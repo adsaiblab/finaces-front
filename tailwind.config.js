@@ -5,65 +5,68 @@ module.exports = {
     ],
     theme: {
         extend: {
-            // 1. LES FONDS (bg-...)
-            backgroundColor: {
-                'default': 'var(--bg-default)',
-                'card': 'var(--bg-card)',
-                'sidebar': 'var(--bg-sidebar)',
-                'sidebar-active-bg': 'var(--sidebar-active-bg)',
-            },
-            // 2. LES TEXTES (text-...)
-            textColor: {
-                'primary': 'var(--text-primary)',
-                'secondary': 'var(--text-secondary)',
-                'disabled': 'var(--text-disabled)',
-                'inverse': 'var(--text-inverse)',
-                'sidebar': 'var(--sidebar-text)',
-                'sidebar-active': 'var(--sidebar-active)',
-            },
-            // 3. LES BORDURES (border-...)
-            borderColor: {
-                DEFAULT: 'var(--border)',
-                'strong': 'var(--border-strong)',
-                'sidebar-text': 'var(--sidebar-text)',
-            },
-            // 4. LES AUTRES COULEURS MÉTIER
             colors: {
-                'primary': 'var(--primary)',
-                'primary-light': 'var(--primary-light)',
-                'secondary': 'var(--secondary)',
-                'success': 'var(--success)',
-                'warning': 'var(--warning)',
-                'error': 'var(--error)',
-                'info': 'var(--info)',
-
-                // MCC Rail
-                'mcc-low': 'var(--mcc-low)',
-                'mcc-moderate': 'var(--mcc-moderate)',
-                'mcc-high': 'var(--mcc-high)',
-                'mcc-critical': 'var(--mcc-critical)',
-                'mcc-surface': 'var(--mcc-surface)',
-                'mcc-border': 'var(--mcc-border)',
-
-                // IA Rail
-                'ia-low': 'var(--ia-low)',
-                'ia-moderate': 'var(--ia-moderate)',
-                'ia-high': 'var(--ia-high)',
-                'ia-critical': 'var(--ia-critical)',
+                surface: {
+                    default: 'var(--surface-default)',
+                    card: 'var(--surface-card)',
+                    sidebar: 'var(--surface-sidebar)',
+                    hover: 'var(--surface-hover)',
+                },
+                content: {
+                    primary: 'var(--content-primary)',
+                    secondary: 'var(--content-secondary)',
+                    disabled: 'var(--content-disabled)',
+                },
+                sidebar: {
+                    content: 'var(--sidebar-content)',
+                    'content-active': 'var(--sidebar-content-active)',
+                    'surface-active': 'var(--sidebar-surface-active)',
+                },
+                border: {
+                    default: 'var(--border-default)',
+                    strong: 'var(--border-strong)',
+                },
+                primary: 'var(--primary)',
+                success: 'var(--success)',
+                warning: 'var(--warning)',
+                error: 'var(--error)',
+                info: 'var(--info)',
+                mcc: {
+                    low: 'var(--mcc-low)',
+                    moderate: 'var(--mcc-moderate)',
+                    high: 'var(--mcc-high)',
+                    critical: 'var(--mcc-critical)',
+                    surface: 'var(--mcc-surface)',
+                    border: 'var(--mcc-border)',
+                },
+                ia: {
+                    low: 'var(--ia-low)',
+                    moderate: 'var(--ia-moderate)',
+                    high: 'var(--ia-high)',
+                    critical: 'var(--ia-critical)',
+                }
             },
             fontFamily: {
-                'sans': ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
-                'mono': ['JetBrains Mono', 'Monaco', 'monospace'],
+                sans: ['var(--font-sans)'],
+                mono: ['var(--font-mono)'],
+            },
+            boxShadow: {
+                sm: 'var(--shadow-sm)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+                card: 'var(--shadow-card)',
             },
             spacing: {
-                'micro': '4px',
-                '0.5': '4px',
+                micro: '4px',
             },
             width: {
-                'sidebar': '240px',
+                sidebar: 'var(--sidebar-width)',
+            },
+            maxWidth: {
+                container: 'var(--max-width-content)',
             },
             height: {
-                'topbar': '64px',
+                topbar: 'var(--topbar-height)',
             },
         },
     },

@@ -1,12 +1,14 @@
-<div class="flex h-screen w-full bg-default text-primary overflow-hidden transition-colors duration-300">
+<div
+    class="flex h-screen w-full bg-surface-default text-content-primary overflow-hidden transition-colors duration-300">
 
-    <aside class="bg-sidebar text-sidebar flex flex-col transition-all duration-300 ease-in-out relative z-20"
+    <aside
+        class="bg-surface-sidebar flex flex-col transition-all duration-300 ease-in-out relative z-20 shadow-lg border-r border-border-strong"
         [class.w-sidebar]="isSidebarOpen()" [class.w-16]="!isSidebarOpen()">
 
-        <div class="h-topbar flex items-center justify-between px-4 border-b border-sidebar-text/20">
-            <span *ngIf="isSidebarOpen()" class="font-bold text-lg text-sidebar-active truncate">FinaCES</span>
+        <div class="h-topbar flex items-center justify-between px-4 border-b border-border-strong">
+            <span *ngIf="isSidebarOpen()" class="font-bold text-lg text-sidebar-content-active truncate">FinaCES</span>
             <button (click)="toggleSidebar()"
-                class="p-1 hover:bg-sidebar-active-bg rounded text-sidebar-active transition-colors">
+                class="p-1 hover:bg-sidebar-surface-active rounded text-sidebar-content transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
                     </path>
@@ -16,7 +18,7 @@
 
         <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
             <a routerLink="/"
-                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-surface-active transition-colors text-sidebar-content hover:text-sidebar-content-active group cursor-pointer"
                 title="Tableau de bord">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -27,7 +29,7 @@
             </a>
 
             <a routerLink="/strategique"
-                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-surface-active transition-colors text-sidebar-content hover:text-sidebar-content-active group cursor-pointer"
                 title="Assistant Stratégique">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -38,7 +40,7 @@
             </a>
 
             <a routerLink="/ia"
-                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-surface-active transition-colors text-sidebar-content hover:text-sidebar-content-active group cursor-pointer"
                 title="Assistant IA">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -51,9 +53,9 @@
 
     <div class="flex-1 flex flex-col min-w-0">
         <header
-            class="h-topbar bg-card border-b border-strong px-6 flex items-center justify-end transition-colors duration-300 shadow-sm z-10">
+            class="h-topbar bg-surface-card border-b border-border-strong px-6 flex items-center justify-end transition-colors duration-300 shadow-sm z-10">
             <button (click)="themeService.toggleTheme()"
-                class="p-2 rounded-full hover:bg-default transition-colors border border-strong text-secondary flex items-center justify-center cursor-pointer">
+                class="p-2 rounded-full hover:bg-surface-hover transition-colors border border-border-strong text-content-secondary hover:text-content-primary flex items-center justify-center cursor-pointer">
                 <svg *ngIf="!themeService.isDarkMode()" class="w-5 h-5" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -69,7 +71,7 @@
             </button>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-6 bg-default transition-colors duration-300">
+        <main class="flex-1 overflow-y-auto p-6 bg-surface-default transition-colors duration-300">
             <div class="max-w-container mx-auto">
                 <router-outlet></router-outlet>
             </div>
