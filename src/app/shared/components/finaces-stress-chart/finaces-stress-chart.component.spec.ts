@@ -12,13 +12,13 @@ describe('FinacesStressChartComponent', () => {
         { month: 3, openingCash: 11000, inflows: 3000, outflows: 6000, closingCash: 8000 }
     ];
 
-    // Le mock ResizeObserver est obligatoire car Chart.js l'utilise en interne pour le responsive
     beforeAll(() => {
-        global.ResizeObserver = class ResizeObserver {
+        // Utilisation de vi.stubGlobal (propre à Vitest) au lieu de 'global' (NodeJS)
+        vi.stubGlobal('ResizeObserver', class ResizeObserver {
             observe() { }
             unobserve() { }
             disconnect() { }
-        };
+        });
     });
 
     beforeEach(async () => {

@@ -25,7 +25,7 @@ import {
     ChartConfiguration
 } from 'chart.js';
 
-// Tree-shaking: Enregistrer uniquement les modules nécessaires au lieu de 'registerables'
+// Tree-shaking: Enregistrer uniquement les modules nécessaires
 Chart.register(
     LineController,
     LineElement,
@@ -78,7 +78,6 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['monthlyFlows'] || changes['criticalMonth']) {
             if (this.isViewInit) {
-                // requestAnimationFrame assure que le DOM (notamment la taille du canvas parent) est prêt
                 requestAnimationFrame(() => this.renderChart());
             }
         }
@@ -103,7 +102,6 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
             this.chart.destroy();
         }
 
-        // Récupération des couleurs du Design System
         const colorPrimary = this.getCssVariable('--color-primary') || '#3B82F6';
         const colorError = this.getCssVariable('--color-error') || '#EF4444';
         const colorBgPrimary = `rgba(${this.hexToRgb(colorPrimary)}, 0.1)`;
@@ -161,7 +159,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // Important pour respecter le Input() height
+                maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
                     legend: {
@@ -171,18 +169,18 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                             usePointStyle: true,
                             padding: 15,
                             color: colorTextSecondary,
-                            font: { size: 12, weight: '500', family: 'inherit' }
+                            font: { size: 12, weight: 'normal', family: 'inherit' } // Correction TypeScript
                         }
                     },
                     tooltip: {
-                        backgroundColor: colorTextPrimary, // Inversion pour contraste
+                        backgroundColor: colorTextPrimary,
                         titleColor: colorSurfaceCard,
                         bodyColor: colorSurfaceCard,
                         padding: 12,
                         borderColor: colorBorder,
                         borderWidth: 1,
                         cornerRadius: 6,
-                        titleFont: { size: 13, weight: '600', family: 'inherit' },
+                        titleFont: { size: 13, weight: 'bold', family: 'inherit' }, // Correction TypeScript
                         bodyFont: { size: 12, family: 'inherit' },
                         callbacks: {
                             label: (context: any) => {
@@ -208,7 +206,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                             display: true,
                             text: 'Trésorerie (devise locale)',
                             color: colorTextSecondary,
-                            font: { size: 12, weight: '600', family: 'inherit' }
+                            font: { size: 12, weight: 'bold', family: 'inherit' } // Correction TypeScript
                         }
                     },
                     x: {
@@ -218,7 +216,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                             display: true,
                             text: 'Mois de projection',
                             color: colorTextSecondary,
-                            font: { size: 12, weight: '600', family: 'inherit' }
+                            font: { size: 12, weight: 'bold', family: 'inherit' } // Correction TypeScript
                         }
                     }
                 }
@@ -228,7 +226,6 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
         this.chart = new Chart(canvas, config);
     }
 
-    // Utilitaire pour convertir l'hex primaire en RGB pour l'opacité (backgroundColor)
     private hexToRgb(hex: string): string {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '59, 130, 246';
