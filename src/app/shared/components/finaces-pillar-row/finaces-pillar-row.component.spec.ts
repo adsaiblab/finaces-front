@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinacesPillarRowComponent, PillarDetailSchema } from './finaces-pillar-row.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
+import { vi } from 'vitest'; // IMPORT VITAL POUR VITEST
 
 describe('FinacesPillarRowComponent', () => {
     let component: FinacesPillarRowComponent;
@@ -68,8 +69,9 @@ describe('FinacesPillarRowComponent', () => {
     });
 
     it('should emit toggleExpand when clicked', () => {
-        spyOn(component.toggleExpand, 'emit');
+        // Utilisation de vi.spyOn spécifique à Vitest
+        const emitSpy = vi.spyOn(component.toggleExpand, 'emit');
         component.onExpandToggle();
-        expect(component.toggleExpand.emit).toHaveBeenCalledWith('LIQUIDITE');
+        expect(emitSpy).toHaveBeenCalledWith('LIQUIDITE');
     });
 });

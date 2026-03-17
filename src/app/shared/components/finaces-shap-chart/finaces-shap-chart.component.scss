@@ -1,0 +1,42 @@
+.finaces-shap-wrapper {
+    width: 100%;
+    background-color: var(--color-surface-card);
+    border-radius: 8px;
+    border: 1px solid var(--color-border-default);
+    padding: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    .shap-chart-container {
+        width: 100%;
+        position: relative;
+        overflow-x: hidden; // Prevent horizontal scroll on mobile, handled by SVG viewBox
+
+        // Global D3 SVG styles
+        ::ng-deep svg {
+            font-family: inherit;
+
+            .bar-group {
+                .shap-bar {
+                    transition: filter 0.2s ease, opacity 0.2s ease;
+
+                    &:hover {
+                        filter: brightness(1.15); // Lighten on hover (works in both dark/light mode)
+                    }
+                }
+            }
+
+            .shap-x-axis {
+                .domain {
+                    display: none; // Hide the top solid line, keeping only ticks
+                }
+            }
+        }
+    }
+}
+
+// Mobile responsiveness for padding
+@media (max-width: 640px) {
+    .finaces-shap-wrapper {
+        padding: 12px 8px;
+    }
+}

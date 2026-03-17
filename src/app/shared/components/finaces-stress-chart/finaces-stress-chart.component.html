@@ -1,0 +1,21 @@
+<div class="finaces-stress-container">
+    <div class="stress-header">
+        <h3 class="stress-title">Projection de Trésorerie</h3>
+        <div class="stress-metadata">
+            <span *ngIf="stress60dResult" class="stress-result"
+                [ngClass]="stress60dResult === 'INSOLVENT' ? 'status-insolvent' : 'status-solvent'">
+                <mat-icon>{{ stress60dResult === 'SOLVENT' ? 'check_circle' : 'cancel' }}</mat-icon>
+                60J : {{ stress60dResult }}
+            </span>
+            <span *ngIf="stress90dResult" class="stress-result"
+                [ngClass]="stress90dResult === 'INSOLVENT' ? 'status-insolvent' : 'status-solvent'">
+                <mat-icon>{{ stress90dResult === 'SOLVENT' ? 'check_circle' : 'cancel' }}</mat-icon>
+                90J : {{ stress90dResult }}
+            </span>
+        </div>
+    </div>
+
+    <div class="chart-wrapper" [style.height.px]="height">
+        <canvas #chartCanvas class="stress-canvas"></canvas>
+    </div>
+</div>
