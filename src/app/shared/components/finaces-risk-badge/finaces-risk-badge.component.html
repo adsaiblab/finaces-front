@@ -1,0 +1,9 @@
+<span [ngClass]="badgeClasses" [ngStyle]="badgeStyle">
+    <mat-icon *ngIf="showIcon && colorScheme?.icon" class="badge-icon">
+        {{ colorScheme?.icon }}
+    </mat-icon>
+    <span class="badge-prefix" *ngIf="!isMcc && showLabel">IA</span>
+    <span class="badge-label" *ngIf="showLabel">
+        {{ colorScheme?.label }}
+    </span>
+</span>

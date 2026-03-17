@@ -1,0 +1,49 @@
+.finaces-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: all 150ms ease-in-out;
+
+    &.badge-mcc {
+        border: 1px solid transparent;
+    }
+
+    &.badge-ia {
+        border: 1px solid;
+    }
+
+    &.badge-sm {
+        height: 20px;
+        padding: 2px 8px;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    &.badge-md {
+        height: 24px;
+        padding: 4px 12px;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .badge-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        margin-right: 2px;
+    }
+
+    .badge-prefix {
+        font-size: 10px;
+        font-weight: 600;
+        margin-right: 2px;
+        opacity: 0.8;
+    }
+
+    .badge-label {
+        white-space: nowrap;
+    }
+}

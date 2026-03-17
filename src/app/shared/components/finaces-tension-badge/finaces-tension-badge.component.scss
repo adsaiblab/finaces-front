@@ -1,0 +1,64 @@
+.finaces-tension-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    .tension-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .tension-label {
+        color: var(--text-primary);
+    }
+
+    // Variations de couleurs
+    &.tension-none .tension-dot {
+        background-color: var(--success);
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+    }
+
+    &.tension-mild .tension-dot {
+        background-color: var(--info);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    &.tension-moderate .tension-dot {
+        background-color: var(--warning);
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+
+    &.tension-severe {
+        border-color: rgba(239, 68, 68, 0.3);
+        background-color: rgba(239, 68, 68, 0.05);
+
+        .tension-dot {
+            background-color: var(--error);
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+            animation: pulse-danger 2s infinite;
+        }
+    }
+}
+
+@keyframes pulse-danger {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
