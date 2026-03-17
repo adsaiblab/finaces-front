@@ -1,0 +1,102 @@
+<mat-expansion-panel [expanded]="isExpanded" (opened)="onExpandToggle()" (closed)="onExpandToggle()"
+    class="finaces-pillar-panel">
+    <mat-expansion-panel-header>
+        <mat-panel-title class="pillar-header">
+            <mat-icon [ngClass]="metadata?.colorClass" class="pillar-icon">
+                {{ metadata?.icon }}
+            </mat-icon>
+            <span class="pillar-name">{{ pillar.label }}</span>
+
+            <div class="pillar-score-section">
+                <span class="pillar-score-value">{{ pillar.score | number:'1.0-1' }}/{{ pillar.maxScore }}</span>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" [style.width.%]="getProgressValue()"
+                        [ngClass]="getProgressColorClass()"></div>
+                </div>
+            </div>
+
+            <finaces-risk-badge [riskClass]="pillar.riskClass" [rail]="pillar.rail" [size]="'sm'" [showLabel]="true"
+                [showIcon]="false" class="pillar-risk-badge"></finaces-risk-badge>
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="pillar-expanded-content">
+        <h4 class="section-title">Indicateurs</h4>
+        <table mat-table [dataSource]="pillar.indicators || []" class="indicators-table">
+
+            <ng-container matColumnDef="indicator">
+                <th mat-header-cell *matHeaderCellDef>Indicateur</th>
+                <td mat-cell *matCellDef="let element">
+                    <span class="indicator-name">{{ element.name }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef>Valeur</th>
+                <td mat-cell *matCellDef="let element">
+                    <span class="indicator-value">{{ element.value }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="score">
+                <th mat-header-cell *matHeaderCellDef>Note /5</th>
+                <td mat-cell *matCellDef="let element">
+                    <span class="indicator-score">{{ element.score | number:'1.1-1' }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="weight">
+                <th mat-header-cell *matHeaderCellDef>Poids</th>
+                <td mat-cell *matCellDef="let element">
+                    <span class="indicator-weight">{{ element.weight }}%</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="contribution">
+                <th mat-header-cell *matHeaderCellDef>Contribution</th>
+                <td mat-cell *matCellDef="let element">
+                    <span class="indicator-contribution" [class.negative]="element.contribution < 0">
+                        {{ element.contribution > 0 ? '+' : '' }}{{ element.contribution | number:'1.2-2' }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div *ngIf="pillar.signals && pillar.signals.length" class="signals-section">
+            <h4 class="section-title">Signaux</h4>
+            <ul class="signals-list">
+                <li *ngFor="let signal of pillar.signals" class="signal-item">
+                    {{ signal }}
+                </li>
+            </ul>
+        </div>
+
+        <div *ngIf="pillar.trends && pillar.trends.length" class="trends-section">
+            <h4 class="section-title">Tendances</h4>
+            <div class="trends-list">
+                <div *ngFor="let trend of pillar.trends" class="trend-item">
+                    <span class="trend-name">{{ trend.name }}</span>
+                    <mat-icon [class.text-warning]="trend.direction === 'UP'"
+                        [class.text-success]="trend.direction === 'DOWN'">
+                        {{ trend.direction === 'UP' ? 'trending_up' : 'trending_down' }}
+                    </mat-icon>
+                    <span class="trend-slope">{{ trend.slope > 0 ? '+' : '' }}{{ trend.slope | number:'1.3-3' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="comment-section">
+            <h4 class="section-title">Commentaire Analyste</h4>
+            <mat-form-field *ngIf="!readonly" appearance="outline" class="comment-field w-full">
+                <textarea matInput [(ngModel)]="editingComment" (blur)="onCommentBlur()"
+                    placeholder="Ajouter une note ou une justification..." rows="3"></textarea>
+            </mat-form-field>
+            <div *ngIf="readonly" class="comment-read-only">
+                {{ pillar.comment || '(Aucun commentaire renseigné)' }}
+            </div>
+        </div>
+    </div>
+</mat-expansion-panel>
