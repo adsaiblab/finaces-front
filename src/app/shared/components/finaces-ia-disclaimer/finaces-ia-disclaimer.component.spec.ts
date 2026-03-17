@@ -27,7 +27,8 @@ describe('FinacesIaDisclaimerComponent', () => {
     });
 
     it('should apply warning class and icon when type is warning', () => {
-        component.type = 'warning';
+        // Utilisation de setInput pour respecter la stratégie OnPush
+        fixture.componentRef.setInput('type', 'warning');
         fixture.detectChanges();
 
         expect(component.disclaimerClass).toBe('disclaimer-warning');
@@ -36,7 +37,8 @@ describe('FinacesIaDisclaimerComponent', () => {
 
     it('should display the custom message provided via input', () => {
         const customMsg = 'Attention : les ratios IA doivent être vérifiés manuellement.';
-        component.message = customMsg;
+        // Utilisation de setInput pour forcer le rafraîchissement du DOM avec OnPush
+        fixture.componentRef.setInput('message', customMsg);
         fixture.detectChanges();
 
         const textElement = fixture.debugElement.query(By.css('.disclaimer-text')).nativeElement;
