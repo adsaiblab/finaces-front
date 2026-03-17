@@ -1,3 +1,5 @@
+import { ConsortiumMember } from './consortium.model';
+
 export enum CaseType {
     SINGLE = 'SINGLE',
     GROUPEMENT = 'GROUPEMENT',
@@ -93,29 +95,6 @@ export interface BidderOut {
     sector: string;
     active_cases: number;
     last_evaluation_date?: string;
-}
-
-export interface ConsortiumMember {
-    member_id: string;
-    member_name: string;
-    role: 'LEADER' | 'MEMBER';
-    participation_pct: number;
-}
-
-export interface ConsortiumScorecardOutput {
-    consortium_id: string;
-    members: ConsortiumMember[];
-    joint_venture_type: 'SOLIDAIRE' | 'CONJOINTE' | 'SEPARATE';
-    synergy_index: number;
-    weakest_member_id: string;
-    combined_scorecard: any;
-    member_scorecards: Record<string, any>;
-}
-
-export interface ConsortiumMemberCreate {
-    member_id: string;
-    role: 'LEADER' | 'MEMBER';
-    participation_pct: number;
 }
 
 export function isCaseStatus(value: any): value is CaseStatus {
