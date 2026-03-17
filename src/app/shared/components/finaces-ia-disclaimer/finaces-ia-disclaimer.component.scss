@@ -1,0 +1,48 @@
+.finaces-ia-disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border-default);
+    background-color: var(--color-surface-card);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-content-secondary);
+    transition: all 0.2s ease-in-out;
+
+    .disclaimer-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .disclaimer-text {
+        flex: 1;
+        font-weight: 500;
+    }
+
+    // --- Variations ---
+    &.disclaimer-info {
+        border-left: 4px solid var(--color-info);
+
+        .disclaimer-icon {
+            color: var(--color-info);
+        }
+    }
+
+    &.disclaimer-warning {
+        border-left: 4px solid var(--color-warning);
+        // Un léger fond teinté pour attirer l'œil sur les avertissements IA (basé sur un hex générique warning)
+        background-color: rgba(245, 158, 11, 0.05);
+
+        .disclaimer-icon {
+            color: var(--color-warning);
+        }
+
+        .disclaimer-text {
+            color: var(--color-content-primary); // Plus de contraste pour forcer la lecture
+        }
+    }
+}
