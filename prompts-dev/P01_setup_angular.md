@@ -11,6 +11,7 @@ PROMPT 1 — SETUP ANGULAR + TAILWIND + ANGULAR MATERIAL + DESIGN TOKENS
 ## CONTEXTE
 
 Première étape de construction du projet FinaCES from scratch. Ce prompt met en place:
+
 1. Projet Angular 17+ standalone components
 2. Tailwind CSS configuré avec thème custom FinaCES
 3. Angular Material installé et thème custom appliqué
@@ -26,12 +27,14 @@ Première étape de construction du projet FinaCES from scratch. Ce prompt met e
 Aucune règle métier — infrastructure uniquement.
 
 **Constraints couleurs :**
+
 - Rails MCC: --mcc-low (#22C55E) → --mcc-moderate (#F59E0B) → --mcc-high (#F97316) → --mcc-critical (#EF4444)
 - Rails IA: --ia-low (#3B82F6) → --ia-moderate (#6366F1) → --ia-high (#8B5CF6) → --ia-critical (#A855F7)
 - Tension: --tension-none (#22C55E), --tension-mild (#3B82F6), --tension-moderate (#F59E0B), --tension-severe (#EF4444)
 - Neutres: --primary (#1E3A5F), --text-primary (#0F172A), --bg-default (#F8FAFC), etc.
 
 **Typography standards :**
+
 ```
 Font: Inter, -apple-system, sans-serif
 Mono: JetBrains Mono
@@ -48,6 +51,7 @@ Score Medium: 28px / 700
 ```
 
 **Grid et spacing (8pt base):**
+
 - Micro: 4px
 - xs: 8px
 - sm: 12px
@@ -58,6 +62,7 @@ Score Medium: 28px / 700
 - 3xl: 64px
 
 **Layout desktop:**
+
 - Max width: 1440px
 - Grid: 12 colonnes
 - Gutters: 24px
@@ -70,7 +75,8 @@ Score Medium: 28px / 700
 
 ## FICHIERS À CRÉER / MODIFIER
 
-### Fichiers à créer (8 total):
+### Fichiers à créer (8 total)
+
 1. `angular.json` — configuration projet Angular
 2. `tailwind.config.js` — Tailwind custom theme avec tokens FinaCES
 3. `src/styles.scss` — global styles entrypoint
@@ -82,6 +88,7 @@ Score Medium: 28px / 700
 9. `src/environments/environment.prod.ts` — prod environment
 
 Modifications:
+
 - `package.json` — ajouter Tailwind, Angular Material, dépendances dev
 - `angular.json` — configurer SCSS, Tailwind, assets
 
@@ -92,6 +99,7 @@ Modifications:
 ### 1. SETUP INITIAL
 
 **Prerequisites:**
+
 ```bash
 node --version  # >= 18.13.0
 npm --version   # >= 9.2.0
@@ -99,12 +107,14 @@ ng version      # Angular 17+
 ```
 
 **Créer le projet:**
+
 ```bash
 ng new finaces-front --package-manager=npm --style=scss --skip-git
 cd finaces-front
 ```
 
 **Dépendances à installer:**
+
 ```bash
 npm install -D tailwindcss postcss autoprefixer
 npm install @angular/material @angular/cdk
@@ -1043,12 +1053,14 @@ export const environment = {
 ## BINDING API
 
 Les tokens CSS/SCSS sont bindés via:
+
 1. **CSS Variables:** `color: var(--primary)` (dynamique à runtime)
 2. **Tailwind utilities:** Classes comme `text-primary-light`, `bg-mcc-low`
 3. **SCSS mixins:** Pour les composants stylisés (future)
 4. **JSON tokens:** Peut être consommé par scripts de documentation
 
 **Ordre de préférence:**
+
 1. CSS variables pour les UI dynamiques
 2. Tailwind utilities dans les templates
 3. SCSS dans les `.component.scss` si besoin de logique complexe
@@ -1100,8 +1112,8 @@ finaces-front/
 ## PROCHAINES ÉTAPES
 
 Passez à **PROMPT 2** (P02_architecture_services_models.md) pour:
+
 - Créer tous les services HTTP typés
 - Créer tous les modèles TypeScript
 - Configurer les interceptors
 - Créer les pipes partagés
-
