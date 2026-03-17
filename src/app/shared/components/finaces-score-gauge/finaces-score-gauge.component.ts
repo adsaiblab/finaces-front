@@ -17,26 +17,27 @@ export class FinacesScoreGaugeComponent implements OnChanges {
     @Input() iaVariant: boolean = false;
 
     readonly strokeWidth = 10;
-    readonly radius = 50; // Base de calcul pour le SVG viewBox
+    readonly radius = 50; // Pour un viewBox de 120x120, centre 60, rayon 50 -> rentre parfaitement
     readonly circumference = 2 * Math.PI * this.radius;
 
     dashoffset: number = this.circumference;
     colorClass: string = 'gauge-success';
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['score']) {
+        if (changes['score'] || changes['iaVariant']) {
             this.updateGauge();
         }
     }
 
     private updateGauge(): void {
+        // 1. Sécuriser la valeur du score entre 0 et 100
         const clampedScore = Math.max(0, Math.min(100, this.score));
 
-        // Calcul de l'arc (dashoffset) : 100 -> 0 offset, 0 -> full offset
+        // 2. Calculer le remplissage SVG
         const percentage = clampedScore / 100;
-        this.dashoffset = this.circumference - percentage * this.circumference;
+        this.dashoffset = this.circumference - (percentage * this.circumference);
 
-        // Détermination de la classe couleur
+        // 3. Déterminer la classe de couleur
         if (this.iaVariant) {
             this.colorClass = 'gauge-ia';
         } else if (clampedScore >= 80) {
@@ -48,17 +49,17 @@ export class FinacesScoreGaugeComponent implements OnChanges {
         }
     }
 
-    get gaugeStyle() {
+    get gaugeStyle(): Record<string, string> {
         return {
             width: `${this.size}px`,
             height: `${this.size}px`
         };
     }
 
-    get circleStyle() {
+    get circleStyle(): Record<string, string | number> {
         return {
-            strokeDasharray: this.circumference,
-            strokeDashoffset: this.dashoffset
+            'stroke-dasharray': this.circumference,
+            'stroke-dashoffset': this.dashoffset
         };
     }
 }

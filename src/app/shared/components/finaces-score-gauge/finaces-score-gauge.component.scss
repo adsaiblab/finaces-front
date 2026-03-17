@@ -16,6 +16,7 @@
 
         .gauge-value {
             stroke-linecap: round;
+            // Animation fluide du remplissage
             transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
         }
     }
@@ -27,6 +28,7 @@
         align-items: center;
         justify-content: center;
         text-align: center;
+        inset: 0;
 
         .gauge-score {
             font-size: 24px;
@@ -52,7 +54,7 @@
         }
     }
 
-    // --- Variations de couleurs ---
+    // Application des Tokens du Design System
     &.gauge-success .gauge-value {
         stroke: var(--color-success);
     }
@@ -66,8 +68,6 @@
     }
 
     &.gauge-ia .gauge-value {
-        // Une couleur IA par défaut, on utilise la couleur warning pour ce cas IA si non spécifiée, 
-        // ou une couleur personnalisée si ajoutée dans le _variables.scss plus tard
-        stroke: #8B5CF6; // Violet IA générique (basé sur le badge IA)
+        stroke: var(--color-primary, #6366f1); // Fallback sur un Indigo si var non trouvée
     }
 }

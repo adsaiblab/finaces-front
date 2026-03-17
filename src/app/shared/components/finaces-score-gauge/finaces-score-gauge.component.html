@@ -1,5 +1,5 @@
 <div class="finaces-gauge-container" [ngStyle]="gaugeStyle" [ngClass]="colorClass">
-    <svg viewBox="0 0 120 120" class="gauge-svg">
+    <svg viewBox="0 0 120 120" class="gauge-svg" preserveAspectRatio="xMidYMid meet">
         <circle class="gauge-track" cx="60" cy="60" [attr.r]="radius" [attr.stroke-width]="strokeWidth" fill="none" />
         <circle class="gauge-value" cx="60" cy="60" [attr.r]="radius" [attr.stroke-width]="strokeWidth" fill="none"
             [ngStyle]="circleStyle" transform="rotate(-90 60 60)" />
