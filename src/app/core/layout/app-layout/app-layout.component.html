@@ -17,8 +17,9 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
-            <a routerLink="/"
-                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-surface-active transition-colors text-sidebar-content hover:text-sidebar-content-active group cursor-pointer"
+
+            <a routerLink="/dashboard" routerLinkActive="active-menu" [routerLinkActiveOptions]="{exact: true}"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
                 title="Tableau de bord">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -28,8 +29,8 @@
                 <span *ngIf="isSidebarOpen()" class="truncate text-sm font-medium">Tableau de bord</span>
             </a>
 
-            <a routerLink="/strategique"
-                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-surface-active transition-colors text-sidebar-content hover:text-sidebar-content-active group cursor-pointer"
+            <a routerLink="/cases" routerLinkActive="active-menu"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
                 title="Assistant Stratégique">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -39,8 +40,8 @@
                 <span *ngIf="isSidebarOpen()" class="truncate text-sm font-medium">Assistant Stratégique</span>
             </a>
 
-            <a routerLink="/ia"
-                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-surface-active transition-colors text-sidebar-content hover:text-sidebar-content-active group cursor-pointer"
+            <a routerLink="/admin-ia" routerLinkActive="active-menu"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
                 title="Assistant IA">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
