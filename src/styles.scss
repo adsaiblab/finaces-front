@@ -1,12 +1,23 @@
-/* 1. On importe tes variables de couleurs (Papier/Abysse) avec la syntaxe moderne */
+/* ═══════════════════════════════════════════════════════════
+   FINACES FRONT — Global Styles Entry Point
+   Ordre obligatoire : variables → Tailwind → typography → spacing
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Design Tokens (CSS Variables — Surfaces, Contents, Borders) */
 @use 'styles/variables';
 
-/* 2. On injecte Tailwind CSS */
+/* 2. Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 3. Quelques styles de base globaux */
+/* 3. Typographie globale (h1-h4, p, .label, code) */
+@use 'styles/typography';
+
+/* 4. Spacing & Layout tokens (:root CSS vars) */
+@use 'styles/spacing';
+
+/* ── Reset & Base ────────────────────────────────────────── */
 html,
 body {
     margin: 0;
@@ -22,7 +33,7 @@ body {
     box-sizing: border-box;
 }
 
-/* Scrollbar discrète */
+/* ── Scrollbar discrète (thémée) ─────────────────────────── */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

@@ -2,117 +2,99 @@
 // TOKENS SÉMANTIQUES — LIGHT MODE ("Papier & Minéral")
 // ═══════════════════════════════════════════════════════════
 :root {
-    /* 1. SURFACES (Fonds) - Zéro blanc pur */
-    --surface-default: #F5F4F1;
-    /* Parchemin très doux */
-    --surface-card: #FCFCFA;
-    /* Crème pour les cartes et la topbar */
-    --surface-sidebar: #1E2329;
-    /* Gris/Bleu ultra profond pour la sidebar */
-    --surface-hover: #EBEAE5;
+    // ── SURFACES (Fonds) ──────────────────────────────────────
+    // Zéro blanc pur, zéro gris clinique
+    --bg-default: #F2EFE9;       // Fond parchemin chaud
+    --bg-card:    #FAF8F5;       // Cartes crème (démarcation douce)
+    --bg-sidebar: #2B323A;       // Sidebar "Bleu de Prusse" profond
 
-    /* 2. TEXTES (Contenus) - Zéro noir pur */
-    --content-primary: #1C2026;
-    /* Anthracite profond */
-    --content-secondary: #5C6570;
-    --content-disabled: #A0AAB5;
+    // ── CONTENTS (Textes) ────────────────────────────────────
+    // Zéro noir pur
+    --text-primary:   #1C2431;   // Encre marine
+    --text-secondary: #5C6773;   // Ardoise
+    --text-disabled:  #A1A8B3;
+    --text-inverse:   #F2EFE9;
 
-    /* 3. SIDEBAR (Spécifique) */
-    --sidebar-content: #9CA3AF;
-    /* Gris clair neutre (parfait sur fond sombre) */
-    --sidebar-content-active: #D4AF37;
-    /* Accent Laiton/Or */
-    --sidebar-surface-active: #15191E;
-    /* Fond encore plus sombre au survol */
+    // ── BORDERS ──────────────────────────────────────────────
+    --border:       #E5E0D8;     // Bordure sable
+    --border-strong: #D4CEC4;
 
-    /* 4. BORDURES */
-    --border-default: #E2DFD8;
-    --border-strong: #CFCBC2;
+    // ── ÉTATS SIDEBAR ────────────────────────────────────────
+    --sidebar-text:      #9CA3AF;
+    --sidebar-active:    #E8DCC4;   // Accent laiton/sable
+    --sidebar-active-bg: #1F252C;   // Enfoncement net
 
-    /* 5. COULEURS MÉTIER (FinaCES) */
-    --primary: #2C4B5E;
-    --success: #2B8A5A;
-    --warning: #D18D2A;
-    --error: #BC3B3B;
-    --info: #4A7A9E;
+    // ── COULEURS MÉTIER FINACES ───────────────────────────────
+    --primary:       #2C4B5E;
+    --primary-light: #4A7A9E;    // Variante claire du primary
 
-    /* 6. MCC RAIL */
-    --mcc-low: #2B8A5A;
+    // ── COULEURS FONCTIONNELLES (Statuts UI) ─────────────────
+    --success: #2B8A5A;          // Vert forêt (pas vert acide)
+    --warning: #D18D2A;          // Ambre chaud
+    --error:   #BC3B3B;          // Rouge brique
+    --info:    #4A7A9E;          // Bleu ardoise
+
+    // ── MCC RAIL ─────────────────────────────────────────────
+    --mcc-low:      #2B8A5A;
     --mcc-moderate: #D18D2A;
-    --mcc-high: #D4602C;
+    --mcc-high:     #D4602C;
     --mcc-critical: #BC3B3B;
-    --mcc-surface: #F5F4F1;
-    --mcc-border: #E2DFD8;
+    --mcc-surface:  #F5F0E8;     // Fond badge MCC (parchemin léger)
+    --mcc-border:   #D4B483;     // Bordure badge MCC (laiton doux)
 
-    /* 7. IA RAIL */
-    --ia-low: #4A7A9E;
+    // ── IA RAIL ──────────────────────────────────────────────
+    --ia-low:      #4A7A9E;
     --ia-moderate: #605B91;
-    --ia-high: #7C5382;
+    --ia-high:     #7C5382;
     --ia-critical: #934674;
-
-    /* 8. CONSTANTES STRUCTURELLES */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-    --font-sans: Inter, -apple-system, system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', Monaco, monospace;
-
-    --sidebar-width: 240px;
-    --topbar-height: 64px;
-    --max-width-content: 1160px;
 }
 
 // ═══════════════════════════════════════════════════════════
 // TOKENS SÉMANTIQUES — DARK MODE ("Abysse & Laiton")
 // ═══════════════════════════════════════════════════════════
 [data-theme="dark"] {
-    /* 1. SURFACES (Fonds) - Zéro noir pur */
-    --surface-default: #121418;
-    /* Abysse neutre */
-    --surface-card: #1A1D23;
-    /* Démarcation nette pour les cartes */
-    --surface-sidebar: #0A0C0F;
-    /* Sidebar ultra profonde */
-    --surface-hover: #22262E;
+    // ── SURFACES ─────────────────────────────────────────────
+    // Zéro noir pur
+    --bg-default: #14181D;       // Fond Abysse
+    --bg-card:    #1D2229;       // Cartes Encre
+    --bg-sidebar: #0E1115;       // Sidebar Ultra profonde
 
-    /* 2. TEXTES (Contenus) */
-    --content-primary: #E5E7EB;
-    /* Gris très clair (pas blanc pur) */
-    --content-secondary: #9CA3AF;
-    --content-disabled: #4B5563;
+    // ── CONTENTS ─────────────────────────────────────────────
+    --text-primary:   #E8E4D9;   // Craie / Sable clair (pas blanc pur)
+    --text-secondary: #8B95A5;   // Gris bleuté
+    --text-disabled:  #4B5563;
+    --text-inverse:   #14181D;
 
-    /* 3. SIDEBAR (Spécifique) */
-    --sidebar-content: #9CA3AF;
-    /* Gris neutre (adieu le texte bleu!) */
-    --sidebar-content-active: #D4AF37;
-    /* Accent Laiton/Or */
-    --sidebar-surface-active: #1A1D23;
-    /* Fond clair au survol */
+    // ── BORDERS ──────────────────────────────────────────────
+    --border:        #2C3440;
+    --border-strong: #3D4756;
 
-    /* 4. BORDURES */
-    --border-default: #2A2F38;
-    --border-strong: #3D4450;
+    // ── ÉTATS SIDEBAR ────────────────────────────────────────
+    --sidebar-text:      #8B95A5;
+    --sidebar-active:    #D4B483;   // Laiton éclatant
+    --sidebar-active-bg: #1D2229;
 
-    /* 5. COULEURS MÉTIER (FinaCES) */
-    --primary: #D4AF37;
-    --success: #36AD71;
-    --warning: #ECA338;
-    --error: #DF4F4F;
-    --info: #609DD1;
+    // ── COULEURS MÉTIER FINACES ───────────────────────────────
+    --primary:       #D4B483;
+    --primary-light: #E8D0A0;    // Laiton clair
 
-    /* 6. MCC RAIL */
-    --mcc-low: #36AD71;
-    --mcc-moderate: #ECA338;
-    --mcc-high: #EE743C;
-    --mcc-critical: #DF4F4F;
-    --mcc-surface: #1A1D23;
-    --mcc-border: #2A2F38;
+    // ── COULEURS FONCTIONNELLES (Statuts UI) ─────────────────
+    --success: #3BAD72;          // Vert lumineux sur fond sombre
+    --warning: #E5A23A;          // Ambre lumineux
+    --error:   #E05252;          // Rouge lumineux
+    --info:    #6B9EC0;          // Bleu lumineux
 
-    /* 7. IA RAIL */
-    --ia-low: #609DD1;
-    --ia-moderate: #8480C6;
-    --ia-high: #A172A8;
-    --ia-critical: #BA6298;
+    // ── MCC RAIL ─────────────────────────────────────────────
+    --mcc-low:      #3BAD72;
+    --mcc-moderate: #E5A23A;
+    --mcc-high:     #E07040;
+    --mcc-critical: #E05252;
+    --mcc-surface:  #1D2229;     // Fond badge MCC dark (= bg-card)
+    --mcc-border:   #D4B483;     // Bordure badge MCC dark (laiton)
+
+    // ── IA RAIL ──────────────────────────────────────────────
+    --ia-low:      #6B9EC0;
+    --ia-moderate: #8078B8;
+    --ia-high:     #9F6DAA;
+    --ia-critical: #BB5A90;
 }
