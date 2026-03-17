@@ -1,4 +1,14 @@
-<div class="finaces-ia-disclaimer" [ngClass]="disclaimerClass">
-    <mat-icon class="disclaimer-icon" aria-hidden="true">{{ iconName }}</mat-icon>
-    <span class="disclaimer-text">{{ message }}</span>
+<div *ngIf="!isDismissed" [ngClass]="'ia-disclaimer ia-' + variant" role="alert">
+    <div class="disclaimer-content">
+        <mat-icon class="disclaimer-icon">auto_awesome</mat-icon>
+
+        <div class="disclaimer-text-section">
+            <p class="disclaimer-main">{{ disclaimerText }}</p>
+            <p *ngIf="pilotMode" class="disclaimer-pilot">{{ pilotModeText }}</p>
+        </div>
+
+        <button *ngIf="dismissible" mat-icon-button (click)="onDismiss()" class="dismiss-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
 </div>

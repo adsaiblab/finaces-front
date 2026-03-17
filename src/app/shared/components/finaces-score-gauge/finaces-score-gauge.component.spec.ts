@@ -1,5 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { FinacesScoreGaugeComponent } from './finaces-score-gauge.component';
+import { vi } from 'vitest';
 
 describe('FinacesScoreGaugeComponent', () => {
     let component: FinacesScoreGaugeComponent;
@@ -14,38 +15,41 @@ describe('FinacesScoreGaugeComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('should create', () => {
+    it('should create with default size 120', () => {
         expect(component).toBeTruthy();
+        expect(component.metrics.size).toBe(120);
     });
 
-    it('should apply gauge-success class for score >= 80', () => {
-        component.score = 85;
-        component.ngOnChanges({ score: {} as any });
-        expect(component.colorClass).toBe('gauge-success');
-    });
+    it('should animate score from 0 to target', fakeAsync(() => {
+        fixture.componentRef.setInput('score', 3.5);
+        fixture.componentRef.setInput('animated', true);
+        fixture.detectChanges();
 
-    it('should apply gauge-warning class for score >= 50 and < 80', () => {
-        component.score = 65;
-        component.ngOnChanges({ score: {} as any });
-        expect(component.colorClass).toBe('gauge-warning');
-    });
+        expect(component.displayScore).toBe(0);
+        tick(400); // Milieu d'animation
+        expect(component.displayScore).toBeGreaterThan(1.5);
+        tick(400); // Fin
+        expect(component.displayScore).toBeCloseTo(3.5, 1);
+    }));
 
-    it('should apply gauge-error class for score < 50', () => {
-        component.score = 45;
-        component.ngOnChanges({ score: {} as any });
-        expect(component.colorClass).toBe('gauge-error');
-    });
+    it('should emit rendered when animation completes', fakeAsync(() => {
+        const emitSpy = vi.spyOn(component.rendered, 'emit');
+        fixture.componentRef.setInput('score', 3.0);
+        fixture.componentRef.setInput('animated', true);
+        fixture.detectChanges();
 
-    it('should apply gauge-ia class when iaVariant is true, regardless of score', () => {
-        component.score = 90;
-        component.iaVariant = true;
-        component.ngOnChanges({ iaVariant: {} as any });
-        expect(component.colorClass).toBe('gauge-ia');
-    });
+        tick(800);
+        expect(emitSpy).toHaveBeenCalled();
+    }));
 
-    it('should mathematically clamp score between 0 and 100 for dashoffset calculation', () => {
-        component.score = 150;
-        component.ngOnChanges({ score: {} as any });
-        expect(component.dashoffset).toBe(0); // Offset 0 = Cercle rempli à 100%
+    it('should generate correct progress path', () => {
+        component.displayScore = 2.5;
+        component.maxScore = 5;
+        component.ngOnChanges({ riskClass: {} as any });
+
+        const path = component.getProgressPath();
+        expect(path).toBeTruthy();
+        expect(path).toContain('M');
+        expect(path).toContain('A');
     });
 });

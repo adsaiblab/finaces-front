@@ -1,73 +1,41 @@
-.finaces-gauge-container {
-    position: relative;
+.finaces-gauge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
     .gauge-svg {
-        width: 100%;
-        height: 100%;
-        overflow: visible;
 
-        .gauge-track {
-            stroke: var(--color-border-default);
-            transition: stroke 0.3s ease;
+        // Variations de couleurs liées au Design System
+        &.gauge-success .progress-arc {
+            stroke: var(--color-success);
         }
 
-        .gauge-value {
-            stroke-linecap: round;
-            // Animation fluide du remplissage
-            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+        &.gauge-warning .progress-arc {
+            stroke: var(--color-warning);
         }
-    }
 
-    .gauge-content {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        inset: 0;
+        &.gauge-orange .progress-arc {
+            stroke: #F97316;
+        }
 
-        .gauge-score {
-            font-size: 24px;
+        &.gauge-error .progress-arc {
+            stroke: var(--color-error);
+        }
+
+        &.gauge-ia .progress-arc {
+            stroke: var(--color-primary, #6366f1);
+        }
+
+        .gauge-score-value {
+            font-size: 26px;
             font-weight: 700;
-            color: var(--color-content-primary);
-            line-height: 1;
-
-            .gauge-suffix {
-                font-size: 12px;
-                font-weight: 500;
-                color: var(--color-content-tertiary);
-                margin-left: 2px;
-            }
+            fill: var(--color-content-primary);
         }
 
-        .gauge-label {
-            font-size: 11px;
+        .gauge-max-label {
+            font-size: 12px;
             font-weight: 500;
-            color: var(--color-content-secondary);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            fill: var(--color-content-tertiary);
         }
-    }
-
-    // Application des Tokens du Design System
-    &.gauge-success .gauge-value {
-        stroke: var(--color-success);
-    }
-
-    &.gauge-warning .gauge-value {
-        stroke: var(--color-warning);
-    }
-
-    &.gauge-error .gauge-value {
-        stroke: var(--color-error);
-    }
-
-    &.gauge-ia .gauge-value {
-        stroke: var(--color-primary, #6366f1); // Fallback sur un Indigo si var non trouvée
     }
 }

@@ -1,26 +1,35 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
-export type DisclaimerType = 'info' | 'warning';
+export type DisclaimerVariant = 'banner' | 'inline' | 'chip';
 
 @Component({
     selector: 'finaces-ia-disclaimer',
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule],
     templateUrl: './finaces-ia-disclaimer.component.html',
     styleUrls: ['./finaces-ia-disclaimer.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinacesIaDisclaimerComponent {
-    @Input() message: string = "Cette analyse a été générée par l'Assistant IA et nécessite une validation experte.";
-    @Input() type: DisclaimerType = 'info';
+    @Input() variant: DisclaimerVariant = 'banner';
+    @Input() dismissible: boolean = false;
+    @Input() pilotMode: boolean = false;
 
-    get disclaimerClass(): string {
-        return `disclaimer-${this.type}`;
-    }
+    @Output() dismissed = new EventEmitter<void>();
 
-    get iconName(): string {
-        return this.type === 'warning' ? 'warning_amber' : 'auto_awesome';
+    isDismissed: boolean = false;
+
+    readonly disclaimerText = 'Ce scoring IA est un outil de challenge NON DÉCISIONNEL. Il ne remplace pas le score MCC.';
+    readonly pilotModeText = 'Mode pilote IA : résultats expérimentaux, à titre informatif uniquement.';
+
+    constructor(private cdr: ChangeDetectorRef) { }
+
+    onDismiss(): void {
+        this.isDismissed = true;
+        this.dismissed.emit();
+        this.cdr.markForCheck();
     }
 }

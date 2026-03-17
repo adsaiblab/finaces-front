@@ -1,4 +1,9 @@
-<span class="finaces-tension-badge" [ngClass]="config.colorClass">
-    <span class="tension-dot"></span>
-    <span class="tension-label">Tension {{ config.label }}</span>
-</span>
+<div [ngClass]="badgeClasses">
+    <mat-icon class="tension-icon">{{ tensionScheme.icon }}</mat-icon>
+    <span class="tension-label">{{ tensionScheme.labelFr }}</span>
+
+    <span *ngIf="showDirectionDelta" class="tension-delta">
+        <mat-icon *ngIf="direction" class="delta-arrow">{{ directionIcon }}</mat-icon>
+        <span *ngIf="delta !== undefined" class="delta-value">{{ displayDelta }}</span>
+    </span>
+</div>

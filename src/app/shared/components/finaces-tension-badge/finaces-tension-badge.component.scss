@@ -1,51 +1,84 @@
-.finaces-tension-badge {
+.finaces-tension {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
-    border-radius: 12px;
-    background-color: var(--color-surface-card);
-    border: 1px solid var(--color-border-default);
-    font-size: 12px;
     font-weight: 500;
-    transition: all 0.2s ease;
+    border-radius: 6px;
+    transition: all 150ms ease-in-out;
+    border: 1px solid transparent;
 
-    .tension-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
+    &.tension-sm {
+        height: 20px;
+        padding: 2px 8px;
+        font-size: 11px;
+
+        .tension-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    &.tension-md {
+        height: 28px;
+        padding: 4px 12px;
+        font-size: 13px;
+
+        .tension-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
     }
 
     .tension-label {
-        color: var(--color-content-primary);
+        white-space: nowrap;
+        flex: 1;
     }
 
-    // Variations de couleurs alignées sur src/styles/_variables.scss
-    &.tension-none .tension-dot {
+    .tension-delta {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        margin-left: 4px;
+        padding-left: 4px;
+        border-left: 1px solid currentColor;
+        opacity: 0.85;
+
+        .delta-arrow {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+        }
+
+        .delta-value {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    // --- Design System Colors ---
+    &.tension-none {
         background-color: var(--color-success);
-        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); // Basé sur le HEX de color-success
+        color: #fff;
     }
 
-    &.tension-mild .tension-dot {
+    &.tension-mild {
         background-color: var(--color-info);
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        color: #fff;
     }
 
-    &.tension-moderate .tension-dot {
+    &.tension-moderate {
         background-color: var(--color-warning);
-        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+        color: #fff;
     }
 
     &.tension-severe {
-        border-color: rgba(239, 68, 68, 0.3);
-        background-color: rgba(239, 68, 68, 0.05);
-
-        .tension-dot {
-            background-color: var(--color-error);
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-            animation: pulse-danger 2s infinite;
-        }
+        background-color: var(--color-error);
+        color: #fff;
+        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        animation: pulse-danger 2s infinite;
     }
 }
 

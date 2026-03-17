@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinacesIaDisclaimerComponent } from './finaces-ia-disclaimer.component';
-import { By } from '@angular/platform-browser';
+import { vi } from 'vitest';
 
 describe('FinacesIaDisclaimerComponent', () => {
     let component: FinacesIaDisclaimerComponent;
@@ -16,32 +16,29 @@ describe('FinacesIaDisclaimerComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('should display banner variant by default', () => {
+        const el = fixture.nativeElement.querySelector('.ia-banner');
+        expect(el).toBeTruthy();
     });
 
-    it('should display default info message and correct icon', () => {
-        expect(component.message).toContain('Assistant IA');
-        expect(component.disclaimerClass).toBe('disclaimer-info');
-        expect(component.iconName).toBe('auto_awesome');
+    it('should show pilot mode text when enabled in banner mode', () => {
+        fixture.componentRef.setInput('pilotMode', true);
+        fixture.detectChanges();
+        const pilotText = fixture.nativeElement.querySelector('.disclaimer-pilot');
+        expect(pilotText).toBeTruthy();
     });
 
-    it('should apply warning class and icon when type is warning', () => {
-        // Utilisation de setInput pour respecter la stratégie OnPush
-        fixture.componentRef.setInput('type', 'warning');
+    it('should emit dismissed event and hide when dismiss button is clicked', () => {
+        const emitSpy = vi.spyOn(component.dismissed, 'emit');
+        fixture.componentRef.setInput('dismissible', true);
         fixture.detectChanges();
 
-        expect(component.disclaimerClass).toBe('disclaimer-warning');
-        expect(component.iconName).toBe('warning_amber');
-    });
-
-    it('should display the custom message provided via input', () => {
-        const customMsg = 'Attention : les ratios IA doivent être vérifiés manuellement.';
-        // Utilisation de setInput pour forcer le rafraîchissement du DOM avec OnPush
-        fixture.componentRef.setInput('message', customMsg);
+        const button = fixture.nativeElement.querySelector('.dismiss-button');
+        button.click();
         fixture.detectChanges();
 
-        const textElement = fixture.debugElement.query(By.css('.disclaimer-text')).nativeElement;
-        expect(textElement.textContent.trim()).toBe(customMsg);
+        expect(emitSpy).toHaveBeenCalled();
+        const disclaimer = fixture.nativeElement.querySelector('.ia-disclaimer');
+        expect(disclaimer).toBeFalsy();
     });
 });
