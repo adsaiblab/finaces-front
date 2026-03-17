@@ -1,23 +1,19 @@
-/* ═══════════════════════════════════════════════════════════
-   FINACES FRONT — Global Styles Entry Point
-   Ordre obligatoire : variables → Tailwind → typography → spacing
-   ═══════════════════════════════════════════════════════════ */
+// ═══════════════════════════════════════════════════════════
+// FINACES FRONT — Global Styles Entry Point
+// RÈGLE SASS : tous les @use DOIVENT être en premier, avant tout CSS
+// ═══════════════════════════════════════════════════════════
 
-/* 1. Design Tokens (CSS Variables — Surfaces, Contents, Borders) */
-@use 'styles/variables';
+// ─ BLOC 1 : Tous les @use en premier (règle Sass obligatoire) ────────
+@use 'styles/variables';   // Design Tokens (Surfaces, Contents, Borders)
+@use 'styles/typography';  // Typographie globale (h1-h4, p, .label, code)
+@use 'styles/spacing';     // Spacing & Layout tokens (:root CSS vars)
 
-/* 2. Tailwind CSS */
+// ─ BLOC 2 : Tailwind (après tous les @use) ─────────────────────
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 3. Typographie globale (h1-h4, p, .label, code) */
-@use 'styles/typography';
-
-/* 4. Spacing & Layout tokens (:root CSS vars) */
-@use 'styles/spacing';
-
-/* ── Reset & Base ────────────────────────────────────────── */
+// ─ BLOC 3 : Reset & styles de base globaux ────────────────────
 html,
 body {
     margin: 0;
@@ -33,7 +29,7 @@ body {
     box-sizing: border-box;
 }
 
-/* ── Scrollbar discrète (thémée) ─────────────────────────── */
+// ─ Scrollbar discrète (thémée) ────────────────────────────────
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
