@@ -1,0 +1,63 @@
+// ═══════════════════════════════════════════════════════════
+// TOKENS SÉMANTIQUES — LIGHT MODE ("Papier & Minéral")
+// ═══════════════════════════════════════════════════════════
+:root {
+    // Structure (Zéro blanc pur, zéro gris clinique)
+    --bg-default: #F2EFE9; // Fond parchemin chaud
+    --bg-card: #FAF8F5; // Cartes crème très clair (démarcation douce)
+    --bg-sidebar: #2B323A; // Sidebar "Bleu de Prusse" profond
+
+    // Textes
+    --text-primary: #1C2431; // Encre marine (pas noir pur)
+    --text-secondary: #5C6773; // Ardoise
+    --text-disabled: #A1A8B3;
+    --text-inverse: #F2EFE9;
+
+    // États Sidebar
+    --sidebar-text: #9CA3AF;
+    --sidebar-active: #E8DCC4; // Accent laiton/sable
+    --sidebar-active-bg: #1F252C; // Enfoncement net
+
+    // Couleurs Métier FinaCES
+    --primary: #2C4B5E;
+    --border: #E5E0D8; // Bordure sable
+    --border-strong: #D4CEC4;
+
+    // MCC Rail
+    --mcc-low: #2B8A5A;
+    --mcc-moderate: #D18D2A;
+    --mcc-high: #D4602C;
+    --mcc-critical: #BC3B3B;
+
+    // IA Rail
+    --ia-low: #4A7A9E;
+    --ia-moderate: #605B91;
+    --ia-high: #7C5382;
+    --ia-critical: #934674;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOKENS SÉMANTIQUES — DARK MODE ("Abysse & Laiton")
+// ═══════════════════════════════════════════════════════════
+[data-theme="dark"] {
+    // Structure (Zéro noir pur)
+    --bg-default: #14181D; // Fond Abysse
+    --bg-card: #1D2229; // Cartes Encre (démarcation nette du fond)
+    --bg-sidebar: #0E1115; // Sidebar Ultra profonde
+
+    // Textes
+    --text-primary: #E8E4D9; // Craie / Sable clair (pas blanc pur)
+    --text-secondary: #8B95A5; // Gris bleuté
+    --text-disabled: #4B5563;
+    --text-inverse: #14181D;
+
+    // États Sidebar
+    --sidebar-text: #8B95A5;
+    --sidebar-active: #D4B483; // Laiton éclatant
+    --sidebar-active-bg: #1D2229;
+
+    // Couleurs Métier FinaCES
+    --primary: #D4B483;
+    --border: #2C3440;
+    --border-strong: #3D4756;
+}

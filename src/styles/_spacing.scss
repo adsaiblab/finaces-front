@@ -1,0 +1,23 @@
+// src/styles/_spacing.scss
+// ═══════════════════════════════════════════════════════════
+// SPACING & LAYOUT TOKENS ONLY (Tailwind gère les utilitaires)
+// ═══════════════════════════════════════════════════════════
+
+:root {
+    // Base 8pt Grid
+    --space-micro: 4px;
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+
+    // Layout
+    --sidebar-width: 240px;
+    --topbar-height: 64px;
+    --max-width-content: 1160px;
+    --gutter: 24px;
+    --margin: 32px;
+}

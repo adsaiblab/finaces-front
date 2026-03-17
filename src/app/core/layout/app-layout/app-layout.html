@@ -1,0 +1,78 @@
+<div class="flex h-screen w-full bg-default text-primary overflow-hidden transition-colors duration-300">
+
+    <aside class="bg-sidebar text-sidebar flex flex-col transition-all duration-300 ease-in-out relative z-20"
+        [class.w-sidebar]="isSidebarOpen()" [class.w-16]="!isSidebarOpen()">
+
+        <div class="h-topbar flex items-center justify-between px-4 border-b border-sidebar-text/20">
+            <span *ngIf="isSidebarOpen()" class="font-bold text-lg text-sidebar-active truncate">FinaCES</span>
+            <button (click)="toggleSidebar()"
+                class="p-1 hover:bg-sidebar-active-bg rounded text-sidebar-active transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
+            <a routerLink="/"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
+                title="Tableau de bord">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
+                </svg>
+                <span *ngIf="isSidebarOpen()" class="truncate text-sm font-medium">Tableau de bord</span>
+            </a>
+
+            <a routerLink="/strategique"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
+                title="Assistant Stratégique">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+                <span *ngIf="isSidebarOpen()" class="truncate text-sm font-medium">Assistant Stratégique</span>
+            </a>
+
+            <a routerLink="/ia"
+                class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
+                title="Assistant IA">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <span *ngIf="isSidebarOpen()" class="truncate text-sm font-medium">Assistant IA</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header
+            class="h-topbar bg-card border-b border-strong px-6 flex items-center justify-end transition-colors duration-300 shadow-sm z-10">
+            <button (click)="themeService.toggleTheme()"
+                class="p-2 rounded-full hover:bg-default transition-colors border border-strong text-secondary flex items-center justify-center cursor-pointer">
+                <svg *ngIf="!themeService.isDarkMode()" class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                <svg *ngIf="themeService.isDarkMode()" class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                    </path>
+                </svg>
+            </button>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6 bg-default transition-colors duration-300">
+            <div class="max-w-container mx-auto">
+                <router-outlet></router-outlet>
+            </div>
+        </main>
+    </div>
+</div>

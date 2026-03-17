@@ -1,0 +1,38 @@
+/* 1. On importe tes variables de couleurs (Papier/Abysse) avec la syntaxe moderne */
+@use 'styles/variables';
+
+/* 2. On injecte Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Quelques styles de base globaux */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: var(--font-sans, sans-serif);
+    background-color: var(--bg-default);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Scrollbar discrète */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
