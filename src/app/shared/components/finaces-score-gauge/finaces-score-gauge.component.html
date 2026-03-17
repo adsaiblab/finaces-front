@@ -1,0 +1,14 @@
+<div class="finaces-gauge-container" [ngStyle]="gaugeStyle" [ngClass]="colorClass">
+    <svg viewBox="0 0 120 120" class="gauge-svg">
+        <circle class="gauge-track" cx="60" cy="60" [attr.r]="radius" [attr.stroke-width]="strokeWidth" fill="none" />
+        <circle class="gauge-value" cx="60" cy="60" [attr.r]="radius" [attr.stroke-width]="strokeWidth" fill="none"
+            [ngStyle]="circleStyle" transform="rotate(-90 60 60)" />
+    </svg>
+
+    <div class="gauge-content">
+        <span class="gauge-score">
+            {{ score | number:'1.0-1' }}<span class="gauge-suffix" *ngIf="suffix">{{ suffix }}</span>
+        </span>
+        <span class="gauge-label" *ngIf="label">{{ label }}</span>
+    </div>
+</div>
