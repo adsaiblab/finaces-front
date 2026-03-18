@@ -4,9 +4,9 @@
 // ═══════════════════════════════════════════════════════════
 
 // ─ BLOC 1 : Tous les @use en premier (règle Sass obligatoire) ────────
-@use 'styles/variables';   // Design Tokens (Surfaces, Contents, Borders)
-@use 'styles/typography';  // Typographie globale (h1-h4, p, .label, code)
-@use 'styles/spacing';     // Spacing & Layout tokens (:root CSS vars)
+@use 'styles/variables'; // Design Tokens (Surfaces, Contents, Borders)
+@use 'styles/typography'; // Typographie globale (h1-h4, p, .label, code)
+@use 'styles/spacing'; // Spacing & Layout tokens (:root CSS vars)
 
 // ─ BLOC 2 : Tailwind (après tous les @use) ─────────────────────
 @tailwind base;
@@ -42,4 +42,50 @@ body {
 ::-webkit-scrollbar-thumb {
     background: var(--border-strong);
     border-radius: 4px;
+}
+
+// ─ BLOC 4 : SURCHARGES MATERIAL (MDC) SÉCURISÉES ─────────────
+
+/* 1. Surcharge des Form Fields (Bordures, Textes, Focus) - Sans casser le DOM */
+.mat-mdc-form-field {
+    --mdc-outlined-text-field-outline-color: var(--color-border-default);
+    --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
+    --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
+
+    --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
+    --mdc-outlined-text-field-hover-label-text-color: var(--color-content-primary);
+    --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
+
+    --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
+    --mdc-outlined-text-field-caret-color: var(--color-primary);
+
+    /* Correction pour les Selects */
+    .mat-mdc-select-value-text {
+        color: var(--color-content-primary) !important;
+    }
+}
+
+/* 2. Surcharge des Checkboxes */
+.mat-mdc-checkbox {
+    --mdc-checkbox-unselected-icon-color: var(--color-content-secondary);
+    --mdc-checkbox-unselected-hover-icon-color: var(--color-content-primary);
+    --mdc-checkbox-selected-icon-color: var(--color-primary);
+    --mdc-checkbox-selected-hover-icon-color: var(--color-primary);
+    --mdc-checkbox-selected-focus-icon-color: var(--color-primary);
+    --mdc-checkbox-selected-checkmark-color: #ffffff;
+}
+
+/* 3. Correction du Stepper (MDC) */
+.mat-mdc-stepper {
+    --mat-stepper-header-icon-background-color: var(--color-surface-default);
+    --mat-stepper-header-icon-foreground-color: var(--color-content-secondary);
+
+    --mat-stepper-header-selected-state-icon-background-color: var(--color-primary);
+    --mat-stepper-header-selected-state-icon-foreground-color: #ffffff;
+
+    --mat-stepper-header-edit-state-icon-background-color: var(--color-primary);
+    --mat-stepper-header-edit-state-icon-foreground-color: #ffffff;
+
+    --mat-stepper-header-label-text-color: var(--color-content-secondary);
+    --mat-stepper-header-selected-state-label-text-color: var(--color-content-primary);
 }

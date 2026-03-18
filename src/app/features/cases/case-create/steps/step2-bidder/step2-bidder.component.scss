@@ -14,8 +14,67 @@
 
 .bidder-search-container {
     background-color: var(--color-surface-default);
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
     border-radius: 0.5rem;
     border: 1px solid var(--color-border-default);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+
+    .search-hint {
+        font-size: 0.75rem;
+        color: var(--color-content-secondary);
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .search-field {
+        width: 100%;
+    }
+
+    .search-icon {
+        color: var(--color-content-secondary);
+        margin-right: 8px;
+    }
+
+    .clear-icon {
+        color: var(--color-error);
+    }
+}
+
+.autocomplete-option-content {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+    line-height: 1.2;
+
+    .auto-name {
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .auto-desc {
+        font-size: 0.75rem;
+        color: var(--color-content-secondary);
+    }
+}
+
+/* Surcharge MDC pour le dropdown autocomplete */
+::ng-deep .mat-mdc-autocomplete-panel {
+    background-color: var(--color-surface-card) !important;
+    border: 1px solid var(--color-border-default);
+
+    .mat-mdc-option {
+        border-bottom: 1px solid var(--color-border-default);
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: var(--color-surface-default) !important;
+        }
+
+        .mdc-list-item__primary-text {
+            color: var(--color-content-primary) !important;
+        }
+    }
 }

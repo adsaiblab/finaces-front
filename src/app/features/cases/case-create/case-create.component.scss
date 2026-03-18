@@ -58,38 +58,36 @@
     overflow: hidden;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 
-    /* Surcharge Material pour utiliser nos tokens FinaCES */
-    ::ng-deep .mat-step-header {
-        .mat-step-icon {
-            background-color: var(--color-surface-default);
-            color: var(--color-content-secondary);
+    /* Surcharge ANGULAR 17 MDC stricte */
+    ::ng-deep {
+        .mat-mdc-step-header {
 
-            &.mat-step-icon-selected,
-            &.mat-step-icon-state-edit {
-                background-color: var(--color-primary);
-                color: #ffffff;
+            /* Cercles des étapes */
+            .mat-step-icon,
+            .mat-mdc-step-icon {
+                background-color: var(--color-surface-default);
+                color: var(--color-content-secondary);
+
+                &.mat-step-icon-selected,
+                &.mat-mdc-step-icon-selected,
+                &.mat-step-icon-state-edit,
+                &.mat-mdc-step-icon-state-edit {
+                    background-color: var(--color-primary);
+                    color: #ffffff;
+                }
             }
-        }
 
-        .mat-step-label {
-            color: var(--color-content-secondary);
+            /* Texte des labels */
+            .mdc-step-label__text-label {
+                color: var(--color-content-secondary) !important;
+            }
 
-            &.mat-step-label-active {
-                color: var(--color-content-primary);
-                font-weight: 600;
+            &[aria-selected="true"] .mdc-step-label__text-label {
+                color: var(--color-content-primary) !important;
+                font-weight: 600 !important;
             }
         }
     }
-}
-
-.step-placeholder {
-    padding: 3rem;
-    text-align: center;
-    color: var(--color-content-secondary);
-    border: 1px dashed var(--color-border-default);
-    border-radius: 0.5rem;
-    margin: 1.5rem 0;
-    background-color: var(--color-surface-default);
 }
 
 .step-actions {

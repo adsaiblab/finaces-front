@@ -1,5 +1,4 @@
 <div class="case-create-container">
-
     <div class="header-section">
         <a routerLink="/cases" class="back-btn" title="Retour aux dossiers">
             <mat-icon>arrow_back</mat-icon>
@@ -8,7 +7,7 @@
             <h1>Nouveau Dossier d'Évaluation</h1>
             <p>Saisissez les informations initiales du marché et du soumissionnaire.</p>
         </div>
-        <button mat-stroked-button color="primary" (click)="saveDraft()">
+        <button mat-stroked-button color="primary" (click)="saveDraft()" [disabled]="isSubmitting()">
             <mat-icon>save</mat-icon>
             Enregistrer brouillon
         </button>
@@ -20,28 +19,23 @@
             <ng-template matStepLabel>Informations Marché</ng-template>
             <app-step1-market-info [formGroup]="marketInfoForm" />
             <div class="step-actions">
-                <button mat-raised-button color="primary" matStepperNext [disabled]="marketInfoForm.invalid">
-                    Suivant
-                </button>
+                <button mat-raised-button color="primary" matStepperNext
+                    [disabled]="marketInfoForm.invalid || isSubmitting()">Suivant</button>
             </div>
         </mat-step>
 
         <mat-step [stepControl]="bidderForm">
             <ng-template matStepLabel>Soumissionnaire</ng-template>
-
             <app-step2-bidder [formGroup]="bidderForm" />
-
             @if(marketInfoForm.get('case_type')?.value === 'GROUPEMENT') {
             <div style="margin-top: 2rem;">
                 <app-groupement-members [membersArray]="groupementMembersArray" />
             </div>
             }
-
             <div class="step-actions">
-                <button mat-button matStepperPrevious>Précédent</button>
-                <button mat-raised-button color="primary" matStepperNext [disabled]="bidderForm.invalid">
-                    Suivant
-                </button>
+                <button mat-button matStepperPrevious [disabled]="isSubmitting()">Précédent</button>
+                <button mat-raised-button color="primary" matStepperNext
+                    [disabled]="bidderForm.invalid || isSubmitting()">Suivant</button>
             </div>
         </mat-step>
 
@@ -49,14 +43,20 @@
             <ng-template matStepLabel>Récapitulatif</ng-template>
             <app-step3-summary [parentForm]="caseForm" />
             <div class="step-actions">
-                <button mat-button matStepperPrevious>Précédent</button>
-                <button mat-raised-button color="primary" matStepperNext>Valider et Continuer</button>
+                <button mat-button matStepperPrevious [disabled]="isSubmitting()">Précédent</button>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="isSubmitting()">Valider et
+                    Continuer</button>
             </div>
         </mat-step>
 
         <mat-step>
             <ng-template matStepLabel>Confirmation</ng-template>
             <app-step4-confirmation (submitCase)="submitCase()" />
+            @if(isSubmitting()) {
+            <div style="text-align: center; color: var(--color-primary); margin-top: 1rem; font-weight: 500;">
+                Traitement en cours...
+            </div>
+            }
         </mat-step>
 
     </mat-stepper>

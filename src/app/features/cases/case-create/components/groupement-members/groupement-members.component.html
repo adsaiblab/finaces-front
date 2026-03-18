@@ -1,8 +1,6 @@
 <div class="members-container">
-    <h3 style="font-size: 1rem; font-weight: 600; color: var(--color-content-primary); margin: 0;">Membres du Groupement
-    </h3>
-    <p style="font-size: 0.875rem; color: var(--color-content-secondary); margin-top: 0;">Lister les entreprises
-        constituant le groupement.</p>
+    <h3 class="section-title">Membres du Groupement</h3>
+    <p class="section-desc">Lister les entreprises constituant le groupement principal.</p>
 
     @for (member of memberGroups; track i; let i = $index) {
     <div class="member-row" [formGroup]="member">
@@ -30,7 +28,7 @@
     </div>
     }
 
-    <div style="margin-top: 0.5rem;">
+    <div class="add-btn-wrapper">
         <button mat-stroked-button color="primary" (click)="addMember()">
             <mat-icon>add</mat-icon>
             Ajouter un membre

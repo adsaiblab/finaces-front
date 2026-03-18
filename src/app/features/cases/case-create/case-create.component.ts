@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, FormGroup, FormArray } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 
 import { CaseService } from '../../../core/services/case.service';
@@ -24,6 +25,7 @@ import { GroupementMembersComponent } from './components/groupement-members/grou
         MatStepperModule,
         MatButtonModule,
         MatIconModule,
+        MatSnackBarModule,
         RouterLink,
         Step1MarketInfoComponent,
         Step2BidderComponent,
@@ -39,6 +41,10 @@ export class CaseCreateComponent {
     private readonly fb = inject(FormBuilder);
     private readonly caseService = inject(CaseService);
     private readonly router = inject(Router);
+    private readonly snackBar = inject(MatSnackBar);
+
+    // Gestion du loading UX
+    readonly isSubmitting = signal<boolean>(false);
 
     readonly caseForm = this.fb.group({
         marketInfo: this.fb.group({
@@ -67,34 +73,42 @@ export class CaseCreateComponent {
         })
     });
 
-    get marketInfoForm(): FormGroup {
-        return this.caseForm.get('marketInfo') as FormGroup;
-    }
-
-    get bidderForm(): FormGroup {
-        return this.caseForm.get('bidder') as FormGroup;
-    }
-
-    get groupementMembersArray(): FormArray {
-        return this.caseForm.get('groupement.members') as FormArray;
-    }
+    get marketInfoForm(): FormGroup { return this.caseForm.get('marketInfo') as FormGroup; }
+    get bidderForm(): FormGroup { return this.caseForm.get('bidder') as FormGroup; }
+    get groupementMembersArray(): FormArray { return this.caseForm.get('groupement.members') as FormArray; }
 
     saveDraft(): void {
+        if (this.isSubmitting()) return;
+        this.isSubmitting.set(true);
+
         const payload = this.buildPayload();
         this.caseService.saveCaseDraft(payload).subscribe({
-            next: (res) => console.log('Brouillon sauvegardé', res),
-            error: (err) => console.error('Erreur brouillon', err)
+            next: () => {
+                this.isSubmitting.set(false);
+                this.snackBar.open('Brouillon sauvegardé avec succès.', 'Fermer', { duration: 3000, panelClass: 'success-snackbar' });
+            },
+            error: () => {
+                this.isSubmitting.set(false);
+                this.snackBar.open('Erreur lors de la sauvegarde du brouillon.', 'Fermer', { duration: 5000, panelClass: 'error-snackbar' });
+            }
         });
     }
 
     submitCase(): void {
+        if (this.isSubmitting() || this.caseForm.invalid) return;
+        this.isSubmitting.set(true);
+
         const payload = { ...this.buildPayload(), status: CaseStatus.PENDING_GATE };
         this.caseService.createCase(payload).subscribe({
             next: (res) => {
-                // Redirection vers le workspace du nouveau dossier
+                this.isSubmitting.set(false);
+                this.snackBar.open('Dossier créé avec succès.', 'Fermer', { duration: 3000, panelClass: 'success-snackbar' });
                 this.router.navigate(['/cases', res.id]);
             },
-            error: (err) => console.error('Erreur lors de la création', err)
+            error: () => {
+                this.isSubmitting.set(false);
+                this.snackBar.open('Erreur critique lors de la création du dossier.', 'Fermer', { duration: 5000, panelClass: 'error-snackbar' });
+            }
         });
     }
 

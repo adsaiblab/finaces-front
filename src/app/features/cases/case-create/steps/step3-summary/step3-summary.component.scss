@@ -39,11 +39,61 @@
     .label {
         font-size: 0.75rem;
         color: var(--color-content-secondary);
+        margin-bottom: 0.25rem;
     }
 
     .value {
         font-size: 0.875rem;
         font-weight: 500;
         color: var(--color-content-primary);
+    }
+
+    .value-bold {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--color-content-primary);
+    }
+
+    .value-alert {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--color-error);
+    }
+
+    .value-success {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--color-success);
+    }
+}
+
+.groupement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .groupement-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--color-border-default);
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .member-name {
+            color: var(--color-content-primary);
+            font-weight: 500;
+        }
+
+        .member-role {
+            color: var(--color-content-secondary);
+        }
+
+        .member-percent {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
     }
 }

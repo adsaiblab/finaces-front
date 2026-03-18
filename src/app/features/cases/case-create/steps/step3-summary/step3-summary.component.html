@@ -2,17 +2,46 @@
     <div class="summary-card">
         <h3><mat-icon>gavel</mat-icon> Informations du Marché</h3>
         <div class="data-grid">
-            <div class="data-item"><span class="label">Référence</span><span class="value">{{
-                    marketData.market_reference }}</span></div>
-            <div class="data-item"><span class="label">Montant</span><span class="value">{{ marketData.contract_value |
-                    number }} {{ marketData.contract_currency }}</span></div>
+            <div class="data-item"><span class="label">Référence & Intitulé</span><span class="value">{{
+                    marketData.market_reference }} — {{ marketData.market_label }}</span></div>
+            <div class="data-item"><span class="label">Type de dossier</span><span class="value-bold">{{
+                    marketData.case_type }}</span></div>
+            <div class="data-item"><span class="label">Montant du contrat</span><span class="value">{{
+                    marketData.contract_value | number:'1.0-0' }} {{ marketData.contract_currency }}</span></div>
+            <div class="data-item"><span class="label">Durée & Secteur</span><span class="value">{{
+                    marketData.contract_duration_months }} mois | {{ marketData.sector }}</span></div>
+            <div class="data-item">
+                <span class="label">Sensibilité</span>
+                @if(marketData.sensitive) { <span class="value-alert">OUI (Revue renforcée requise)</span> }
+                @else { <span class="value-success">NON</span> }
+            </div>
         </div>
     </div>
+
     <div class="summary-card">
         <h3><mat-icon>business</mat-icon> Soumissionnaire Principal</h3>
         <div class="data-grid">
-            <div class="data-item"><span class="label">Entreprise</span><span class="value">{{ bidderData.bidder_name
-                    }}</span></div>
+            <div class="data-item"><span class="label">Entreprise (Statut)</span><span class="value">{{
+                    bidderData.bidder_name }} ({{ bidderData.legal_form || 'N/A' }})</span></div>
+            <div class="data-item"><span class="label">Pays</span><span class="value">{{ bidderData.country }}</span>
+            </div>
+            <div class="data-item"><span class="label">Contact</span><span class="value">{{ bidderData.email || 'N/A' }}
+                    | {{ bidderData.phone || 'N/A' }}</span></div>
         </div>
     </div>
+
+    @if(marketData.case_type === 'GROUPEMENT' && members.length > 0) {
+    <div class="summary-card">
+        <h3><mat-icon>group</mat-icon> Membres du Groupement ({{ members.length }})</h3>
+        <div class="groupement-list">
+            @for(member of members; track $index) {
+            <div class="groupement-row">
+                <span class="member-name">{{ member.name }}</span>
+                <span class="member-role">{{ member.role }} — <span class="member-percent">{{
+                        member.participation_percentage }}%</span></span>
+            </div>
+            }
+        </div>
+    </div>
+    }
 </div>
