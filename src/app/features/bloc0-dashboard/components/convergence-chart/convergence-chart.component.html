@@ -1,0 +1,44 @@
+<div class="chart-container">
+    <div class="chart-header">
+        <h2>Convergence MCC/IA</h2>
+        <p>Évolution des scores sur les 30 derniers jours</p>
+    </div>
+
+    @if (chartData()) {
+    <div class="canvas-wrapper">
+        <canvas #chartCanvas></canvas>
+    </div>
+
+    <div class="custom-legend">
+        <div class="flex items-center gap-2">
+            <div style="width: 1.5rem; height: 0.25rem; background-color: var(--color-success); border-radius: 9999px;">
+            </div>
+            <span>MCC Score (Décision)</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div style="width: 1.5rem; height: 0; border-top: 2px dashed var(--color-info);"></div>
+            <span>IA Challenge</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div style="width: 0.75rem; height: 0.75rem; border-radius: 9999px; background-color: var(--color-error);">
+            </div>
+            <span>Alerte Divergence</span>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <span class="stat-item">Corrélation: <span class="val-corr">{{ chartData()?.correlation | number:'1.2-2'
+                }}</span></span>
+        <span class="stat-item">Divergences détectées: <span class="val-div">{{ chartData()?.divergence_flags?.length ||
+                0 }}</span></span>
+        <span class="stat-item">Convergence globale: <span class="val-conv">{{ chartData()?.convergence_percentage
+                }}%</span></span>
+    </div>
+    } @else {
+    <div class="empty-state">
+        <mat-icon>insights</mat-icon>
+        <p class="empty-title">Pas de données.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.25rem;">Commencer les évaluations pour voir la convergence.</p>
+    </div>
+    }
+</div>

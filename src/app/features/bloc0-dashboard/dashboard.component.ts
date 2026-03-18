@@ -1,40 +1,52 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
-import { Observable } from 'rxjs';
-
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DashboardComponent } from './dashboard.component';
 import { CaseService } from '../../core/services/case.service';
-import { DashboardStatsOut, ConvergenceChartOut, TensionAlertOut } from '../../core/models/dashboard.model';
-import { EvaluationCaseDetailOut } from '../../core/models/case.model';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-import { KpiRowComponent } from './components/kpi-row.component';
-import { RecentCasesTableComponent } from './components/recent-cases-table.component';
-import { ActiveTensionsCardComponent } from './components/active-tensions-card.component';
-import { ConvergenceChartComponent } from './components/convergence-chart.component';
+// RÈGLE MANIFESTE : Tests isolés, mocking du service injecté
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
+  let mockCaseService: any;
 
-@Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterLink,
-    KpiRowComponent,
-    RecentCasesTableComponent,
-    ActiveTensionsCardComponent,
-    ConvergenceChartComponent
-  ],
-  templateUrl: './dashboard.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class DashboardComponent {
-  private readonly caseService = inject(CaseService);
+  beforeEach(async () => {
+    // Création du mock avec Vitest
+    mockCaseService = {
+      getDashboardStats: vi.fn().mockReturnValue(of(null)),
+      getRecentCases: vi.fn().mockReturnValue(of([])),
+      getActiveTensionCases: vi.fn().mockReturnValue(of([])),
+      getConvergenceChart: vi.fn().mockReturnValue(of(null))
+    };
 
-  readonly stats$: Observable<DashboardStatsOut> = this.caseService.getDashboardStats();
-  readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService.getRecentCases(5);
-  readonly tensions$: Observable<TensionAlertOut[]> = this.caseService.getActiveTensionCases();
-  readonly chartData$: Observable<ConvergenceChartOut> = this.caseService.getConvergenceChart(30);
-}
+    await TestBed.configureTestingModule({
+      imports: [DashboardComponent],
+      providers: [
+        provideRouter([]),
+        { provide: CaseService, useValue: mockCaseService }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('devrait créer le composant parent dashboard', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('devrait appeler les 4 méthodes du CaseService à l\'initialisation', () => {
+    expect(mockCaseService.getDashboardStats).toHaveBeenCalled();
+    expect(mockCaseService.getRecentCases).toHaveBeenCalledWith(5);
+    expect(mockCaseService.getActiveTensionCases).toHaveBeenCalled();
+    expect(mockCaseService.getConvergenceChart).toHaveBeenCalledWith(30);
+  });
+
+  it('devrait afficher le titre du tableau de bord', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const title = compiled.querySelector('h1');
+    expect(title?.textContent).toContain('FinaCES — Tableau de Bord');
+  });
+});

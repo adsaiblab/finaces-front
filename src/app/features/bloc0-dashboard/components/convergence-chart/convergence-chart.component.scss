@@ -1,0 +1,100 @@
+/* Isolation stricte via tokens CSS */
+.chart-container {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border-default);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+    margin-bottom: 1.5rem;
+
+    h2 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--color-content-primary);
+        margin: 0;
+    }
+
+    p {
+        font-size: 0.875rem;
+        color: var(--color-content-secondary);
+        margin: 0.25rem 0 0 0;
+    }
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 16rem;
+    /* 256px fixe pour garantir la responsivité de Chart.js */
+}
+
+/* Légende custom HTML pour un stylage parfait avec nos tokens */
+.custom-legend {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--color-content-secondary);
+    border-top: 1px solid var(--color-border-default);
+    padding-top: 1rem;
+}
+
+.stats-row {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-surface-default);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border-default);
+    font-size: 0.875rem;
+
+    .stat-item {
+        color: var(--color-content-primary);
+        font-weight: 500;
+    }
+
+    .val-corr {
+        color: var(--color-primary);
+        font-weight: 700;
+    }
+
+    .val-div {
+        color: var(--color-error);
+        font-weight: 700;
+    }
+
+    .val-conv {
+        color: var(--color-success);
+        font-weight: 700;
+    }
+}
+
+.empty-state {
+    height: 16rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-content-secondary);
+
+    mat-icon {
+        opacity: 0.5;
+        margin-bottom: 0.5rem;
+        width: 48px;
+        height: 48px;
+        font-size: 48px;
+    }
+
+    .empty-title {
+        font-size: 1.125rem;
+        font-weight: 500;
+        margin: 0;
+    }
+}

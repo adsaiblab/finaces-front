@@ -1,0 +1,68 @@
+@if (stats()) {
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+    <mat-card class="kpi-card kpi-mcc-border" routerLink="/cases" [queryParams]="{ status: 'active' }">
+        <mat-card-content class="flex items-center p-6">
+            <div class="kpi-icon-container mcc-bg">
+                <mat-icon
+                    style="color: var(--color-primary); width: 32px; height: 32px; font-size: 32px;">folder_open</mat-icon>
+            </div>
+            <div class="flex-1">
+                <p class="kpi-title">Dossiers en cours</p>
+                <h3 class="kpi-value">{{ stats()?.total_active_cases }}</h3>
+                <p class="kpi-subtitle">Actifs cette semaine</p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card kpi-mcc-border" routerLink="/cases" [queryParams]="{ status: 'PENDING_GATE' }">
+        <mat-card-content class="flex items-center p-6">
+            <div class="kpi-icon-container mcc-bg">
+                <mat-icon
+                    style="color: var(--color-primary); width: 32px; height: 32px; font-size: 32px;">pending_actions</mat-icon>
+            </div>
+            <div class="flex-1">
+                <p class="kpi-title">En attente validation</p>
+                <h3 class="kpi-value">{{ stats()?.cases_pending_gate }}</h3>
+                <p class="kpi-subtitle">Gate documentaire</p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card kpi-warning-border" routerLink="/cases" [queryParams]="{ filter: 'tension_alert' }">
+        <mat-card-content class="flex items-center p-6">
+            <div class="kpi-icon-container warning-bg" [matBadge]="stats()?.cases_with_tension_alert || 0"
+                [matBadgeHidden]="(stats()?.cases_with_tension_alert || 0) === 0" matBadgeColor="warn">
+                <mat-icon
+                    style="color: var(--color-warning); width: 32px; height: 32px; font-size: 32px;">warning</mat-icon>
+            </div>
+            <div class="flex-1">
+                <p class="kpi-title">Alertes Tensions</p>
+                <h3 class="kpi-value">{{ stats()?.cases_with_tension_alert }}</h3>
+                <p class="kpi-subtitle">Divergences MCC/IA détectées</p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card kpi-ia-border">
+        <mat-card-content class="flex items-center p-6">
+            <div class="kpi-icon-container ia-bg">
+                <mat-icon
+                    style="color: var(--color-info); width: 32px; height: 32px; font-size: 32px;">smart_toy</mat-icon>
+            </div>
+            <div class="flex-1">
+                <p class="kpi-title">Convergence IA</p>
+                <h3 class="kpi-value" [ngClass]="{
+              'text-success': (stats()?.convergence_percentage || 0) >= 90,
+              'text-warning': (stats()?.convergence_percentage || 0) >= 70 && (stats()?.convergence_percentage || 0) < 90,
+              'text-error': (stats()?.convergence_percentage || 0) < 70
+            }">
+                    {{ stats()?.convergence_percentage }}%
+                </h3>
+                <p class="kpi-subtitle">Accord MCC/IA global</p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+</div>
+}
