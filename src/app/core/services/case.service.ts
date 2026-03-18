@@ -37,6 +37,15 @@ export class CaseService {
         return this.http.post<EvaluationCaseDetailOut>(this.apiUrl, payload);
     }
 
+    /**
+     * Sauvegarde un brouillon du dossier en cours de création.
+     * Permet d'enregistrer des données partielles.
+     */
+    saveCaseDraft(payload: Partial<CaseCreate>): Observable<EvaluationCaseDetailOut> {
+        const draftPayload = { ...payload, status: 'DRAFT' };
+        return this.http.post<EvaluationCaseDetailOut>(this.apiUrl, draftPayload);
+    }
+
     getCaseStatus(caseId: string): Observable<CaseStatusResponse> {
         return this.http.get<CaseStatusResponse>(`${this.apiUrl}/${caseId}/status`);
     }

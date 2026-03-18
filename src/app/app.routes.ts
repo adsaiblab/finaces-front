@@ -17,11 +17,17 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 loadComponent: () => import('./features/bloc0-dashboard/dashboard.component').then(m => m.DashboardComponent),
-                title: 'FinaCES — Tableau de Bord' // Ajout du titre spécifié dans le P6
+                title: 'FinaCES — Tableau de Bord'
             },
             {
                 path: 'cases',
                 loadComponent: () => import('./features/cases/cases-list/cases-list.component').then(m => m.CasesListComponent)
+            },
+            // NOUVELLE ROUTE : Création de dossier (Placée AVANT cases/:id)
+            {
+                path: 'cases/new',
+                loadComponent: () => import('./features/cases/case-create/case-create.component').then(m => m.CaseCreateComponent),
+                title: 'FinaCES — Nouveau Dossier'
             },
             {
                 path: 'admin-ia',

@@ -22,7 +22,6 @@ export class ConvergenceChartComponent implements OnDestroy {
     constructor(@Inject(PLATFORM_ID) platformId: Object) {
         this.isBrowser = isPlatformBrowser(platformId);
 
-        // L'effect remplace le ngOnChanges pour les Signals. Il se déclenche si les données ou le DOM changent.
         effect(() => {
             const data = this.chartData();
             const canvas = this.canvasRef();
@@ -34,17 +33,21 @@ export class ConvergenceChartComponent implements OnDestroy {
     }
 
     private renderChart(data: ConvergenceChartOut, canvasEl: HTMLCanvasElement): void {
-        // RÈGLE D'OR : Prévention des fuites mémoire
         if (this.chartInstance) {
             this.chartInstance.destroy();
         }
 
-        // Récupération dynamique des variables CSS ou utilisation de fallback
-        const mccColor = getComputedStyle(document.documentElement).getPropertyValue('--color-success').trim() || '#10B981';
-        const iaColor = getComputedStyle(document.documentElement).getPropertyValue('--color-info').trim() || '#3B82F6';
-        const alertColor = getComputedStyle(document.documentElement).getPropertyValue('--color-error').trim() || '#EF4444';
-        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--color-content-secondary').trim() || '#6B7280';
-        const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--color-border-default').trim() || '#E5E7EB';
+        // Correctif pour JSDOM : Sécurisation absolue du .trim()
+        const getCssVar = (name: string, fallback: string): string => {
+            const val = getComputedStyle(document.documentElement).getPropertyValue(name);
+            return val ? val.trim() : fallback;
+        };
+
+        const mccColor = getCssVar('--color-success', '#10B981');
+        const iaColor = getCssVar('--color-info', '#3B82F6');
+        const alertColor = getCssVar('--color-error', '#EF4444');
+        const textColor = getCssVar('--color-content-secondary', '#6B7280');
+        const gridColor = getCssVar('--color-border-default', '#E5E7EB');
 
         const formattedDates = data.dates.map(dateStr => {
             const d = new Date(dateStr);
@@ -71,7 +74,7 @@ export class ConvergenceChartComponent implements OnDestroy {
                         pointBackgroundColor: alertPoints,
                         pointRadius: alertRadii,
                         pointHoverRadius: 8,
-                        order: 1 // MCC en avant
+                        order: 1
                     },
                     {
                         label: 'IA Challenge',
@@ -79,7 +82,7 @@ export class ConvergenceChartComponent implements OnDestroy {
                         borderColor: iaColor,
                         backgroundColor: 'transparent',
                         borderWidth: 2,
-                        borderDash: [5, 5], // Tirets pour l'IA (Non officiel)
+                        borderDash: [5, 5],
                         tension: 0.3,
                         pointRadius: 0,
                         pointHoverRadius: 4,
@@ -90,18 +93,14 @@ export class ConvergenceChartComponent implements OnDestroy {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: { display: false }, // Géré via HTML
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             afterBody: (context) => {
                                 const idx = context[0].dataIndex;
-                                const isDivergent = data.divergence_flags[idx];
-                                if (isDivergent) {
+                                if (data.divergence_flags[idx]) {
                                     const delta = Math.abs(data.mcc_scores[idx] - data.ia_scores[idx]);
                                     return `\n⚠️ Divergence: OUI (Δ=${delta.toFixed(1)})`;
                                 }
@@ -126,10 +125,7 @@ export class ConvergenceChartComponent implements OnDestroy {
                         },
                         grid: { color: gridColor }
                     },
-                    x: {
-                        ticks: { color: textColor },
-                        grid: { display: false }
-                    }
+                    x: { ticks: { color: textColor }, grid: { display: false } }
                 }
             }
         });

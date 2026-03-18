@@ -1,0 +1,61 @@
+<div class="case-create-container">
+
+    <div class="header-section">
+        <a routerLink="/cases" class="back-btn" title="Retour aux dossiers">
+            <mat-icon>arrow_back</mat-icon>
+        </a>
+        <div class="title-wrapper">
+            <h1>Nouveau Dossier d'Évaluation</h1>
+            <p>Saisissez les informations initiales du marché et du soumissionnaire.</p>
+        </div>
+        <button mat-stroked-button color="primary" (click)="saveDraft()">
+            <mat-icon>save</mat-icon>
+            Enregistrer brouillon
+        </button>
+    </div>
+
+    <mat-stepper [linear]="true" #stepper class="custom-stepper">
+
+        <mat-step [stepControl]="marketInfoForm">
+            <ng-template matStepLabel>Informations Marché</ng-template>
+
+            <app-step1-market-info [formGroup]="marketInfoForm" />
+
+            <div class="step-actions">
+                <button mat-raised-button color="primary" matStepperNext [disabled]="marketInfoForm.invalid">
+                    Suivant
+                </button>
+            </div>
+        </mat-step>
+
+        <mat-step [stepControl]="bidderForm">
+            <ng-template matStepLabel>Soumissionnaire</ng-template>
+            <div class="step-placeholder">
+                <p>Le formulaire "Soumissionnaire" sera injecté ici à l'étape suivante.</p>
+            </div>
+            <div class="step-actions">
+                <button mat-button matStepperPrevious>Précédent</button>
+                <button mat-raised-button color="primary" matStepperNext>Suivant</button>
+            </div>
+        </mat-step>
+
+        <mat-step>
+            <ng-template matStepLabel>Récapitulatif</ng-template>
+            <div class="step-placeholder">
+                <p>Le composant "Récapitulatif" sera injecté ici à l'étape suivante.</p>
+            </div>
+            <div class="step-actions">
+                <button mat-button matStepperPrevious>Précédent</button>
+                <button mat-raised-button color="primary" matStepperNext>Valider et Continuer</button>
+            </div>
+        </mat-step>
+
+        <mat-step>
+            <ng-template matStepLabel>Confirmation</ng-template>
+            <div class="step-placeholder">
+                <p>L'écran de "Confirmation" sera injecté ici à l'étape suivante.</p>
+            </div>
+        </mat-step>
+
+    </mat-stepper>
+</div>

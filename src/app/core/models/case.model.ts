@@ -33,17 +33,39 @@ export enum GateVerdict {
     REVIEW = 'REVIEW',
 }
 
-export interface CaseCreate {
+export interface GroupementMember {
     name: string;
-    bidder_name: string;
-    country: string;
-    sector: string;
+    role: 'LEADER' | 'MEMBER';
+    participation_percentage: number;
+}
+
+export interface CaseCreate {
+    // Etape 1: Info Marché
+    case_type: CaseType;
+    market_reference: string;
+    market_label: string;
     contract_value: number;
     contract_currency: string;
-    contract_months: number;
-    case_type: CaseType;
-    case_manager_id?: string;
+    contract_duration_months: number;
+    country: string;
+    sector: string;
+    sensitive: boolean;
     notes?: string;
+
+    // Etape 2: Soumissionnaire
+    bidder_id?: string | null; // Renseigné si sélectionné via recherche
+    bidder_name?: string;      // Renseigné si nouveau soumissionnaire
+    legal_form?: string;       // Renseigné si nouveau soumissionnaire
+    registration_number?: string;
+    email?: string;
+    phone?: string;
+
+    // Optionnel si case_type === GROUPEMENT
+    members?: GroupementMember[];
+
+    // Meta gérées par le Stepper
+    status: 'DRAFT' | 'PENDING_GATE';
+    case_manager_id?: string;
 }
 
 export interface StatusTransition {
