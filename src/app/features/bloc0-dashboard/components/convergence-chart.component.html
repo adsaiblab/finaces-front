@@ -1,0 +1,48 @@
+<div class="chart-container shadow-sm">
+    <div class="mb-6 flex justify-between items-start">
+        <div>
+            <h2 class="text-lg font-semibold text-[var(--color-content-primary)] m-0">Convergence MCC/IA</h2>
+            <p class="text-sm text-[var(--color-content-secondary)] mt-1">Évolution des scores sur les 30 derniers jours
+            </p>
+        </div>
+    </div>
+
+    @if (chartData()) {
+    <div class="relative w-full h-64">
+        <canvas #chartCanvas></canvas>
+    </div>
+
+    <div
+        class="mt-4 flex flex-wrap gap-4 items-center justify-center text-sm text-[var(--color-content-secondary)] border-t border-[var(--color-border-default)] pt-4">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-1 bg-[var(--color-success)] rounded-full"></div>
+            <span>MCC Score (Décision)</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-0 border-t-2 border-dashed border-[var(--color-info)]"></div>
+            <span>IA Challenge</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-[var(--color-error)]"></div>
+            <span>Divergence Alert</span>
+        </div>
+    </div>
+
+    <div
+        class="mt-4 flex flex-wrap justify-between items-center text-sm bg-[var(--color-surface-default)] p-3 rounded-lg border border-[var(--color-border-default)]">
+        <span class="text-[var(--color-content-primary)] font-medium">Corrélation: <span
+                class="text-[var(--color-primary)]">{{ chartData()?.correlation | number:'1.2-2' }}</span></span>
+        <span class="text-[var(--color-content-primary)] font-medium">Divergences détectées: <span
+                class="text-[var(--color-error)]">{{ chartData()?.divergence_flags?.filter(x => x)?.length || 0
+                }}</span></span>
+        <span class="text-[var(--color-content-primary)] font-medium">Convergence globale: <span
+                class="text-[var(--color-success)]">{{ chartData()?.convergence_percentage }}%</span></span>
+    </div>
+    } @else {
+    <div class="h-64 flex flex-col items-center justify-center text-[var(--color-content-secondary)]">
+        <mat-icon class="opacity-50 mb-2" style="width: 48px; height: 48px; font-size: 48px;">insights</mat-icon>
+        <p class="text-center font-medium">Pas de données.</p>
+        <p class="text-xs text-center mt-1">Commencer les évaluations pour voir la convergence.</p>
+    </div>
+    }
+</div>

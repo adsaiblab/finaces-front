@@ -10,6 +10,9 @@ import {
     CaseStatusResponse,
     StatusTransition,
     BidderOut,
+    DashboardStatsOut,
+    ConvergenceChartOut,
+    TensionAlertOut
 } from '../models';
 
 @Injectable({
@@ -17,6 +20,8 @@ import {
 })
 export class CaseService {
     private apiUrl = `${environment.apiUrl}/cases`;
+    private analyticsUrl = `${environment.apiUrl}/analytics`;
+    private dashboardUrl = `${environment.apiUrl}/dashboard`;
 
     constructor(private http: HttpClient) { }
 
@@ -48,5 +53,47 @@ export class CaseService {
 
     getBidders(): Observable<BidderOut[]> {
         return this.http.get<BidderOut[]>(`${this.apiUrl}/bidders`);
+    }
+
+    // =========================================================================
+    // NOUVELLES MÉTHODES POUR LE DASHBOARD (BLOC 0)
+    // =========================================================================
+
+    /**
+     * Récupère les KPI agrégés pour le tableau de bord
+     */
+    getDashboardStats(): Observable<DashboardStatsOut> {
+        return this.http.get<DashboardStatsOut>(this.dashboardUrl);
+    }
+
+    /**
+     * Récupère les dossiers les plus récents
+     * @param limit Nombre de dossiers à récupérer (défaut: 5)
+     */
+    getRecentCases(limit: number = 5): Observable<EvaluationCaseDetailOut[]> {
+        const params = new HttpParams()
+            .set('limit', limit.toString())
+            .set('sort', '-updated_at');
+
+        return this.http.get<EvaluationCaseDetailOut[]>(this.apiUrl, { params });
+    }
+
+    /**
+     * Récupère les données de convergence pour le graphique
+     * @param days Période en jours (défaut: 30)
+     */
+    getConvergenceChart(days: number = 30): Observable<ConvergenceChartOut> {
+        const params = new HttpParams().set('days', days.toString());
+
+        return this.http.get<ConvergenceChartOut>(`${this.analyticsUrl}/convergence`, { params });
+    }
+
+    /**
+     * Récupère les dossiers présentant une tension (divergence MODERATE ou SEVERE)
+     */
+    getActiveTensionCases(): Observable<TensionAlertOut[]> {
+        const params = new HttpParams().set('filter', 'divergence_level:MODERATE,SEVERE');
+
+        return this.http.get<TensionAlertOut[]>(this.apiUrl, { params });
     }
 }

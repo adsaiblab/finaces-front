@@ -1,3 +1,4 @@
+export * from './dashboard.model';
 export * from './case.model';
 export * from './financial.model';
 export * from './scoring.model';

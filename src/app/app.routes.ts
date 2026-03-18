@@ -16,7 +16,8 @@ export const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             {
                 path: 'dashboard',
-                loadComponent: () => import('./features/bloc0-dashboard/dashboard.component').then(m => m.DashboardComponent)
+                loadComponent: () => import('./features/bloc0-dashboard/dashboard.component').then(m => m.DashboardComponent),
+                title: 'FinaCES — Tableau de Bord' // Ajout du titre spécifié dans le P6
             },
             {
                 path: 'cases',
