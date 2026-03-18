@@ -1,7 +1,22 @@
-import { describe, it, expect } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Step4ConfirmationComponent } from './step4-confirmation.component';
+import { describe, it, expect, beforeEach } from 'vitest';
 
-describe('Component Placeholder', () => {
-    it('en attente de la prochaine étape', () => {
-        expect(true).toBe(true);
+describe('Step4ConfirmationComponent', () => {
+    let component: Step4ConfirmationComponent;
+    let fixture: ComponentFixture<Step4ConfirmationComponent>;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [Step4ConfirmationComponent]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(Step4ConfirmationComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('devrait créer le composant de confirmation', () => {
+        expect(component).toBeTruthy();
     });
 });

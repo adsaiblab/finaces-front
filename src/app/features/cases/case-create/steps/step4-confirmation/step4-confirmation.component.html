@@ -1,0 +1,13 @@
+<div class="confirmation-container">
+    <mat-icon class="success-icon">check_circle_outline</mat-icon>
+    <h2>Dossier prêt pour la soumission</h2>
+    <p>Toutes les informations ont été saisies et vérifiées. Cliquez sur le bouton ci-dessous pour créer officiellement
+        le dossier et le basculer en attente du Gate documentaire.</p>
+
+    <div class="action-buttons">
+        <button mat-raised-button color="primary" class="submit-btn" (click)="submitCase.emit()">
+            <mat-icon>send</mat-icon>
+            Soumettre le dossier
+        </button>
+    </div>
+</div>

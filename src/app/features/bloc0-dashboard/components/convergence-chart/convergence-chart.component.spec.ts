@@ -3,16 +3,6 @@ import { ConvergenceChartComponent } from './convergence-chart.component';
 import { ConvergenceChartOut } from '../../../../core/models/dashboard.model';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
-// RÈGLE MANIFESTE : Mock global sous forme de classe pour respecter l'appel "new Chart()"
-vi.mock('chart.js/auto', () => {
-    return {
-        default: class MockChart {
-            constructor() { }
-            destroy() { }
-        }
-    };
-});
-
 describe('ConvergenceChartComponent', () => {
     let component: ConvergenceChartComponent;
     let fixture: ComponentFixture<ConvergenceChartComponent>;
@@ -27,8 +17,13 @@ describe('ConvergenceChartComponent', () => {
     };
 
     beforeEach(async () => {
-        // Mock explicite du canvas pour l'environnement de test JSDOM
+        // Stubs natifs pour JSDOM - Utilisation de globalThis au lieu de global
         HTMLCanvasElement.prototype.getContext = vi.fn() as any;
+        globalThis.ResizeObserver = class {
+            observe() { }
+            unobserve() { }
+            disconnect() { }
+        };
 
         await TestBed.configureTestingModule({
             imports: [ConvergenceChartComponent]

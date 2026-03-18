@@ -37,10 +37,14 @@ export class ConvergenceChartComponent implements OnDestroy {
             this.chartInstance.destroy();
         }
 
-        // Correctif pour JSDOM : Sécurisation absolue du .trim()
+        // CORRECTIF JSDOM : Vérification stricte du type avant d'appeler .trim()
         const getCssVar = (name: string, fallback: string): string => {
-            const val = getComputedStyle(document.documentElement).getPropertyValue(name);
-            return val ? val.trim() : fallback;
+            try {
+                const val = getComputedStyle(document.documentElement).getPropertyValue(name);
+                return val && typeof val === 'string' && val.trim() !== '' ? val.trim() : fallback;
+            } catch (e) {
+                return fallback;
+            }
         };
 
         const mccColor = getCssVar('--color-success', '#10B981');

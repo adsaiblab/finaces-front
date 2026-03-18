@@ -18,9 +18,7 @@
 
         <mat-step [stepControl]="marketInfoForm">
             <ng-template matStepLabel>Informations Marché</ng-template>
-
             <app-step1-market-info [formGroup]="marketInfoForm" />
-
             <div class="step-actions">
                 <button mat-raised-button color="primary" matStepperNext [disabled]="marketInfoForm.invalid">
                     Suivant
@@ -30,20 +28,26 @@
 
         <mat-step [stepControl]="bidderForm">
             <ng-template matStepLabel>Soumissionnaire</ng-template>
-            <div class="step-placeholder">
-                <p>Le formulaire "Soumissionnaire" sera injecté ici à l'étape suivante.</p>
+
+            <app-step2-bidder [formGroup]="bidderForm" />
+
+            @if(marketInfoForm.get('case_type')?.value === 'GROUPEMENT') {
+            <div style="margin-top: 2rem;">
+                <app-groupement-members [membersArray]="groupementMembersArray" />
             </div>
+            }
+
             <div class="step-actions">
                 <button mat-button matStepperPrevious>Précédent</button>
-                <button mat-raised-button color="primary" matStepperNext>Suivant</button>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="bidderForm.invalid">
+                    Suivant
+                </button>
             </div>
         </mat-step>
 
         <mat-step>
             <ng-template matStepLabel>Récapitulatif</ng-template>
-            <div class="step-placeholder">
-                <p>Le composant "Récapitulatif" sera injecté ici à l'étape suivante.</p>
-            </div>
+            <app-step3-summary [parentForm]="caseForm" />
             <div class="step-actions">
                 <button mat-button matStepperPrevious>Précédent</button>
                 <button mat-raised-button color="primary" matStepperNext>Valider et Continuer</button>
@@ -52,9 +56,7 @@
 
         <mat-step>
             <ng-template matStepLabel>Confirmation</ng-template>
-            <div class="step-placeholder">
-                <p>L'écran de "Confirmation" sera injecté ici à l'étape suivante.</p>
-            </div>
+            <app-step4-confirmation (submitCase)="submitCase()" />
         </mat-step>
 
     </mat-stepper>
