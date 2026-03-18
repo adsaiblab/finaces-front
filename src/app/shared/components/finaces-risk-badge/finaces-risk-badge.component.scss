@@ -1,3 +1,8 @@
+// =============================================================
+// FINACES RISK BADGE — Toutes les couleurs via tokens CSS
+// Zéro couleur en dur : Dark Mode natif garanti
+// =============================================================
+
 .finaces-badge {
     display: inline-flex;
     align-items: center;
@@ -5,21 +10,16 @@
     font-weight: 500;
     border-radius: 6px;
     white-space: nowrap;
-    transition: all 150ms ease-in-out;
+    transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
-    &.badge-mcc {
-        border: 1px solid transparent;
-    }
-
-    &.badge-ia {
-        border: 1px solid;
-    }
-
+    // ── Tailles ────────────────────────────────────────────────
     &.badge-sm {
         height: 20px;
         padding: 2px 8px;
         font-size: 11px;
         line-height: 1.4;
+
+        .badge-icon { font-size: 12px; width: 12px; height: 12px; }
     }
 
     &.badge-md {
@@ -27,15 +27,59 @@
         padding: 4px 12px;
         font-size: 12px;
         line-height: 1.5;
+
+        .badge-icon { font-size: 14px; width: 14px; height: 14px; }
     }
 
-    .badge-icon {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
-        margin-right: 2px;
+    // ── Rail MCC (fond plein, bordure transparente) ────────────
+    &.badge-mcc {
+        border: 1px solid transparent;
     }
 
+    &.badge-mcc-low {
+        background-color: var(--mcc-low);
+        color: var(--text-inverse);
+    }
+    &.badge-mcc-moderate {
+        background-color: var(--mcc-moderate);
+        color: var(--text-inverse);
+    }
+    &.badge-mcc-high {
+        background-color: var(--mcc-high);
+        color: var(--text-inverse);
+    }
+    &.badge-mcc-critical {
+        background-color: var(--mcc-critical);
+        color: var(--text-inverse);
+    }
+
+    // ── Rail IA (fond teinté, bordure colorée) ─────────────────
+    &.badge-ia {
+        border: 1px solid;
+    }
+
+    &.badge-ia-low {
+        background-color: color-mix(in srgb, var(--ia-low) 15%, transparent);
+        color: var(--ia-low);
+        border-color: var(--ia-low);
+    }
+    &.badge-ia-moderate {
+        background-color: color-mix(in srgb, var(--ia-moderate) 15%, transparent);
+        color: var(--ia-moderate);
+        border-color: var(--ia-moderate);
+    }
+    &.badge-ia-high {
+        background-color: color-mix(in srgb, var(--ia-high) 15%, transparent);
+        color: var(--ia-high);
+        border-color: var(--ia-high);
+    }
+    &.badge-ia-critical {
+        background-color: color-mix(in srgb, var(--ia-critical) 15%, transparent);
+        color: var(--ia-critical);
+        border-color: var(--ia-critical);
+    }
+
+    // ── Éléments internes ──────────────────────────────────────
     .badge-prefix {
         font-size: 10px;
         font-weight: 600;

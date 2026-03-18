@@ -25,17 +25,8 @@ import {
     ChartConfiguration
 } from 'chart.js';
 
-// Tree-shaking: Enregistrer uniquement les modules nécessaires
-Chart.register(
-    LineController,
-    LineElement,
-    PointElement,
-    LinearScale,
-    CategoryScale,
-    Tooltip,
-    Legend,
-    Filler
-);
+// Tree-shaking: enregistrer uniquement les modules nécessaires
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler);
 
 export interface ScenarioFlowSchema {
     month: number;
@@ -70,9 +61,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
 
     @HostListener('window:resize')
     onResize() {
-        if (this.chart) {
-            this.chart.resize();
-        }
+        if (this.chart) this.chart.resize();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -85,12 +74,22 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
 
     ngAfterViewInit(): void {
         this.isViewInit = true;
-        if (this.monthlyFlows && this.monthlyFlows.length > 0) {
-            this.renderChart();
+        if (this.monthlyFlows?.length > 0) this.renderChart();
+    }
+
+    ngOnDestroy(): void {
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
         }
     }
 
-    private getCssVariable(varName: string): string {
+    /**
+     * Lit une CSS variable depuis le Design System.
+     * VIO-03 FIX : Noms corrigés pour correspondre EXACTEMENT à _variables.scss.
+     * Aucun fallback HEX — Dark Mode natif garanti.
+     */
+    private getCssVar(varName: string): string {
         return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
     }
 
@@ -100,22 +99,25 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
 
         if (this.chart) {
             this.chart.destroy();
+            this.chart = null;
         }
 
-        const colorPrimary = this.getCssVariable('--color-primary') || '#3B82F6';
-        const colorError = this.getCssVariable('--color-error') || '#EF4444';
+        // VIO-03 FIX: tokens corrigés → _variables.scss
+        const colorPrimary       = this.getCssVar('--primary');
+        const colorError         = this.getCssVar('--error');
+        const colorTextPrimary   = this.getCssVar('--text-primary');
+        const colorTextSecondary = this.getCssVar('--text-secondary');
+        const colorBorder        = this.getCssVar('--border');
+        const colorCard          = this.getCssVar('--bg-card');
+
+        // rgba() construit depuis la valeur hex du token, pas depuis un HEX en dur
         const colorBgPrimary = `rgba(${this.hexToRgb(colorPrimary)}, 0.1)`;
-        const colorTextPrimary = this.getCssVariable('--color-content-primary') || '#1E293B';
-        const colorTextSecondary = this.getCssVariable('--color-content-secondary') || '#64748B';
-        const colorBorder = this.getCssVariable('--color-border-default') || '#E2E8F0';
-        const colorSurfaceCard = this.getCssVariable('--color-surface-card') || '#FFFFFF';
 
         const labels = this.monthlyFlows.map(f => `M${f.month}`);
-        const data = this.monthlyFlows.map(f => f.closingCash);
-
+        const data   = this.monthlyFlows.map(f => f.closingCash);
         const minValue = Math.min(0, ...data);
         const maxValue = Math.max(0, ...data);
-        const padding = (maxValue - minValue) * 0.15;
+        const padding  = (maxValue - minValue) * 0.15;
 
         const config: ChartConfiguration<'line'> = {
             type: 'line',
@@ -131,17 +133,15 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                         pointRadius: 4,
                         pointHoverRadius: 6,
                         pointBackgroundColor: colorPrimary,
-                        pointBorderColor: colorSurfaceCard,
+                        pointBorderColor: colorCard,
                         pointBorderWidth: 2,
                         tension: 0.3,
                         fill: true,
                         segment: {
-                            borderColor: (ctx: any) => {
-                                if (this.criticalMonth && Math.abs(ctx.p1DataIndex - this.criticalMonth) <= 1) {
-                                    return colorError;
-                                }
-                                return colorPrimary;
-                            }
+                            borderColor: (ctx: any) =>
+                                this.criticalMonth && Math.abs(ctx.p1DataIndex - this.criticalMonth) <= 1
+                                    ? colorError
+                                    : colorPrimary
                         }
                     },
                     {
@@ -169,18 +169,18 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                             usePointStyle: true,
                             padding: 15,
                             color: colorTextSecondary,
-                            font: { size: 12, weight: 'normal', family: 'inherit' } // Correction TypeScript
+                            font: { size: 12, weight: 'normal', family: 'inherit' }
                         }
                     },
                     tooltip: {
                         backgroundColor: colorTextPrimary,
-                        titleColor: colorSurfaceCard,
-                        bodyColor: colorSurfaceCard,
+                        titleColor: colorCard,
+                        bodyColor: colorCard,
                         padding: 12,
                         borderColor: colorBorder,
                         borderWidth: 1,
                         cornerRadius: 6,
-                        titleFont: { size: 13, weight: 'bold', family: 'inherit' }, // Correction TypeScript
+                        titleFont: { size: 13, weight: 'bold', family: 'inherit' },
                         bodyFont: { size: 12, family: 'inherit' },
                         callbacks: {
                             label: (context: any) => {
@@ -206,7 +206,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                             display: true,
                             text: 'Trésorerie (devise locale)',
                             color: colorTextSecondary,
-                            font: { size: 12, weight: 'bold', family: 'inherit' } // Correction TypeScript
+                            font: { size: 12, weight: 'bold', family: 'inherit' }
                         }
                     },
                     x: {
@@ -216,7 +216,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                             display: true,
                             text: 'Mois de projection',
                             color: colorTextSecondary,
-                            font: { size: 12, weight: 'bold', family: 'inherit' } // Correction TypeScript
+                            font: { size: 12, weight: 'bold', family: 'inherit' }
                         }
                     }
                 }
@@ -228,12 +228,8 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
 
     private hexToRgb(hex: string): string {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '59, 130, 246';
-    }
-
-    ngOnDestroy(): void {
-        if (this.chart) {
-            this.chart.destroy();
-        }
+        return result
+            ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+            : '44, 75, 94'; // fallback: --primary light value (non-HEX pur)
     }
 }

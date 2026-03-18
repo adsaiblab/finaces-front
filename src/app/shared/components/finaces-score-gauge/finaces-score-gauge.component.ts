@@ -43,7 +43,8 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
 
     metrics!: GaugeMetrics;
     arcPath: string = '';
-    backgroundColor: string = 'var(--color-border-default)';
+    // VIO-08 FIX: token corrigé → --border (existant dans _variables.scss)
+    backgroundColor: string = 'var(--border)';
     arcColorClass: string = 'gauge-warning';
     displayScore: number = 0;
     displayScoreStr: string = '0.0';
@@ -60,7 +61,6 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
         if (changes['size']) {
             this.initializeMetrics(this.size);
         }
-
         if (changes['score'] || changes['riskClass'] || changes['rail'] || changes['size']) {
             this.updateArcColor();
             this.updateBackground();
@@ -98,7 +98,7 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
         if (!this.metrics) return;
         const { cx, cy, arcRadius } = this.metrics;
         const startRad = this.degToRad(this.startAngle);
-        const endRad = this.degToRad(this.startAngle + this.totalArcAngle);
+        const endRad   = this.degToRad(this.startAngle + this.totalArcAngle);
         const x1 = cx + arcRadius * Math.cos(startRad);
         const y1 = cy + arcRadius * Math.sin(startRad);
         const x2 = cx + arcRadius * Math.cos(endRad);
@@ -109,8 +109,6 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
 
     private startAnimation(): void {
         if (this.animationId !== null) cancelAnimationFrame(this.animationId);
-
-        // Sécurisation Math
         const safeScore = Math.max(0, Math.min(this.score, this.maxScore));
 
         if (!this.animated) {
@@ -123,16 +121,13 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
 
         const startTime = performance.now();
         const duration = 800;
-        const startScore = 0;
 
         const animate = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-
-            // Easing simple (ease-out cubic)
             const easeProgress = 1 - Math.pow(1 - progress, 3);
 
-            this.displayScore = startScore + (safeScore - startScore) * easeProgress;
+            this.displayScore = safeScore * easeProgress;
             this.displayScoreStr = this.displayScore.toFixed(1);
             this.cdr.markForCheck();
 
@@ -156,24 +151,19 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
     getProgressPath(): string {
         if (!this.metrics) return '';
         const { cx, cy, arcRadius } = this.metrics;
-
-        // Protection contre division par zero et dépassement
         const safeMax = Math.max(0.1, this.maxScore);
         const progressPercent = Math.max(0, Math.min(1, this.displayScore / safeMax));
-
         const angleSpan = this.totalArcAngle * progressPercent;
-        if (angleSpan <= 0.1) return ''; // Pas de path si score à 0
+        if (angleSpan <= 0.1) return '';
 
         const endAngle = this.startAngle + angleSpan;
         const startRad = this.degToRad(this.startAngle);
-        const endRad = this.degToRad(endAngle);
-
+        const endRad   = this.degToRad(endAngle);
         const x1 = cx + arcRadius * Math.cos(startRad);
         const y1 = cy + arcRadius * Math.sin(startRad);
         const x2 = cx + arcRadius * Math.cos(endRad);
         const y2 = cy + arcRadius * Math.sin(endRad);
         const largeArc = angleSpan > 180 ? 1 : 0;
-
         return `M ${x1} ${y1} A ${arcRadius} ${arcRadius} 0 ${largeArc} 1 ${x2} ${y2}`;
     }
 

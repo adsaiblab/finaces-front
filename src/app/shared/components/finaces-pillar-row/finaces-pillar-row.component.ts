@@ -48,7 +48,7 @@ export interface PillarDetailSchema {
 
 interface PillarMetadata {
     icon: string;
-    colorClass: string; // Utilisation de classe au lieu de HEX en dur
+    colorClass: string; // Classe Tailwind → var(--token), jamais de HEX
     description: string;
 }
 
@@ -72,20 +72,20 @@ interface PillarMetadata {
 })
 export class FinacesPillarRowComponent implements OnInit, OnChanges {
     @Input({ required: true }) pillar!: PillarDetailSchema;
-    @Input() isExpanded: boolean = false;
+    @Input() isExpanded: boolean = false;   // Lecture seule — muté uniquement par le parent
     @Input() readonly: boolean = false;
 
-    @Output() toggleExpand = new EventEmitter<string>();
+    @Output() toggleExpand  = new EventEmitter<string>();
     @Output() commentChange = new EventEmitter<string>();
 
     displayedColumns: string[] = ['indicator', 'value', 'score', 'weight', 'contribution'];
 
     private readonly pillarMetadataMap: Record<string, PillarMetadata> = {
-        LIQUIDITE: { icon: 'water_drop', colorClass: 'text-info', description: 'Capacité à faire face aux dettes à court terme' },
-        SOLVABILITE: { icon: 'shield', colorClass: 'text-success', description: 'Structure de financement et endettement' },
-        RENTABILITE: { icon: 'trending_up', colorClass: 'text-warning', description: 'Génération de profits et marges' },
-        CAPACITE: { icon: 'bolt', colorClass: 'text-primary', description: 'Capacité de remboursement du contrat' },
-        QUALITE: { icon: 'star', colorClass: 'text-error', description: 'Qualité des données et cohérence' }
+        LIQUIDITE:   { icon: 'water_drop',   colorClass: 'text-info',    description: 'Capacité à faire face aux dettes à court terme' },
+        SOLVABILITE: { icon: 'shield',        colorClass: 'text-success', description: 'Structure de financement et endettement'         },
+        RENTABILITE: { icon: 'trending_up',   colorClass: 'text-warning', description: 'Génération de profits et marges'                 },
+        CAPACITE:    { icon: 'bolt',          colorClass: 'text-primary', description: 'Capacité de remboursement du contrat'            },
+        QUALITE:     { icon: 'star',          colorClass: 'text-error',   description: 'Qualité des données et cohérence'               }
     };
 
     metadata: PillarMetadata | null = null;
@@ -96,9 +96,7 @@ export class FinacesPillarRowComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['pillar']) {
-            this.initData();
-        }
+        if (changes['pillar']) this.initData();
     }
 
     private initData(): void {
@@ -108,8 +106,9 @@ export class FinacesPillarRowComponent implements OnInit, OnChanges {
         }
     }
 
+    // VIO-07 FIX: Ne plus muter @Input isExpanded.
+    // Le composant émet l'événement et laisse le PARENT décider du nouvel état.
     onExpandToggle(): void {
-        this.isExpanded = !this.isExpanded;
         if (this.pillar) {
             this.toggleExpand.emit(this.pillar.pillarKey);
         }
@@ -122,16 +121,16 @@ export class FinacesPillarRowComponent implements OnInit, OnChanges {
     }
 
     getProgressValue(): number {
-        if (!this.pillar || !this.pillar.maxScore) return 0;
+        if (!this.pillar?.maxScore) return 0;
         return Math.min(100, Math.max(0, (this.pillar.score / this.pillar.maxScore) * 100));
     }
 
     getProgressColorClass(): string {
         if (!this.pillar) return 'bg-warning';
         const riskColorMap: Record<RiskClass, string> = {
-            LOW: 'bg-success',
+            LOW:      'bg-success',
             MODERATE: 'bg-warning',
-            HIGH: 'bg-orange', // Tolérance Tailwind si définie, sinon warning
+            HIGH:     'bg-mcc-high',
             CRITICAL: 'bg-error'
         };
         return riskColorMap[this.pillar.riskClass] || 'bg-warning';
