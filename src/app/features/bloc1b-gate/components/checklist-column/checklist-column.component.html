@@ -1,0 +1,40 @@
+<div class="checklist-container">
+    <div class="checklist-header">
+        <h3 class="title">DOCUMENTS REQUIS</h3>
+        <div class="total-progress">
+            <div class="progress-label">
+                <span>TOTAL</span>
+                <span class="percentage">{{ totalProgressPercent }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="totalProgressPercent"
+                [color]="getProgressBarColor(totalProgressPercent)">
+            </mat-progress-bar>
+        </div>
+    </div>
+
+    <div class="years-list">
+        <div class="year-block" *ngFor="let yp of yearlyProgress">
+            <div class="year-header">
+                <span class="year-title">Exercice {{ yp.year }}</span>
+                <span class="year-percentage">{{ yp.progressPercent }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="yp.progressPercent"
+                [color]="getProgressBarColor(yp.progressPercent)" class="year-progress-bar">
+            </mat-progress-bar>
+
+            <ul class="docs-list">
+                <li class="doc-item" *ngFor="let doc of yp.docs" [class.is-uploaded]="doc.uploaded"
+                    [class.is-optional]="!doc.required">
+                    <mat-icon class="status-icon" [class.checked]="doc.uploaded">
+                        {{ doc.uploaded ? 'check_box' : (doc.required ? 'check_box_outline_blank' :
+                        'radio_button_unchecked') }}
+                    </mat-icon>
+                    <span class="doc-label">
+                        {{ doc.label }}
+                        <span class="optional-badge" *ngIf="!doc.required">(Optionnel)</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

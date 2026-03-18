@@ -7,3 +7,4 @@ export * from './stress.model';
 export * from './expert.model';
 export * from './document.model';
 export * from './consortium.model';
+export * from './gate.model';

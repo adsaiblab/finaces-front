@@ -1,0 +1,111 @@
+.gate-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: var(--color-background-default, #f8fafc); // Fallback léger si token absent
+}
+
+.gate-header {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border-default);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .title-group {
+            .page-title {
+                margin: 0 0 0.25rem 0;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--color-content-primary);
+            }
+
+            .breadcrumb {
+                font-size: 0.875rem;
+                color: var(--color-content-secondary);
+            }
+        }
+
+        .status-group {
+            .status-badge {
+                display: inline-block;
+                padding: 0.5rem 1rem;
+                border-radius: 9999px;
+                font-size: 0.875rem;
+                font-weight: 600;
+                background-color: var(--color-surface-default);
+                color: var(--color-content-primary);
+                border: 1px solid var(--color-border-default);
+
+                &.pending_gate {
+                    background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
+                    color: var(--color-warning);
+                    border-color: var(--color-warning);
+                }
+
+                &.financial_input {
+                    background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+                    color: var(--color-success);
+                    border-color: var(--color-success);
+                }
+            }
+        }
+    }
+}
+
+.gate-grid {
+    display: grid;
+    grid-template-columns: 4fr 5fr 3fr;
+    /* Respect des proportions 4/12, 5/12, 3/12 */
+    gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
+
+    section {
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* --- RESPONSIVE DESIGN --- */
+
+@media (max-width: 1200px) {
+    .gate-grid {
+        grid-template-columns: 1fr 1fr;
+
+        .col-checklist {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .col-documents {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .col-decision {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .gate-grid {
+        grid-template-columns: 1fr;
+
+        .col-checklist,
+        .col-documents,
+        .col-decision {
+            grid-column: 1;
+            grid-row: auto;
+        }
+    }
+}

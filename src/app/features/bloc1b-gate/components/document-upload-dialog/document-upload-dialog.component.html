@@ -1,0 +1,53 @@
+<h2 mat-dialog-title class="dialog-title">Uploader Document</h2>
+<mat-dialog-content>
+    <div class="file-info">
+        <span class="file-label">Fichier sélectionné :</span>
+        <span class="file-name">{{ fileName }}</span>
+    </div>
+
+    <form [formGroup]="uploadForm" class="upload-form">
+        <mat-form-field appearance="outline">
+            <mat-label>Type de Document</mat-label>
+            <mat-select formControlName="document_type">
+                <mat-option value="BILAN">Bilan</mat-option>
+                <mat-option value="CPC">CPC</mat-option>
+                <mat-option value="TFT">TFT</mat-option>
+                <mat-option value="ATTESTATION_FISCALE">Attestation Fiscale</mat-option>
+                <mat-option value="STATUTS">Statuts</mat-option>
+                <mat-option value="OTHER">Autre</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Exercice Fiscal</mat-label>
+            <mat-select formControlName="fiscal_year">
+                <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Niveau de Fiabilité</mat-label>
+            <mat-select formControlName="reliability_level">
+                <mat-option value="AUDITED">Audité (Big 4 / Reconnu)</mat-option>
+                <mat-option value="REVIEWED">Examiné (Assurance Limitée)</mat-option>
+                <mat-option value="COMPILED">Compilé (Sans vérification)</mat-option>
+                <mat-option value="UNAUDITED">Non-audité (Auto-préparé)</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" *ngIf="uploadForm.get('reliability_level')?.value === 'AUDITED'">
+            <mat-label>Nom du cabinet d'audit</mat-label>
+            <input matInput formControlName="auditor_name" placeholder="Ex: PwC, Deloitte...">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Notes ou commentaires</mat-label>
+            <textarea matInput formControlName="notes" rows="3" maxlength="500"></textarea>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" [disabled]="uploadForm.invalid" (click)="onSubmit()">Uploader</button>
+</mat-dialog-actions>

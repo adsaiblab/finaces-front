@@ -1,1 +1,37 @@
-<h2>Bloc 1B : Gate de conformité</h2>
+<div class="gate-layout" *ngIf="case$ | async as caseData">
+
+    <header class="gate-header">
+        <div class="header-content">
+            <div class="title-group">
+                <h1 class="page-title">Gate Documentaire — {{ caseData.bidder_name }}</h1>
+                <div class="breadcrumb">Dossiers &gt; {{ caseData.name }} &gt; Gate Documentaire</div>
+            </div>
+            <div class="status-group">
+                <span class="status-badge" [ngClass]="caseData.status.toLowerCase()">{{ caseData.status }}</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="gate-grid">
+
+        <section class="col-checklist">
+            <app-checklist-column [documents]="(documents$ | async) || []">
+            </app-checklist-column>
+        </section>
+
+        <section class="col-documents">
+            <app-documents-column [documents]="(documents$ | async) || []" (fileDropped)="onFileDropped($event)"
+                (deleteDocument)="onDeleteDocument($event)" (downloadDocument)="onDownloadDocument($event)"
+                (viewDetails)="onViewDetails($event)">
+            </app-documents-column>
+        </section>
+
+        <section class="col-decision">
+            <app-decision-column [decision]="decision$ | async" [isEvaluating]="(isEvaluating$ | async) || false"
+                (evaluate)="onEvaluateGate()" (sealGate)="onSealGate()" (goToFinancials)="onGoToFinancials()"
+                (correctDocuments)="onCorrectDocuments()" (goToDashboard)="onGoToDashboard()">
+            </app-decision-column>
+        </section>
+
+    </main>
+</div>

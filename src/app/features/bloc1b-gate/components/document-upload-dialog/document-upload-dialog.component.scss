@@ -1,0 +1,31 @@
+.dialog-title {
+    color: var(--color-content-primary);
+    border-bottom: 1px solid var(--color-border-default);
+    margin-bottom: 1rem;
+}
+
+.file-info {
+    background-color: var(--color-surface-default);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border-default);
+
+    .file-label {
+        color: var(--color-content-secondary);
+        font-size: 0.875rem;
+    }
+
+    .file-name {
+        color: var(--color-primary);
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}

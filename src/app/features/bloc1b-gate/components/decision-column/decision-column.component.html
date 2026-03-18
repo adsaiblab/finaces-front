@@ -1,0 +1,103 @@
+<div class="decision-container">
+    <h3 class="column-title">DÉCISION GATE</h3>
+
+    <div class="flags-banner"
+        *ngIf="decision && (decision.blocking_reasons.length > 0 || decision.reserve_flags.length > 0)">
+        <div class="banner-header">
+            <mat-icon>warning</mat-icon>
+            <span>FLAGS DÉTECTÉS</span>
+        </div>
+        <ul class="flags-list">
+            <li *ngFor="let reason of decision.blocking_reasons" class="flag-item blocking">
+                • {{ reason }}
+            </li>
+            <li *ngFor="let flag of decision.reserve_flags" class="flag-item reserve">
+                • {{ flag }}
+            </li>
+        </ul>
+    </div>
+
+    <div class="state-card pending-state" *ngIf="!decision && !isEvaluating">
+        <mat-icon class="state-icon">pending_actions</mat-icon>
+        <h4 class="state-title">EN ATTENTE</h4>
+        <p class="state-desc">Pas encore évalué. Assurez-vous d'avoir téléchargé tous les documents requis.</p>
+        <button mat-flat-button color="primary" class="action-btn" (click)="evaluate.emit()">
+            Lancer l'Évaluation Gate
+        </button>
+        <p class="note">Note : Évaluation automatique des documents uploadés via notre moteur d'IA.</p>
+    </div>
+
+    <div class="state-card evaluating-state" *ngIf="isEvaluating">
+        <mat-spinner diameter="40" class="eval-spinner"></mat-spinner>
+        <h4 class="state-title">Analyse en cours...</h4>
+        <p class="state-desc">Vérification de l'intégrité et de la complétude des documents.</p>
+    </div>
+
+    <div class="state-card result-state" *ngIf="decision && !isEvaluating"
+        [ngClass]="{'is-passed': isPassed, 'is-blocked': isBlocked}">
+
+        <div class="verdict-header">
+            <mat-icon class="verdict-icon">{{ isPassed ? 'check_circle' : 'cancel' }}</mat-icon>
+            <h4 class="verdict-title">Verdict : {{ decision.verdict }}</h4>
+        </div>
+
+        <div class="score-row">
+            <span class="label">Fiabilité :</span>
+            <strong class="value">{{ decision.reliability_level }} ({{ decision.reliability_score }}/100)</strong>
+        </div>
+
+        <div class="docs-summary" *ngIf="isPassed">
+            <h5>Documents complètement reçus :</h5>
+            <ul class="summary-list">
+                <li><mat-icon>check_box</mat-icon> Bilans ({{ decision.documents_received['BILAN']?.length || 0 }} ex.)
+                </li>
+                <li><mat-icon>check_box</mat-icon> CPCs ({{ decision.documents_received['CPC']?.length || 0 }} ex.)</li>
+                <li><mat-icon>check_box</mat-icon> TFTs ({{ decision.documents_received['TFT']?.length || 0 }} ex.)</li>
+                <li><mat-icon>check_box</mat-icon> Attestations ({{
+                    decision.documents_received['ATTESTATION_FISCALE']?.length || 0 }} ex.)</li>
+                <li class="optional"><mat-icon>radio_button_unchecked</mat-icon> Statuts ({{
+                    decision.documents_received['STATUTS']?.length || 0 }} ex.)</li>
+            </ul>
+            <p class="success-msg">Pas de raisons bloquantes.</p>
+        </div>
+
+        <div class="financials-status">
+            <mat-icon>{{ isPassed ? 'lock_open' : 'lock' }}</mat-icon>
+            <span>Financials {{ isPassed ? 'déverrouillés' : 'verrouillés' }}</span>
+        </div>
+
+        <div class="actions-group">
+            <ng-container *ngIf="isPassed">
+                <button mat-flat-button color="primary" class="action-btn" (click)="sealGate.emit()">
+                    Sceller le Gate
+                </button>
+                <button mat-stroked-button color="accent" class="action-btn mt-2" (click)="goToFinancials.emit()">
+                    Aller aux Financials
+                </button>
+            </ng-container>
+
+            <ng-container *ngIf="isBlocked">
+                <button mat-flat-button color="warn" class="action-btn" (click)="correctDocuments.emit()">
+                    Corriger Documents
+                </button>
+                <button mat-stroked-button class="action-btn mt-2" (click)="goToDashboard.emit()">
+                    Retour Dashboard
+                </button>
+            </ng-container>
+        </div>
+    </div>
+
+    <div class="audit-log" *ngIf="decision && decision.audit_log.length">
+        <details>
+            <summary><mat-icon>history</mat-icon> AUDIT LOG</summary>
+            <div class="log-entries">
+                <div class="log-entry" *ngFor="let log of decision.audit_log">
+                    <span class="log-time">{{ log.timestamp | date:'shortTime' }}</span>
+                    <span class="log-actor">{{ log.actor }}</span>
+                    <span class="log-action">{{ log.action }}</span>
+                </div>
+            </div>
+        </details>
+    </div>
+
+</div>

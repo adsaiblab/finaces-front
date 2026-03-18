@@ -36,15 +36,5 @@ export interface IntegrityCheckResult {
     checked_at: string;
 }
 
-export interface GateDecisionSchema {
-    case_id: string;
-    decision_id: string;
-    verdict: 'PASS' | 'FAIL' | 'REVIEW';
-    blocking_flags: string[];
-    reserve_flags: string[];
-    checked_documents: string[];
-    missing_documents: string[];
-    evaluation_date: string;
-    evaluated_by: string;
-    recommendation: string;
-}
+// GateDecisionSchema a été déplacé vers gate.model.ts (version canonique complète).
+// Ce fichier ne doit plus le définir pour éviter les conflits de types.

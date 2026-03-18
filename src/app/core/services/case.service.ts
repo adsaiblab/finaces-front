@@ -12,7 +12,8 @@ import {
     BidderOut,
     DashboardStatsOut,
     ConvergenceChartOut,
-    TensionAlertOut
+    TensionAlertOut,
+    GateDecisionSchema
 } from '../models';
 
 @Injectable({
@@ -65,7 +66,7 @@ export class CaseService {
     }
 
     // =========================================================================
-    // NOUVELLES MÉTHODES POUR LE DASHBOARD (BLOC 0)
+    // MÉTHODES POUR LE DASHBOARD (BLOC 0)
     // =========================================================================
 
     /**
@@ -104,5 +105,23 @@ export class CaseService {
         const params = new HttpParams().set('filter', 'divergence_level:MODERATE,SEVERE');
 
         return this.http.get<TensionAlertOut[]>(this.apiUrl, { params });
+    }
+
+    // =========================================================================
+    // NOUVELLES MÉTHODES POUR LE GATE (BLOC 1B)
+    // =========================================================================
+
+    evaluateGate(caseId: string): Observable<GateDecisionSchema> {
+        return this.http.post<GateDecisionSchema>(
+            `${this.apiUrl}/${caseId}/gate/evaluate`,
+            {}
+        );
+    }
+
+    patchCaseStatus(caseId: string, status: string): Observable<EvaluationCaseDetailOut> {
+        return this.http.patch<EvaluationCaseDetailOut>(
+            `${this.apiUrl}/${caseId}`,
+            { status }
+        );
     }
 }

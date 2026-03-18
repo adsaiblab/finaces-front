@@ -2,12 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {
-    DocumentOut,
-    DocumentStatusUpdate,
-    GateDecisionSchema,
-    IntegrityCheckResult,
-} from '../models';
+import { GateDocumentOut, GateDecisionSchema } from '../models/gate.model';
 
 @Injectable({
     providedIn: 'root',
@@ -17,44 +12,28 @@ export class DocumentService {
 
     constructor(private http: HttpClient) { }
 
-    uploadDocument(caseId: string, file: File): Observable<DocumentOut> {
-        const formData = new FormData();
-        formData.append('file', file);
-        return this.http.post<DocumentOut>(
+    uploadGateDocument(caseId: string, formData: FormData): Observable<GateDocumentOut> {
+        return this.http.post<GateDocumentOut>(
             `${this.apiUrl}/${caseId}/documents`,
             formData
         );
     }
 
-    getDocuments(caseId: string): Observable<DocumentOut[]> {
-        return this.http.get<DocumentOut[]>(
+    getGateDocuments(caseId: string): Observable<GateDocumentOut[]> {
+        return this.http.get<GateDocumentOut[]>(
             `${this.apiUrl}/${caseId}/documents`
         );
     }
 
-    checkIntegrity(
-        caseId: string,
-        docId: string
-    ): Observable<IntegrityCheckResult> {
-        return this.http.get<IntegrityCheckResult>(
+    getDocumentIntegrity(caseId: string, docId: string): Observable<any> {
+        return this.http.get<any>(
             `${this.apiUrl}/${caseId}/documents/${docId}/integrity`
         );
     }
 
-    updateDocumentStatus(
-        docId: string,
-        payload: DocumentStatusUpdate
-    ): Observable<void> {
-        return this.http.patch<void>(
-            `${this.apiUrl}/documents/${docId}/status`,
-            payload
-        );
-    }
-
-    evaluateGate(caseId: string): Observable<GateDecisionSchema> {
-        return this.http.post<GateDecisionSchema>(
-            `${this.apiUrl}/${caseId}/gate/evaluate`,
-            {}
+    deleteDocument(caseId: string, docId: string): Observable<void> {
+        return this.http.delete<void>(
+            `${this.apiUrl}/${caseId}/documents/${docId}`
         );
     }
 }
