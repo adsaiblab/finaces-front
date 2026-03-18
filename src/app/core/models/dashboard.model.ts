@@ -1,5 +1,5 @@
 // src/app/core/models/dashboard.model.ts
-import { Case } from './case.model';
+import { EvaluationCaseDetailOut } from './case.model';
 
 export interface DashboardStatsOut {
     total_active_cases: number;
@@ -21,5 +21,10 @@ export interface ConvergenceChartOut {
     convergence_percentage: number;
 }
 
-// L'alerte de tension est essentiellement une vue allégée ou complète d'un cas avec divergence
-export type TensionAlertOut = Case;
+// L'alerte de tension étend le modèle de base avec les champs spécifiques au dashboard
+export interface TensionAlertOut extends EvaluationCaseDetailOut {
+    divergence_level?: 'NONE' | 'MILD' | 'MODERATE' | 'SEVERE';
+    divergence_score?: number;
+    mcc_level?: string;
+    ia_level?: string;
+}

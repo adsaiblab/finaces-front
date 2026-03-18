@@ -1,27 +1,27 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { Case } from '../../../core/models/case.model';
+import { EvaluationCaseDetailOut } from '../../../core/models/case.model';
 import { FinacesRiskBadgeComponent } from '../../../shared/components/finaces-risk-badge/finaces-risk-badge.component';
 
 @Component({
-    selector: 'app-recent-cases-table',
-    standalone: true,
-    imports: [
-        CommonModule,
-        MatTableModule,
-        MatButtonModule,
-        MatIconModule,
-        RouterLink,
-        FinacesRiskBadgeComponent,
-        DecimalPipe
-    ],
-    templateUrl: './recent-cases-table.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    styles: [`
+  selector: 'app-recent-cases-table',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    FinacesRiskBadgeComponent,
+    DecimalPipe
+  ],
+  templateUrl: './recent-cases-table.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: [`
     .table-container {
       @apply bg-[var(--color-surface-card)] rounded-xl border border-[var(--color-border-default)] overflow-hidden;
     }
@@ -34,20 +34,19 @@ import { FinacesRiskBadgeComponent } from '../../../shared/components/finaces-ri
   `]
 })
 export class RecentCasesTableComponent {
-    readonly cases = input.required<Case[]>();
-    readonly displayedColumns: string[] = ['reference', 'bidder', 'amount', 'status', 'mcc_class', 'actions'];
+  readonly cases = input.required<EvaluationCaseDetailOut[]>();
+  readonly displayedColumns: string[] = ['reference', 'bidder', 'amount', 'status', 'mcc_class', 'actions'];
 
-    // Générateur de couleur pseudo-aléatoire basé sur le nom pour l'avatar
-    getAvatarColor(name: string): string {
-        const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        return colors[Math.abs(hash) % colors.length];
+  getAvatarColor(name: string): string {
+    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
+    return Math.abs(hash) ? colors[Math.abs(hash) % colors.length] : colors[0];
+  }
 
-    getInitials(name: string): string {
-        return name.substring(0, 2).toUpperCase();
-    }
+  getInitials(name: string): string {
+    return name ? name.substring(0, 2).toUpperCase() : 'NA';
+  }
 }

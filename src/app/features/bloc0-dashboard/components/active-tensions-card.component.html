@@ -20,10 +20,10 @@
                         class="text-sm font-bold text-[var(--color-content-primary)] hover:text-[var(--color-primary)] transition-colors">
                         {{ tension.bidder_name }}
                     </a>
-                    <span class="text-xs text-[var(--color-content-secondary)] ml-2 font-mono">{{ tension.reference
+                    <span class="text-xs text-[var(--color-content-secondary)] ml-2 font-mono">{{ tension.id | slice:0:8
                         }}</span>
                 </div>
-                <app-finaces-tension-badge [level]="tension.divergence_level || 'LOW'" />
+                <finaces-tension-badge [level]="tension.divergence_level || 'NONE'" />
             </div>
 
             <div
@@ -31,14 +31,14 @@
                 <div class="flex-1">
                     <span class="text-[var(--color-content-secondary)] text-xs block mb-1">Score MCC</span>
                     <span class="font-semibold text-[var(--color-primary)]">{{ tension.mcc_score | number:'1.1-1' }} ({{
-                        tension.mcc_level }})</span>
+                        tension.mcc_level || 'N/A' }})</span>
                 </div>
                 <mat-icon class="text-[var(--color-content-secondary)] text-sm"
                     style="width: 16px; height: 16px;">arrow_forward</mat-icon>
                 <div class="flex-1 text-right">
                     <span class="text-[var(--color-content-secondary)] text-xs block mb-1">Score IA</span>
                     <span class="font-semibold text-[var(--color-info)]">{{ tension.ia_score | number:'1.1-1' }} ({{
-                        tension.ia_level }})</span>
+                        tension.ia_level || 'N/A' }})</span>
                 </div>
             </div>
 
@@ -55,7 +55,7 @@
             <mat-icon class="opacity-50 mb-2 text-[var(--color-success)]"
                 style="width: 48px; height: 48px; font-size: 48px;">check_circle</mat-icon>
             <p class="text-center font-medium">Aucune tension détectée.</p>
-            <p class="text-xs text-center mt-1">MCC et IA sont alignés sur tous les dossiers actifs.</p>
+            <p class="text-xs text-center mt-1">MCC et IA sont alignés.</p>
         </div>
         }
     </div>
