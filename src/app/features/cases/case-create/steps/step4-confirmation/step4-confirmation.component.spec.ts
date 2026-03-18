@@ -7,16 +7,13 @@ describe('Step4ConfirmationComponent', () => {
     let fixture: ComponentFixture<Step4ConfirmationComponent>;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [Step4ConfirmationComponent]
-        }).compileComponents();
-
+        await TestBed.configureTestingModule({ imports: [Step4ConfirmationComponent] }).compileComponents();
         fixture = TestBed.createComponent(Step4ConfirmationComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
-    it('devrait créer le composant de confirmation', () => {
+    it('devrait créer le composant', () => {
         expect(component).toBeTruthy();
     });
 });

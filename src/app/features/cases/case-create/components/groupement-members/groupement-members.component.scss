@@ -1,0 +1,29 @@
+.members-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--color-surface-default);
+    border: 1px solid var(--color-border-default);
+    border-radius: 0.5rem;
+
+    .field-name {
+        flex: 2;
+    }
+
+    .field-role {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .field-percent {
+        width: 100px;
+    }
+}

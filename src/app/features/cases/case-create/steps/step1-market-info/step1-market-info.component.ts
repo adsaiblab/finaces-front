@@ -9,19 +9,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 @Component({
     selector: 'app-step1-market-info',
     standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatCheckboxModule
-    ],
+    imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule],
     templateUrl: './step1-market-info.component.html',
     styleUrls: ['./step1-market-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Step1MarketInfoComponent {
-    // On reçoit le sous-groupe depuis le parent
     readonly formGroup = input.required<FormGroup>();
 }

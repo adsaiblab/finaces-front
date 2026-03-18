@@ -12,6 +12,5 @@ import { MatIconModule } from '@angular/material/icon';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Step4ConfirmationComponent {
-    // Émetteur pour déclencher l'appel API dans le parent
     readonly submitCase = output<void>();
 }

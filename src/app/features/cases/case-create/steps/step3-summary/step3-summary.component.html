@@ -1,0 +1,18 @@
+<div class="summary-container">
+    <div class="summary-card">
+        <h3><mat-icon>gavel</mat-icon> Informations du Marché</h3>
+        <div class="data-grid">
+            <div class="data-item"><span class="label">Référence</span><span class="value">{{
+                    marketData.market_reference }}</span></div>
+            <div class="data-item"><span class="label">Montant</span><span class="value">{{ marketData.contract_value |
+                    number }} {{ marketData.contract_currency }}</span></div>
+        </div>
+    </div>
+    <div class="summary-card">
+        <h3><mat-icon>business</mat-icon> Soumissionnaire Principal</h3>
+        <div class="data-grid">
+            <div class="data-item"><span class="label">Entreprise</span><span class="value">{{ bidderData.bidder_name
+                    }}</span></div>
+        </div>
+    </div>
+</div>

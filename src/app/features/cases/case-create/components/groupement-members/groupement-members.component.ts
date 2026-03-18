@@ -27,6 +27,11 @@ export class GroupementMembersComponent {
     readonly membersArray = input.required<FormArray>();
     private readonly fb = inject(FormBuilder);
 
+    // CORRECTIF : Getter typé pour le template HTML
+    get memberGroups(): FormGroup[] {
+        return this.membersArray().controls as FormGroup[];
+    }
+
     addMember(): void {
         const memberGroup = this.fb.group({
             name: ['', Validators.required],

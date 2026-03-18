@@ -1,0 +1,39 @@
+<div class="members-container">
+    <h3 style="font-size: 1rem; font-weight: 600; color: var(--color-content-primary); margin: 0;">Membres du Groupement
+    </h3>
+    <p style="font-size: 0.875rem; color: var(--color-content-secondary); margin-top: 0;">Lister les entreprises
+        constituant le groupement.</p>
+
+    @for (member of memberGroups; track i; let i = $index) {
+    <div class="member-row" [formGroup]="member">
+        <mat-form-field appearance="outline" class="field-name">
+            <mat-label>Nom de l'entreprise</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Construction SA">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-role">
+            <mat-label>Rôle</mat-label>
+            <mat-select formControlName="role">
+                <mat-option value="LEADER">Leader</mat-option>
+                <mat-option value="MEMBER">Membre</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-percent">
+            <mat-label>Part (%)</mat-label>
+            <input matInput type="number" formControlName="participation_percentage" min="0" max="100">
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" (click)="removeMember(i)" matTooltip="Retirer ce membre">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+    }
+
+    <div style="margin-top: 0.5rem;">
+        <button mat-stroked-button color="primary" (click)="addMember()">
+            <mat-icon>add</mat-icon>
+            Ajouter un membre
+        </button>
+    </div>
+</div>

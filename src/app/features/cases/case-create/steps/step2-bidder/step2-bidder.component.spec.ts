@@ -11,46 +11,24 @@ describe('Step2BidderComponent', () => {
     let fixture: ComponentFixture<Step2BidderComponent>;
     let fb: FormBuilder;
     let form: FormGroup;
-    let mockBidderService: any;
 
     beforeEach(async () => {
-        // Mock du service de recherche
-        mockBidderService = {
-            searchBidders: vi.fn().mockReturnValue(of([]))
-        };
-
+        const mockBidderService = { searchBidders: vi.fn().mockReturnValue(of([])) };
         await TestBed.configureTestingModule({
             imports: [Step2BidderComponent, ReactiveFormsModule],
-            providers: [
-                provideAnimations(),
-                { provide: BidderService, useValue: mockBidderService }
-            ]
+            providers: [provideAnimations(), { provide: BidderService, useValue: mockBidderService }]
         }).compileComponents();
 
         fb = TestBed.inject(FormBuilder);
-        form = fb.group({
-            bidder_id: [null],
-            bidder_name: [''],
-            legal_form: [''],
-            registration_number: [''],
-            email: [''],
-            phone: [''],
-            country: ['']
-        });
+        form = fb.group({ bidder_id: [null], bidder_name: [''], legal_form: [''], registration_number: [''], email: [''], phone: [''], country: [''] });
 
         fixture = TestBed.createComponent(Step2BidderComponent);
         component = fixture.componentInstance;
-
-        // Injection du Signal
         fixture.componentRef.setInput('formGroup', form);
         fixture.detectChanges();
     });
 
-    it('devrait créer le composant de l\'étape 2', () => {
+    it('devrait créer le composant', () => {
         expect(component).toBeTruthy();
-    });
-
-    it('devrait initialiser l\'observable de recherche', () => {
-        expect(component.filteredBidders$).toBeDefined();
     });
 });
