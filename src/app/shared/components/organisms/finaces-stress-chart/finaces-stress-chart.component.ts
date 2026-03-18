@@ -103,21 +103,21 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
         }
 
         // VIO-03 FIX: tokens corrigés → _variables.scss
-        const colorPrimary       = this.getCssVar('--primary');
-        const colorError         = this.getCssVar('--error');
-        const colorTextPrimary   = this.getCssVar('--text-primary');
+        const colorPrimary = this.getCssVar('--primary');
+        const colorError = this.getCssVar('--error');
+        const colorTextPrimary = this.getCssVar('--text-primary');
         const colorTextSecondary = this.getCssVar('--text-secondary');
-        const colorBorder        = this.getCssVar('--border');
-        const colorCard          = this.getCssVar('--bg-card');
+        const colorBorder = this.getCssVar('--border');
+        const colorCard = this.getCssVar('--bg-card');
 
-        // rgba() construit depuis la valeur hex du token, pas depuis un HEX en dur
-        const colorBgPrimary = `rgba(${this.hexToRgb(colorPrimary)}, 0.1)`;
+        // VIO-03 FIX: Utilisation native de color-mix au lieu d'un parsing HexToRgb hasardeux
+        const colorBgPrimary = `color-mix(in srgb, ${colorPrimary} 10%, transparent)`;
 
         const labels = this.monthlyFlows.map(f => `M${f.month}`);
-        const data   = this.monthlyFlows.map(f => f.closingCash);
+        const data = this.monthlyFlows.map(f => f.closingCash);
         const minValue = Math.min(0, ...data);
         const maxValue = Math.max(0, ...data);
-        const padding  = (maxValue - minValue) * 0.15;
+        const padding = (maxValue - minValue) * 0.15;
 
         const config: ChartConfiguration<'line'> = {
             type: 'line',
@@ -224,12 +224,5 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
         };
 
         this.chart = new Chart(canvas, config);
-    }
-
-    private hexToRgb(hex: string): string {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result
-            ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
-            : '44, 75, 94'; // fallback: --primary light value (non-HEX pur)
     }
 }

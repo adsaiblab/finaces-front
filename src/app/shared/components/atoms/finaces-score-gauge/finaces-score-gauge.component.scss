@@ -4,38 +4,36 @@
     justify-content: center;
 
     .gauge-svg {
-
-        // Variations de couleurs liées au Design System
         &.gauge-success .progress-arc {
-            stroke: var(--color-success);
+            stroke: var(--success);
         }
 
         &.gauge-warning .progress-arc {
-            stroke: var(--color-warning);
+            stroke: var(--warning);
         }
 
         &.gauge-orange .progress-arc {
-            stroke: #F97316;
+            stroke: var(--mcc-high);
         }
 
         &.gauge-error .progress-arc {
-            stroke: var(--color-error);
+            stroke: var(--error);
         }
 
         &.gauge-ia .progress-arc {
-            stroke: var(--color-primary, #6366f1);
+            stroke: var(--primary);
         }
 
         .gauge-score-value {
             font-size: 26px;
             font-weight: 700;
-            fill: var(--color-content-primary);
+            fill: var(--text-primary);
         }
 
         .gauge-max-label {
             font-size: 12px;
             font-weight: 500;
-            fill: var(--color-content-tertiary);
+            fill: var(--text-secondary);
         }
     }
 }

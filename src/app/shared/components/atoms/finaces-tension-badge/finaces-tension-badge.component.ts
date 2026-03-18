@@ -1,22 +1,11 @@
-import {
-    Component,
-    Input,
-    ChangeDetectionStrategy,
-    OnChanges,
-    SimpleChanges,
-    ChangeDetectorRef
-} from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
 export type TensionLevel = 'NONE' | 'MILD' | 'MODERATE' | 'SEVERE';
 export type Direction = 'UP' | 'DOWN';
 
-interface TensionScheme {
-    icon: string;
-    labelFr: string;
-    colorClass: string;
-}
+interface TensionScheme { icon: string; labelFr: string; colorClass: string; }
 
 @Component({
     selector: 'finaces-tension-badge',
@@ -43,8 +32,6 @@ export class FinacesTensionBadgeComponent implements OnChanges {
         SEVERE: { icon: 'crisis_alert', labelFr: 'TENSION MAJEURE', colorClass: 'tension-severe' }
     };
 
-    constructor(private cdr: ChangeDetectorRef) { }
-
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['level'] || changes['direction'] || changes['delta']) {
             this.updateScheme();
@@ -53,14 +40,11 @@ export class FinacesTensionBadgeComponent implements OnChanges {
 
     private updateScheme(): void {
         this.tensionScheme = this.schemeMap[this.level] || this.schemeMap.NONE;
-
         if (this.delta !== undefined && this.delta !== null) {
             const sign = this.delta > 0 ? '+' : '';
             this.displayDelta = `${sign}${this.delta.toFixed(2)}`;
         }
-
         this.directionIcon = this.direction === 'UP' ? 'trending_up' : 'trending_down';
-        this.cdr.markForCheck();
     }
 
     get badgeClasses(): string {

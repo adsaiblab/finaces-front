@@ -3,9 +3,7 @@ import {
     Input,
     ChangeDetectionStrategy,
     OnChanges,
-    SimpleChanges,
-    computed,
-    signal
+    SimpleChanges
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,9 +34,9 @@ export class FinacesRiskBadgeComponent implements OnChanges {
 
     // Metadata sémantique uniquement (labels + icônes) — ZÉRO couleur
     private readonly metadataMap: Record<RiskClass, RiskMetadata> = {
-        LOW:      { label: 'Faible',   icon: 'check_circle' },
-        MODERATE: { label: 'Modéré',   icon: 'warning'      },
-        HIGH:     { label: 'Élevé',    icon: 'error'        },
+        LOW: { label: 'Faible', icon: 'check_circle' },
+        MODERATE: { label: 'Modéré', icon: 'warning' },
+        HIGH: { label: 'Élevé', icon: 'error' },
         CRITICAL: { label: 'Critique', icon: 'crisis_alert' }
     };
 

@@ -3,7 +3,7 @@ import { RecentCasesTableComponent } from './recent-cases-table.component';
 import { provideRouter } from '@angular/router';
 import { EvaluationCaseDetailOut, CaseType, CaseStatus } from '../../../../core/models/case.model';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FinacesRiskBadgeComponent } from '../../../../shared/components/finaces-risk-badge/finaces-risk-badge.component';
+import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 
 describe('RecentCasesTableComponent', () => {
     let component: RecentCasesTableComponent;

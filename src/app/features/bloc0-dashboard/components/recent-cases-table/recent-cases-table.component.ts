@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { EvaluationCaseDetailOut } from '../../../../core/models/case.model';
-import { FinacesRiskBadgeComponent } from '../../../../shared/components/finaces-risk-badge/finaces-risk-badge.component';
+import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 
 @Component({
     selector: 'app-recent-cases-table',

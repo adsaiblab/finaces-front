@@ -57,41 +57,41 @@
         }
     }
 
-    // --- Design System Colors ---
+    // --- Design System Colors (ZÉRO COULEUR EN DUR) ---
     &.tension-none {
-        background-color: var(--color-success);
-        color: #fff;
+        background-color: var(--success);
+        color: var(--text-inverse);
     }
 
     &.tension-mild {
-        background-color: var(--color-info);
-        color: #fff;
+        background-color: var(--info);
+        color: var(--text-inverse);
     }
 
     &.tension-moderate {
-        background-color: var(--color-warning);
-        color: #fff;
+        background-color: var(--warning);
+        color: var(--text-inverse);
     }
 
     &.tension-severe {
-        background-color: var(--color-error);
-        color: #fff;
-        border-color: rgba(0, 0, 0, 0.2);
-        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        background-color: var(--error);
+        color: var(--text-inverse);
+        border-color: color-mix(in srgb, var(--error) 20%, transparent);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--error) 20%, transparent);
         animation: pulse-danger 2s infinite;
     }
 }
 
 @keyframes pulse-danger {
     0% {
-        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--error) 40%, transparent);
     }
 
     70% {
-        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+        box-shadow: 0 0 0 4px transparent;
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        box-shadow: 0 0 0 0 transparent;
     }
 }

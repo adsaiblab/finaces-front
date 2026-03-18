@@ -16,8 +16,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FinacesRiskBadgeComponent } from '../finaces-risk-badge/finaces-risk-badge.component';
-import { RiskClass, Rail } from '../finaces-risk-badge/finaces-risk-badge.component';
+
+// CORRECTION DES CHEMINS RELATIFS : On pointe vers le dossier "atoms"
+import { FinacesRiskBadgeComponent } from '../../atoms/finaces-risk-badge/finaces-risk-badge.component';
+import { RiskClass, Rail } from '../../atoms/finaces-risk-badge/finaces-risk-badge.component';
 
 export interface PillarIndicator {
     name: string;
@@ -75,17 +77,17 @@ export class FinacesPillarRowComponent implements OnInit, OnChanges {
     @Input() isExpanded: boolean = false;   // Lecture seule — muté uniquement par le parent
     @Input() readonly: boolean = false;
 
-    @Output() toggleExpand  = new EventEmitter<string>();
+    @Output() toggleExpand = new EventEmitter<string>();
     @Output() commentChange = new EventEmitter<string>();
 
     displayedColumns: string[] = ['indicator', 'value', 'score', 'weight', 'contribution'];
 
     private readonly pillarMetadataMap: Record<string, PillarMetadata> = {
-        LIQUIDITE:   { icon: 'water_drop',   colorClass: 'text-info',    description: 'Capacité à faire face aux dettes à court terme' },
-        SOLVABILITE: { icon: 'shield',        colorClass: 'text-success', description: 'Structure de financement et endettement'         },
-        RENTABILITE: { icon: 'trending_up',   colorClass: 'text-warning', description: 'Génération de profits et marges'                 },
-        CAPACITE:    { icon: 'bolt',          colorClass: 'text-primary', description: 'Capacité de remboursement du contrat'            },
-        QUALITE:     { icon: 'star',          colorClass: 'text-error',   description: 'Qualité des données et cohérence'               }
+        LIQUIDITE: { icon: 'water_drop', colorClass: 'text-info', description: 'Capacité à faire face aux dettes à court terme' },
+        SOLVABILITE: { icon: 'shield', colorClass: 'text-success', description: 'Structure de financement et endettement' },
+        RENTABILITE: { icon: 'trending_up', colorClass: 'text-warning', description: 'Génération de profits et marges' },
+        CAPACITE: { icon: 'bolt', colorClass: 'text-primary', description: 'Capacité de remboursement du contrat' },
+        QUALITE: { icon: 'star', colorClass: 'text-error', description: 'Qualité des données et cohérence' }
     };
 
     metadata: PillarMetadata | null = null;
@@ -128,9 +130,9 @@ export class FinacesPillarRowComponent implements OnInit, OnChanges {
     getProgressColorClass(): string {
         if (!this.pillar) return 'bg-warning';
         const riskColorMap: Record<RiskClass, string> = {
-            LOW:      'bg-success',
+            LOW: 'bg-success',
             MODERATE: 'bg-warning',
-            HIGH:     'bg-mcc-high',
+            HIGH: 'bg-mcc-high',
             CRITICAL: 'bg-error'
         };
         return riskColorMap[this.pillar.riskClass] || 'bg-warning';
