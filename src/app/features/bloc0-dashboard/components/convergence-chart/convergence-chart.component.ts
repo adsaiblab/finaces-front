@@ -47,11 +47,11 @@ export class ConvergenceChartComponent implements OnDestroy {
             }
         };
 
-        const mccColor = getCssVar('--color-success', '#10B981');
-        const iaColor = getCssVar('--color-info', '#3B82F6');
-        const alertColor = getCssVar('--color-error', '#EF4444');
-        const textColor = getCssVar('--color-content-secondary', '#6B7280');
-        const gridColor = getCssVar('--color-border-default', '#E5E7EB');
+        const mccColor   = getCssVar('--color-success', '#2B8A5A');   // var(--success) light
+        const iaColor    = getCssVar('--color-info',    '#4A7A9E');   // var(--info) light
+        const alertColor = getCssVar('--color-error',   '#BC3B3B');   // var(--error) light
+        const textColor  = getCssVar('--color-content-secondary', '#5C6773');  // var(--text-secondary) light
+        const gridColor  = getCssVar('--color-border-default',    '#E5E0D8');  // var(--border) light
 
         const formattedDates = data.dates.map(dateStr => {
             const d = new Date(dateStr);

@@ -53,7 +53,7 @@
     justify-content: center;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--color-content-inverse);
     flex-shrink: 0;
 }
 
@@ -65,4 +65,69 @@
     border: 1px solid var(--color-border-default);
     background-color: var(--color-surface-default);
     color: var(--color-content-secondary);
+}
+
+// ─ Cellule référence ──────────────────────────────────────
+.ref-link {
+    font-family: monospace;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// ─ Cellule soumissionnaire ───────────────────────────────
+.bidder-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.bidder-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.bidder-name {
+    color: var(--color-content-primary);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.bidder-country {
+    font-size: 0.75rem;
+    color: var(--color-content-secondary);
+}
+
+// ─ Colonne actions ───────────────────────────────────────
+.col-actions {
+    text-align: right;
+}
+
+// ─ État vide ─────────────────────────────────────────────
+.empty-state {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-content-secondary);
+}
+
+.empty-icon {
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+    width: 48px;
+    height: 48px;
+    font-size: 48px;
+}
+
+.empty-text {
+    font-size: 1.125rem;
+    margin: 0;
 }

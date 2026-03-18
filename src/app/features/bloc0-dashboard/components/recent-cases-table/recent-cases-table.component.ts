@@ -29,16 +29,19 @@ export class RecentCasesTableComponent {
     readonly cases = input.required<EvaluationCaseDetailOut[]>();
     readonly displayedColumns: string[] = ['reference', 'bidder', 'amount', 'status', 'mcc_class', 'actions'];
 
-    // Génère une couleur déterministe basée sur le nom pour l'avatar.
-    // Exception consentie sur les couleurs en dur car c'est un utilitaire pseudo-aléatoire pour les avatars.
-    getAvatarColor(name: string | undefined): string {
-        if (!name) return '#6B7280'; // fallback var(--color-content-secondary)
-        const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+    // Génère une teinte HSL déterministe (hue uniquement, sans couleur en dur).
+    // La luminosité et saturation sont fixées pour rester cohérentes avec le design system.
+    getAvatarStyle(name: string | undefined): { background: string } {
+        if (!name) {
+            return { background: 'var(--color-content-secondary)' };
+        }
         let hash = 0;
         for (let i = 0; i < name.length; i++) {
             hash = name.charCodeAt(i) + ((hash << 5) - hash);
         }
-        return colors[Math.abs(hash) % colors.length];
+        // Hue: 0–359, Saturation: 45% (sobre), Lightness: 42% (lisible sur fond blanc Manifeste)
+        const hue = Math.abs(hash) % 360;
+        return { background: `hsl(${hue}, 45%, 42%)` };
     }
 
     getInitials(name: string | undefined): string {

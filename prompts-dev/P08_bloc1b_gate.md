@@ -17,6 +17,7 @@ Le **Gate Documentaire** est le contrôle d'accès préalable à toute évaluati
 **Règle MCC-R6** : Gate must pass (is_passed=true) avant accès financials. C'est un **point de non-retour** dans le workflow.
 
 Le gate affiche 3 colonnes:
+
 - **Col 1 (Checklist)** : liste des documents requis avec progression
 - **Col 2 (Upload & Documents)** : zone drag-drop + tableau documents existants
 - **Col 3 (Décision Gate)** : résultat évaluation + verrous
@@ -28,6 +29,7 @@ Le gate affiche 3 colonnes:
 **MCC-R6** : Gate documentaire obligatoire et bloquante. Aucune donnée financière ne peut être saisie tant que gate n'est pas passé (is_passed=true).
 
 **Documents Requis** (par exercice fiscal):
+
 - **Bilan** (Actif/Passif)
 - **CPC** (Compte de Résultat / P&L)
 - **TFT** (Tableau de Flux de Trésorerie)
@@ -37,6 +39,7 @@ Le gate affiche 3 colonnes:
 Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 
 **Document Metadata** (à saisir lors upload):
+
 - `document_type`: enum {BILAN, CPC, TFT, ATTESTATION_FISCALE, STATUTS, OTHER}
 - `fiscal_year`: année (ex: 2023)
 - `reliability_level`: enum {AUDITED, REVIEWED, COMPILED, UNAUDITED}
@@ -48,12 +51,14 @@ Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 - `notes`: string optionnel (commentaires upload)
 
 **Flags & Red Flags** :
+
 - missing_required_docs: liste documents manquants par exercice
 - file_integrity_issues: problèmes détectés (fichier corrompu, format invalide, etc.)
 - date_anomalies: dates de signature invraisemblables
 - conflicting_sources: données conflictuelles entre docs (ex: total bilan différent en CPC)
 
 **GateEvaluation Result** :
+
 ```
 {
   "is_passed": bool,
@@ -69,6 +74,7 @@ Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 ```
 
 **Status Transition** :
+
 - PENDING_GATE (initial) → POST gate/evaluate
 - Si is_passed=true → PATCH status FINANCIAL_INPUT → déverrouille accès financials
 - Si is_passed=false → reste PENDING_GATE + affiche reasons bloquantes
@@ -77,7 +83,8 @@ Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 
 ## FICHIERS À CRÉER / MODIFIER
 
-### Création :
+### Création
+
 1. `src/app/pages/gate/gate.component.ts`
 2. `src/app/pages/gate/gate.component.html`
 3. `src/app/pages/gate/gate.component.scss`
@@ -93,7 +100,8 @@ Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 13. `src/app/pages/gate/components/document-upload-dialog.component.ts`
 14. `src/app/pages/gate/components/document-upload-dialog.component.html`
 
-### Modification :
+### Modification
+
 1. `src/app/app.routes.ts` : ajouter route `/cases/:caseId/gate`
 2. `src/app/services/case.service.ts` : ajouter méthodes gate (voir binding API)
 3. `src/app/services/document.service.ts` : créer (uploadDocument, getDocuments, deleteDocument)
@@ -104,6 +112,7 @@ Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 ## SPÉCIFICATION TECHNIQUE COMPLÈTE
 
 ### Route et Navigation
+
 - **Route** : `/cases/:caseId/gate`
 - **Breadcrumb** : "Dossiers > {ref} > Gate Documentaire"
 - **Page Title** : "Gate Documentaire — {bidder_name}"
@@ -131,6 +140,7 @@ Minimum 3 exercices fiscaux requis (n, n-1, n-2).
 ```
 
 **Responsive** :
+
 - Desktop (>1200px): 3 colonnes côte à côte
 - Tablet (768-1200px): Checklist + Upload stacked, Decision right
 - Mobile (<768px): Stacked vertical
@@ -173,13 +183,15 @@ Composant `checklist-column.component`:
 ```
 
 **Logique** :
+
 - Pour chaque exercice: afficher 5 lignes (4 requis + 1 optionnel)
 - Coché si document uploadé + accepté pour cet exercice+type
 - Progress bar per exercice = (requis cochés / 4) * 100
-- Progress bar total = (requis cochés total / (4*3 exercices)) * 100
+- Progress bar total = (requis cochés total / (4*3 exercices))* 100
 - Couleur progress: vert si 100%, orange si 50-99%, rouge si <50%
 
 **Requêtes API** :
+
 - GET /api/v1/cases/{id}/documents → liste docs existants
 - Mettre à jour checklist en temps réel (observable, polling 2s ou WebSocket)
 
@@ -205,6 +217,7 @@ Composant `documents-column.component`:
 ```
 
 **Fonctionnalité** :
+
 - Drag-and-drop zone (CDK dropZone)
 - Click ouvre file picker (multi-select)
 - Accepter: .pdf, .xlsx, .xls, .xlsm, .zip
@@ -248,6 +261,7 @@ Composant `documents-column.component`:
 ```
 
 **Validation Modal** :
+
 - Type document requis
 - Exercice fiscal requis
 - Fiabilité requise
@@ -271,6 +285,7 @@ Composant `documents-column.component`:
 ```
 
 **Colonnes** :
+
 - Document: type (Bilan, CPC, TFT, Attestation, Statuts)
 - Exercice: année (2023, 2022, 2021)
 - Taille: format human-readable (2.3 MB)
@@ -284,11 +299,13 @@ Composant `documents-column.component`:
   - ⌫ Bouton Supprimer (DELETE)
 
 **Table Material** :
+
 - MatTableDataSource avec paginator (5 rows par page)
 - Triable par: Document, Exercice, Statut
 - Hover effects
 
 **Menu Contextuel [...]**:
+
 - [Voir Détails]: affiche modal READ-ONLY avec:
   - Métadonnées: type, exercice, fiabilité, auditeur, notes
   - Intégrité: hash fichier, date upload, uploaded by
@@ -297,6 +314,7 @@ Composant `documents-column.component`:
 - [Télécharger]: GET /api/v1/cases/{id}/documents/{doc_id} → download
 
 **Suppression** :
+
 - Bouton ⌫: confirmation modale "Supprimer ce document?"
 - Si OK: DELETE /api/v1/cases/{id}/documents/{doc_id}
 - Checklist se met à jour (observable)
@@ -324,6 +342,7 @@ Composant `decision-column.component`:
 ```
 
 **Bouton [Lancer Évaluation Gate]**:
+
 - POST /api/v1/cases/{id}/gate/evaluate
 - Spinner loading pendant traitement (2-5s)
 - Affiche résultat ci-dessous une fois reçu
@@ -384,6 +403,7 @@ Composant `decision-column.component`:
 **Buttons POST VERDICT** :
 
 Si PASSÉ:
+
 - `[Sceller le Gate]` (mat-raised-button, color="primary")
   - PATCH /api/v1/cases/{id} status=FINANCIAL_INPUT
   - Success: Toast vert "Gate scellé. Financials déverrouillés."
@@ -392,6 +412,7 @@ Si PASSÉ:
   - Navigue `/cases/{id}/financials`
 
 Si BLOQUÉ:
+
 - `[Corriger Documents]` (mat-raised-button, color="warn")
   - Scroll to Col 2 (documents)
   - Focus zone upload
@@ -511,6 +532,7 @@ changeDetection: ChangeDetectionStrategy.OnPush
 ### 1. POST /api/v1/cases/{id}/documents (Upload)
 
 **Request: FormData**
+
 ```
 Content-Type: multipart/form-data
 
@@ -523,6 +545,7 @@ notes: "Audit annuel 2023"
 ```
 
 **Response: DocumentOut**
+
 ```json
 {
   "id": "uuid-doc",
@@ -549,6 +572,7 @@ notes: "Audit annuel 2023"
 ### 2. GET /api/v1/cases/{id}/documents
 
 **Response: DocumentOut[]**
+
 ```json
 {
   "documents": [
@@ -572,6 +596,7 @@ notes: "Audit annuel 2023"
 ### 3. GET /api/v1/cases/{id}/documents/{doc_id}/integrity
 
 **Response**:
+
 ```json
 {
   "document_id": "uuid-doc",
@@ -590,6 +615,7 @@ notes: "Audit annuel 2023"
 ### 5. POST /api/v1/cases/{id}/gate/evaluate
 
 **Response: GateDecisionSchema**
+
 ```json
 {
   "id": "uuid-gate-eval",
@@ -624,6 +650,7 @@ notes: "Audit annuel 2023"
 ### 6. PATCH /api/v1/cases/{id} (Sceller Gate)
 
 **Request**:
+
 ```json
 {
   "status": "FINANCIAL_INPUT"

@@ -47,6 +47,32 @@
     --ia-moderate: #605B91;
     --ia-high:     #7C5382;
     --ia-critical: #934674;
+
+    // ══════════════════════════════════════════════════════════
+    // ALIAS MANIFESTE — --color-* (convention obligatoire)
+    // Ces alias font le pont entre les tokens de base ci-dessus
+    // et la convention --color-* imposée par le Manifeste §3.
+    // Sans ces alias, AUCUN composant ne s'affiche.
+    // ══════════════════════════════════════════════════════════
+    --color-surface-default:   var(--bg-default);
+    --color-surface-card:      var(--bg-card);
+    --color-surface-sidebar:   var(--bg-sidebar);
+
+    --color-content-primary:   var(--text-primary);
+    --color-content-secondary: var(--text-secondary);
+    --color-content-disabled:  var(--text-disabled);
+    --color-content-inverse:   var(--text-inverse);
+
+    --color-border-default:    var(--border);
+    --color-border-strong:     var(--border-strong);
+
+    --color-primary:           var(--primary);
+    --color-primary-light:     var(--primary-light);
+
+    --color-success:           var(--success);
+    --color-warning:           var(--warning);
+    --color-error:             var(--error);
+    --color-info:              var(--info);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -97,4 +123,28 @@
     --ia-moderate: #8078B8;
     --ia-high:     #9F6DAA;
     --ia-critical: #BB5A90;
+
+    // ══════════════════════════════════════════════════════════
+    // ALIAS MANIFESTE — --color-* (convention obligatoire)
+    // Hérite automatiquement des valeurs dark ci-dessus.
+    // ══════════════════════════════════════════════════════════
+    --color-surface-default:   var(--bg-default);
+    --color-surface-card:      var(--bg-card);
+    --color-surface-sidebar:   var(--bg-sidebar);
+
+    --color-content-primary:   var(--text-primary);
+    --color-content-secondary: var(--text-secondary);
+    --color-content-disabled:  var(--text-disabled);
+    --color-content-inverse:   var(--text-inverse);
+
+    --color-border-default:    var(--border);
+    --color-border-strong:     var(--border-strong);
+
+    --color-primary:           var(--primary);
+    --color-primary-light:     var(--primary-light);
+
+    --color-success:           var(--success);
+    --color-warning:           var(--warning);
+    --color-error:             var(--error);
+    --color-info:              var(--info);
 }

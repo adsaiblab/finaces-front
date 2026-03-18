@@ -30,16 +30,16 @@
     margin-right: 1rem;
 
     &.mcc-bg {
-        background-color: rgba(16, 185, 129, 0.1);
+        background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
     }
 
-    /* Basé sur var(--color-primary) avec opacité */
+    /* Basé sur var(--color-warning) avec opacité — Dark Mode natif */
     &.warning-bg {
-        background-color: rgba(245, 158, 11, 0.1);
+        background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
     }
 
     &.ia-bg {
-        background-color: rgba(59, 130, 246, 0.1);
+        background-color: color-mix(in srgb, var(--color-info) 10%, transparent);
     }
 }
 

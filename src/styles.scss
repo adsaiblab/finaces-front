@@ -72,7 +72,7 @@ body {
     --mdc-checkbox-selected-icon-color: var(--color-primary);
     --mdc-checkbox-selected-hover-icon-color: var(--color-primary);
     --mdc-checkbox-selected-focus-icon-color: var(--color-primary);
-    --mdc-checkbox-selected-checkmark-color: #ffffff;
+    --mdc-checkbox-selected-checkmark-color: var(--color-content-inverse);
 }
 
 /* 3. Correction du Stepper (MDC) */
@@ -81,10 +81,10 @@ body {
     --mat-stepper-header-icon-foreground-color: var(--color-content-secondary);
 
     --mat-stepper-header-selected-state-icon-background-color: var(--color-primary);
-    --mat-stepper-header-selected-state-icon-foreground-color: #ffffff;
+    --mat-stepper-header-selected-state-icon-foreground-color: var(--color-content-inverse);
 
     --mat-stepper-header-edit-state-icon-background-color: var(--color-primary);
-    --mat-stepper-header-edit-state-icon-foreground-color: #ffffff;
+    --mat-stepper-header-edit-state-icon-foreground-color: var(--color-content-inverse);
 
     --mat-stepper-header-label-text-color: var(--color-content-secondary);
     --mat-stepper-header-selected-state-label-text-color: var(--color-content-primary);

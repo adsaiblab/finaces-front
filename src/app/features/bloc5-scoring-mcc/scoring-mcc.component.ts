@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './scoring-mcc.component.html',
-  styleUrls: ['./scoring-mcc.component.scss']
+  styleUrls: ['./scoring-mcc.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScoringMccComponent {}
