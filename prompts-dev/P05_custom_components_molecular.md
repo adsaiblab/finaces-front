@@ -13,6 +13,7 @@ Les composants moléculaires dépendent des atomiques (finaces-risk-badge inclus
 et ajoutent des dépendances externes (D3.js ou Chart.js pour les graphiques).
 
 Les 3 composants :
+
 1. **finaces-pillar-row** : Ligne d'un pilier avec accordion expansion, tableau d'indicateurs,
    commentaire analyst, et intégration de finaces-risk-badge.
 2. **finaces-shap-chart** : Graphique de barres bidirectionnelles (SHAP values) pour l'analyse
@@ -24,7 +25,9 @@ Les 3 composants :
 ## RÈGLES MÉTIER APPLICABLES
 
 ### Piliers de scoring (5)
+
 Les piliers sont des dimensions d'évaluation financière :
+
 1. **Liquidité** : icon=water_drop, couleur=#3B82F6
 2. **Solvabilité** : icon=shield, couleur=#10B981
 3. **Rentabilité** : icon=trending_up, couleur=#F59E0B
@@ -32,19 +35,25 @@ Les piliers sont des dimensions d'évaluation financière :
 5. **Qualité** : icon=star, couleur=#EC4899
 
 ### Indicateurs (Tableau dans expansion)
+
 Structure type :
+
 | Indicateur | Valeur | Note /5 | Poids | Contribution |
 |------------|--------|---------|--------|--------------|
 | Current Ratio | 1.2 | 4.0 | 25% | +1.00 |
 | DSO Days | 45 | 3.5 | 15% | +0.53 |
 
 ### Tension et Risque
+
 Affichage combiné :
+
 - Badge de risque (finaces-risk-badge) à droite
 - Badge de tension (si dynamic_analysis présent)
 
 ### SHAP Features
+
 Structure de données :
+
 ```typescript
 interface ShapFeature {
   name: string;                           // "Current Ratio"
@@ -57,11 +66,14 @@ interface ShapFeature {
 ```
 
 Interprétation :
+
 - **direction=UP, shapValue>0** : Facteur qui augmente le risque (barre rouge à droite)
 - **direction=DOWN, shapValue>0** : Facteur qui réduit le risque (barre verte à gauche)
 
 ### Stress Test Results
+
 Structure :
+
 ```typescript
 interface StressResult {
   scenario: string;                       // "Stress 30 jours"
@@ -100,7 +112,9 @@ src/app/shared/
 ```
 
 ### Dépendances externes
+
 Ajouter à `package.json` (si pas déjà présent de P1) :
+
 ```json
 {
   "dependencies": {
@@ -114,7 +128,9 @@ Ajouter à `package.json` (si pas déjà présent de P1) :
 ```
 
 ### Modifications à PROMPT 4 (Index)
+
 Ajouter à `shared/components/index.ts` :
+
 ```typescript
 export * from './finaces-pillar-row/finaces-pillar-row.component';
 export * from './finaces-shap-chart/finaces-shap-chart.component';
@@ -128,6 +144,7 @@ export * from './finaces-stress-chart/finaces-stress-chart.component';
 ### 1. FinacesPillarRowComponent
 
 **Objectif** : Afficher un pilier de scoring avec :
+
 - Ligne statique : icône + nom + score sur /5 + barre de progression + badge de risque
 - Expansion : tableau d'indicateurs, liste de signaux, liste de tendances, textarea pour commentaire
 - Édition : texte du commentaire modifiable si `readonly=false`
@@ -1590,6 +1607,7 @@ describe('FinacesStressChartComponent', () => {
 ## BINDING API
 
 ### FinacesPillarRowComponent
+
 ```typescript
 // Usage
 <finaces-pillar-row
@@ -1602,6 +1620,7 @@ describe('FinacesStressChartComponent', () => {
 ```
 
 ### FinacesShapChartComponent
+
 ```typescript
 // Usage
 <finaces-shap-chart
@@ -1614,6 +1633,7 @@ describe('FinacesStressChartComponent', () => {
 ```
 
 ### FinacesStressChartComponent
+
 ```typescript
 // Usage
 <finaces-stress-chart
@@ -1630,6 +1650,7 @@ describe('FinacesStressChartComponent', () => {
 ## CRITÈRES DE VALIDATION
 
 ### ✓ Validation visuelle (QA manual)
+
 - [ ] finaces-pillar-row affiche icône + nom + score + barre + badge de risque
 - [ ] finaces-pillar-row expansion affiche tableau d'indicateurs avec 5 colonnes
 - [ ] finaces-pillar-row expansion affiche signaux et tendances
@@ -1642,6 +1663,7 @@ describe('FinacesStressChartComponent', () => {
 - [ ] finaces-stress-chart affiche métadonnées de stress (60J, 90J)
 
 ### ✓ Validation technique
+
 - [ ] Tous les composants exportés depuis `shared/components/index.ts`
 - [ ] Pas d'erreurs de compilation `ng build`
 - [ ] Tous les tests unitaires passent `ng test`
@@ -1650,12 +1672,14 @@ describe('FinacesStressChartComponent', () => {
 - [ ] OnPush activé sur tous les composants
 
 ### ✓ Validation de performance
+
 - [ ] D3 rendering < 200ms
 - [ ] Chart.js rendering < 150ms
 - [ ] Pas de jank lors du scroll de table
 - [ ] Animations lisses (60 FPS)
 
 ### ✓ Validation métier
+
 - [ ] Tous les piliers (5) affichent correctement leur icône et couleur
 - [ ] Tenant compte des deux rails (MCC/IA) partout où applicable
 - [ ] SHAP chart affiche direction UP/DOWN correctement
@@ -1696,76 +1720,85 @@ src/app/shared/
 ✓ **Disposer de 7 composants custom réutilisables et testés visuellement**
 
 ✓ **finaces-risk-badge**
-  - Affiche correctement les 4 niveaux (LOW/MODERATE/HIGH/CRITICAL)
-  - Supporte les 2 rails (MCC solide, IA outlined)
-  - Supporte les 2 tailles (sm=20px, md=24px)
-  - Affiche icône optionnellement
-  - Tous les tests unitaires passent
+
+- Affiche correctement les 4 niveaux (LOW/MODERATE/HIGH/CRITICAL)
+- Supporte les 2 rails (MCC solide, IA outlined)
+- Supporte les 2 tailles (sm=20px, md=24px)
+- Affiche icône optionnellement
+- Tous les tests unitaires passent
 
 ✓ **finaces-tension-badge**
-  - Affiche les 4 niveaux de tension (NONE/MILD/MODERATE/SEVERE)
-  - Affiche direction (UP/DOWN) avec icônes
-  - Affiche delta formaté avec +/- sign
-  - Tous les tests unitaires passent
+
+- Affiche les 4 niveaux de tension (NONE/MILD/MODERATE/SEVERE)
+- Affiche direction (UP/DOWN) avec icônes
+- Affiche delta formaté avec +/- sign
+- Tous les tests unitaires passent
 
 ✓ **finaces-score-gauge**
-  - Anime l'arc SVG 270° (−135° à +135°)
-  - Animation fluide 0→score en 800ms via requestAnimationFrame
-  - Affiche score central + max label
-  - Émet événement rendered à la fin
-  - Tous les tests unitaires passent
+
+- Anime l'arc SVG 270° (−135° à +135°)
+- Animation fluide 0→score en 800ms via requestAnimationFrame
+- Affiche score central + max label
+- Émet événement rendered à la fin
+- Tous les tests unitaires passent
 
 ✓ **finaces-ia-disclaimer**
-  - S'affiche en 3 variantes (banner, inline, chip)
-  - Message d'avertissement correct avec texte IA
-  - Optionnellement dismissible avec événement
-  - Supporte mode pilote
-  - Tous les tests unitaires passent
+
+- S'affiche en 3 variantes (banner, inline, chip)
+- Message d'avertissement correct avec texte IA
+- Optionnellement dismissible avec événement
+- Supporte mode pilote
+- Tous les tests unitaires passent
 
 ✓ **finaces-pillar-row**
-  - Affiche ligne static : icône + nom + score/5 + barre + badge
-  - Expansion avec mat-expansion-panel
-  - Tableau d'indicateurs (5 colonnes) via mat-table
-  - Liste de signaux
-  - Liste de tendances avec direction
-  - Textarea de commentaire (modifiable si !readonly)
-  - Intégration correcte de finaces-risk-badge
-  - Tous les tests unitaires passent
+
+- Affiche ligne static : icône + nom + score/5 + barre + badge
+- Expansion avec mat-expansion-panel
+- Tableau d'indicateurs (5 colonnes) via mat-table
+- Liste de signaux
+- Liste de tendances avec direction
+- Textarea de commentaire (modifiable si !readonly)
+- Intégration correcte de finaces-risk-badge
+- Tous les tests unitaires passent
 
 ✓ **finaces-shap-chart**
-  - Affiche barres bidirectionnelles (D3.js)
-  - Positive (rouge, risque ↑) à droite
-  - Négative (vert, risque ↓) à gauche
-  - Axe central à zéro visible
-  - Affiche SHAP values et raw values
-  - Trie par valeur absolue SHAP
-  - Responsive et interactif (hover, click)
-  - Tous les tests unitaires passent
+
+- Affiche barres bidirectionnelles (D3.js)
+- Positive (rouge, risque ↑) à droite
+- Négative (vert, risque ↓) à gauche
+- Axe central à zéro visible
+- Affiche SHAP values et raw values
+- Trie par valeur absolue SHAP
+- Responsive et interactif (hover, click)
+- Tous les tests unitaires passent
 
 ✓ **finaces-stress-chart**
-  - Affiche line chart (Chart.js) avec projection mensuelle
-  - Affiche seuil critique (ligne rouge pointillée à zéro)
-  - Marque le mois critique avec rouge
-  - Affiche métadonnées (stress 60J, 90J)
-  - Légende et tooltip informatifs
-  - Y-axis avec formatage devise locale
-  - X-axis avec labels mois (M1, M2, ..., M24)
-  - Tous les tests unitaires passent
+
+- Affiche line chart (Chart.js) avec projection mensuelle
+- Affiche seuil critique (ligne rouge pointillée à zéro)
+- Marque le mois critique avec rouge
+- Affiche métadonnées (stress 60J, 90J)
+- Légende et tooltip informatifs
+- Y-axis avec formatage devise locale
+- X-axis avec labels mois (M1, M2, ..., M24)
+- Tous les tests unitaires passent
 
 ✓ **Architecture correcte**
-  - Tous les composants standalone
-  - OnPush change detection activé partout
-  - Barrel exports via shared/components/index.ts
-  - Pas d'erreurs de compilation
-  - ng lint passe sans avertissements
-  - Aucun memory leak détecté
+
+- Tous les composants standalone
+- OnPush change detection activé partout
+- Barrel exports via shared/components/index.ts
+- Pas d'erreurs de compilation
+- ng lint passe sans avertissements
+- Aucun memory leak détecté
 
 ✓ **Documentation complète**
-  - Chaque composant a une spécification TypeScript complète
-  - HTML et SCSS fournis entièrement
-  - Tests unitaires écrits et validés
-  - API d'inputs/outputs documentée
-  - Critères de validation définis
+
+- Chaque composant a une spécification TypeScript complète
+- HTML et SCSS fournis entièrement
+- Tests unitaires écrits et validés
+- API d'inputs/outputs documentée
+- Critères de validation définis
 
 ───────────────────────────────────────────────────────────────
 
