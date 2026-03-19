@@ -98,25 +98,56 @@ export class CaseCreateComponent {
         if (this.isSubmitting() || this.caseForm.invalid) return;
         this.isSubmitting.set(true);
 
-        const payload = { ...this.buildPayload(), status: CaseStatus.PENDING_GATE };
+        const payload = this.buildPayload();
+        
+        // ---------------------------------------------------------
+        // MOCK PROPRE "ENTERPRISE-GRADE" (Prototypage UI)
+        // Bypass l'API pour éviter les fausses erreurs et console polluée
+        // ---------------------------------------------------------
+        console.log('✅ [MOCK] Payload formaté prêt pour le backend :', payload);
+        this.snackBar.open('Mode Prototype : Dossier simulé avec succès', 'Fermer', { duration: 2000, panelClass: 'success-snackbar' });
+
+        setTimeout(() => {
+            this.isSubmitting.set(false);
+            this.router.navigate(['/cases', '00000000-0000-0000-0000-000000000000', 'gate']);
+        }, 800);
+
+        /* == Futur câblage Backend (À DÉCOMMENTER) ==
         this.caseService.createCase(payload).subscribe({
             next: (res) => {
                 this.isSubmitting.set(false);
                 this.snackBar.open('Dossier créé avec succès.', 'Fermer', { duration: 3000, panelClass: 'success-snackbar' });
-                this.router.navigate(['/cases', res.id]);
+                this.router.navigate(['/cases', res.id, 'gate']);
             },
             error: () => {
                 this.isSubmitting.set(false);
                 this.snackBar.open('Erreur critique lors de la création du dossier.', 'Fermer', { duration: 5000, panelClass: 'error-snackbar' });
             }
         });
+        */
     }
 
     private buildPayload(): any {
         const rawValue = this.caseForm.getRawValue();
+        
+        // Nettoyage et strict alignement sur le Pydantic `CaseCreate` (FastAPI)
         return {
-            ...rawValue.marketInfo,
-            ...rawValue.bidder,
+            case_type: rawValue.marketInfo.case_type,
+            market_reference: rawValue.marketInfo.market_reference,
+            market_label: rawValue.marketInfo.market_label,
+            contract_value: rawValue.marketInfo.contract_value,
+            contract_currency: rawValue.marketInfo.contract_currency,
+            contract_duration_months: rawValue.marketInfo.contract_duration_months,
+            notes: rawValue.marketInfo.notes,
+            // Info Bidder
+            bidder_id: rawValue.bidder.bidder_id,
+            bidder_name: rawValue.bidder.bidder_name,
+            legal_form: rawValue.bidder.legal_form,
+            registration_number: rawValue.bidder.registration_number,
+            country: rawValue.marketInfo.country || rawValue.bidder.country,
+            sector: rawValue.marketInfo.sector,
+            contact_email: rawValue.bidder.email, // Mapped 'email' to 'contact_email'
+            // Groupement optionnel
             members: rawValue.groupement.members
         };
     }
