@@ -1,0 +1,68 @@
+<form [formGroup]="pnlForm" class="max-w-4xl mx-auto flex flex-col gap-6 animate-fade-in">
+
+    <div class="financial-block p-6">
+        <div class="flex items-center gap-2 mb-6 border-b border-[color:var(--color-border-default)] pb-4">
+            <mat-icon class="text-[color:var(--color-primary)]">trending_up</mat-icon>
+            <h3 class="text-xl font-semibold text-[color:var(--color-content-primary)]">Compte de Résultat (P&L)</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+            <mat-form-field class="w-full">
+                <mat-label>Chiffre d'Affaires (Revenus)</mat-label>
+                <input matInput type="number" formControlName="revenue">
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Coût des Ventes (COGS)</mat-label>
+                <input matInput type="number" formControlName="cogs">
+            </mat-form-field>
+
+            <div
+                class="col-span-1 md:col-span-2 mb-4 p-3 bg-[color:var(--color-surface-default)] rounded flex justify-between">
+                <span class="text-sm text-[color:var(--color-content-secondary)]">Marge Brute</span>
+                <span class="font-medium text-[color:var(--color-content-primary)]">{{ (pnlForm.get('revenue')?.value -
+                    pnlForm.get('cogs')?.value) | number:'1.2-2' }} €</span>
+            </div>
+
+            <mat-form-field class="w-full md:col-span-2">
+                <mat-label>Dépenses d'Exploitation (OPEX)</mat-label>
+                <input matInput type="number" formControlName="operatingExpenses">
+            </mat-form-field>
+
+            <div
+                class="col-span-1 md:col-span-2 mb-4 p-4 rounded-lg border border-[color:var(--color-info)] bg-[color:var(--color-surface-default)] flex justify-between items-center">
+                <span class="font-semibold text-[color:var(--color-info)]">EBITDA</span>
+                <span class="text-xl font-bold text-[color:var(--color-content-primary)]">{{ ebitda() | number:'1.2-2'
+                    }} €</span>
+            </div>
+
+            <mat-form-field class="w-full">
+                <mat-label>Dotations Amortissements (D&A)</mat-label>
+                <input matInput type="number" formControlName="depreciationAmortization">
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Charges d'Intérêts</mat-label>
+                <input matInput type="number" formControlName="interestExpense">
+            </mat-form-field>
+
+            <mat-form-field class="w-full md:col-span-2">
+                <mat-label>Impôts et Taxes</mat-label>
+                <input matInput type="number" formControlName="taxes">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="total-bar flex justify-between items-center p-6 rounded-xl border border-[color:var(--color-border-strong)]"
+        [ngClass]="netIncome() >= 0 ? 'bg-[color:var(--color-success)] bg-opacity-10' : 'bg-[color:var(--color-error)] bg-opacity-10'">
+        <span class="text-sm font-semibold uppercase tracking-wider"
+            [ngClass]="netIncome() >= 0 ? 'text-[color:var(--color-success)]' : 'text-[color:var(--color-error)]'">
+            Résultat Net ({{ year() }})
+        </span>
+        <span class="text-3xl font-bold"
+            [ngClass]="netIncome() >= 0 ? 'text-[color:var(--color-success)]' : 'text-[color:var(--color-error)]'">
+            {{ netIncome() | number:'1.2-2' }} €
+        </span>
+    </div>
+
+</form>

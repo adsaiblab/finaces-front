@@ -1,0 +1,50 @@
+// SCSS Fail-Fast : Utilisation stricte des variables du Design System.
+// Force le conteneur du Tab Group à prendre tout l'espace disponible
+:host {
+    display: block;
+    height: 100%;
+}
+
+::ng-deep .finaces-tabs {
+
+    // Ajustement Material 3 pour FinaCES (Dark Mode compliant)
+    .mat-mdc-tab-header {
+        background-color: var(--color-surface-default);
+        border-bottom: 1px solid var(--color-border-default);
+    }
+
+    .mat-mdc-tab-labels {
+        padding-left: 1rem;
+    }
+
+    .mdc-tab__text-label {
+        color: var(--color-content-secondary);
+        font-weight: 500;
+    }
+
+    .mdc-tab--active .mdc-tab__text-label {
+        color: var(--color-primary);
+    }
+
+    // Évite que les onglets réduisent la hauteur de la vue de contenu
+    .mat-mdc-tab-body-wrapper {
+        flex: 1 1 auto;
+    }
+}
+
+// Animation subtile d'apparition (Enterprise Grade)
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

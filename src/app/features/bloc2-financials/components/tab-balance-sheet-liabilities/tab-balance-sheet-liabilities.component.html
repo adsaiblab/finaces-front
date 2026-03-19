@@ -1,0 +1,60 @@
+<form [formGroup]="liabilitiesForm" class="flex flex-col gap-8 animate-fade-in">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div formGroupName="equity" class="financial-block">
+            <div class="flex items-center gap-2 mb-4">
+                <mat-icon class="text-[color:var(--color-primary)]">account_balance</mat-icon>
+                <h3 class="text-lg font-semibold text-[color:var(--color-content-primary)]">Capitaux Propres</h3>
+            </div>
+            <div class="flex flex-col gap-4">
+                <mat-form-field class="w-full">
+                    <mat-label>Capital Social</mat-label>
+                    <input matInput type="number" formControlName="shareCapital">
+                </mat-form-field>
+                <mat-form-field class="w-full">
+                    <mat-label>Réserves / Report à nouveau</mat-label>
+                    <input matInput type="number" formControlName="retainedEarnings">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div formGroupName="nonCurrentLiabilities" class="financial-block">
+            <div class="flex items-center gap-2 mb-4">
+                <mat-icon class="text-[color:var(--color-primary)]">history_toggle_off</mat-icon>
+                <h3 class="text-lg font-semibold text-[color:var(--color-content-primary)]">Dettes Long Terme</h3>
+            </div>
+            <div class="flex flex-col gap-4">
+                <mat-form-field class="w-full">
+                    <mat-label>Dettes Financières (LMT)</mat-label>
+                    <input matInput type="number" formControlName="longTermDebt">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div formGroupName="currentLiabilities" class="financial-block">
+            <div class="flex items-center gap-2 mb-4">
+                <mat-icon class="text-[color:var(--color-primary)]">schedule</mat-icon>
+                <h3 class="text-lg font-semibold text-[color:var(--color-content-primary)]">Dettes Court Terme</h3>
+            </div>
+            <div class="flex flex-col gap-4">
+                <mat-form-field class="w-full">
+                    <mat-label>Dettes Financières (CT)</mat-label>
+                    <input matInput type="number" formControlName="shortTermDebt">
+                </mat-form-field>
+                <mat-form-field class="w-full">
+                    <mat-label>Dettes Fournisseurs</mat-label>
+                    <input matInput type="number" formControlName="accountsPayable">
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="total-bar flex justify-between items-center p-4 rounded-xl border border-[color:var(--color-border-strong)] bg-[color:var(--color-surface-default)]">
+        <span class="text-sm font-medium text-[color:var(--color-content-secondary)] uppercase tracking-wider">Total
+            Passif ({{ year() }})</span>
+        <span class="text-2xl font-bold text-[color:var(--color-content-primary)]">{{ totalLiabilities() |
+            number:'1.2-2' }} €</span>
+    </div>
+
+</form>

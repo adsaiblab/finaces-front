@@ -1,0 +1,38 @@
+<form [formGroup]="cashFlowForm" class="max-w-3xl mx-auto flex flex-col gap-6 animate-fade-in">
+
+    <div class="financial-block p-6">
+        <div class="flex items-center gap-2 mb-6 border-b border-[color:var(--color-border-default)] pb-4">
+            <mat-icon class="text-[color:var(--color-primary)]">waves</mat-icon>
+            <h3 class="text-xl font-semibold text-[color:var(--color-content-primary)]">Flux de Trésorerie (TFT)</h3>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <mat-form-field class="w-full">
+                <mat-label>Flux de trésorerie lié aux activités opérationnelles (CFO)</mat-label>
+                <input matInput type="number" formControlName="operatingActivities">
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Flux de trésorerie lié aux investissements (CFI)</mat-label>
+                <input matInput type="number" formControlName="investingActivities">
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Flux de trésorerie lié au financement (CFF)</mat-label>
+                <input matInput type="number" formControlName="financingActivities">
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="total-bar flex justify-between items-center p-6 rounded-xl border border-[color:var(--color-border-strong)]"
+        [ngClass]="netCashFlow() >= 0 ? 'bg-[color:var(--color-success)] bg-opacity-10' : 'bg-[color:var(--color-error)] bg-opacity-10'">
+        <span class="text-sm font-semibold uppercase tracking-wider"
+            [ngClass]="netCashFlow() >= 0 ? 'text-[color:var(--color-success)]' : 'text-[color:var(--color-error)]'">
+            Variation Nette Trésorerie ({{ year() }})
+        </span>
+        <span class="text-3xl font-bold"
+            [ngClass]="netCashFlow() >= 0 ? 'text-[color:var(--color-success)]' : 'text-[color:var(--color-error)]'">
+            {{ netCashFlow() | number:'1.2-2' }} €
+        </span>
+    </div>
+</form>

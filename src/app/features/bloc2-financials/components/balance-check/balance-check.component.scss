@@ -1,0 +1,28 @@
+// Respect du Dark Mode et des Tokens
+.balanced-card {
+    background-color: rgba(var(--color-success-rgb, 16, 185, 129), 0.05); // Fallback RGB si token absent, mais on s'appuie sur nos variables 
+    border-color: var(--color-success);
+
+    .icon-container {
+        background-color: rgba(var(--color-success-rgb, 16, 185, 129), 0.1);
+        color: var(--color-success);
+    }
+
+    .text-success {
+        color: var(--color-success);
+    }
+}
+
+.unbalanced-card {
+    background-color: rgba(var(--color-error-rgb, 239, 68, 68), 0.05);
+    border-color: var(--color-error);
+
+    .icon-container {
+        background-color: rgba(var(--color-error-rgb, 239, 68, 68), 0.1);
+        color: var(--color-error);
+    }
+
+    .text-error {
+        color: var(--color-error);
+    }
+}

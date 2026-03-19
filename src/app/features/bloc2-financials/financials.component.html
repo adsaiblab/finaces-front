@@ -1,1 +1,55 @@
-<h2>Bloc 2 : États Financiers</h2>
+<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in">
+
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <app-exercise-selector [years]="availableYears()" [selectedYear]="currentExercise()"
+                (yearChange)="onYearChange($event)" />
+
+            <button mat-flat-button color="primary" [disabled]="isSubmitting()" (click)="triggerNormalization()"
+                class="finaces-primary-btn">
+                <mat-icon>auto_awesome</mat-icon> Lancer la Normalisation
+            </button>
+        </div>
+    </header>
+
+    <main
+        class="flex-1 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <mat-tab-group animationDuration="200ms" class="finaces-tabs h-full flex flex-col">
+
+            <mat-tab>
+                <ng-template mat-tab-label><mat-icon class="mr-2">account_balance_wallet</mat-icon>Bilan
+                    Actif</ng-template>
+                <div class="p-6 overflow-y-auto">
+                    <app-tab-balance-sheet-assets [year]="currentExercise()"
+                        (assetsDataChange)="onAssetsUpdate($event)" />
+                </div>
+            </mat-tab>
+
+            <mat-tab>
+                <ng-template mat-tab-label><mat-icon class="mr-2">credit_score</mat-icon>Bilan Passif</ng-template>
+                <div class="p-6 overflow-y-auto">
+                    <app-tab-balance-sheet-liabilities [year]="currentExercise()"
+                        (liabilitiesDataChange)="onLiabilitiesUpdate($event)" />
+                </div>
+            </mat-tab>
+
+            <mat-tab>
+                <ng-template mat-tab-label><mat-icon class="mr-2">trending_up</mat-icon>Compte de Résultat</ng-template>
+                <div class="p-6 overflow-y-auto">
+                    <app-tab-income-statement [year]="currentExercise()" (pnlDataChange)="onPnlUpdate($event)" />
+                </div>
+            </mat-tab>
+
+            <mat-tab>
+                <ng-template mat-tab-label><mat-icon class="mr-2">payments</mat-icon>Flux de Trésorerie</ng-template>
+                <div class="p-6 overflow-y-auto">
+                    <app-tab-cash-flow [year]="currentExercise()" (cashFlowDataChange)="onCashFlowUpdate($event)" />
+                </div>
+            </mat-tab>
+
+        </mat-tab-group>
+    </main>
+
+    <app-balance-check [totalAssets]="currentAssetsTotal()" [totalLiabilities]="currentLiabilitiesTotal()" />
+
+</div>
