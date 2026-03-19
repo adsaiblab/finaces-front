@@ -1,7 +1,7 @@
 <div class="chart-container">
     <div class="chart-header">
-        <h2>Convergence MCC/IA</h2>
-        <p>Évolution des scores sur les 30 derniers jours</p>
+        <h2>MCC/AI Convergence</h2>
+        <p>Score evolution over the last 30 days</p>
     </div>
 
     @if (chartData()) {
@@ -22,23 +22,23 @@
         <div class="flex items-center gap-2">
             <div style="width: 0.75rem; height: 0.75rem; border-radius: 9999px; background-color: var(--color-error);">
             </div>
-            <span>Alerte Divergence</span>
+            <span>Divergence Alert</span>
         </div>
     </div>
 
     <div class="stats-row">
-        <span class="stat-item">Corrélation: <span class="val-corr">{{ chartData()?.correlation | number:'1.2-2'
+        <span class="stat-item">Correlation: <span class="val-corr">{{ chartData()?.correlation | number:'1.2-2'
                 }}</span></span>
-        <span class="stat-item">Divergences détectées: <span class="val-div">{{ chartData()?.divergence_flags?.length ||
+        <span class="stat-item">Divergences detected: <span class="val-div">{{ chartData()?.divergence_flags?.length ||
                 0 }}</span></span>
-        <span class="stat-item">Convergence globale: <span class="val-conv">{{ chartData()?.convergence_percentage
+        <span class="stat-item">Global convergence: <span class="val-conv">{{ chartData()?.convergence_percentage
                 }}%</span></span>
     </div>
     } @else {
     <div class="empty-state">
         <mat-icon>insights</mat-icon>
-        <p class="empty-title">Pas de données.</p>
-        <p style="font-size: 0.75rem; margin-top: 0.25rem;">Commencer les évaluations pour voir la convergence.</p>
+        <p class="empty-title">No data.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.25rem;">Start evaluations to see convergence data.</p>
     </div>
     }
 </div>

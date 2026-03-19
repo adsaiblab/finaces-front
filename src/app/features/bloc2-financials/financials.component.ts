@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-// L'IMPORT DU BARREL FILE MAGIQUE
 import {
   ExerciseSelectorComponent,
   BalanceCheckComponent,
@@ -23,7 +23,7 @@ import {
     MatTabsModule,
     MatIconModule,
     MatButtonModule,
-    // Nos sous-composants vitaux
+    MatSnackBarModule,
     ExerciseSelectorComponent,
     BalanceCheckComponent,
     TabBalanceSheetAssetsComponent,
@@ -36,34 +36,32 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinancialsComponent {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+
   public caseId = signal<string>('');
 
-  // Gestion des exercices
   public availableYears = signal<number[]>([2023, 2022, 2021]);
   public currentExercise = signal<number>(2023);
-
-  // État de l'UI
   public isSubmitting = signal<boolean>(false);
 
-  // État des Totaux (Pour le Balance Check en temps réel)
+  // Signaux pour le Balance Check
   public currentAssetsTotal = signal<number>(0);
   public currentLiabilitiesTotal = signal<number>(0);
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor() {
+    // Résolution robuste du caseId
     const resolvedId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
     this.caseId.set(resolvedId);
   }
 
-  // --- HANDLERS D'ÉVÉNEMENTS ENFANTS ---
-
   public onYearChange(year: number): void {
     this.currentExercise.set(year);
-    // Ici on chargerait idéalement les données sauvegardées pour l'année via l'API
   }
 
   public onAssetsUpdate(event: { total: number, data: any }): void {
     this.currentAssetsTotal.set(event.total);
-    // Sauvegarde en brouillon (Mock)
   }
 
   public onLiabilitiesUpdate(event: { total: number, data: any }): void {
@@ -71,19 +69,22 @@ export class FinancialsComponent {
   }
 
   public onPnlUpdate(event: { netIncome: number, ebitda: number, data: any }): void {
-    // Handling P&L
+    // KPI Updates
   }
 
   public onCashFlowUpdate(event: { netCashFlow: number, data: any }): void {
-    // Handling Cashflow
+    // KPI Updates
   }
 
-  // Flux de validation (Mock)
   public triggerNormalization(): void {
     this.isSubmitting.set(true);
+    this.snackBar.open('Normalisation en cours...', '', { duration: 2000 });
+
+    // Prototype Enterprise-Grade (Simulation sans backend)
     setTimeout(() => {
       this.isSubmitting.set(false);
+      this.snackBar.open('Normalisation terminée avec succès', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-white'] });
       this.router.navigate(['/cases', this.caseId(), 'normalization']);
-    }, 1200);
+    }, 1500);
   }
 }

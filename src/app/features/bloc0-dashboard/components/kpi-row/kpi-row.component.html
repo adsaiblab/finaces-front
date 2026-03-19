@@ -7,9 +7,9 @@
                 <mat-icon class="kpi-icon kpi-icon--primary">folder_open</mat-icon>
             </div>
             <div class="flex-1">
-                <p class="kpi-title">Dossiers en cours</p>
+                <p class="kpi-title">Active Cases</p>
                 <h3 class="kpi-value">{{ stats()?.total_active_cases }}</h3>
-                <p class="kpi-subtitle">Actifs cette semaine</p>
+                <p class="kpi-subtitle">Active this week</p>
             </div>
         </mat-card-content>
     </mat-card>
@@ -20,9 +20,9 @@
                 <mat-icon class="kpi-icon kpi-icon--primary">pending_actions</mat-icon>
             </div>
             <div class="flex-1">
-                <p class="kpi-title">En attente validation</p>
+                <p class="kpi-title">Pending Validation</p>
                 <h3 class="kpi-value">{{ stats()?.cases_pending_gate }}</h3>
-                <p class="kpi-subtitle">Gate documentaire</p>
+                <p class="kpi-subtitle">Document Gate</p>
             </div>
         </mat-card-content>
     </mat-card>
@@ -34,9 +34,9 @@
                 <mat-icon class="kpi-icon kpi-icon--warning">warning</mat-icon>
             </div>
             <div class="flex-1">
-                <p class="kpi-title">Alertes Tensions</p>
+                <p class="kpi-title">Tension Alerts</p>
                 <h3 class="kpi-value">{{ stats()?.cases_with_tension_alert }}</h3>
-                <p class="kpi-subtitle">Divergences MCC/IA détectées</p>
+                <p class="kpi-subtitle">MCC/AI divergences detected</p>
             </div>
         </mat-card-content>
     </mat-card>
@@ -47,7 +47,7 @@
                 <mat-icon class="kpi-icon kpi-icon--info">smart_toy</mat-icon>
             </div>
             <div class="flex-1">
-                <p class="kpi-title">Convergence IA</p>
+                <p class="kpi-title">AI Convergence</p>
                 <h3 class="kpi-value" [ngClass]="{
               'text-success': (stats()?.convergence_percentage || 0) >= 90,
               'text-warning': (stats()?.convergence_percentage || 0) >= 70 && (stats()?.convergence_percentage || 0) < 90,
@@ -55,7 +55,7 @@
             }">
                     {{ stats()?.convergence_percentage }}%
                 </h3>
-                <p class="kpi-subtitle">Accord MCC/IA global</p>
+                <p class="kpi-subtitle">Overall MCC/AI agreement</p>
             </div>
         </mat-card-content>
     </mat-card>

@@ -1,29 +1,29 @@
 <div class="summary-container">
     <div class="summary-card">
-        <h3><mat-icon>gavel</mat-icon> Informations du Marché</h3>
+        <h3><mat-icon>gavel</mat-icon> Market Information</h3>
         <div class="data-grid">
-            <div class="data-item"><span class="label">Référence & Intitulé</span><span class="value">{{
+            <div class="data-item"><span class="label">Reference & Title</span><span class="value">{{
                     marketData.market_reference }} — {{ marketData.market_label }}</span></div>
-            <div class="data-item"><span class="label">Type de dossier</span><span class="value-bold">{{
+            <div class="data-item"><span class="label">Case type</span><span class="value-bold">{{
                     marketData.case_type }}</span></div>
-            <div class="data-item"><span class="label">Montant du contrat</span><span class="value">{{
+            <div class="data-item"><span class="label">Contract amount</span><span class="value">{{
                     marketData.contract_value | number:'1.0-0' }} {{ marketData.contract_currency }}</span></div>
-            <div class="data-item"><span class="label">Durée & Secteur</span><span class="value">{{
-                    marketData.contract_duration_months }} mois | {{ marketData.sector }}</span></div>
+            <div class="data-item"><span class="label">Duration & Sector</span><span class="value">{{
+                    marketData.contract_duration_months }} months | {{ marketData.sector }}</span></div>
             <div class="data-item">
-                <span class="label">Sensibilité</span>
-                @if(marketData.sensitive) { <span class="value-alert">OUI (Revue renforcée requise)</span> }
+                <span class="label">Sensitivity</span>
+                @if(marketData.sensitive) { <span class="value-alert">YES (Enhanced review required)</span> }
                 @else { <span class="value-success">NON</span> }
             </div>
         </div>
     </div>
 
     <div class="summary-card">
-        <h3><mat-icon>business</mat-icon> Soumissionnaire Principal</h3>
+        <h3><mat-icon>business</mat-icon> Lead Bidder</h3>
         <div class="data-grid">
-            <div class="data-item"><span class="label">Entreprise (Statut)</span><span class="value">{{
+            <div class="data-item"><span class="label">Company (Status)</span><span class="value">{{
                     bidderData.bidder_name }} ({{ bidderData.legal_form || 'N/A' }})</span></div>
-            <div class="data-item"><span class="label">Pays</span><span class="value">{{ bidderData.country }}</span>
+            <div class="data-item"><span class="label">Country</span><span class="value">{{ bidderData.country }}</span>
             </div>
             <div class="data-item"><span class="label">Contact</span><span class="value">{{ bidderData.email || 'N/A' }}
                     | {{ bidderData.phone || 'N/A' }}</span></div>
@@ -32,7 +32,7 @@
 
     @if(marketData.case_type === 'GROUPEMENT' && members.length > 0) {
     <div class="summary-card">
-        <h3><mat-icon>group</mat-icon> Membres du Groupement ({{ members.length }})</h3>
+        <h3><mat-icon>group</mat-icon> Joint Venture Members ({{ members.length }})</h3>
         <div class="groupement-list">
             @for(member of members; track $index) {
             <div class="groupement-row">

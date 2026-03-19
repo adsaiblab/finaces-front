@@ -1,17 +1,17 @@
 <form [formGroup]="formGroup()" class="step-form-grid mt-4">
 
     <div class="full-width bidder-search-container">
-        <span class="search-hint">Recherchez une entreprise existante ou saisissez un nouveau nom pour la créer.</span>
+        <span class="search-hint">Search for an existing company or type a new name to create one.</span>
 
         <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Nom de l'entreprise (Soumissionnaire)</mat-label>
+            <mat-label>Company name (Bidder)</mat-label>
             <mat-icon matPrefix class="search-icon">business</mat-icon>
 
             <input matInput formControlName="bidder_name" [matAutocomplete]="auto"
-                placeholder="Saisir pour rechercher...">
+                placeholder="Type to search...">
 
             @if (formGroup().get('bidder_id')?.value) {
-            <button mat-icon-button matSuffix (click)="resetBidder()" matTooltip="Effacer et saisir manuellement">
+            <button mat-icon-button matSuffix (click)="resetBidder()" matTooltip="Clear and enter manually">
                 <mat-icon class="clear-icon">close</mat-icon>
             </button>
             }
@@ -22,7 +22,7 @@
                     <div class="autocomplete-option-content">
                         <span class="auto-name">{{ bidder.name }}</span>
                         <span class="auto-desc">
-                            {{ bidder.legal_form || 'Forme indéfinie' }} • {{ bidder.country || 'Pays indéfini' }}
+                            {{ bidder.legal_form || 'Undefined form' }} • {{ bidder.country || 'Undefined country' }}
                         </span>
                     </div>
                 </mat-option>
@@ -32,30 +32,30 @@
     </div>
 
     <mat-form-field appearance="outline">
-        <mat-label>Forme Juridique</mat-label>
+        <mat-label>Legal form</mat-label>
         <input matInput formControlName="legal_form" placeholder="ex: SA, SARL...">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Numéro d'enregistrement</mat-label>
+        <mat-label>Registration number</mat-label>
         <input matInput formControlName="registration_number" placeholder="ex: RC-123456">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Email de contact principal</mat-label>
+        <mat-label>Primary contact email</mat-label>
         <input matInput formControlName="email" type="email" placeholder="contact@entreprise.com">
         @if (formGroup().get('email')?.hasError('email')) {
-        <mat-error>Format d'email invalide</mat-error>
+        <mat-error>Invalid email format</mat-error>
         }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Téléphone</mat-label>
+        <mat-label>Phone</mat-label>
         <input matInput formControlName="phone" placeholder="+33 1 23 45 67 89">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Pays du siège social</mat-label>
+        <mat-label>Country of registered office</mat-label>
         <input matInput formControlName="country" placeholder="ex: France">
     </mat-form-field>
 

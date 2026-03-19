@@ -1,38 +1,38 @@
 <form [formGroup]="formGroup()" class="step-form-grid mt-4">
 
     <mat-form-field appearance="outline">
-        <mat-label>Type de dossier</mat-label>
+        <mat-label>Case type</mat-label>
         <mat-select formControlName="case_type">
-            <mat-option value="SINGLE">Single (Soumissionnaire Unique)</mat-option>
-            <mat-option value="GROUPEMENT">Groupement Solidaire</mat-option>
-            <mat-option value="LOTS">Lots distincts</mat-option>
+            <mat-option value="SINGLE">Single (Sole Bidder)</mat-option>
+            <mat-option value="GROUPEMENT">Joint Venture</mat-option>
+            <mat-option value="LOTS">Separate Lots</mat-option>
         </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Référence du Marché</mat-label>
+        <mat-label>Market Reference</mat-label>
         <input matInput formControlName="market_reference" placeholder="ex: MCC-2024-001">
         @if (formGroup().get('market_reference')?.hasError('pattern')) {
-        <mat-error>Format requis : AAA-1234-123</mat-error>
+        <mat-error>Required format: AAA-1234-123</mat-error>
         }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Intitulé complet du Marché</mat-label>
+        <mat-label>Full Market Title</mat-label>
         <input matInput formControlName="market_label">
         @if (formGroup().get('market_label')?.hasError('required')) {
-        <mat-error>L'intitulé est obligatoire.</mat-error>
+        <mat-error>Title is required.</mat-error>
         }
     </mat-form-field>
 
     <div class="amount-currency-group">
         <mat-form-field appearance="outline" class="field-amount">
-            <mat-label>Montant du contrat</mat-label>
+            <mat-label>Contract amount</mat-label>
             <input matInput type="number" formControlName="contract_value" min="0">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field-currency">
-            <mat-label>Devise</mat-label>
+            <mat-label>Currency</mat-label>
             <mat-select formControlName="contract_currency">
                 <mat-option value="EUR">EUR</mat-option>
                 <mat-option value="USD">USD</mat-option>
@@ -42,33 +42,33 @@
     </div>
 
     <mat-form-field appearance="outline">
-        <mat-label>Durée (en mois)</mat-label>
+        <mat-label>Duration (months)</mat-label>
         <input matInput type="number" formControlName="contract_duration_months" min="1">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Pays cible</mat-label>
+        <mat-label>Target country</mat-label>
         <input matInput formControlName="country" placeholder="ex: France">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label>Secteur d'activité</mat-label>
+        <mat-label>Activity sector</mat-label>
         <input matInput formControlName="sector" placeholder="ex: Construction">
     </mat-form-field>
 
     <div class="full-width sensitive-toggle-box">
         <mat-checkbox formControlName="sensitive" class="custom-checkbox">
             <div class="checkbox-text-wrapper">
-                <span class="checkbox-title">Marquer comme dossier sensible</span>
-                <span class="checkbox-desc">Déclenche une revue d'expertise stricte obligatoire</span>
+                <span class="checkbox-title">Mark as sensitive case</span>
+                <span class="checkbox-desc">Triggers a mandatory strict expert review</span>
             </div>
         </mat-checkbox>
     </div>
 
     <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Notes préliminaires (Optionnel)</mat-label>
+        <mat-label>Preliminary notes (Optional)</mat-label>
         <textarea matInput formControlName="notes" rows="3"
-            placeholder="Informations complémentaires utiles pour l'analyste..."></textarea>
+            placeholder="Additional information useful for the analyst..."></textarea>
     </mat-form-field>
 
 </form>

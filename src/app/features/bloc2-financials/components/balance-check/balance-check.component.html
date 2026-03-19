@@ -7,17 +7,17 @@
 
     <div class="flex-1">
         <h3 class="text-sm font-semibold" [class.text-success]="isBalanced()" [class.text-error]="!isBalanced()">
-            {{ isBalanced() ? 'Bilan Équilibré' : 'Déséquilibre Détecté' }}
+            {{ isBalanced() ? 'Balanced' : 'Imbalance Detected' }}
         </h3>
         <p class="text-xs text-[color:var(--color-content-secondary)] mt-0.5 flex gap-4">
-            <span>Total Actif: <strong>{{ totalAssets() | number:'1.2-2' }}</strong></span>
-            <span>Total Passif: <strong>{{ totalLiabilities() | number:'1.2-2' }}</strong></span>
+            <span>Total Assets: <strong>{{ totalAssets() | number:'1.2-2' }}</strong></span>
+            <span>Total Liabilities: <strong>{{ totalLiabilities() | number:'1.2-2' }}</strong></span>
         </p>
     </div>
 
     @if (!isBalanced()) {
     <div class="text-right">
-        <span class="text-xs text-[color:var(--color-content-secondary)] block">Écart à justifier</span>
+        <span class="text-xs text-[color:var(--color-content-secondary)] block">Difference to resolve</span>
         <span class="text-sm font-bold text-[color:var(--color-error)]">{{ difference() | number:'1.2-2' }}</span>
     </div>
     }
