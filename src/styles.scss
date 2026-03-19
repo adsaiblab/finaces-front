@@ -1,27 +1,61 @@
 // ═══════════════════════════════════════════════════════════
-// FINACES FRONT — Global Styles Entry Point
-// RÈGLE SASS : tous les @use DOIVENT être en premier, avant tout CSS
+// FINACES FRONT — Global Styles & Material Core Entry Point
 // ═══════════════════════════════════════════════════════════
 
 // ─ BLOC 1 : Tous les @use en premier (règle Sass obligatoire) ────────
+@use '@angular/material' as mat;
 @use 'styles/variables'; // Design Tokens (Surfaces, Contents, Borders)
 @use 'styles/typography'; // Typographie globale (h1-h4, p, .label, code)
 @use 'styles/spacing'; // Spacing & Layout tokens (:root CSS vars)
 
-// ─ BLOC 2 : Tailwind (après tous les @use) ─────────────────────
+// ─ BLOC 2 : INJECTION MATERIAL CORE & SQUELETTE (Sans couleurs strictes)
+@include mat.core();
+
+// On génère le squelette (padding, shadow, layout) de Material MDC
+// avec la syntaxe moderne Angular 18+ (mat.define-theme)
+$finaces-dummy-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$cyan-palette
+  )
+));
+
+@include mat.all-component-themes($finaces-dummy-theme);
+
+// ─ BLOC 3 : Tailwind (après Material pour qu'il garde la priorité sur les utilitaires)
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// ─ BLOC 3 : Reset & styles de base globaux ────────────────────
+// ─ BLOC 4 : MAPPING MDC -> FINACES MANIFESTE (Zéro HEX/RGB) ───────────
+// C'est ici que l'on connecte la machinerie Material à nos tokens dynamiques.
+:root {
+    --mdc-theme-primary: var(--color-primary);
+    --mdc-theme-on-primary: var(--color-content-inverse);
+    --mdc-theme-secondary: var(--color-primary-light);
+    --mdc-theme-on-secondary: var(--color-content-inverse);
+    --mdc-theme-surface: var(--color-surface-card);
+    --mdc-theme-on-surface: var(--color-content-primary);
+    --mdc-theme-background: var(--color-surface-default);
+    --mdc-theme-error: var(--color-error);
+    --mdc-theme-on-error: var(--color-content-inverse);
+    --mdc-theme-text-primary-on-background: var(--color-content-primary);
+    --mdc-theme-text-secondary-on-background: var(--color-content-secondary);
+    --mdc-theme-text-hint-on-background: var(--color-content-disabled);
+    --mdc-theme-text-disabled-on-background: var(--color-content-disabled);
+    --mdc-theme-text-icon-on-background: var(--color-content-secondary);
+}
+
+// ─ BLOC 5 : Reset & styles de base globaux ────────────────────
 html,
 body {
     margin: 0;
     padding: 0;
     height: 100%;
     font-family: var(--font-sans, sans-serif);
-    background-color: var(--bg-default);
-    color: var(--text-primary);
+    background-color: var(--color-surface-default);
+    color: var(--color-content-primary);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -40,13 +74,13 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
+    background: var(--color-border-strong);
     border-radius: 4px;
 }
 
-// ─ BLOC 4 : SURCHARGES MATERIAL (MDC) SÉCURISÉES ─────────────
+// ─ BLOC 6 : SURCHARGES MATERIAL SPÉCIFIQUES & CDK OVERLAY ─────
 
-/* 1. Surcharge des Form Fields (Bordures, Textes, Focus) - Sans casser le DOM */
+/* 1. Surcharge form-field (Bordures transparentes et hover) */
 .mat-mdc-form-field {
     --mdc-outlined-text-field-outline-color: var(--color-border-default);
     --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
@@ -65,7 +99,20 @@ body {
     }
 }
 
-/* 2. Surcharge des Checkboxes */
+/* 2. Stepper */
+.mat-mdc-stepper {
+    --mat-stepper-header-icon-background-color: var(--color-surface-default);
+    --mat-stepper-header-icon-foreground-color: var(--color-content-secondary);
+    --mat-stepper-header-selected-state-icon-background-color: var(--color-primary);
+    --mat-stepper-header-selected-state-icon-foreground-color: var(--color-content-inverse);
+    --mat-stepper-header-edit-state-icon-background-color: var(--color-primary);
+    --mat-stepper-header-edit-state-icon-foreground-color: var(--color-content-inverse);
+    --mat-stepper-header-label-text-color: var(--color-content-secondary);
+    --mat-stepper-header-selected-state-label-text-color: var(--color-content-primary);
+    background-color: var(--color-surface-card);
+}
+
+/* 3. Checkboxes */
 .mat-mdc-checkbox {
     --mdc-checkbox-unselected-icon-color: var(--color-content-secondary);
     --mdc-checkbox-unselected-hover-icon-color: var(--color-content-primary);
@@ -75,17 +122,61 @@ body {
     --mdc-checkbox-selected-checkmark-color: var(--color-content-inverse);
 }
 
-/* 3. Correction du Stepper (MDC) */
-.mat-mdc-stepper {
-    --mat-stepper-header-icon-background-color: var(--color-surface-default);
-    --mat-stepper-header-icon-foreground-color: var(--color-content-secondary);
+/* 4. CDK Overlay Container (Menus, Dropdowns, Dialogs, Tooltips...) */
+// Injecté à la racine body, hors du data-theme="dark" natif → Theming explicite
+.cdk-overlay-container {
 
-    --mat-stepper-header-selected-state-icon-background-color: var(--color-primary);
-    --mat-stepper-header-selected-state-icon-foreground-color: var(--color-content-inverse);
+    .mat-mdc-select-panel,
+    .mat-mdc-autocomplete-panel,
+    .mat-mdc-menu-panel {
+        background-color: var(--color-surface-card) !important;
+        color: var(--color-content-primary);
 
-    --mat-stepper-header-edit-state-icon-background-color: var(--color-primary);
-    --mat-stepper-header-edit-state-icon-foreground-color: var(--color-content-inverse);
+        .mat-mdc-option {
+            color: var(--color-content-primary);
+            background-color: transparent;
 
-    --mat-stepper-header-label-text-color: var(--color-content-secondary);
-    --mat-stepper-header-selected-state-label-text-color: var(--color-content-primary);
+            &:hover,
+            &.mat-mdc-option-active {
+                background-color: color-mix(in srgb, var(--color-primary) 12%, transparent) !important;
+            }
+
+            &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+                color: var(--color-primary);
+                background-color: color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
+            }
+        }
+    }
+
+    .mat-mdc-dialog-container {
+        --mdc-dialog-container-color: var(--color-surface-card);
+        --mdc-dialog-with-divider-divider-color: var(--color-border-default);
+    }
+
+    .mat-mdc-snack-bar-container {
+        --mdc-snackbar-container-color: var(--color-surface-card);
+        --mdc-snackbar-supporting-text-color: var(--color-content-primary);
+    }
+
+    .mat-mdc-tooltip {
+        --mdc-plain-tooltip-container-color: var(--color-surface-card);
+        --mdc-plain-tooltip-supporting-text-color: var(--color-content-primary);
+    }
+}
+
+/* 5. Force text colors on inputs & selects (Overriding Material Light-mode fallback) */
+.mat-mdc-input-element,
+.mat-mdc-select-value-text,
+.mdc-text-field__input {
+    color: var(--color-content-primary) !important;
+}
+
+/* 6. Force disabled buttons (Overriding Material blackish rgba 38% fallback) */
+button:disabled,
+.mat-mdc-button:disabled,
+.mat-mdc-raised-button:disabled,
+.mdc-button:disabled {
+    color: var(--color-content-disabled) !important;
+    background-color: var(--color-surface-disabled) !important;
+    opacity: 0.6;
 }

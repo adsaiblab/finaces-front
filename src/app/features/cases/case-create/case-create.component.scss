@@ -1,6 +1,6 @@
 .case-create-container {
     padding: 1.5rem;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
@@ -97,4 +97,15 @@
     padding-top: 1.5rem;
     border-top: 1px solid var(--color-border-default);
     margin-top: 1.5rem;
+}
+
+.groupement-members-wrapper {
+    margin-top: 2rem;
+}
+
+.submitting-indicator {
+    text-align: center;
+    color: var(--color-primary);
+    margin-top: 1rem;
+    font-weight: 500;
 }

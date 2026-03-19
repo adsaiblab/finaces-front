@@ -43,6 +43,17 @@
     }
 }
 
+// ─ Icônes KPI (remplacent les style="" inline supprimés) ─────────────────
+.kpi-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+
+    &.kpi-icon--primary { color: var(--color-primary); }
+    &.kpi-icon--warning { color: var(--color-warning); }
+    &.kpi-icon--info    { color: var(--color-info); }
+}
+
 /* Typographie stricte */
 .kpi-title {
     font-size: 0.875rem;
