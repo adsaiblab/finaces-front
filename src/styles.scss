@@ -151,6 +151,11 @@ body {
     .mat-mdc-dialog-container {
         --mdc-dialog-container-color: var(--color-surface-card);
         --mdc-dialog-with-divider-divider-color: var(--color-border-default);
+
+        // Forçage absolu Material 18: La surface interne de la modale
+        .mdc-dialog__surface {
+            background-color: var(--color-surface-card) !important;
+        }
     }
 
     .mat-mdc-snack-bar-container {
@@ -179,4 +184,34 @@ button:disabled,
     color: var(--color-content-disabled) !important;
     background-color: var(--color-surface-disabled) !important;
     opacity: 0.6;
+}
+
+/* ─────────────────────────────────────────────────────────
+   🌙 OVERRIDES MATERIAL : EXCLUSIF DARK MODE (SaaS Outline)
+   ───────────────────────────────────────────────────────── */
+html.dark body, 
+html[data-theme="dark"] body,
+body.dark,
+body[data-theme="dark"] {
+  /* Textes & Curseurs */
+  --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
+  --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
+  --mdc-outlined-text-field-caret-color: var(--color-primary);
+
+  /* Bordures (Outline) */
+  --mdc-outlined-text-field-outline-color: var(--color-border-strong);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
+
+  /* Menus déroulants et Icônes */
+  --mat-select-enabled-arrow-color: var(--color-content-secondary);
+  --mat-select-value-text-color: var(--color-content-primary);
+  --mat-select-panel-background-color: var(--color-surface-card);
+  --mdc-icon-button-icon-color: var(--color-content-secondary);
+
+  /* Modales (Dialogs) & Overlays */
+  --mdc-dialog-container-color: var(--color-surface-card);
+  --mdc-dialog-subhead-color: var(--color-content-primary);
+  --mdc-dialog-supporting-text-color: var(--color-content-secondary);
 }
