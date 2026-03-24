@@ -48,7 +48,7 @@ export const routes: Routes = [
                     { path: 'gate', loadComponent: () => import('./features/bloc1b-gate/gate.component').then(m => m.GateComponent) },
                     { path: 'financials', loadComponent: () => import('./features/bloc2-financials/financials.component').then(m => m.FinancialsComponent) },
                     { path: 'normalization', loadComponent: () => import('./features/bloc3-normalization/normalization.component').then(m => m.NormalizationComponent) },
-                    { path: 'ratios', loadComponent: () => import('./features/bloc4-ratios/ratios.component').then(m => m.RatiosComponent) },
+                    { path: 'ratios', loadComponent: () => import('./features/bloc4-ratios/bloc4-ratios.component').then(m => m.Bloc4RatiosComponent) },
                     { path: 'scoring-mcc', loadComponent: () => import('./features/bloc5-scoring-mcc/scoring-mcc.component').then(m => m.ScoringMccComponent) },
                     { path: 'ia', loadComponent: () => import('./features/bloc6-ia/ia.component').then(m => m.IaComponent) },
                     { path: 'tension', loadComponent: () => import('./features/bloc7-tension/tension.component').then(m => m.TensionComponent) },

@@ -1,0 +1,65 @@
+<mat-card
+    class="ratio-group-card !bg-[color:var(--color-surface-card)] !border !border-[color:var(--color-border-default)] !shadow-sm !rounded-xl overflow-hidden h-full flex flex-col">
+
+    <mat-card-header
+        class="!pb-4 border-b border-[color:var(--color-border-default)] bg-[color:var(--color-surface-default)]">
+        <mat-icon mat-card-avatar class="!text-[color:var(--color-primary)] !text-[28px] !w-[28px] !h-[28px]">
+            {{ groupIcon() }}
+        </mat-icon>
+        <mat-card-title class="!text-lg !font-semibold !text-[color:var(--color-content-primary)] mt-1.5">
+            {{ groupName() }}
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="!p-0 flex-1 overflow-x-auto">
+        <table mat-table [dataSource]="ratioRows()" class="w-full bg-transparent">
+
+            <ng-container matColumnDef="indicator">
+                <th mat-header-cell *matHeaderCellDef
+                    class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider !px-4">
+                    Indicator </th>
+                <td mat-cell *matCellDef="let element"
+                    class="!px-4 !py-3 text-[color:var(--color-content-primary)] font-medium text-sm">
+                    {{ element.label }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef
+                    class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-right !px-4">
+                    Value </th>
+                <td mat-cell *matCellDef="let element"
+                    class="text-right !px-4 !py-3 text-[color:var(--color-content-primary)] font-bold">
+                    {{ formatValue(element.value) }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef
+                    class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-center !px-4">
+                    Status </th>
+                <td mat-cell *matCellDef="let element" class="text-center !px-4 !py-3">
+                    <mat-icon [class]="statusColorClass(element.value.status) + ' text-[20px] w-[20px] h-[20px]'"
+                        [matTooltip]="'Benchmark: ' + element.value.benchmark_min + ' - ' + element.value.benchmark_max">
+                        {{ statusIcon(element.value.status) }}
+                    </mat-icon>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="variation">
+                <th mat-header-cell *matHeaderCellDef
+                    class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-right !px-4">
+                    Var. % </th>
+                <td mat-cell *matCellDef="let element" class="text-right !px-4 !py-3 font-semibold text-sm"
+                    [ngClass]="element.value.variation_pct > 0 ? 'text-[color:var(--color-success)]' : (element.value.variation_pct < 0 ? 'text-[color:var(--color-error)]' : 'text-[color:var(--color-content-secondary)]')">
+                    {{ element.value.variation_pct > 0 ? '+' : '' }}{{ element.value.variation_pct | number:'1.1-1' }}%
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                class="hover:bg-[color:var(--color-surface-default)] transition-colors duration-150 border-b border-[color:var(--color-border-default)] last:border-b-0">
+            </tr>
+        </table>
+    </mat-card-content>
+</mat-card>

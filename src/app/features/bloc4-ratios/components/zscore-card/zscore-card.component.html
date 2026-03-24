@@ -1,0 +1,83 @@
+<mat-card class="zscore-card !bg-[color:var(--color-surface-card)] !border !shadow-sm transition-all duration-300"
+    [ngClass]="{
+            '!border-[color:var(--color-error)]': zscore().z_score_zone === 'DISTRESS',
+            '!border-[color:var(--color-warning)]': zscore().z_score_zone === 'GREY',
+            '!border-[color:var(--color-success)]': zscore().z_score_zone === 'SAFE',
+            'alert-mode': isAlertMode()
+          }">
+    <mat-card-header class="!pb-0">
+        <mat-icon mat-card-avatar [class]="getIconColor() + ' !text-[32px] !w-[32px] !h-[32px]'">
+            {{ getIcon() }}
+        </mat-icon>
+        <mat-card-title class="!text-lg !font-bold !text-[color:var(--color-content-primary)] mt-1">
+            Altman Z-Score: {{ zscore().z_score_zone }}
+        </mat-card-title>
+        <mat-card-subtitle class="!text-[color:var(--color-content-secondary)]">
+            Current Score: <strong [class]="getIconColor()">{{ zscore().z_score_altman.current | number:'1.2-2'
+                }}</strong>
+        </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="!pt-4">
+        @if (zscore().z_score_zone === 'DISTRESS') {
+        <p class="text-[color:var(--color-content-primary)] leading-relaxed m-0">
+            <strong class="text-[color:var(--color-error)]">High risk of default.</strong>
+            The Z-Score indicates significant financial distress.
+            <br>
+            <span class="block mt-2 font-medium bg-[color:var(--color-error)] bg-opacity-10 p-2 rounded">
+                Recommendation: Mandatory senior review before final scoring.
+            </span>
+        </p>
+        }
+        @if (zscore().z_score_zone === 'GREY') {
+        <p class="text-[color:var(--color-content-primary)] leading-relaxed m-0">
+            <strong class="text-[color:var(--color-warning)]">Grey zone.</strong>
+            The company is neither clearly safe nor in immediate distress.
+            <br>
+            <span class="block mt-2 font-medium bg-[color:var(--color-warning)] bg-opacity-10 p-2 rounded">
+                Recommendation: Cautious approach recommended. Monitor closely.
+            </span>
+        </p>
+        }
+        @if (zscore().z_score_zone === 'SAFE') {
+        <p class="text-[color:var(--color-content-primary)] leading-relaxed m-0">
+            <strong class="text-[color:var(--color-success)]">Safe zone.</strong>
+            The company demonstrates a healthy financial profile with low default probability according to the Altman
+            model.
+        </p>
+        }
+
+        @if (!isAlertMode()) {
+        <div class="mt-4 pt-4 border-t border-[color:var(--color-border-default)]">
+            <p class="text-xs text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-2 font-semibold">
+                Formula Breakdown</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div
+                    class="p-2 bg-[color:var(--color-surface-default)] rounded border border-[color:var(--color-border-default)] text-center">
+                    <span class="block text-xs text-[color:var(--color-content-secondary)]">WC / TA (X1)</span>
+                    <span class="block font-medium text-[color:var(--color-content-primary)] mt-1">{{
+                        zscore().formula_breakdown.x1 | number:'1.2-2' }}</span>
+                </div>
+                <div
+                    class="p-2 bg-[color:var(--color-surface-default)] rounded border border-[color:var(--color-border-default)] text-center">
+                    <span class="block text-xs text-[color:var(--color-content-secondary)]">RE / TA (X2)</span>
+                    <span class="block font-medium text-[color:var(--color-content-primary)] mt-1">{{
+                        zscore().formula_breakdown.x2 | number:'1.2-2' }}</span>
+                </div>
+                <div
+                    class="p-2 bg-[color:var(--color-surface-default)] rounded border border-[color:var(--color-border-default)] text-center">
+                    <span class="block text-xs text-[color:var(--color-content-secondary)]">EBIT / TA (X3)</span>
+                    <span class="block font-medium text-[color:var(--color-content-primary)] mt-1">{{
+                        zscore().formula_breakdown.x3 | number:'1.2-2' }}</span>
+                </div>
+                <div
+                    class="p-2 bg-[color:var(--color-surface-default)] rounded border border-[color:var(--color-border-default)] text-center">
+                    <span class="block text-xs text-[color:var(--color-content-secondary)]">Eq / TL (X4)</span>
+                    <span class="block font-medium text-[color:var(--color-content-primary)] mt-1">{{
+                        zscore().formula_breakdown.x4 | number:'1.2-2' }}</span>
+                </div>
+            </div>
+        </div>
+        }
+    </mat-card-content>
+</mat-card>

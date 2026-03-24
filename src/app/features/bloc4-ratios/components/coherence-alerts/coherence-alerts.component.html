@@ -1,0 +1,57 @@
+@if (alerts().length > 0) {
+<div class="coherence-alerts-container border-l-4 rounded-md p-4 mb-6 transition-colors duration-300"
+    [ngClass]="status() === 'CRITICAL' ? 'border-[color:var(--color-error)] bg-[color:var(--color-error)] bg-opacity-5' : 'border-[color:var(--color-warning)] bg-[color:var(--color-warning)] bg-opacity-5'">
+
+    <h3 class="flex items-center gap-3 m-0 mb-4 text-lg font-semibold text-[color:var(--color-content-primary)]">
+        <mat-icon [class]="getStatusColorClass()">{{ getStatusIcon() }}</mat-icon>
+        {{ alerts().length }} Coherence Alert(s) Detected
+    </h3>
+
+    <mat-accordion class="finaces-accordion">
+        @for (alert of alerts(); track alert.id) {
+        <mat-expansion-panel
+            class="!bg-[color:var(--color-surface-card)] !border !border-[color:var(--color-border-default)] !shadow-none mb-2"
+            [ngClass]="alert.severity === 'CRITICAL' ? 'border-l-4 !border-l-[color:var(--color-error)]' : 'border-l-4 !border-l-[color:var(--color-warning)]'">
+            <mat-expansion-panel-header>
+                <mat-panel-title class="flex items-center gap-2 text-[color:var(--color-content-primary)] font-medium">
+                    <mat-icon
+                        [class]="alert.severity === 'CRITICAL' ? 'text-[color:var(--color-error)]' : 'text-[color:var(--color-warning)]'">
+                        {{ getAlertIcon(alert.severity) }}
+                    </mat-icon>
+                    {{ alert.message }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="pt-4 pb-2 flex flex-col gap-3 border-t border-[color:var(--color-border-default)]">
+                <p class="text-sm text-[color:var(--color-content-primary)] m-0">
+                    <strong class="text-[color:var(--color-content-secondary)]">Rule:</strong> {{ alert.rule_description
+                    }}
+                </p>
+                <p class="text-sm text-[color:var(--color-content-primary)] m-0">
+                    <strong class="text-[color:var(--color-content-secondary)]">Affected Ratios:</strong>
+                    <span class="inline-flex gap-2 ml-2">
+                        @for (ratio of alert.affected_ratios; track ratio) {
+                        <span
+                            class="px-2 py-0.5 bg-[color:var(--color-surface-default)] rounded text-xs border border-[color:var(--color-border-default)]">{{
+                            ratio }}</span>
+                        }
+                    </span>
+                </p>
+                <p class="text-sm text-[color:var(--color-content-primary)] m-0">
+                    <strong class="text-[color:var(--color-content-secondary)]">Recommended Action:</strong> {{
+                    alert.suggested_action }}
+                </p>
+
+                @if (alert.data_challenge) {
+                <div
+                    class="mt-2 p-3 bg-[color:var(--color-warning)] bg-opacity-10 border border-[color:var(--color-warning)] border-opacity-30 rounded flex items-start gap-2 text-sm text-[color:var(--color-warning)] italic">
+                    <mat-icon class="text-[18px] w-[18px] h-[18px] mt-0.5">info</mat-icon>
+                    May indicate a data entry issue. Please verify the raw financial statements.
+                </div>
+                }
+            </div>
+        </mat-expansion-panel>
+        }
+    </mat-accordion>
+</div>
+}
