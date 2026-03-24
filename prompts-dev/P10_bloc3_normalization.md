@@ -11,6 +11,7 @@ La page **Normalisation IFRS** affiche le **résultat du retraitement comptable*
 **Règle MCC-R7** : Ratios sont calculés sur les données **normalisées** (pas sur brutes). Cette page valide la qualité des retraitements avant calcul des ratios (P11, future).
 
 Le workflow:
+
 1. Utilisateur saisit finances brutes (P9)
 2. Click [Lancer Normalisation] → POST /normalize
 3. Backend:
@@ -25,6 +26,7 @@ Le workflow:
 5. User valide → [Lancer Calcul des Ratios]
 
 **Status Transition** :
+
 - FINANCIAL_INPUT (P9) → [Lancer Normalisation] → POST → status = NORMALIZATION_DONE
 - Ensuite: NORMALIZATION_DONE → [Calc Ratios] → POST ratios/compute → status = RATIOS_COMPUTED (P11)
 
@@ -35,6 +37,7 @@ Le workflow:
 **MCC-R7** : Ratios sont calculés uniquement sur données normalisées.
 
 **Normalisation Automatique** : Le backend applique des retraitements selon la norme comptable détectée:
+
 - **EBITDA Restatement** : si fourni brut, recalculer selon: EBITDA = Operating Income + Amortization + Depreciation
 - **Currency Conversion** : si documents en devise locale (ex: MAD), convertir en USD via taux change officiel
 - **Lease Capitalization** : reclasser leases opérationnels en immobilisations + dettes (IAS 16/IFRS 16)
@@ -43,6 +46,7 @@ Le workflow:
 - **Provisions** : ajuster provisions à valeur actualisée si applicable
 
 **Norme Comptable Détectée** : Le backend identifie le standard source et applique IFRS en output:
+
 - MAROC CNC (Plan Comptable Marocain)
 - FRENCH PCGA (Plan Comptable Général Français)
 - US GAAP (US General Accepted Accounting Principles)
@@ -52,6 +56,7 @@ Le workflow:
 **Exchange Rate** : taux change officiel utilisé pour conversion (ex: 1 USD = 10.5 MAD au 2026-03-16)
 
 **Output: FinancialStatementNormalizedSchema**
+
 ```
 {
   "id": uuid,
@@ -90,7 +95,8 @@ Le workflow:
 
 ## FICHIERS À CRÉER / MODIFIER
 
-### Création :
+### Création
+
 1. `src/app/pages/normalization/normalization.component.ts`
 2. `src/app/pages/normalization/normalization.component.html`
 3. `src/app/pages/normalization/normalization.component.scss`
@@ -103,7 +109,8 @@ Le workflow:
 10. `src/app/pages/normalization/components/accounting-standard-section.component.ts`
 11. `src/app/pages/normalization/components/accounting-standard-section.component.html`
 
-### Modification :
+### Modification
+
 1. `src/app/app.routes.ts` : ajouter route `/cases/:caseId/normalization`
 2. `src/app/services/case.service.ts` : ajouter méthode getNormalizedFinancials()
 3. `src/app/models/financial.model.ts` : extension (FinancialStatementNormalizedSchema)
@@ -113,6 +120,7 @@ Le workflow:
 ## SPÉCIFICATION TECHNIQUE COMPLÈTE
 
 ### Route et Navigation
+
 - **Route** : `/cases/:caseId/normalization`
 - **Breadcrumb** : "Dossiers > {ref} > Normalisation"
 - **Page Title** : "Normalisation IFRS — {bidder_name}"
@@ -134,6 +142,7 @@ Le workflow:
 ```
 
 **Topbar Components** :
+
 - **Badge "NORMALISÉ"** : vert checkmark + texte (visual confirmation)
 - **Exercise Selector** : dropdown ou pills (2023) — read-only (pas de multi-exercise ici)
 - **Adjustments Count** : "X retraitements appliqués"
@@ -163,6 +172,7 @@ Composant `accounting-standard-section.component`:
 ```
 
 **Display Items** (READ-ONLY):
+
 - source_standard (detected)
 - applied_standard (always IFRS for MVP)
 - exchange_rate_used
@@ -214,6 +224,7 @@ Composant `comparative-table.component`:
 ```
 
 **Colonnes** :
+
 1. **Poste Financier** : nom du line item (hierarchical indentation)
 2. **Valeur Brute** : montant original (non-normalisé)
 3. **Valeur Normalisée** : montant après retraitements
@@ -224,12 +235,14 @@ Composant `comparative-table.component`:
 5. **Note** : "OK", "Δ" (marqué), commentaire court
 
 **Data Grouping** :
+
 - Section Bilan Actif (actif courant + non-courant + total)
 - Section Bilan Passif (équité + passifs + total)
 - Section Compte de Résultat (si applicable: revenus, charges, résultat)
 - Section TFT (si applicable: flux opér./invest./finan.)
 
 **Interaction** :
+
 - Rows avec Δ > 0%: hover → tooltip "Cliquer pour voir l'ajustement détaillé"
 - Click row → scroll to adjustments section, filtre sur cet ajustement
 
@@ -275,6 +288,7 @@ Composant `adjustments-list.component`:
 ```
 
 **Par Ajustement** :
+
 - Titre : type (EBITDA_RESTATEMENT, CURRENCY_CONVERSION, LEASE_CAPITALIZATION, etc.)
 - Ligne impactée : nom du poste
 - Avant/Après : montants
@@ -293,6 +307,7 @@ Composant `adjustments-list.component`:
 Bas de page, sticky bottom:
 
 **Button 1** :
+
 - `[Lancer Calcul des Ratios]` (mat-raised-button, color="primary")
 - POST /api/v1/cases/{id}/ratios/compute
 - Spinner: "Calcul des ratios en cours..."
@@ -305,10 +320,12 @@ Bas de page, sticky bottom:
   - Reste sur page
 
 **Button 2** :
+
 - `[Retour Financials]` (mat-button, color="accent")
 - Navigue `/cases/{id}/financials` (pour re-vérifier/modifier données brutes)
 
 **Button 3** (optionnel) :
+
 - `[Recalculer Normalisation]` (mat-button)
 - POST /api/v1/cases/{id}/normalize (re-run si données changed)
 - Refresh page content
@@ -395,6 +412,7 @@ changeDetection: ChangeDetectionStrategy.OnPush
 ### 1. GET /api/v1/cases/{id}/normalize (ou GET /api/v1/cases/{id}/normalized-financials)
 
 **Response: FinancialStatementNormalizedSchema**
+
 ```json
 {
   "id": "uuid-norm",
@@ -515,11 +533,13 @@ changeDetection: ChangeDetectionStrategy.OnPush
 ### 2. POST /api/v1/cases/{id}/ratios/compute
 
 **Request: (empty body)**
+
 ```json
 {}
 ```
 
 **Response: CaseRatiosOut** (future P11)
+
 ```json
 {
   "id": "uuid-ratios",
