@@ -27,7 +27,7 @@ describe('DecisionColumnComponent', () => {
         fixture.detectChanges();
 
         const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector('.state-title')?.textContent).toContain('EN ATTENTE');
+        expect(compiled.querySelector('.state-title')?.textContent).toContain('PENDING');
     });
 
     it('devrait afficher le spinner si en cours dévaluation', () => {
@@ -36,7 +36,7 @@ describe('DecisionColumnComponent', () => {
 
         const compiled = fixture.nativeElement as HTMLElement;
         expect(compiled.querySelector('mat-spinner')).toBeTruthy();
-        expect(compiled.querySelector('.state-title')?.textContent).toContain('Analyse en cours');
+        expect(compiled.querySelector('.state-title')?.textContent).toContain('Analysis in progress...');
     });
 
     it('devrait émettre evaluate au clic sur le bouton', () => {

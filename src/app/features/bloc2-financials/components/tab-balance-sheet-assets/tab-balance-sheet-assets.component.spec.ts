@@ -26,8 +26,8 @@ describe('TabBalanceSheetAssetsComponent', () => {
 
     it('should calculate totalAssets correctly when form changes', () => {
         component.assetsForm.patchValue({
-            currentAssets: { cash: 1000, accountsReceivable: 500, inventory: 0 },
-            nonCurrentAssets: { propertyPlantEquipment: 2000, intangibleAssets: 0 }
+            liquidAssets: 1000, accountsReceivable: 500, inventory: 0, otherCurrentAssets: 0,
+            tangibleAssets: 2000, intangibleAssets: 0, financialAssets: 0, otherNonCurrentAssets: 0
         });
 
         // Le signal totalAssets se met à jour automatiquement via toSignal
@@ -38,8 +38,8 @@ describe('TabBalanceSheetAssetsComponent', () => {
         const emitSpy = vi.spyOn(component.assetsDataChange, 'emit');
 
         component.assetsForm.patchValue({
-            currentAssets: { cash: 100, accountsReceivable: 0, inventory: 0 },
-            nonCurrentAssets: { propertyPlantEquipment: 0, intangibleAssets: 0 }
+            liquidAssets: 100, accountsReceivable: 0, inventory: 0, otherCurrentAssets: 0,
+            tangibleAssets: 0, intangibleAssets: 0, financialAssets: 0, otherNonCurrentAssets: 0
         });
 
         expect(emitSpy).toHaveBeenCalledWith({

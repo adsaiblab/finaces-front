@@ -1,0 +1,93 @@
+<div
+    class="finaces-table-container border border-[color:var(--color-border-default)] rounded-xl overflow-hidden bg-[color:var(--color-surface-card)] animate-fade-in">
+
+    <table mat-table [dataSource]="dataSource()" class="w-full">
+
+        <ng-container matColumnDef="item">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-semibold text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)]">
+                Financial Item
+            </th>
+            <td mat-cell *matCellDef="let row"
+                [ngClass]="{'font-bold uppercase text-[color:var(--color-content-primary)]': row.isHeader, 'font-semibold': row.isTotal}"
+                [style.padding-left.px]="row.indentLevel * 24 + 16">
+                {{ row.label }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="raw">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-semibold text-right text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)]">
+                Raw Value
+            </th>
+            <td mat-cell *matCellDef="let row" class="text-right text-[color:var(--color-content-secondary)]"
+                [ngClass]="{'hidden-cell': row.isHeader}">
+                @if (!row.isHeader) {
+                    {{ row.rawValue | currency:'USD':'symbol':'1.0-0' }}
+                }
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="normalized">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-semibold text-right text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)]">
+                Normalized Value
+            </th>
+            <td mat-cell *matCellDef="let row" class="text-right font-medium text-[color:var(--color-content-primary)]"
+                [ngClass]="{'hidden-cell': row.isHeader}">
+                @if (!row.isHeader) {
+                    {{ row.normalizedValue | currency:'USD':'symbol':'1.0-0' }}
+                }
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delta">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-semibold text-right text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)]">
+                Δ
+            </th>
+            <td mat-cell *matCellDef="let row" class="text-right font-bold"
+                [ngClass]="getDeltaColorClass(row.deltaPct)">
+                @if (!row.isHeader) {
+                    @if (row.deltaPct === 0) { <span>—</span> }
+                    @if (row.deltaPct !== 0) {
+                        <span>
+                            {{ row.deltaPct > 0 ? '+' : '' }}{{ row.deltaPct | number:'1.1-1' }}%
+                        </span>
+                    }
+                }
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="note">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-semibold text-center text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)]">
+                Note
+            </th>
+            <td mat-cell *matCellDef="let row" class="text-center" [ngClass]="{'hidden-cell': row.isHeader}">
+                @if (!row.isHeader) {
+                    @if (row.note === 'OK') {
+                        <span class="text-[color:var(--color-success)] text-xs font-bold px-2 py-1 bg-[color:var(--color-success)] bg-opacity-10 rounded-full">
+                            OK
+                        </span>
+                    }
+                    @if (row.note === 'Δ') {
+                        <span class="text-[color:var(--color-warning)] text-xs font-bold px-2 py-1 bg-[color:var(--color-warning)] bg-opacity-10 rounded-full cursor-pointer flex items-center justify-center gap-1 w-fit mx-auto"
+                        matTooltip="Click to view adjustment details">
+                            <mat-icon class="text-[14px] w-[14px] h-[14px]">info</mat-icon>
+                            Δ
+                        </span>
+                    }
+                }
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="transition-colors duration-200" [ngClass]="{
+          'bg-[color:var(--color-surface-default)] border-y border-[color:var(--color-border-default)]': row.isHeader || row.isTotal,
+          'hover:bg-[color:var(--color-surface-default)] cursor-pointer': row.note === 'Δ',
+          'border-b-0': row.isHeader
+        }" (click)="onRowClick(row)">
+        </tr>
+    </table>
+</div>

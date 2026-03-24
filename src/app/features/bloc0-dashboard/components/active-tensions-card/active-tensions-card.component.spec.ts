@@ -68,7 +68,7 @@ describe('ActiveTensionsCardComponent', () => {
         fixture.detectChanges();
 
         const compiled = fixture.nativeElement as HTMLElement;
-        // On vérifie que le message "Aucune tension détectée" est bien présent
-        expect(compiled.textContent).toContain('Aucune tension détectée');
+        // On vérifie que le message "No tension detected" est bien présent
+        expect(compiled.textContent).toContain('No tension detected');
     });
 });

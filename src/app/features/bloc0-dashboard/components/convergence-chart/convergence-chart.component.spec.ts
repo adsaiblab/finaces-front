@@ -49,7 +49,7 @@ describe('ConvergenceChartComponent', () => {
 
         const compiled = fixture.nativeElement as HTMLElement;
         expect(compiled.querySelector('.empty-state')).toBeTruthy();
-        expect(compiled.textContent).toContain('Pas de données');
+        expect(compiled.textContent).toContain('No data');
     });
 
     it('devrait afficher le canvas et les stats si chartData est fourni', () => {

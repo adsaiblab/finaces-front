@@ -24,28 +24,40 @@ describe('TabIncomeStatementComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should calculate EBITDA correctly (Revenue - COGS - OpEx)', () => {
+    it('should calculate EBITDA correctly', () => {
         component.pnlForm.patchValue({
             revenue: 100000,
-            cogs: 40000,
-            operatingExpenses: 20000,
+            soldProduction: 0,
+            otherOperatingIncome: 0,
+            consumedPurchases: 40000,
+            externalExpenses: 10000,
+            personnelExpenses: 10000,
+            taxesAndDuties: 0,
             depreciationAmortization: 5000,
-            interestExpense: 2000,
-            taxes: 8000
+            financialIncome: 0,
+            financialExpenses: 2000,
+            exceptionalIncome: 0,
+            incomeTax: 8000
         });
 
-        // EBITDA = Revenue - COGS - OpEx = 100k - 40k - 20k = 40k
+        // EBITDA = Revenue - Consumed - External - Personnel = 100k - 40k - 10k - 10k = 40k
         expect(component.ebitda()).toBe(40000);
     });
 
-    it('should calculate Net Income correctly (EBITDA - D&A - Interest - Taxes)', () => {
+    it('should calculate Net Income correctly', () => {
         component.pnlForm.patchValue({
             revenue: 100000,
-            cogs: 40000,
-            operatingExpenses: 20000,
+            soldProduction: 0,
+            otherOperatingIncome: 0,
+            consumedPurchases: 40000,
+            externalExpenses: 10000,
+            personnelExpenses: 10000,
+            taxesAndDuties: 0,
             depreciationAmortization: 5000,
-            interestExpense: 2000,
-            taxes: 8000
+            financialIncome: 0,
+            financialExpenses: 2000,
+            exceptionalIncome: 0,
+            incomeTax: 8000
         });
 
         // Net Income = EBITDA - D&A - Interest - Taxes = 40k - 5k - 2k - 8k = 25k
@@ -57,11 +69,17 @@ describe('TabIncomeStatementComponent', () => {
 
         component.pnlForm.patchValue({
             revenue: 50000,
-            cogs: 10000,
-            operatingExpenses: 5000,
+            soldProduction: 0,
+            otherOperatingIncome: 0,
+            consumedPurchases: 10000,
+            externalExpenses: 5000,
+            personnelExpenses: 0,
+            taxesAndDuties: 0,
             depreciationAmortization: 2000,
-            interestExpense: 1000,
-            taxes: 4000
+            financialIncome: 0,
+            financialExpenses: 1000,
+            exceptionalIncome: 0,
+            incomeTax: 4000
         });
 
         // EBITDA = 50k - 10k - 5k = 35k, Net Income = 35k - 2k - 1k - 4k = 28k

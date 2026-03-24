@@ -106,6 +106,14 @@ export interface FinancialStatementNormalizedSchema {
     adjustments: NormalizationAdjustment[];
     confidence_score: number;
     normalization_date: string;
+    normalized_bilan_actif?: BilanActifSchema;
+    normalized_bilan_passif?: BilanPassifSchema;
+    normalized_income_statement?: IncomeStatementSchema;
+    normalized_cash_flow_statement?: CashFlowSchema;
+    source_standard?: string;
+    applied_standard?: string;
+    exchange_rate_used?: number;
+    exchange_rate_date?: string;
 }
 
 export interface NormalizationAdjustment {

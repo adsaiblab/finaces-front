@@ -1,0 +1,42 @@
+<div class="finaces-card animate-fade-in p-6">
+    <div class="flex items-center gap-2 mb-6 pb-4 border-b border-[color:var(--color-border-default)]">
+        <mat-icon class="text-[color:var(--color-primary)]">policy</mat-icon>
+        <h2 class="text-xl font-semibold text-[color:var(--color-content-primary)] uppercase tracking-wider text-sm">
+            Accounting Standard
+        </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="info-block">
+            <span class="label">Detected Standard</span>
+            <span class="value font-medium">{{ data().source_standard || 'MAROC CNC' }}</span>
+        </div>
+
+        <div class="info-block">
+            <span class="label">Applied Standard</span>
+            <span class="value font-bold text-[color:var(--color-primary)]">{{ data().applied_standard ||
+                'IFRS' }}</span>
+        </div>
+
+        <div class="info-block">
+            <span class="label">Exchange Rate</span>
+            <span class="value">
+                1 USD = {{ (data().exchange_rate_used || 10.5) | number:'1.2-4' }}
+                <span class="text-xs text-[color:var(--color-content-secondary)] ml-1">(as of {{ (data().exchange_rate_date || data().normalization_date) | date:'mediumDate' }})</span>
+            </span>
+        </div>
+
+        <div class="info-block">
+            <span class="label">Normalized At</span>
+            <span class="value text-sm">{{ data().normalization_date | date:'medium' }}</span>
+        </div>
+
+        <div class="info-block">
+            <span class="label">Processed By</span>
+            <span class="value text-sm flex items-center gap-1">
+                <mat-icon class="text-[16px] w-[16px] h-[16px]">computer</mat-icon>
+                SYSTEM
+            </span>
+        </div>
+    </div>
+</div>

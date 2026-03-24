@@ -100,7 +100,7 @@ export class CaseService {
     }
 
     // =========================================================================
-    // NOUVELLES MÉTHODES POUR LES ÉTATS FINANCIERS (BLOC 2 & 3)
+    // NOUVELLES MÉTHODES POUR LES ÉTATS FINANCIERS (BLOC 2)
     // =========================================================================
 
     getFinancials(caseId: string): Observable<FinancialStatementRawOut[]> {
@@ -117,5 +117,17 @@ export class CaseService {
 
     normalizeFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema> {
         return this.http.post<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalize`, {});
+    }
+
+    // =========================================================================
+    // NOUVELLES MÉTHODES POUR LA NORMALISATION & RATIOS (BLOCS 3 & 4)
+    // =========================================================================
+
+    getNormalizedFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema> {
+        return this.http.get<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalized-financials`);
+    }
+
+    computeRatios(caseId: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/${caseId}/ratios/compute`, {});
     }
 }

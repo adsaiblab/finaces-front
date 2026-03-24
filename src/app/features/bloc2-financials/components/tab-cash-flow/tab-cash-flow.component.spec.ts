@@ -31,8 +31,8 @@ describe('TabCashFlowComponent', () => {
             financingActivities: -2000   // Remboursement de dette
         });
 
-        // Le signal netCashFlow se met à jour automatiquement
-        expect(component.netCashFlow()).toBe(8000);
+        // Le signal changeInCash se met à jour automatiquement
+        expect(component.changeInCash()).toBe(8000);
     });
 
     it('should emit cashFlowDataChange when form is valid and changes', () => {

@@ -64,6 +64,6 @@ describe('RecentCasesTableComponent', () => {
         const compiled = fixture.nativeElement as HTMLElement;
         const emptyState = compiled.querySelector('.empty-state');
         expect(emptyState).toBeTruthy();
-        expect(emptyState?.textContent).toContain('Aucun dossier récent');
+        expect(emptyState?.textContent).toContain('No recent cases');
     });
 });

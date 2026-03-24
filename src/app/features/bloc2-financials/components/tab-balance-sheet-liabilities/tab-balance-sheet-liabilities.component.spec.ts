@@ -26,12 +26,11 @@ describe('TabBalanceSheetLiabilitiesComponent', () => {
 
     it('should calculate totalLiabilities correctly when form changes', () => {
         component.liabilitiesForm.patchValue({
-            equity: { shareCapital: 50000, retainedEarnings: 10000 },
-            nonCurrentLiabilities: { longTermDebt: 30000 },
-            currentLiabilities: { shortTermDebt: 5000, accountsPayable: 15000 }
+            shareCapital: 50000, reserves: 0, retainedEarningsPrior: 10000, currentYearEarnings: 0,
+            longTermDebt: 30000, longTermProvisions: 0,
+            shortTermDebt: 5000, accountsPayable: 15000, taxAndSocialLiabilities: 0, otherCurrentLiabilities: 0
         });
 
-        // Le signal totalLiabilities se met à jour automatiquement
         expect(component.totalLiabilities()).toBe(110000);
     });
 
@@ -39,9 +38,9 @@ describe('TabBalanceSheetLiabilitiesComponent', () => {
         const emitSpy = vi.spyOn(component.liabilitiesDataChange, 'emit');
 
         component.liabilitiesForm.patchValue({
-            equity: { shareCapital: 10000, retainedEarnings: 0 },
-            nonCurrentLiabilities: { longTermDebt: 0 },
-            currentLiabilities: { shortTermDebt: 0, accountsPayable: 0 }
+            shareCapital: 10000, reserves: 0, retainedEarningsPrior: 0, currentYearEarnings: 0,
+            longTermDebt: 0, longTermProvisions: 0,
+            shortTermDebt: 0, accountsPayable: 0, taxAndSocialLiabilities: 0, otherCurrentLiabilities: 0
         });
 
         expect(emitSpy).toHaveBeenCalledWith({
