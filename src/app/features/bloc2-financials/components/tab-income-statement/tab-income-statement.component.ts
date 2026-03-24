@@ -1,16 +1,12 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
 
 @Component({
     selector: 'app-tab-income-statement',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './tab-income-statement.component.html',
     styleUrls: ['./tab-income-statement.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -22,26 +18,49 @@ export class TabIncomeStatementComponent implements OnInit {
     public pnlDataChange = output<{ netIncome: number, ebitda: number, data: any }>();
 
     public pnlForm: FormGroup = this.fb.group({
-        revenue: [0, [Validators.required, Validators.min(0)]],
-        cogs: [0, [Validators.required, Validators.min(0)]], // Cost of Goods Sold
-        operatingExpenses: [0, [Validators.required, Validators.min(0)]],
-        depreciationAmortization: [0, [Validators.required, Validators.min(0)]],
-        interestExpense: [0, [Validators.required, Validators.min(0)]],
-        taxes: [0, [Validators.required, Validators.min(0)]]
+        revenue: [0, [Validators.required]],
+        soldProduction: [0, [Validators.required]],
+        otherOperatingIncome: [0, [Validators.required]],
+        consumedPurchases: [0, [Validators.required]],
+        externalExpenses: [0, [Validators.required]],
+        personnelExpenses: [0, [Validators.required]],
+        taxesAndDuties: [0, [Validators.required]],
+        depreciationAmortization: [0, [Validators.required]],
+        financialIncome: [0, [Validators.required]],
+        financialExpenses: [0, [Validators.required]],
+        exceptionalIncome: [0, [Validators.required]],
+        incomeTax: [0, [Validators.required]]
     });
 
-    // KPI calculés dynamiquement
-    public ebitda = toSignal(
-        this.pnlForm.valueChanges.pipe(
-            map(v => (v.revenue || 0) - (v.cogs || 0) - (v.operatingExpenses || 0))
-        ), { initialValue: 0 }
-    );
+    // Capture the entire form value reactively
+    private formValues = toSignal(this.pnlForm.valueChanges, { initialValue: this.pnlForm.value });
 
-    public netIncome = toSignal(
-        this.pnlForm.valueChanges.pipe(
-            map(v => this.ebitda() - (v.depreciationAmortization || 0) - (v.interestExpense || 0) - (v.taxes || 0))
-        ), { initialValue: 0 }
-    );
+    // KPI calculés dynamiquement via computed()
+    public operatingIncome = computed(() => {
+        const v = this.formValues();
+        return (v.revenue || 0) + (v.soldProduction || 0) + (v.otherOperatingIncome || 0)
+             - (v.consumedPurchases || 0) - (v.externalExpenses || 0) - (v.personnelExpenses || 0)
+             - (v.taxesAndDuties || 0) - (v.depreciationAmortization || 0);
+    });
+
+    public ebitda = computed(() => {
+        const v = this.formValues();
+        return this.operatingIncome() + (v.depreciationAmortization || 0);
+    });
+
+    public netFinancialResult = computed(() => {
+        const v = this.formValues();
+        return (v.financialIncome || 0) - (v.financialExpenses || 0);
+    });
+
+    public ordinaryIncome = computed(() => {
+        return this.operatingIncome() + this.netFinancialResult();
+    });
+
+    public netIncome = computed(() => {
+        const v = this.formValues();
+        return this.ordinaryIncome() + (v.exceptionalIncome || 0) - (v.incomeTax || 0);
+    });
 
     ngOnInit(): void {
         this.pnlForm.valueChanges.subscribe(val => {

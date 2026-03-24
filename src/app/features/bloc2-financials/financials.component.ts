@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import {
   ExerciseSelectorComponent,
@@ -14,22 +14,24 @@ import {
   TabIncomeStatementComponent,
   TabCashFlowComponent
 } from './components';
+import { TabOthersComponent } from './components/tab-others/tab-others.component';
 
 @Component({
   selector: 'app-financials',
   standalone: true,
   imports: [
     CommonModule,
-    MatTabsModule,
     MatIconModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatTabsModule,
     ExerciseSelectorComponent,
     BalanceCheckComponent,
     TabBalanceSheetAssetsComponent,
     TabBalanceSheetLiabilitiesComponent,
     TabIncomeStatementComponent,
-    TabCashFlowComponent
+    TabCashFlowComponent,
+    TabOthersComponent
   ],
   templateUrl: './financials.component.html',
   styleUrls: ['./financials.component.scss'],
@@ -41,6 +43,9 @@ export class FinancialsComponent {
   private snackBar = inject(MatSnackBar);
 
   public caseId = signal<string>('');
+
+  // ✅ Le signal de routage interne pour piloter notre nouvelle Sidebar latérale
+  public activeTab = signal<'assets' | 'liabilities' | 'pnl' | 'cashflow' | 'others'>('assets');
 
   public availableYears = signal<number[]>([2023, 2022, 2021]);
   public currentExercise = signal<number>(2023);

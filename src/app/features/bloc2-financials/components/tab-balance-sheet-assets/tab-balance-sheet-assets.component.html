@@ -1,50 +1,57 @@
-<form [formGroup]="assetsForm" class="flex flex-col gap-8 animate-fade-in">
+<form [formGroup]="assetsForm" class="flex flex-col pt-2 pb-8">
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="financial-block" formGroupName="currentAssets">
-            <h3>Current Assets</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <mat-form-field appearance="outline" class="finaces-input">
-                    <mat-label>Cash & equivalents</mat-label>
-                    <input matInput type="number" formControlName="cash" placeholder="0.00">
-                    <span matTextPrefix>MAD</span>
-                </mat-form-field>
+    <div class="flex flex-col">
+        <h3 class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2">
+            Non-Current Assets</h3>
 
-                <mat-form-field appearance="outline" class="finaces-input">
-                    <mat-label>Accounts receivable</mat-label>
-                    <input matInput type="number" formControlName="accountsReceivable" placeholder="0.00">
-                    <span matTextPrefix>MAD</span>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="finaces-input">
-                    <mat-label>Inventory</mat-label>
-                    <input matInput type="number" formControlName="inventory" placeholder="0.00">
-                    <span matTextPrefix>MAD</span>
-                </mat-form-field>
-            </div>
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Intangible Assets</label>
+            <input type="number" formControlName="intangibleAssets" placeholder="0.00" class="finaces-data-pill">
         </div>
 
-        <div class="financial-block" formGroupName="nonCurrentAssets">
-            <h3>Non-Current Assets</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <mat-form-field appearance="outline" class="finaces-input">
-                    <mat-label>Property, Plant & Equipment (PP&E)</mat-label>
-                    <input matInput type="number" formControlName="propertyPlantEquipment" placeholder="0.00">
-                    <span matTextPrefix>MAD</span>
-                </mat-form-field>
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Property, Plant & Equipment</label>
+            <input type="number" formControlName="tangibleAssets" placeholder="0.00" class="finaces-data-pill">
+        </div>
 
-                <mat-form-field appearance="outline" class="finaces-input">
-                    <mat-label>Intangible Assets</mat-label>
-                    <input matInput type="number" formControlName="intangibleAssets" placeholder="0.00">
-                    <span matTextPrefix>MAD</span>
-                </mat-form-field>
-            </div>
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Financial Assets</label>
+            <input type="number" formControlName="financialAssets" placeholder="0.00" class="finaces-data-pill">
+        </div>
+
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Other Non-Current Assets</label>
+            <input type="number" formControlName="otherNonCurrentAssets" placeholder="0.00" class="finaces-data-pill">
         </div>
     </div>
 
-    <div class="total-bar">
-        <span class="total-label">Total Assets ({{ year() }})</span>
-        <span class="total-value">{{ totalAssets() | number:'1.2-2' }} MAD</span>
+    <div class="flex flex-col mt-6">
+        <h3 class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2">Current Assets</h3>
+
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Inventory</label>
+            <input type="number" formControlName="inventory" placeholder="0.00" class="finaces-data-pill">
+        </div>
+
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Accounts Receivable</label>
+            <input type="number" formControlName="accountsReceivable" placeholder="0.00" class="finaces-data-pill">
+        </div>
+
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Other Current Assets</label>
+            <input type="number" formControlName="otherCurrentAssets" placeholder="0.00" class="finaces-data-pill">
+        </div>
+
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Cash & Equivalents</label>
+            <input type="number" formControlName="liquidAssets" placeholder="0.00" class="finaces-data-pill">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-[1fr_200px] items-center py-6 px-2 mt-4 border-t-2 border-[color:var(--color-primary)]">
+        <span class="text-base font-bold text-[color:var(--color-content-primary)] uppercase">Total Assets</span>
+        <span class="text-xl font-bold text-[color:var(--color-primary)] text-right pr-4">{{ totalAssets() | number:'1.2-2' }}</span>
     </div>
 
 </form>

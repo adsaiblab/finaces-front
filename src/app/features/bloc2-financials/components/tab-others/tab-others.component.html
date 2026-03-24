@@ -1,0 +1,38 @@
+<form [formGroup]="othersForm" class="flex flex-col pt-2 pb-8 max-w-3xl">
+
+    <div class="flex flex-col">
+
+        <!-- Headcount -->
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Headcount (number)</label>
+            <input type="number" formControlName="headcount" placeholder="0" class="finaces-data-pill">
+        </div>
+
+        <!-- Backlog Value -->
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Backlog Value</label>
+            <input type="number" formControlName="backlogValue" placeholder="0.00" class="finaces-data-pill">
+        </div>
+
+        <!-- Distributed Dividends -->
+        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm text-[color:var(--color-content-primary)]">Distributed Dividends</label>
+            <input type="number" formControlName="distributedDividends" placeholder="0.00" class="finaces-data-pill">
+        </div>
+
+        <!-- Consolidated Accounts -->
+        <div class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
+            <label class="text-sm font-bold text-[color:var(--color-content-primary)]">Consolidated Accounts</label>
+            <div class="flex justify-end pr-8">
+                <mat-slide-toggle formControlName="consolidatedAccounts" color="primary"></mat-slide-toggle>
+            </div>
+        </div>
+
+        <!-- Notes / Source -->
+        <div class="flex flex-col mt-6 gap-3">
+            <label class="text-sm font-bold text-[color:var(--color-content-primary)] px-2">Notes / Source</label>
+            <textarea formControlName="notes" rows="4" class="w-full bg-[color:var(--color-surface-hover)] border border-[color:var(--color-border-default)] rounded-xl p-4 text-sm text-[color:var(--color-content-primary)] focus:border-[color:var(--color-primary)] outline-none transition-colors" placeholder="[SEED-API] Profil DETRESSE | Exercice {{ year() }}"></textarea>
+        </div>
+
+    </div>
+</form>

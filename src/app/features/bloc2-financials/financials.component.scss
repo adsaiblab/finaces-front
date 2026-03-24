@@ -1,38 +1,45 @@
-// SCSS Fail-Fast : Utilisation stricte des variables du Design System.
-// Force le conteneur du Tab Group à prendre tout l'espace disponible
 :host {
     display: block;
     height: 100%;
 }
 
-::ng-deep .finaces-tabs {
+/* Custom Navigation Pills (Remplace le mat-tab-group natif) */
+.nav-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: transparent;
+    color: var(--color-content-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 
-    // Ajustement Material 3 pour FinaCES (Dark Mode compliant)
-    .mat-mdc-tab-header {
-        background-color: var(--color-surface-default);
-        border-bottom: 1px solid var(--color-border-default);
+    mat-icon {
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        color: inherit;
     }
 
-    .mat-mdc-tab-labels {
-        padding-left: 1rem;
+    &:hover {
+        background-color: var(--color-surface-hover);
+        color: var(--color-content-primary);
     }
 
-    .mdc-tab__text-label {
-        color: var(--color-content-secondary);
-        font-weight: 500;
-    }
-
-    .mdc-tab--active .mdc-tab__text-label {
+    &.active {
+        /* Utilisation de color-mix pour une opacité élégante du fond */
+        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
         color: var(--color-primary);
-    }
-
-    // Évite que les onglets réduisent la hauteur de la vue de contenu
-    .mat-mdc-tab-body-wrapper {
-        flex: 1 1 auto;
+        font-weight: 600;
     }
 }
 
-// Animation subtile d'apparition (Enterprise Grade)
 .animate-fade-in {
     animation: fadeIn 0.3s ease-out forwards;
 }
@@ -46,5 +53,31 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+::ng-deep .finaces-horizontal-tabs {
+    .mat-mdc-tab-header {
+        background-color: var(--color-surface-card);
+        border-bottom: 1px solid var(--color-border-strong);
+    }
+
+    .mdc-tab__text-label {
+        color: var(--color-content-secondary);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .mdc-tab--active .mdc-tab__text-label {
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
+    .mdc-tab-indicator__inner--theme-demo {
+        border-color: var(--color-primary) !important;
+    }
+
+    .mat-mdc-tab-body-wrapper {
+        flex: 1 1 auto;
     }
 }

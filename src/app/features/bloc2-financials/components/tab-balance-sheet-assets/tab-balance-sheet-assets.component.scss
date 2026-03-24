@@ -1,21 +1,30 @@
-// Respect du Fail-Fast SCSS
-.financial-block {
-    background-color: var(--color-surface-card);
-    border: 1px solid var(--color-border-default);
-    border-radius: 0.75rem; // xl
-    padding: 1.5rem;
+/* Naked Input style for Excel-like Grid */
+.finaces-grid-input {
+    width: 100%;
+    background-color: transparent;
+    color: var(--color-content-primary);
+    text-align: right;
+    font-size: 0.875rem;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid transparent;
+    /* Invisible par défaut */
+    border-radius: 0.25rem;
+    outline: none;
+    transition: all 0.2s ease-in-out;
 
-    // Surcharge MDC pour adapter les inputs au Dark Mode FinaCES
-    ::ng-deep .mdc-text-field--outlined {
-        --mdc-outlined-text-field-container-color: var(--color-surface-default);
-        --mdc-outlined-text-field-outline-color: var(--color-border-default);
-        --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
-        --mdc-outlined-text-field-hover-outline-color: var(--color-border-strong);
-        --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
-        --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
+    /* N'apparaît qu'au survol ou focus */
+    &:hover:not(:focus) {
+        border-color: var(--color-border-strong);
+        background-color: var(--color-surface-default);
     }
-}
 
-.total-bar {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    &:focus {
+        border-color: var(--color-primary);
+        background-color: var(--color-surface-default);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    &::placeholder {
+        color: var(--color-content-disabled);
+    }
 }

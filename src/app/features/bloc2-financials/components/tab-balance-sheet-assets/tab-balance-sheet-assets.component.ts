@@ -1,16 +1,12 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
 
 @Component({
     selector: 'app-tab-balance-sheet-assets',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './tab-balance-sheet-assets.component.html',
     styleUrls: ['./tab-balance-sheet-assets.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -18,40 +14,37 @@ import { map } from 'rxjs';
 export class TabBalanceSheetAssetsComponent implements OnInit {
     private fb = inject(FormBuilder);
 
-    // L'année en cours d'édition
     public year = input.required<number>();
-
-    // Émission des données validées vers le parent
     public assetsDataChange = output<{ total: number, data: any }>();
 
     public assetsForm: FormGroup = this.fb.group({
-        currentAssets: this.fb.group({
-            cash: [0, [Validators.required, Validators.min(0)]],
-            accountsReceivable: [0, [Validators.required, Validators.min(0)]],
-            inventory: [0, [Validators.required, Validators.min(0)]]
-        }),
-        nonCurrentAssets: this.fb.group({
-            propertyPlantEquipment: [0, [Validators.required, Validators.min(0)]],
-            intangibleAssets: [0, [Validators.required, Validators.min(0)]]
-        })
+        intangibleAssets: [0, [Validators.required]],
+        tangibleAssets: [0, [Validators.required]],
+        financialAssets: [0, [Validators.required]],
+        otherNonCurrentAssets: [0, [Validators.required]],
+        inventory: [0, [Validators.required]],
+        accountsReceivable: [0, [Validators.required]],
+        otherCurrentAssets: [0, [Validators.required]],
+        liquidAssets: [0, [Validators.required]]
     });
 
-    // Utilisation de toSignal pour convertir le flux du formulaire en Signal calculé
-    public totalAssets = toSignal(
-        this.assetsForm.valueChanges.pipe(
-            map(values => {
-                const current = values.currentAssets;
-                const nonCurrent = values.nonCurrentAssets;
-                const totalCurrent = (current?.cash || 0) + (current?.accountsReceivable || 0) + (current?.inventory || 0);
-                const totalNonCurrent = (nonCurrent?.propertyPlantEquipment || 0) + (nonCurrent?.intangibleAssets || 0);
-                return totalCurrent + totalNonCurrent;
-            })
-        ),
-        { initialValue: 0 }
-    );
+    private formValues = toSignal(this.assetsForm.valueChanges, { initialValue: this.assetsForm.value });
+
+    public nonCurrentAssetsTotal = computed(() => {
+        const v = this.formValues();
+        return (v.intangibleAssets || 0) + (v.tangibleAssets || 0) + (v.financialAssets || 0) + (v.otherNonCurrentAssets || 0);
+    });
+
+    public currentAssetsTotal = computed(() => {
+        const v = this.formValues();
+        return (v.inventory || 0) + (v.accountsReceivable || 0) + (v.otherCurrentAssets || 0) + (v.liquidAssets || 0);
+    });
+
+    public totalAssets = computed(() => {
+        return this.nonCurrentAssetsTotal() + this.currentAssetsTotal();
+    });
 
     ngOnInit(): void {
-        // Écoute les changements pour remonter l'info au parent (Debounce possible ici)
         this.assetsForm.valueChanges.subscribe(val => {
             if (this.assetsForm.valid) {
                 this.assetsDataChange.emit({
