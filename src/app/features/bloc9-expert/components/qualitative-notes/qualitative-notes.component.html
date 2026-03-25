@@ -1,0 +1,63 @@
+<section class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6" [formGroup]="parentGroup()">
+    <h2 class="text-xl font-bold text-content-primary mb-2 flex items-center gap-2">
+        <span class="material-icons text-primary-default">edit_note</span>
+        Expert Qualitative Analysis (Pillars)
+    </h2>
+    <p class="text-sm text-content-secondary mb-6">
+        Provide a detailed qualitative assessment for each financial pillar based on the ratios and context.
+    </p>
+
+    <div *ngIf="isTensionHigh"
+        class="mb-6 bg-warning-lighter border-l-4 border-warning-default p-4 rounded-r-md flex items-start gap-3">
+        <span class="material-icons text-warning-default mt-0.5">notification_important</span>
+        <div>
+            <h4 class="text-sm font-bold text-warning-dark">Active Tension ({{ tensionLabel() }})</h4>
+            <p class="text-sm text-warning-dark mt-1">Please ensure you address the underlying causes of this tension in
+                the Dynamic Analysis or Risk Factors sections.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Liquidity Comment</mat-label>
+            <textarea matInput formControlName="liquidity_comment" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Solvability Comment</mat-label>
+            <textarea matInput formControlName="solvability_comment" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Profitability Comment</mat-label>
+            <textarea matInput formControlName="profitability_comment" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Capacity Comment</mat-label>
+            <textarea matInput formControlName="capacity_comment" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Quality Comment</mat-label>
+            <textarea matInput formControlName="quality_comment" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Dynamic Analysis</mat-label>
+            <textarea matInput formControlName="dynamic_analysis_comment" rows="3"></textarea>
+        </mat-form-field>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border-default pt-4">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Mitigating Factors (Optional)</mat-label>
+            <textarea matInput formControlName="mitigating_factors" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Risk Factors (Optional)</mat-label>
+            <textarea matInput formControlName="risk_factors" rows="3"></textarea>
+        </mat-form-field>
+    </div>
+</section>

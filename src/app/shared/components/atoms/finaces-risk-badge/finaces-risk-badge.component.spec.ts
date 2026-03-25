@@ -27,8 +27,8 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.detectChanges();
         fixture.detectChanges();
 
-        expect(component.metadata.label).toBe('Low');
-        expect(component.isMcc).toBe(true);
+        expect(component.metadata().label).toBe('Low');
+        expect(component.isMcc()).toBe(true);
     });
 
     it('should display CRITICAL risk label for IA rail', () => {
@@ -37,8 +37,8 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.detectChanges();
         fixture.detectChanges();
 
-        expect(component.metadata.label).toBe('Critical');
-        expect(component.isMcc).toBe(false);
+        expect(component.metadata().label).toBe('Critical');
+        expect(component.isMcc()).toBe(false);
     });
 
     it('should include badge-sm class when size is sm', () => {
@@ -46,7 +46,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.detectChanges();
         fixture.detectChanges();
 
-        expect(component.badgeClasses).toContain('badge-sm');
+        expect(component.badgeClasses()).toContain('badge-sm');
     });
 
     it('should include correct semantic CSS class for MCC LOW', () => {
@@ -55,7 +55,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.detectChanges();
         fixture.detectChanges();
 
-        expect(component.badgeClasses).toContain('badge-mcc-low');
+        expect(component.badgeClasses()).toContain('badge-mcc-low');
     });
 
     it('should include correct semantic CSS class for IA CRITICAL', () => {
@@ -64,7 +64,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.detectChanges();
         fixture.detectChanges();
 
-        expect(component.badgeClasses).toContain('badge-ia-critical');
+        expect(component.badgeClasses()).toContain('badge-ia-critical');
     });
 
     it('should hide label element when showLabel is false', () => {

@@ -1,0 +1,82 @@
+<section class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6">
+    <h2 class="text-xl font-bold text-content-primary mb-6 flex items-center gap-2">
+        <span class="material-icons text-primary-default">analytics</span>
+        Decision Recap
+    </h2>
+
+    @if (caseData()) {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="space-y-6 bg-surface-default p-5 rounded-lg border border-border-default">
+            <div class="flex items-center justify-between">
+                <span class="text-content-secondary font-medium">MCC Final Score</span>
+                <finaces-score-gauge [score]="caseData()!.mcc_score_final || 0"></finaces-score-gauge>
+            </div>
+
+            <hr class="border-border-default">
+
+            <div class="flex items-center justify-between">
+                <span class="text-content-secondary font-medium">Risk Class</span>
+                <finaces-risk-badge [riskClass]="$any(caseData()!.risk_class || 'LOW')"></finaces-risk-badge>
+            </div>
+
+            <hr class="border-border-default">
+
+            <div class="flex items-center justify-between">
+                <span class="text-content-secondary font-medium">System Tension</span>
+                <finaces-tension-badge [level]="$any(caseData()!.tension_label || 'NONE')"></finaces-tension-badge>
+            </div>
+
+            <div *ngIf="caseData()!.override_applied"
+                class="flex items-center gap-2 text-warning-default mt-4 bg-warning-lighter p-3 rounded-md">
+                <span class="material-icons text-sm">warning</span>
+                <span class="text-sm font-medium">Risk class was manually overridden.</span>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-surface-default p-5 rounded-lg border border-border-default">
+                <h3 class="text-sm font-bold text-content-primary mb-4 uppercase tracking-wider">Stress Test Results</h3>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-content-secondary text-sm">Stress 60 Days</span>
+                        <span class="flex items-center gap-2 text-sm font-medium"
+                            [ngClass]="{'text-success-default': caseData()!.stress_test_results?.stress60d?.status === 'SOLVENT', 'text-warning-default': caseData()!.stress_test_results?.stress60d?.status === 'LIMIT', 'text-error-default': caseData()!.stress_test_results?.stress60d?.status === 'INSOLVENT'}">
+                            <span class="material-icons text-base">
+                                {{ caseData()!.stress_test_results?.stress60d?.status === 'SOLVENT' ? 'check_circle' :
+                                (caseData()!.stress_test_results?.stress60d?.status === 'LIMIT' ? 'warning' : 'cancel') }}
+                            </span>
+                            {{ caseData()!.stress_test_results?.stress60d?.status || 'N/A' }}
+                            <span class="text-content-tertiary">({{ caseData()!.stress_test_results?.stress60d?.minCash | number:'1.0-0' }} €)</span>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-content-secondary text-sm">Stress 90 Days</span>
+                        <span class="flex items-center gap-2 text-sm font-medium"
+                            [ngClass]="{'text-success-default': caseData()!.stress_test_results?.stress90d?.status === 'SOLVENT', 'text-warning-default': caseData()!.stress_test_results?.stress90d?.status === 'LIMIT', 'text-error-default': caseData()!.stress_test_results?.stress90d?.status === 'INSOLVENT'}">
+                            <span class="material-icons text-base">
+                                {{ caseData()!.stress_test_results?.stress90d?.status === 'SOLVENT' ? 'check_circle' :
+                                (caseData()!.stress_test_results?.stress90d?.status === 'LIMIT' ? 'warning' : 'cancel') }}
+                            </span>
+                            {{ caseData()!.stress_test_results?.stress90d?.status || 'N/A' }}
+                            <span class="text-content-tertiary">({{ caseData()!.stress_test_results?.stress90d?.minCash | number:'1.0-0' }} €)</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="caseData()!.system_alerts?.length"
+                class="bg-error-lighter p-5 rounded-lg border border-error-default">
+                <h3 class="text-sm font-bold text-error-dark mb-3 flex items-center gap-2">
+                    <span class="material-icons text-base">notification_important</span>
+                    Critical System Alerts
+                </h3>
+                <ul class="list-disc list-inside space-y-1 text-sm text-error-dark">
+                    <li *ngFor="let alert of caseData()!.system_alerts">{{ alert }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    }
+</section>

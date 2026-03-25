@@ -100,6 +100,15 @@ export interface EvaluationCaseDetailOut extends EvaluationCaseOut {
     scorecard?: any;
     consortium_data?: ConsortiumMember[];
     expert_review?: any;
+    // Expert Review enriched fields
+    mcc_score_final?: number;
+    tension_label?: string;
+    override_applied?: boolean;
+    stress_test_results?: {
+        stress60d?: { status: 'SOLVENT' | 'LIMIT' | 'INSOLVENT'; minCash: number };
+        stress90d?: { status: 'SOLVENT' | 'LIMIT' | 'INSOLVENT'; minCash: number };
+    };
+    system_alerts?: string[];
 }
 
 export interface CaseStatusResponse {

@@ -1,0 +1,48 @@
+<section class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-xl font-bold text-content-primary flex items-center gap-2">
+                <span class="material-icons text-primary-default">fact_check</span>
+                MCC Recommendations & Conditions
+            </h2>
+            <p class="text-sm text-content-secondary mt-1">Add mandatory or recommended execution conditions.</p>
+        </div>
+        <button mat-flat-button color="primary" (click)="openAddDialog()">
+            <span class="material-icons mr-1">add</span>
+            Add Condition
+        </button>
+    </div>
+
+    <div *ngIf="conditions().length === 0"
+        class="text-center py-8 bg-surface-default rounded-lg border border-dashed border-border-default">
+        <span class="material-icons text-content-tertiary text-4xl mb-2">assignment</span>
+        <p class="text-content-secondary">No conditions added yet.</p>
+    </div>
+
+    <div class="space-y-3">
+        <div *ngFor="let cond of conditions(); let i = index"
+            class="bg-surface-default border border-border-default rounded-lg p-4 flex items-start justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="px-2 py-1 rounded text-xs font-bold"
+                        [ngClass]="{'bg-primary-lighter text-primary-dark': cond.type === 'CAUTION', 'bg-info-lighter text-info-dark': cond.type !== 'CAUTION'}">
+                        {{ cond.type }}
+                    </span>
+                    <span class="text-xs font-bold flex items-center gap-1"
+                        [ngClass]="cond.importance === 'OBLIGATOIRE' ? 'text-error-default' : 'text-content-secondary'">
+                        <span class="material-icons text-xs">{{ cond.importance === 'OBLIGATOIRE' ? 'check_circle' :
+                            'info' }}</span>
+                        {{ cond.importance }}
+                    </span>
+                    <span *ngIf="cond.dueDate" class="text-xs text-content-tertiary">
+                        Due: {{ cond.dueDate | date:'shortDate' }}
+                    </span>
+                </div>
+                <p class="text-sm text-content-primary">{{ cond.description }}</p>
+            </div>
+            <button mat-icon-button color="warn" (click)="removeCondition(i)" aria-label="Remove condition">
+                <span class="material-icons">delete</span>
+            </button>
+        </div>
+    </div>
+</section>

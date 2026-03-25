@@ -1,0 +1,12 @@
+:host {
+    display: block;
+}
+
+// Ensure radio buttons align well with multiline text
+::ng-deep .mat-mdc-radio-button .mdc-form-field {
+    align-items: flex-start;
+}
+
+::ng-deep .mat-mdc-radio-button .mdc-radio {
+    margin-top: 2px;
+}

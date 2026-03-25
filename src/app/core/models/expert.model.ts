@@ -34,3 +34,10 @@ export interface ConclusionUpdate {
     final_recommendation: string;
     conditional_factors?: string[];
 }
+
+export interface MccCondition {
+    type: 'CAUTION' | 'REPORTING' | 'PLAFOND' | 'CLAUSE_REVISION' | 'AUDIT' | 'AUTRE';
+    description: string;
+    importance: 'OBLIGATOIRE' | 'RECOMMANDÉE';
+    dueDate?: string;
+}

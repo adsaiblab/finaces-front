@@ -1,3 +1,4 @@
+@if (zscore()) {
 <mat-card class="zscore-card !bg-[color:var(--color-surface-card)] !border !shadow-sm transition-all duration-300"
     [ngClass]="{
             '!border-[color:var(--color-error)]': zscore().z_score_zone === 'DISTRESS',
@@ -81,3 +82,4 @@
         }
     </mat-card-content>
 </mat-card>
+}

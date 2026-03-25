@@ -155,6 +155,6 @@ export class StressComponent implements OnInit {
   }
 
   public proceedToExpert(): void {
-    this.router.navigate(['/cases', this.caseId(), 'expert-review']);
+    this.router.navigate(['/cases', this.caseId(), 'expert']);
   }
 }

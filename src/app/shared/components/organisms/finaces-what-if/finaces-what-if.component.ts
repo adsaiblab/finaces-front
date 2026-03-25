@@ -17,7 +17,7 @@ import { ShapFeature, WhatIfScenario } from '../../../../core/models/ia.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinacesWhatIfComponent {
-    public features = input.required<ShapFeature[]>();
+    public features = input<ShapFeature[]>([]);
     public isSimulating = input<boolean>(false);
 
     public simulate = output<WhatIfScenario>();

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, viewChild, ElementRef, effect, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, viewChild, ElementRef, afterNextRender, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ConvergenceChartOut } from '../../../../core/models/dashboard.model';
@@ -22,12 +22,9 @@ export class ConvergenceChartComponent implements OnDestroy {
     constructor(@Inject(PLATFORM_ID) platformId: Object) {
         this.isBrowser = isPlatformBrowser(platformId);
 
-        effect(() => {
-            const data = this.chartData();
-            const canvas = this.canvasRef();
-
-            if (this.isBrowser && data && canvas) {
-                this.renderChart(data, canvas.nativeElement);
+        afterNextRender(() => {
+            if (this.isBrowser && this.chartData() && this.canvasRef()) {
+                this.renderChart(this.chartData()!, this.canvasRef()!.nativeElement);
             }
         });
     }

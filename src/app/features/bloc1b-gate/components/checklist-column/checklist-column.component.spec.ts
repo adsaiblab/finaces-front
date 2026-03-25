@@ -31,7 +31,7 @@ describe('ChecklistColumnComponent', () => {
         expect(component.yearlyProgress[0].progressPercent).toBe(0);
     });
 
-    it('devrait calculer correctement la progression avec des documents valides', () => {
+    it('devrait calculer correctement la progression avec des documents valides', async () => {
         const mockDocs: Partial<GateDocumentOut>[] = [
             { document_type: 'BILAN', fiscal_year: 2023, integrity_status: 'OK' },
             { document_type: 'CPC', fiscal_year: 2023, integrity_status: 'WARN' },
@@ -41,6 +41,7 @@ describe('ChecklistColumnComponent', () => {
 
         fixture.componentRef.setInput('documents', mockDocs as GateDocumentOut[]);
         fixture.detectChanges();
+        await fixture.whenStable();
         fixture.detectChanges();
 
         // 4 requis sur 4 pour 2023 = 100% pour l'année
