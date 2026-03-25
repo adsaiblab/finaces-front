@@ -1,21 +1,34 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { IAPredictionResult } from '../models';
+import { IAPredictionResult, WhatIfPayload, WhatIfSimulationResult } from '../models/ia.model';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class IaService {
-    private apiUrl = `${environment.apiUrl}`;
+    private http = inject(HttpClient);
+    private apiUrl = `${environment.apiUrl}/ia/cases`;
 
-    constructor(private http: HttpClient) { }
+    public getPrediction(caseId: string): Observable<IAPredictionResult> {
+        return this.http.get<IAPredictionResult>(`${this.apiUrl}/${caseId}/predict`).pipe(
+            tap(result => console.log('✅ [IA Model] Prediction fetched successfully:', result)),
+            catchError(err => {
+                console.error('❌ [IA Model] Prediction error:', err);
+                return throwError(() => new Error('AI Prediction model is currently unavailable. Proceed with MCC Scoring only.'));
+            })
+        );
+    }
 
-    predictIA(caseId: string, features: Record<string, any>): Observable<IAPredictionResult> {
-        return this.http.post<IAPredictionResult>(
-            `${this.apiUrl}/ia/cases/${caseId}/predict`,
-            features
+    public runWhatIfSimulation(caseId: string, payload: WhatIfPayload): Observable<WhatIfSimulationResult> {
+        return this.http.post<WhatIfSimulationResult>(`${this.apiUrl}/${caseId}/simulate`, payload).pipe(
+            tap(result => console.log('✅ [IA Model] What-If Simulation complete:', result)),
+            catchError(err => {
+                console.error('❌ [IA Model] Simulation error:', err);
+                return throwError(() => new Error('Failed to run What-If simulation. Please check input parameters.'));
+            })
         );
     }
 }
