@@ -1,0 +1,63 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+
+    <mat-card
+        class="!bg-[color:var(--color-surface-card)] !border-2 !border-[color:var(--color-primary)] !shadow-md !rounded-xl relative overflow-hidden">
+        <div
+            class="absolute top-0 left-0 right-0 bg-[color:var(--color-primary)] text-white text-center text-xs font-bold uppercase tracking-wider py-1">
+            Official Decision Source
+        </div>
+        <mat-card-content class="!p-6 flex flex-col items-center justify-center mt-4">
+            <h3
+                class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                <mat-icon class="text-[18px]">military_tech</mat-icon>
+                MCC Score
+            </h3>
+            <finaces-score-gauge [score]="mccScore()"></finaces-score-gauge>
+            <finaces-risk-badge [riskClass]="$any(mccClass())" class="mt-4"></finaces-risk-badge>
+        </mat-card-content>
+    </mat-card>
+
+    <div class="flex flex-col items-center justify-center p-4">
+        <h4 class="text-xs font-bold text-[color:var(--color-content-secondary)] uppercase tracking-widest mb-2">Global
+            Delta</h4>
+
+        <div class="text-4xl font-black mb-2 flex items-center gap-1" [ngClass]="getDeltaColorClass()">
+            @if (deltaScore() > 0) { <mat-icon>trending_up</mat-icon> }
+            @if (deltaScore() < 0) { <mat-icon>trending_down</mat-icon> }
+            @if (deltaScore() === 0) { <mat-icon>drag_handle</mat-icon> }
+            {{ deltaScore() > 0 ? '+' : '' }}{{ deltaScore() | number:'1.2-2' }}
+        </div>
+
+        @if (classDivergence()) {
+        <div
+            class="bg-[color:var(--color-warning)] bg-opacity-10 border border-[color:var(--color-warning)] text-[color:var(--color-warning)] px-3 py-1.5 rounded-full text-xs font-bold uppercase flex items-center gap-1 mt-2">
+            <mat-icon class="text-[14px]">report</mat-icon>
+            Class Divergence
+        </div>
+        } @else {
+        <div
+            class="bg-[color:var(--color-success)] bg-opacity-10 border border-[color:var(--color-success)] text-[color:var(--color-success)] px-3 py-1.5 rounded-full text-xs font-bold uppercase flex items-center gap-1 mt-2">
+            <mat-icon class="text-[14px]">check_circle</mat-icon>
+            Class Aligned
+        </div>
+        }
+    </div>
+
+    <mat-card
+        class="!bg-[color:var(--color-surface-default)] !border-2 !border-dashed !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl relative overflow-hidden">
+        <div
+            class="absolute top-0 left-0 right-0 bg-[color:var(--color-border-strong)] text-[color:var(--color-content-secondary)] text-center text-xs font-bold uppercase tracking-wider py-1 flex items-center justify-center gap-1">
+            <mat-icon class="text-[14px]">science</mat-icon> AI Challenger
+        </div>
+        <mat-card-content class="!p-6 flex flex-col items-center justify-center mt-4 opacity-90">
+            <h3
+                class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                <mat-icon class="text-[18px]">psychology</mat-icon>
+                Predicted Score
+            </h3>
+            <finaces-score-gauge [score]="iaScore()"></finaces-score-gauge>
+            <finaces-risk-badge [riskClass]="$any(iaClass())" class="mt-4"></finaces-risk-badge>
+        </mat-card-content>
+    </mat-card>
+
+</div>

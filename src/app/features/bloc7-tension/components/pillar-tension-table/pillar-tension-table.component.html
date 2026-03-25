@@ -1,0 +1,78 @@
+<div
+    class="finaces-tension-table border border-[color:var(--color-border-default)] rounded-xl overflow-hidden bg-[color:var(--color-surface-card)]">
+
+    <div
+        class="p-4 border-b border-[color:var(--color-border-default)] bg-[color:var(--color-surface-default)] flex items-center gap-2">
+        <mat-icon class="text-[color:var(--color-content-secondary)]">account_balance</mat-icon>
+        <h3 class="text-sm font-semibold text-[color:var(--color-content-primary)] uppercase tracking-wider m-0">
+            Pillar-by-Pillar Divergence Analysis
+        </h3>
+    </div>
+
+    <table mat-table [dataSource]="pillars()" class="w-full bg-transparent">
+
+        <ng-container matColumnDef="pillar">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider !px-4">
+                Pillar </th>
+            <td mat-cell *matCellDef="let row"
+                class="!px-4 !py-3 font-semibold text-[color:var(--color-content-primary)]">
+                {{ row.pillar_name }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="mcc">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-right !px-4">
+                MCC Score </th>
+            <td mat-cell *matCellDef="let row"
+                class="text-right !px-4 !py-3 text-[color:var(--color-content-primary)] font-medium">
+                {{ row.mcc_score | number:'1.1-2' }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ia">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-right !px-4">
+                AI Derived Impact </th>
+            <td mat-cell *matCellDef="let row"
+                class="text-right !px-4 !py-3 text-[color:var(--color-content-secondary)]">
+                {{ row.ia_impact | number:'1.1-2' }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delta">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-right !px-4">
+                Δ </th>
+            <td mat-cell *matCellDef="let row" class="text-right !px-4 !py-3 font-bold"
+                [ngClass]="getDeltaColorClass(row.delta)">
+                {{ row.delta > 0 ? '+' : '' }}{{ row.delta | number:'1.1-2' }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef
+                class="font-medium text-[color:var(--color-content-secondary)] !text-xs uppercase tracking-wider text-center !px-4">
+                Status </th>
+            <td mat-cell *matCellDef="let row" class="text-center !px-4 !py-3">
+                @if (row.is_divergent) {
+                <span
+                    class="inline-flex items-center gap-1 text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-[color:var(--color-error)] bg-opacity-10 text-[color:var(--color-error)] border border-[color:var(--color-error)] border-opacity-30">
+                    <mat-icon class="text-[12px] w-[12px] h-[12px]">warning</mat-icon> Divergent
+                </span>
+                } @else {
+                <span
+                    class="inline-flex items-center gap-1 text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-[color:var(--color-success)] bg-opacity-10 text-[color:var(--color-success)] border border-[color:var(--color-success)] border-opacity-30">
+                    <mat-icon class="text-[12px] w-[12px] h-[12px]">check</mat-icon> Aligned
+                </span>
+                }
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="hover:bg-[color:var(--color-surface-default)] transition-colors duration-150 border-b border-[color:var(--color-border-default)] last:border-b-0">
+        </tr>
+    </table>
+</div>

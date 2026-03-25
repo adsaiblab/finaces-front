@@ -1,0 +1,20 @@
+.finaces-radio {
+    ::ng-deep .mdc-form-field {
+        align-items: flex-start;
+    }
+}
+
+.finaces-form-field {
+    ::ng-deep .mdc-outlined-text-field-container-color {
+        background-color: var(--color-surface-card);
+    }
+}
+
+.finaces-primary-btn {
+    background-color: var(--color-primary);
+    color: white;
+
+    &:hover:not([disabled]) {
+        filter: brightness(1.1);
+    }
+}

@@ -1,0 +1,68 @@
+<mat-card
+    class="!bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl">
+    <mat-card-header
+        class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2">
+        <mat-icon class="text-[color:var(--color-primary)]">gavel</mat-icon>
+        <mat-card-title class="!text-lg !font-semibold !text-[color:var(--color-content-primary)] mt-1">
+            Analyst Final Resolution
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="!p-6">
+        <form [formGroup]="decisionForm" (ngSubmit)="submitDecision()" class="flex flex-col gap-6">
+
+            <div>
+                <h4 class="text-sm font-bold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-3">
+                    Resolution Action</h4>
+                <mat-radio-group formControlName="decision" class="flex flex-col md:flex-row gap-4">
+                    <mat-radio-button value="FOLLOW_MCC" class="finaces-radio">
+                        <span class="font-medium text-[color:var(--color-content-primary)]">Follow Official MCC
+                            Score</span>
+                        <p class="text-xs text-[color:var(--color-content-secondary)] m-0 leading-tight">Discard AI
+                            Challenger.</p>
+                    </mat-radio-button>
+
+                    <mat-radio-button value="FOLLOW_IA" class="finaces-radio">
+                        <span class="font-medium text-[color:var(--color-warning)]">Override MCC with AI Score</span>
+                        <p class="text-xs text-[color:var(--color-content-secondary)] m-0 leading-tight">Requires strong
+                            justification.</p>
+                    </mat-radio-button>
+
+                    <mat-radio-button value="INVESTIGATE" class="finaces-radio">
+                        <span class="font-medium text-[color:var(--color-error)]">Hold for Investigation</span>
+                        <p class="text-xs text-[color:var(--color-content-secondary)] m-0 leading-tight">Pause workflow
+                            to review raw data.</p>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <mat-form-field appearance="outline" class="w-full finaces-form-field">
+                <mat-label>Resolution Justification</mat-label>
+                <textarea matInput formControlName="justification" rows="3"
+                    placeholder="Explain the rationale for this decision..."></textarea>
+                @if (!requiresJustification() && decisionForm.get('decision')?.value === 'FOLLOW_MCC') {
+                <mat-hint>Optional for standard alignments.</mat-hint>
+                }
+                @if (decisionForm.get('justification')?.hasError('required')) {
+                <mat-error>Justification is strictly required for this resolution.</mat-error>
+                }
+                @if (decisionForm.get('justification')?.hasError('minlength')) {
+                <mat-error>Please provide a more detailed explanation.</mat-error>
+                }
+            </mat-form-field>
+
+            <div class="flex items-center justify-between border-t border-[color:var(--color-border-default)] pt-4">
+                <mat-checkbox formControlName="escalate_to_senior" color="warn">
+                    <span class="text-sm font-medium text-[color:var(--color-content-primary)]">Flag for Senior
+                        Review</span>
+                </mat-checkbox>
+
+                <button mat-flat-button color="primary" type="submit" [disabled]="decisionForm.invalid"
+                    class="finaces-primary-btn">
+                    <mat-icon>check_circle</mat-icon> Submit Decision
+                </button>
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,12 @@
+::ng-deep .mat-mdc-table {
+    background: transparent !important;
+}
+
+::ng-deep .mat-mdc-header-row {
+    background-color: var(--color-surface-default);
+    height: 40px !important;
+}
+
+::ng-deep .mat-mdc-cell {
+    border-bottom-color: var(--color-border-default);
+}
