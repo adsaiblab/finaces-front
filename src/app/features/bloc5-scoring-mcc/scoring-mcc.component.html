@@ -1,1 +1,104 @@
-<h2>Bloc 5 : Scoring MCC</h2>
+<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28">
+
+    @if (isLoading()) {
+    <div
+        class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10">
+        <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+        <p class="text-[color:var(--color-content-secondary)] font-medium">Aggregating MCC Scoring data...</p>
+    </div>
+    }
+
+    <header
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
+        <div>
+            <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
+                <mat-icon class="text-[color:var(--color-primary)]">military_tech</mat-icon>
+                MCC Scoring
+            </h1>
+            <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
+                Case #{{ caseId() }} — The authoritative risk decision based on validated financial ratios.
+            </p>
+        </div>
+
+        @if (scoringData(); as data) {
+        <div class="flex items-center gap-3">
+            <span class="px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider"
+                [ngClass]="data.status === 'COMPUTED' ? 'bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] text-[color:var(--color-content-secondary)]' : 'bg-[color:var(--color-warning)] bg-opacity-10 text-[color:var(--color-warning)] border border-[color:var(--color-warning)] border-opacity-30'">
+                {{ data.status === 'COMPUTED' ? 'SYSTEM COMPUTED' : 'MANUALLY OVERRIDDEN' }}
+            </span>
+        </div>
+        }
+    </header>
+
+    @if (error()) {
+    <div
+        class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center">
+        <span>{{ error() }}</span>
+        <button mat-button (click)="error.set(null)">Close</button>
+    </div>
+    }
+
+    @if (scoringData(); as data) {
+    <main class="flex flex-col gap-8 flex-1">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            <div
+                class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm">
+                <h3
+                    class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4">
+                    Global MCC Score</h3>
+                <finaces-score-gauge [score]="data.global_score"></finaces-score-gauge>
+            </div>
+
+            <div
+                class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm">
+                <h3
+                    class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4">
+                    Assigned Risk Class</h3>
+                <finaces-risk-badge [riskClass]="$any(data.risk_class)"
+                    class="transform scale-125"></finaces-risk-badge>
+            </div>
+        </div>
+
+        <div>
+            <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)] mb-4 flex items-center gap-2">
+                <mat-icon class="text-[color:var(--color-primary)]">account_balance</mat-icon>
+                Detailed Pillar Analysis
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                @for (pillar of data.pillars; track pillar.id) {
+                <app-pillar-detail-card [pillar]="pillar"></app-pillar-detail-card>
+                }
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <app-recommendations-section [recommendations]="data.recommendations"
+                [crossAnalysisAlerts]="data.cross_analysis_alerts">
+            </app-recommendations-section>
+
+            <app-override-zone [originalScore]="data.override ? data.override.original_score : data.global_score"
+                [isOverridden]="data.status === 'OVERRIDDEN'" [overrideDetails]="data.override"
+                [isSubmitting]="isOverriding()" (overrideSubmit)="handleOverride($event)">
+            </app-override-zone>
+        </div>
+
+    </main>
+
+    <div
+        class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
+
+        <button mat-button (click)="navigateBack()"
+            class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Ratios
+        </button>
+
+        <button mat-flat-button color="primary" (click)="proceedNext()" class="finaces-primary-btn px-8">
+            <span>Proceed to AI Analysis</span>
+            <mat-icon class="ml-2">smart_toy</mat-icon>
+        </button>
+
+    </div>
+    }
+</div>

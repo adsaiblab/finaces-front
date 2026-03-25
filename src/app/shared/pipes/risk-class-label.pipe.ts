@@ -7,10 +7,10 @@ import { RiskClass } from '../../core/models';
 })
 export class RiskClassLabelPipe implements PipeTransform {
     private readonly labelMap: Record<RiskClass | string, string> = {
-        [RiskClass.FAIBLE]: 'Faible',
-        [RiskClass.MODERE]: 'Modéré',
-        [RiskClass.ELEVE]: 'Élevé',
-        [RiskClass.CRITIQUE]: 'Critique',
+        [RiskClass.LOW]: 'Low',
+        [RiskClass.MODERATE]: 'Moderate',
+        [RiskClass.HIGH]: 'High',
+        [RiskClass.CRITICAL]: 'Critical',
     };
 
     transform(value: RiskClass | string | null): string {

@@ -1,16 +1,20 @@
+// ============================================================================
+// 1. ENUMS (Translated to English)
+// ============================================================================
+
 export enum RiskClass {
-    FAIBLE = 'FAIBLE',
-    MODERE = 'MODERE',
-    ELEVE = 'ELEVE',
-    CRITIQUE = 'CRITIQUE',
+    LOW = 'LOW',
+    MODERATE = 'MODERATE',
+    HIGH = 'HIGH',
+    CRITICAL = 'CRITICAL',
 }
 
 export enum PillarLabel {
-    INSUFFISANT = 'INSUFFISANT',
-    FAIBLE = 'FAIBLE',
-    MODERE = 'MODERE',
-    FORT = 'FORT',
-    TRES_FORT = 'TRES_FORT',
+    INSUFFICIENT = 'INSUFFICIENT',
+    WEAK = 'WEAK',
+    MODERATE = 'MODERATE',
+    STRONG = 'STRONG',
+    VERY_STRONG = 'VERY_STRONG',
 }
 
 export enum TensionLevel {
@@ -21,12 +25,16 @@ export enum TensionLevel {
 }
 
 export enum RiskProfile {
-    EQUILIBRE = 'EQUILIBRE',
-    ASYMETRIQUE = 'ASYMETRIQUE',
-    AGRESSIF = 'AGRESSIF',
-    DEFENSIF = 'DEFENSIF',
-    CLASSIQUE = 'CLASSIQUE',
+    BALANCED = 'BALANCED',
+    ASYMMETRICAL = 'ASYMMETRICAL',
+    AGGRESSIVE = 'AGGRESSIVE',
+    DEFENSIVE = 'DEFENSIVE',
+    CLASSIC = 'CLASSIC',
 }
+
+// ============================================================================
+// 2. EXISTING SCHEMAS (Translated to English properties)
+// ============================================================================
 
 export interface RatioSetSchema {
     case_id: string;
@@ -35,8 +43,8 @@ export interface RatioSetSchema {
     quick_ratio: number;
     cash_ratio: number;
     working_capital: number;
-    bfr: number;
-    bfr_pct_ca: number;
+    wcr: number; // Translated from bfr
+    wcr_pct_revenue: number; // Translated from bfr_pct_ca
     dso_days: number;
     dpo_days: number;
     debt_to_equity: number;
@@ -71,23 +79,23 @@ export interface ScorecardOutputSchema {
     case_id: string;
     scorecard_id: string;
     fiscal_year: number;
-    liquidite_score: number;
-    liquidite_label: PillarLabel;
-    liquidite_detail: PillarDetailSchema;
-    solvabilite_score: number;
-    solvabilite_label: PillarLabel;
-    solvabilite_detail: PillarDetailSchema;
-    rentabilite_score: number;
-    rentabilite_label: PillarLabel;
-    rentabilite_detail: PillarDetailSchema;
-    capacite_score: number;
-    capacite_label: PillarLabel;
-    capacite_detail: PillarDetailSchema;
-    qualite_score: number;
-    qualite_label: PillarLabel;
-    qualite_detail: PillarDetailSchema;
+    liquidity_score: number;
+    liquidity_label: PillarLabel;
+    liquidity_detail: PillarDetailSchema;
+    solvency_score: number;
+    solvency_label: PillarLabel;
+    solvency_detail: PillarDetailSchema;
+    profitability_score: number;
+    profitability_label: PillarLabel;
+    profitability_detail: PillarDetailSchema;
+    capacity_score: number;
+    capacity_label: PillarLabel;
+    capacity_detail: PillarDetailSchema;
+    quality_score: number;
+    quality_label: PillarLabel;
+    quality_detail: PillarDetailSchema;
     global_score: number;
-    risk_class: RiskClass;
+    risk_class: RiskClass | string;
     risk_profile: RiskProfile;
     ia_score?: number;
     tension_level?: TensionLevel;
@@ -114,4 +122,50 @@ export interface RecommendationUpdate {
     recommendation: string;
     conditions?: string[];
     risk_factors?: string[];
+}
+
+// ============================================================================
+// 3. NEW P12 SCHEMAS (Bloc 5 Scoring MCC)
+// ============================================================================
+
+export interface PillarScore {
+    id: string;
+    name: string; // 'Liquidity', 'Solvency', 'Profitability', 'Capacity', 'Quality'
+    score: number; // 0 to 5
+    weight: number; // Percentage (e.g., 20)
+    status: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'CRITICAL';
+    key_drivers: string[];
+}
+
+export interface ScoreOverride {
+    original_score: number;
+    new_score: number;
+    original_risk_class: string;
+    new_risk_class: string;
+    reason: string;
+    author: string;
+    timestamp: string;
+}
+
+export interface ScoringRecommendation {
+    id: string;
+    type: 'POSITIVE' | 'WARNING' | 'CRITICAL';
+    message: string;
+}
+
+export interface ScoringMccSchema {
+    case_id: string;
+    global_score: number; // 0 to 5
+    risk_class: string; // 'A', 'B', 'C', 'D', 'E' or RiskClass Enum
+    calculation_date: string;
+    pillars: PillarScore[];
+    recommendations: ScoringRecommendation[];
+    cross_analysis_alerts: string[];
+    override?: ScoreOverride;
+    status: 'COMPUTED' | 'OVERRIDDEN';
+}
+
+export interface ScoreOverridePayload {
+    new_score: number;
+    reason: string;
 }

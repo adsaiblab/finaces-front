@@ -26,7 +26,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.componentRef.setInput('rail', 'MCC');
         fixture.detectChanges();
 
-        expect(component.metadata.label).toBe('Faible');
+        expect(component.metadata.label).toBe('Low');
         expect(component.isMcc).toBe(true);
     });
 
@@ -35,7 +35,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.componentRef.setInput('rail', 'IA');
         fixture.detectChanges();
 
-        expect(component.metadata.label).toBe('Critique');
+        expect(component.metadata.label).toBe('Critical');
         expect(component.isMcc).toBe(false);
     });
 

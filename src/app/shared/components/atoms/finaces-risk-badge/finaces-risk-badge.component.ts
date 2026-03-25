@@ -34,10 +34,10 @@ export class FinacesRiskBadgeComponent implements OnChanges {
 
     // Metadata sémantique uniquement (labels + icônes) — ZÉRO couleur
     private readonly metadataMap: Record<RiskClass, RiskMetadata> = {
-        LOW: { label: 'Faible', icon: 'check_circle' },
-        MODERATE: { label: 'Modéré', icon: 'warning' },
-        HIGH: { label: 'Élevé', icon: 'error' },
-        CRITICAL: { label: 'Critique', icon: 'crisis_alert' }
+        LOW: { label: 'Low', icon: 'check_circle' },
+        MODERATE: { label: 'Moderate', icon: 'warning' },
+        HIGH: { label: 'High', icon: 'error' },
+        CRITICAL: { label: 'Critical', icon: 'crisis_alert' }
     };
 
     metadata: RiskMetadata = this.metadataMap.LOW;
@@ -58,7 +58,8 @@ export class FinacesRiskBadgeComponent implements OnChanges {
     get badgeClasses(): string[] {
         const sizeClass = this.size === 'sm' ? 'badge-sm' : 'badge-md';
         const railClass = this.isMcc ? 'badge-mcc' : 'badge-ia';
-        const riskClass = `badge-${this.rail.toLowerCase()}-${this.riskClass.toLowerCase()}`;
-        return ['finaces-badge', sizeClass, railClass, riskClass];
+        const safeRiskClass = this.riskClass ? this.riskClass.toLowerCase() : 'low';
+        const riskClassStr = `badge-${this.rail.toLowerCase()}-${safeRiskClass}`;
+        return ['finaces-badge', sizeClass, railClass, riskClassStr];
     }
 }
