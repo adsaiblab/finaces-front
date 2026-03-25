@@ -12,9 +12,9 @@ describe('FinacesRiskBadgeComponent', () => {
 
         fixture = TestBed.createComponent(FinacesRiskBadgeComponent);
         component = fixture.componentInstance;
-        // Input obligatoire requis avant le premier detectChanges
         fixture.componentRef.setInput('riskClass', 'LOW');
         fixture.detectChanges();
+        fixture.detectChanges(); // second pass to stabilize OnPush @Input bindings
     });
 
     it('should create', () => {
@@ -25,6 +25,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.componentRef.setInput('riskClass', 'LOW');
         fixture.componentRef.setInput('rail', 'MCC');
         fixture.detectChanges();
+        fixture.detectChanges();
 
         expect(component.metadata.label).toBe('Low');
         expect(component.isMcc).toBe(true);
@@ -34,6 +35,7 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.componentRef.setInput('riskClass', 'CRITICAL');
         fixture.componentRef.setInput('rail', 'IA');
         fixture.detectChanges();
+        fixture.detectChanges();
 
         expect(component.metadata.label).toBe('Critical');
         expect(component.isMcc).toBe(false);
@@ -42,14 +44,15 @@ describe('FinacesRiskBadgeComponent', () => {
     it('should include badge-sm class when size is sm', () => {
         fixture.componentRef.setInput('size', 'sm');
         fixture.detectChanges();
+        fixture.detectChanges();
 
-        // badgeClasses est un getter pur, pas besoin de DOM
         expect(component.badgeClasses).toContain('badge-sm');
     });
 
     it('should include correct semantic CSS class for MCC LOW', () => {
         fixture.componentRef.setInput('riskClass', 'LOW');
         fixture.componentRef.setInput('rail', 'MCC');
+        fixture.detectChanges();
         fixture.detectChanges();
 
         expect(component.badgeClasses).toContain('badge-mcc-low');
@@ -59,12 +62,14 @@ describe('FinacesRiskBadgeComponent', () => {
         fixture.componentRef.setInput('riskClass', 'CRITICAL');
         fixture.componentRef.setInput('rail', 'IA');
         fixture.detectChanges();
+        fixture.detectChanges();
 
         expect(component.badgeClasses).toContain('badge-ia-critical');
     });
 
     it('should hide label element when showLabel is false', () => {
         fixture.componentRef.setInput('showLabel', false);
+        fixture.detectChanges();
         fixture.detectChanges();
 
         const label = fixture.nativeElement.querySelector('.badge-label');

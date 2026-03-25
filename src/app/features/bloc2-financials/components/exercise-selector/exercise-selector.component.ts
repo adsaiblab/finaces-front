@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
 })
 export class ExerciseSelectorComponent {
     // Utilisation de la nouvelle API Angular Signals pour les Inputs/Outputs
-    public years = input.required<number[]>();
-    public selectedYear = input.required<number>();
+    public years = input<number[]>([]);
+    public selectedYear = input<number>(new Date().getFullYear());
 
     public yearChange = output<number>();
 

@@ -19,14 +19,14 @@ import { FinacesScoreGaugeComponent, FinacesRiskBadgeComponent } from '../../../
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TensionComparisonComponent {
-    public mccScore = input.required<number>();
-    public mccClass = input.required<string>();
+    public mccScore = input<number>(0);
+    public mccClass = input<string>('');
 
-    public iaScore = input.required<number>();
-    public iaClass = input.required<string>();
+    public iaScore = input<number>(0);
+    public iaClass = input<string>('');
 
-    public deltaScore = input.required<number>();
-    public classDivergence = input.required<boolean>();
+    public deltaScore = input<number>(0);
+    public classDivergence = input<boolean>(false);
 
     public getDeltaColorClass(): string {
         const delta = Math.abs(this.deltaScore());

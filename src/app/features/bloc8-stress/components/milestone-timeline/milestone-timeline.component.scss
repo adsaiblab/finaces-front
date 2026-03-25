@@ -1,0 +1,9 @@
+.finaces-dense-field {
+    ::ng-deep .mdc-text-field {
+        height: 48px;
+    }
+
+    ::ng-deep .mdc-outlined-text-field-container-color {
+        background-color: var(--color-surface-default);
+    }
+}

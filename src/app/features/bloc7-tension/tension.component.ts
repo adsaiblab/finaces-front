@@ -110,12 +110,12 @@ export class TensionComponent implements OnInit {
 
       // Si le user a choisi INVESTIGATE on l'envoie vers Stress Test (Bloc 8) ou Expert (Bloc 9).
       // Sinon on passe au Rapport (Bloc 10). On va l'envoyer au Bloc 8 pour le moment.
-      this.router.navigate(['/cases', this.caseId(), 'stress-tests']);
+      this.router.navigate(['/cases', this.caseId(), 'stress']);
     }, 1000);
   }
 
   public navigateBack(): void {
     // Retour vers IA
-    this.router.navigate(['/cases', this.caseId(), 'ia-prediction']);
+    this.router.navigate(['/cases', this.caseId(), 'ia']);
   }
 }

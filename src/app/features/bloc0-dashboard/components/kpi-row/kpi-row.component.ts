@@ -16,5 +16,5 @@ import { DashboardStatsOut } from '../../../../core/models/dashboard.model';
 })
 export class KpiRowComponent {
     // Angular 17.1+ Signal Input obligatoire
-    readonly stats = input.required<DashboardStatsOut | null>();
+    readonly stats = input<DashboardStatsOut | null>(null);
 }

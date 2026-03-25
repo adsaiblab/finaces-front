@@ -13,7 +13,7 @@ import Chart from 'chart.js/auto';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConvergenceChartComponent implements OnDestroy {
-    readonly chartData = input.required<ConvergenceChartOut | null>();
+    readonly chartData = input<ConvergenceChartOut | null>(null);
     readonly canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('chartCanvas');
 
     private chartInstance?: Chart;

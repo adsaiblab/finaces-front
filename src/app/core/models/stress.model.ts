@@ -43,3 +43,34 @@ export interface StressResultSchema {
     computed_at: string;
     duration_days: number;
 }
+
+export interface Milestone {
+    id: string;
+    month: number;
+    amount: number;
+    description: string;
+}
+
+export interface StressParameters {
+    contract_value: number;
+    initial_cash: number;
+    available_credit: number;
+    operating_cash_flow: number;
+    milestones: Milestone[];
+}
+
+export interface StressScenarioResult {
+    scenario_name: string;
+    description: string;
+    min_cash_balance: number;
+    months_in_negative: number;
+    status: 'RESILIENT' | 'MARGINAL' | 'BREACH';
+    cash_curve: number[];
+}
+
+export interface StressTestResponse {
+    case_id: string;
+    computed_at: string;
+    base_parameters: StressParameters;
+    scenarios: StressScenarioResult[];
+}

@@ -12,5 +12,5 @@ import { FinancialStatementNormalizedSchema } from '../../../../core/models';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccountingStandardSectionComponent {
-    public data = input.required<FinancialStatementNormalizedSchema>();
+    public data = input<FinancialStatementNormalizedSchema>(null as unknown as FinancialStatementNormalizedSchema);
 }

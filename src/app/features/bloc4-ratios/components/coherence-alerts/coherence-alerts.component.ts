@@ -14,8 +14,8 @@ import { CoherenceAlert } from '../../../../core/models/ratio.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CoherenceAlertsComponent {
-    public alerts = input.required<CoherenceAlert[]>();
-    public status = input.required<'CLEAN' | 'WARNINGS' | 'CRITICAL'>();
+    public alerts = input<CoherenceAlert[]>([]);
+    public status = input<'CLEAN' | 'WARNINGS' | 'CRITICAL'>('CLEAN');
 
     public getStatusIcon(): string {
         const st = this.status();

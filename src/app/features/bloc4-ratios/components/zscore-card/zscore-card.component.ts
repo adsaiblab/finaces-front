@@ -13,7 +13,7 @@ import { ZScoreGroup } from '../../../../core/models/ratio.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ZscoreCardComponent {
-    public zscore = input.required<ZScoreGroup>();
+    public zscore = input<ZScoreGroup>(null as unknown as ZScoreGroup);
 
     public isAlertMode = input<boolean>(false);
 

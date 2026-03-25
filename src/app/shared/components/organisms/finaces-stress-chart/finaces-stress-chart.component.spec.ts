@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinacesStressChartComponent, ScenarioFlowSchema } from './finaces-stress-chart.component';
-import { vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi, afterAll } from 'vitest';
 
 describe('FinacesStressChartComponent', () => {
     let component: FinacesStressChartComponent;
@@ -13,12 +13,17 @@ describe('FinacesStressChartComponent', () => {
     ];
 
     beforeAll(() => {
-        // Utilisation de vi.stubGlobal (propre à Vitest) au lieu de 'global' (NodeJS)
         vi.stubGlobal('ResizeObserver', class ResizeObserver {
             observe() { }
             unobserve() { }
             disconnect() { }
         });
+        // Stub requestAnimationFrame for Chart.js rendering in JSDOM
+        vi.stubGlobal('requestAnimationFrame', (cb: Function) => cb());
+    });
+
+    afterAll(() => {
+        vi.unstubAllGlobals();
     });
 
     beforeEach(async () => {
@@ -29,7 +34,9 @@ describe('FinacesStressChartComponent', () => {
         fixture = TestBed.createComponent(FinacesStressChartComponent);
         component = fixture.componentInstance;
 
+        // Strict input setting
         fixture.componentRef.setInput('monthlyFlows', mockFlows);
+        fixture.componentRef.setInput('height', 250);
         fixture.detectChanges();
     });
 
@@ -38,28 +45,27 @@ describe('FinacesStressChartComponent', () => {
     });
 
     it('should format labels as M(month_number)', () => {
-        // Force render synchronously for testing
-        component['renderChart']();
-        expect(component.chart).toBeTruthy();
-        expect(component.chart?.data.labels).toEqual(['M1', 'M2', 'M3']);
+        // Accessing private property chart for testing purpose
+        const chartInstance = (component as any).chart;
+        expect(chartInstance).toBeTruthy();
+        expect(chartInstance.data.labels).toEqual(['M1', 'M2', 'M3']);
     });
 
     it('should display stress results badges when status is provided', () => {
-        fixture.componentRef.setInput('stress60dResult', 'SOLVENT');
-        fixture.componentRef.setInput('stress90dResult', 'INSOLVENT');
+        fixture.componentRef.setInput('stress60dResult', 'RESILIENT');
+        fixture.componentRef.setInput('stress90dResult', 'BREACH');
         fixture.detectChanges();
 
         const results = fixture.nativeElement.querySelectorAll('.stress-result');
         expect(results.length).toBe(2);
-        expect(results[0].textContent).toContain('SOLVENT');
-        expect(results[1].textContent).toContain('INSOLVENT');
+        expect(results[0].textContent).toContain('RESILIENT');
+        expect(results[1].textContent).toContain('BREACH');
     });
 
     it('should clean up chart on component destroy', () => {
-        component['renderChart']();
-        expect(component.chart).toBeTruthy();
+        expect((component as any).chart).toBeTruthy();
 
-        const destroySpy = vi.spyOn(component.chart as any, 'destroy');
+        const destroySpy = vi.spyOn((component as any).chart, 'destroy');
         component.ngOnDestroy();
         expect(destroySpy).toHaveBeenCalled();
     });

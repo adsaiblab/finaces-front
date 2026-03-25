@@ -26,5 +26,5 @@ import { FinacesTensionBadgeComponent } from '../../../../shared/components/atom
 })
 export class ActiveTensionsCardComponent {
     // Input Signal strict (Angular 17.1+)
-    readonly tensions = input.required<TensionAlertOut[]>();
+    readonly tensions = input<TensionAlertOut[]>([]);
 }

@@ -13,7 +13,7 @@ import { PillarComparison } from '../../../../core/models/tension.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PillarTensionTableComponent {
-    public pillars = input.required<PillarComparison[]>();
+    public pillars = input<PillarComparison[]>([]);
 
     public displayedColumns: string[] = ['pillar', 'mcc', 'ia', 'delta', 'status'];
 

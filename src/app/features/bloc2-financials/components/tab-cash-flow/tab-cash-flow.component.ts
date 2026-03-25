@@ -14,7 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class TabCashFlowComponent implements OnInit {
     private fb = inject(FormBuilder);
 
-    public year = input.required<number>();
+    public year = input<number>(0);
     public cashFlowDataChange = output<{ netCashFlow: number, data: any }>();
 
     public cashFlowForm: FormGroup = this.fb.group({

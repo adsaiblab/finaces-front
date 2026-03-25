@@ -15,5 +15,5 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Step1MarketInfoComponent {
-    readonly formGroup = input.required<FormGroup>();
+    readonly formGroup = input<FormGroup>(new FormGroup({}));
 }

@@ -1,0 +1,41 @@
+<mat-card
+    class="!bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl h-full">
+    <mat-card-header
+        class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2">
+        <mat-icon class="text-[color:var(--color-primary)]">tune</mat-icon>
+        <mat-card-title class="!text-base !font-semibold !text-[color:var(--color-content-primary)] mt-1">
+            Base Parameters
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="!p-6">
+        <form [formGroup]="paramsForm" class="flex flex-col gap-4">
+
+            <mat-form-field appearance="outline" class="w-full finaces-form-field">
+                <mat-label>Total Contract Value</mat-label>
+                <mat-icon matPrefix class="mr-2 text-[color:var(--color-content-secondary)]">monetization_on</mat-icon>
+                <input matInput type="number" formControlName="contract_value">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full finaces-form-field">
+                <mat-label>Initial Cash Balance</mat-label>
+                <mat-icon matPrefix
+                    class="mr-2 text-[color:var(--color-content-secondary)]">account_balance_wallet</mat-icon>
+                <input matInput type="number" formControlName="initial_cash">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full finaces-form-field">
+                <mat-label>Available Credit Lines</mat-label>
+                <mat-icon matPrefix class="mr-2 text-[color:var(--color-content-secondary)]">credit_card</mat-icon>
+                <input matInput type="number" formControlName="available_credit">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full finaces-form-field">
+                <mat-label>Monthly Operating Cash Flow</mat-label>
+                <mat-icon matPrefix class="mr-2 text-[color:var(--color-content-secondary)]">sync_alt</mat-icon>
+                <input matInput type="number" formControlName="operating_cash_flow">
+            </mat-form-field>
+
+        </form>
+    </mat-card-content>
+</mat-card>

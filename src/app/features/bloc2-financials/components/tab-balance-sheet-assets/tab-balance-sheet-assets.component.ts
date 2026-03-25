@@ -14,7 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class TabBalanceSheetAssetsComponent implements OnInit {
     private fb = inject(FormBuilder);
 
-    public year = input.required<number>();
+    public year = input<number>(0);
     public assetsDataChange = output<{ total: number, data: any }>();
 
     public assetsForm: FormGroup = this.fb.group({

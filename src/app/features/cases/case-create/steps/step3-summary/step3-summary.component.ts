@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Step3SummaryComponent {
-    readonly parentForm = input.required<FormGroup>();
+    readonly parentForm = input<FormGroup>(new FormGroup({}));
     get marketData() { return this.parentForm().get('marketInfo')?.value || {}; }
     get bidderData() { return this.parentForm().get('bidder')?.value || {}; }
     get members() { return this.parentForm().get('groupement.members')?.value || []; }

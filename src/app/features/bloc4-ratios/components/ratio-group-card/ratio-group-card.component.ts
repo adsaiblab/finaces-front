@@ -21,9 +21,9 @@ export interface RatioRow {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RatioGroupCardComponent {
-    public groupName = input.required<string>();
-    public groupIcon = input.required<string>();
-    public ratios = input.required<any>(); // Reçoit le groupe spécifique (LiquidityGroup, etc.)
+    public groupName = input<string>('');
+    public groupIcon = input<string>('');
+    public ratios = input<any>(null); // Reçoit le groupe spécifique (LiquidityGroup, etc.)
 
     public displayedColumns = ['indicator', 'value', 'status', 'variation'];
 

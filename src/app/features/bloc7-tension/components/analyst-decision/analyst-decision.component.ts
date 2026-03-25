@@ -24,7 +24,7 @@ import { AnalystDecisionPayload } from '../../../../core/models/tension.model';
 export class AnalystDecisionComponent {
     private fb = inject(FormBuilder);
 
-    public requiresJustification = input.required<boolean>();
+    public requiresJustification = input<boolean>(false);
     public decisionSubmitted = output<AnalystDecisionPayload>();
 
     public decisionForm: FormGroup = this.fb.group({

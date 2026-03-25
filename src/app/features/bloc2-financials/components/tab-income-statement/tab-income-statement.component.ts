@@ -14,7 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class TabIncomeStatementComponent implements OnInit {
     private fb = inject(FormBuilder);
 
-    public year = input.required<number>();
+    public year = input<number>(0);
     public pnlDataChange = output<{ netIncome: number, ebitda: number, data: any }>();
 
     public pnlForm: FormGroup = this.fb.group({

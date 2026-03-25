@@ -12,7 +12,7 @@ import { NormalizationAdjustment } from '../../../../core/models';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdjustmentsListComponent {
-    public adjustments = input.required<NormalizationAdjustment[]>();
+    public adjustments = input<NormalizationAdjustment[]>([]);
 
     public getDeltaColorClass(amount: number): string {
         if (amount === 0) return 'text-[color:var(--color-success)]';

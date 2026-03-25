@@ -13,7 +13,7 @@ import { PillarScore } from '../../../../core/models/scoring.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PillarDetailCardComponent {
-    public pillar = input.required<PillarScore>();
+    public pillar = input<PillarScore>({ id: '', name: '', score: 0, weight: 0, status: 'GOOD', key_drivers: [] } as unknown as PillarScore);
 
     public getStatusColor(): string {
         const status = this.pillar().status;

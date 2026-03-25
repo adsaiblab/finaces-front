@@ -14,7 +14,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 export class TabOthersComponent implements OnInit {
     private fb = inject(FormBuilder);
 
-    public year = input.required<number>();
+    public year = input<number>(0);
     public othersDataChange = output<{ data: any }>();
 
     public othersForm: FormGroup = this.fb.group({

@@ -1,0 +1,13 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.finaces-primary-btn {
+    background-color: var(--color-primary);
+    color: white;
+
+    &:hover:not([disabled]) {
+        filter: brightness(1.1);
+    }
+}

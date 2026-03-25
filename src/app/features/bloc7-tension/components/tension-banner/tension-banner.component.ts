@@ -13,10 +13,10 @@ import { TensionDirection } from '../../../../core/models/tension.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TensionBannerComponent {
-    public level = input.required<TensionLevel>();
-    public direction = input.required<TensionDirection>();
-    public deltaScore = input.required<number>();
-    public recommendation = input.required<string>();
+    public level = input<TensionLevel>(TensionLevel.NONE);
+    public direction = input<TensionDirection>('NONE' as TensionDirection);
+    public deltaScore = input<number>(0);
+    public recommendation = input<string>('');
 
     public getBannerConfig(): { icon: string; classes: string; title: string } {
         switch (this.level()) {

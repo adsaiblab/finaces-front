@@ -27,7 +27,7 @@ export interface ComparativeRow {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ComparativeTableComponent {
-    public data = input.required<FinancialStatementNormalizedSchema>();
+    public data = input<FinancialStatementNormalizedSchema>(null as unknown as FinancialStatementNormalizedSchema);
 
     // Événement émis lors du clic sur une ligne ayant un ajustement, pour scroller vers les détails
     public rowClick = output<string>();

@@ -27,7 +27,7 @@ import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/f
 })
 export class RecentCasesTableComponent {
     // Input Signal strict (Angular 17.1+)
-    readonly cases = input.required<EvaluationCaseDetailOut[]>();
+    readonly cases = input<EvaluationCaseDetailOut[]>([]);
     readonly displayedColumns: string[] = ['reference', 'bidder', 'amount', 'status', 'mcc_class', 'actions'];
 
     // Génère une teinte HSL déterministe (hue uniquement, sans couleur en dur).

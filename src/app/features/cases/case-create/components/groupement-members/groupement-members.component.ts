@@ -24,7 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GroupementMembersComponent {
-    readonly membersArray = input.required<FormArray>();
+    readonly membersArray = input<FormArray>(new FormArray<any>([]));
     private readonly fb = inject(FormBuilder);
 
     // CORRECTIF : Getter typé pour le template HTML

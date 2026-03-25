@@ -13,8 +13,8 @@ import { ScoringRecommendation } from '../../../../core/models/scoring.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecommendationsSectionComponent {
-    public recommendations = input.required<ScoringRecommendation[]>();
-    public crossAnalysisAlerts = input.required<string[]>();
+    public recommendations = input<ScoringRecommendation[]>([]);
+    public crossAnalysisAlerts = input<string[]>([]);
 
     public getRecommendationIcon(type: string): string {
         switch (type) {

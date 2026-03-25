@@ -14,8 +14,8 @@ describe('ChecklistColumnComponent', () => {
 
         fixture = TestBed.createComponent(ChecklistColumnComponent);
         component = fixture.componentInstance;
-        // Set par défaut
         fixture.componentRef.setInput('fiscalYears', [2023, 2022, 2021]);
+        fixture.detectChanges();
         fixture.detectChanges();
     });
 
@@ -40,6 +40,7 @@ describe('ChecklistColumnComponent', () => {
         ];
 
         fixture.componentRef.setInput('documents', mockDocs as GateDocumentOut[]);
+        fixture.detectChanges();
         fixture.detectChanges();
 
         // 4 requis sur 4 pour 2023 = 100% pour l'année

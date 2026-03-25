@@ -1,21 +1,34 @@
 <div class="finaces-stress-container">
     <div class="stress-header">
-        <h3 class="stress-title">Projection de Trésorerie</h3>
+        <h3 class="stress-title">Cash Flow Projection</h3>
         <div class="stress-metadata">
-            <span *ngIf="stress60dResult" class="stress-result"
-                [ngClass]="stress60dResult === 'INSOLVENT' ? 'status-insolvent' : 'status-solvent'">
-                <mat-icon>{{ stress60dResult === 'SOLVENT' ? 'check_circle' : 'cancel' }}</mat-icon>
-                60J : {{ stress60dResult }}
+            <span *ngIf="stress60dResult()" class="stress-result" [ngClass]="{
+                    'status-resilient': stress60dResult() === 'RESILIENT',
+                    'status-marginal': stress60dResult() === 'MARGINAL',
+                    'status-breach': stress60dResult() === 'BREACH'
+                }">
+                <mat-icon>
+                    {{ stress60dResult() === 'RESILIENT' ? 'check_circle' : (stress60dResult() === 'MARGINAL' ?
+                    'warning' : 'cancel') }}
+                </mat-icon>
+                60D: {{ stress60dResult() }}
             </span>
-            <span *ngIf="stress90dResult" class="stress-result"
-                [ngClass]="stress90dResult === 'INSOLVENT' ? 'status-insolvent' : 'status-solvent'">
-                <mat-icon>{{ stress90dResult === 'SOLVENT' ? 'check_circle' : 'cancel' }}</mat-icon>
-                90J : {{ stress90dResult }}
+
+            <span *ngIf="stress90dResult()" class="stress-result" [ngClass]="{
+                    'status-resilient': stress90dResult() === 'RESILIENT',
+                    'status-marginal': stress90dResult() === 'MARGINAL',
+                    'status-breach': stress90dResult() === 'BREACH'
+                }">
+                <mat-icon>
+                    {{ stress90dResult() === 'RESILIENT' ? 'check_circle' : (stress90dResult() === 'MARGINAL' ?
+                    'warning' : 'cancel') }}
+                </mat-icon>
+                90D: {{ stress90dResult() }}
             </span>
         </div>
     </div>
 
-    <div class="chart-wrapper" [style.height.px]="height">
+    <div class="chart-wrapper" [style.height.px]="height()">
         <canvas #chartCanvas class="stress-canvas"></canvas>
     </div>
 </div>

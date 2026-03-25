@@ -28,9 +28,9 @@ import { ScoreOverridePayload, ScoreOverride } from '../../../../core/models/sco
 export class OverrideZoneComponent {
     private fb = inject(FormBuilder);
 
-    public isOverridden = input.required<boolean>();
+    public isOverridden = input<boolean>(false);
     public overrideDetails = input<ScoreOverride | undefined>();
-    public originalScore = input.required<number>();
+    public originalScore = input<number>(0);
     public isSubmitting = input<boolean>(false);
 
     public overrideSubmit = output<ScoreOverridePayload>();

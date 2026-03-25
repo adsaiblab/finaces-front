@@ -19,7 +19,7 @@ import { BidderSearchOut } from '../../../../../core/models/bidder.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Step2BidderComponent implements OnInit {
-    readonly formGroup = input.required<FormGroup>();
+    readonly formGroup = input<FormGroup>(new FormGroup({}));
     private readonly bidderService = inject(BidderService);
     filteredBidders$!: Observable<BidderSearchOut[]>;
 

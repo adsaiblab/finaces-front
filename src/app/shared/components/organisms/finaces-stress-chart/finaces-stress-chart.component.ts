@@ -1,14 +1,15 @@
 import {
     Component,
-    Input,
     ChangeDetectionStrategy,
-    OnChanges,
-    SimpleChanges,
     ViewChild,
     ElementRef,
     AfterViewInit,
     OnDestroy,
-    HostListener
+    HostListener,
+    input,
+    effect,
+    inject,
+    NgZone
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +26,7 @@ import {
     ChartConfiguration
 } from 'chart.js';
 
-// Tree-shaking: enregistrer uniquement les modules nécessaires
+// Tree-shaking: register only necessary modules
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler);
 
 export interface ScenarioFlowSchema {
@@ -37,44 +38,62 @@ export interface ScenarioFlowSchema {
     label?: string;
 }
 
-export type SolventStatus = 'SOLVENT' | 'INSOLVENT';
+export type SolventStatus = 'RESILIENT' | 'MARGINAL' | 'BREACH'; // Updated to P15 English standards
 
 @Component({
-    selector: 'finaces-stress-chart',
+    selector: 'app-finaces-stress-chart', // Standard Angular prefix
     standalone: true,
     imports: [CommonModule, MatIconModule],
     templateUrl: './finaces-stress-chart.component.html',
     styleUrls: ['./finaces-stress-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FinacesStressChartComponent implements OnChanges, AfterViewInit, OnDestroy {
-    @Input({ required: true }) monthlyFlows: ScenarioFlowSchema[] = [];
-    @Input() stress60dResult?: SolventStatus;
-    @Input() stress90dResult?: SolventStatus;
-    @Input() criticalMonth?: number;
-    @Input() height: number = 250;
+export class FinacesStressChartComponent implements AfterViewInit, OnDestroy {
+    private ngZone = inject(NgZone);
+
+    // Angular 17+ Signals replacing @Input
+    public monthlyFlows = input<ScenarioFlowSchema[]>([]);
+    public stress60dResult = input<SolventStatus | undefined>();
+    public stress90dResult = input<SolventStatus | undefined>();
+    public criticalMonth = input<number | undefined>();
+    public height = input<number>(250);
 
     @ViewChild('chartCanvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
-    chart: Chart<'line'> | null = null;
+    private chart: Chart<'line'> | null = null;
     private isViewInit = false;
+
+    constructor() {
+        // Watch for data changes reactively via effect
+        effect(() => {
+            const flows = this.monthlyFlows();
+            const critical = this.criticalMonth();
+
+            if (this.isViewInit && flows) {
+                this.ngZone.runOutsideAngular(() => {
+                    requestAnimationFrame(() => this.renderChart(flows, critical));
+                });
+            }
+        });
+    }
 
     @HostListener('window:resize')
     onResize() {
-        if (this.chart) this.chart.resize();
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['monthlyFlows'] || changes['criticalMonth']) {
-            if (this.isViewInit) {
-                requestAnimationFrame(() => this.renderChart());
-            }
+        if (this.chart) {
+            this.ngZone.runOutsideAngular(() => {
+                this.chart!.resize();
+            });
         }
     }
 
     ngAfterViewInit(): void {
         this.isViewInit = true;
-        if (this.monthlyFlows?.length > 0) this.renderChart();
+        const flows = this.monthlyFlows();
+        if (flows && flows.length > 0) {
+            this.ngZone.runOutsideAngular(() => {
+                this.renderChart(flows, this.criticalMonth());
+            });
+        }
     }
 
     ngOnDestroy(): void {
@@ -85,36 +104,38 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
     }
 
     /**
-     * Lit une CSS variable depuis le Design System.
-     * VIO-03 FIX : Noms corrigés pour correspondre EXACTEMENT à _variables.scss.
-     * Aucun fallback HEX — Dark Mode natif garanti.
+     * Reads a CSS variable from the Design System.
+     * Tries the new FinaCES standard tokens first, falls back to the original ones to prevent regression.
      */
-    private getCssVar(varName: string): string {
-        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    private getCssVar(primaryVar: string, fallbackVar: string, hexFallback: string): string {
+        const val1 = getComputedStyle(document.documentElement).getPropertyValue(primaryVar).trim();
+        if (val1) return val1;
+        const val2 = getComputedStyle(document.documentElement).getPropertyValue(fallbackVar).trim();
+        if (val2) return val2;
+        return hexFallback;
     }
 
-    private renderChart(): void {
+    private renderChart(monthlyFlows: ScenarioFlowSchema[], criticalMonth: number | undefined): void {
         const canvas = this.canvasRef.nativeElement;
-        if (!canvas || !this.monthlyFlows.length) return;
+        if (!canvas || !monthlyFlows.length) return;
 
         if (this.chart) {
             this.chart.destroy();
             this.chart = null;
         }
 
-        // VIO-03 FIX: tokens corrigés → _variables.scss
-        const colorPrimary = this.getCssVar('--primary');
-        const colorError = this.getCssVar('--error');
-        const colorTextPrimary = this.getCssVar('--text-primary');
-        const colorTextSecondary = this.getCssVar('--text-secondary');
-        const colorBorder = this.getCssVar('--border');
-        const colorCard = this.getCssVar('--bg-card');
+        // Mapping to FinaCES tokens with fallback to your original tokens
+        const colorPrimary = this.getCssVar('--color-primary', '--primary', '#6366F1');
+        const colorError = this.getCssVar('--color-error', '--error', '#EF4444');
+        const colorTextPrimary = this.getCssVar('--color-content-primary', '--text-primary', '#1E293B');
+        const colorTextSecondary = this.getCssVar('--color-content-secondary', '--text-secondary', '#64748B');
+        const colorBorder = this.getCssVar('--color-border-default', '--border', '#E2E8F0');
+        const colorCard = this.getCssVar('--color-surface-card', '--bg-card', '#FFFFFF');
 
-        // VIO-03 FIX: Utilisation native de color-mix au lieu d'un parsing HexToRgb hasardeux
         const colorBgPrimary = `color-mix(in srgb, ${colorPrimary} 10%, transparent)`;
 
-        const labels = this.monthlyFlows.map(f => `M${f.month}`);
-        const data = this.monthlyFlows.map(f => f.closingCash);
+        const labels = monthlyFlows.map(f => `M${f.month}`);
+        const data = monthlyFlows.map(f => f.closingCash);
         const minValue = Math.min(0, ...data);
         const maxValue = Math.max(0, ...data);
         const padding = (maxValue - minValue) * 0.15;
@@ -125,7 +146,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                 labels,
                 datasets: [
                     {
-                        label: 'Trésorerie disponible',
+                        label: 'Available Cash',
                         data,
                         borderColor: colorPrimary,
                         backgroundColor: colorBgPrimary,
@@ -139,13 +160,13 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                         fill: true,
                         segment: {
                             borderColor: (ctx: any) =>
-                                this.criticalMonth && Math.abs(ctx.p1DataIndex - this.criticalMonth) <= 1
+                                criticalMonth && Math.abs(ctx.p1DataIndex - (criticalMonth - 1)) <= 1
                                     ? colorError
                                     : colorPrimary
                         }
                     },
                     {
-                        label: 'Seuil critique',
+                        label: 'Critical Threshold',
                         data: new Array(labels.length).fill(0),
                         borderColor: colorError,
                         borderDash: [5, 5],
@@ -185,7 +206,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                         callbacks: {
                             label: (context: any) => {
                                 if (context.datasetIndex === 0) {
-                                    return `Trésorerie: ${context.parsed.y.toLocaleString('fr-FR')} MAD`;
+                                    return `Cash: ${context.parsed.y.toLocaleString('en-US')} MAD`;
                                 }
                                 return '';
                             }
@@ -200,11 +221,11 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                         ticks: {
                             color: colorTextSecondary,
                             font: { size: 11, family: 'inherit' },
-                            callback: (value: any) => value.toLocaleString('fr-FR')
+                            callback: (value: any) => value.toLocaleString('en-US')
                         },
                         title: {
                             display: true,
-                            text: 'Trésorerie (devise locale)',
+                            text: 'Cash Balance (Local Currency)',
                             color: colorTextSecondary,
                             font: { size: 12, weight: 'bold', family: 'inherit' }
                         }
@@ -214,7 +235,7 @@ export class FinacesStressChartComponent implements OnChanges, AfterViewInit, On
                         ticks: { color: colorTextSecondary, font: { size: 11, family: 'inherit' } },
                         title: {
                             display: true,
-                            text: 'Mois de projection',
+                            text: 'Projection Month',
                             color: colorTextSecondary,
                             font: { size: 12, weight: 'bold', family: 'inherit' }
                         }
