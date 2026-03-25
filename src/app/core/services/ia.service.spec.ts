@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { IaService } from './ia.service';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { environment } from '../../../environments/environment';
-import { WhatIfPayload } from '../models/ia.model';
+import { WhatIfScenario } from '../models/ia.model';
 
 describe('IaService', () => {
     let service: IaService;
@@ -32,17 +32,23 @@ describe('IaService', () => {
 
     it('should call GET on /predict endpoint', () => {
         service.getPrediction('case-123').subscribe();
+
         const req = httpMock.expectOne(`${environment.apiUrl}/ia/cases/case-123/predict`);
         expect(req.request.method).toBe('GET');
         req.flush({});
     });
 
-    it('should call POST on /simulate endpoint', () => {
-        const payload: WhatIfPayload = { feature_adjustments: { 'EBITDA Margin': 15.5 } };
-        service.runWhatIfSimulation('case-123', payload).subscribe();
+    it('should call POST on /simulate endpoint with WhatIfScenario', () => {
+        const mockScenario: WhatIfScenario = {
+            scenario_name: 'Stress Test',
+            feature_modifications: { 'EBITDA Margin': 15.5 }
+        };
+
+        service.simulateWhatIf('case-123', mockScenario).subscribe();
+
         const req = httpMock.expectOne(`${environment.apiUrl}/ia/cases/case-123/simulate`);
         expect(req.request.method).toBe('POST');
-        expect(req.request.body).toEqual(payload);
+        expect(req.request.body).toEqual(mockScenario);
         req.flush({});
     });
 });

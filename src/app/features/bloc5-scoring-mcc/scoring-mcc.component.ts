@@ -139,6 +139,6 @@ export class ScoringMccComponent implements OnInit {
 
   public proceedNext(): void {
     // Proceed to AI Bloc (Bloc 6) or Tension (Bloc 7) depending on workflow
-    this.router.navigate(['/cases', this.caseId(), 'ia-prediction']);
+    this.router.navigate(['/cases', this.caseId(), 'ia']);
   }
 }

@@ -1,7 +1,3 @@
-// ============================================================================
-// 1. EXISTING SCHEMAS (From your current backend implementation)
-// ============================================================================
-
 export interface IAPredictionResult {
     case_id: string;
     model_version: string;
@@ -20,7 +16,6 @@ export interface IAPredictionResult {
     shap_values: ShapExplanation;
     feature_importance: FeatureImportance[];
     disclaimer: string;
-    status?: 'COMPUTED' | 'FAILED' | 'PENDING';
 }
 
 export interface ShapExplanation {
@@ -49,18 +44,4 @@ export interface WhatIfScenario {
     feature_modifications: Record<string, number>;
     predicted_score_if?: number;
     predicted_class_if?: string;
-}
-
-// ============================================================================
-// 2. NEW P13 SCHEMAS (For What-If Simulation execution)
-// ============================================================================
-
-export interface WhatIfPayload {
-    feature_adjustments: Record<string, number>;
-}
-
-export interface WhatIfSimulationResult {
-    simulated_score: number;
-    simulated_probability: number;
-    delta_score: number;
 }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { IAPredictionResult, WhatIfPayload, WhatIfSimulationResult } from '../models/ia.model';
+import { IAPredictionResult, WhatIfScenario } from '../models/ia.model';
 
 @Injectable({
     providedIn: 'root'
@@ -22,8 +22,8 @@ export class IaService {
         );
     }
 
-    public runWhatIfSimulation(caseId: string, payload: WhatIfPayload): Observable<WhatIfSimulationResult> {
-        return this.http.post<WhatIfSimulationResult>(`${this.apiUrl}/${caseId}/simulate`, payload).pipe(
+    public simulateWhatIf(caseId: string, scenario: WhatIfScenario): Observable<IAPredictionResult> {
+        return this.http.post<IAPredictionResult>(`${this.apiUrl}/${caseId}/simulate`, scenario).pipe(
             tap(result => console.log('✅ [IA Model] What-If Simulation complete:', result)),
             catchError(err => {
                 console.error('❌ [IA Model] Simulation error:', err);

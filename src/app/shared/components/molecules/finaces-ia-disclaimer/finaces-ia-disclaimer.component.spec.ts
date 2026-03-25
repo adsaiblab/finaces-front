@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinacesIaDisclaimerComponent } from './finaces-ia-disclaimer.component';
-import { vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('FinacesIaDisclaimerComponent', () => {
     let component: FinacesIaDisclaimerComponent;
@@ -21,11 +21,11 @@ describe('FinacesIaDisclaimerComponent', () => {
         expect(el).toBeTruthy();
     });
 
-    it('should show pilot mode text when enabled in banner mode', () => {
+    it('should show pilot mode class when enabled in banner mode', () => {
         fixture.componentRef.setInput('pilotMode', true);
         fixture.detectChanges();
-        const pilotText = fixture.nativeElement.querySelector('.disclaimer-pilot');
-        expect(pilotText).toBeTruthy();
+        const el = fixture.nativeElement.querySelector('.is-pilot');
+        expect(el).toBeTruthy();
     });
 
     it('should emit dismissed event and hide when dismiss button is clicked', () => {

@@ -1,107 +1,107 @@
 import {
     Component,
-    Input,
-    Output,
-    EventEmitter,
     ChangeDetectionStrategy,
-    OnChanges,
-    SimpleChanges,
+    input,
+    output,
     ViewChild,
     ElementRef,
     AfterViewInit,
     OnDestroy,
-    HostListener
+    HostListener,
+    effect,
+    inject,
+    NgZone
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as d3 from 'd3';
-
-export interface ShapFeature {
-    name: string;
-    label?: string;
-    rawValue: number;
-    shapValue: number;
-    direction: 'UP' | 'DOWN';
-    group?: 'liquidity' | 'solvency' | 'profitability' | 'capacity' | 'quality';
-}
+import { ShapFeature } from '../../../../core/models/ia.model';
 
 @Component({
-    selector: 'finaces-shap-chart',
+    selector: 'app-finaces-shap-chart', // Prefix 'app-'
     standalone: true,
     imports: [CommonModule],
     templateUrl: './finaces-shap-chart.component.html',
     styleUrls: ['./finaces-shap-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDestroy {
-    @Input({ required: true }) features: ShapFeature[] = [];
-    @Input() maxFeatures: number = 10;
-    @Input() showValues: boolean = true;
-    @Input() height: number = 300;
+export class FinacesShapChartComponent implements AfterViewInit, OnDestroy {
+    private ngZone = inject(NgZone);
 
-    @Output() featureClick = new EventEmitter<ShapFeature>();
+    public features = input.required<ShapFeature[]>();
+    public maxFeatures = input<number>(10);
+    public showValues = input<boolean>(true);
+    public height = input<number>(300);
+
+    public featureClick = output<ShapFeature>();
 
     @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef<HTMLDivElement>;
 
-    displayedFeatures: ShapFeature[] = [];
     private isViewInit = false;
+    private displayedFeatures: ShapFeature[] = [];
+
+    constructor() {
+        effect(() => {
+            const feats = this.features();
+            const max = this.maxFeatures();
+
+            if (feats) {
+                this.displayedFeatures = [...feats]
+                    .sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value))
+                    .slice(0, max);
+
+                if (this.isViewInit) {
+                    this.ngZone.runOutsideAngular(() => {
+                        requestAnimationFrame(() => this.renderChart());
+                    });
+                }
+            }
+        });
+    }
 
     @HostListener('window:resize')
     onResize() {
         if (this.isViewInit && this.displayedFeatures.length > 0) {
-            this.renderChart();
-        }
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['features'] || changes['maxFeatures']) {
-            this.updateData();
+            this.ngZone.runOutsideAngular(() => {
+                requestAnimationFrame(() => this.renderChart());
+            });
         }
     }
 
     ngAfterViewInit(): void {
         this.isViewInit = true;
         if (this.displayedFeatures.length > 0) {
-            this.renderChart();
+            this.ngZone.runOutsideAngular(() => {
+                this.renderChart();
+            });
         }
     }
 
-    // VIO-06 FIX: Nettoyage SVG à la destruction du composant
     ngOnDestroy(): void {
         if (this.chartContainer?.nativeElement) {
             d3.select(this.chartContainer.nativeElement).selectAll('svg').remove();
         }
     }
 
-    private updateData(): void {
-        if (!this.features) return;
-        this.displayedFeatures = [...this.features]
-            .sort((a, b) => Math.abs(b.shapValue) - Math.abs(a.shapValue))
-            .slice(0, this.maxFeatures);
-
-        if (this.isViewInit) {
-            requestAnimationFrame(() => this.renderChart());
-        }
-    }
-
-    /**
-     * Lit une CSS variable depuis le Design System.
-     * VIO-02 FIX : Les noms de tokens correspondent EXACTEMENT à _variables.scss.
-     * Aucun fallback HEX — si le token est absent, D3 n'aura pas de couleur en dur.
-     */
     private getCssVar(varName: string): string {
-        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        // Fallback in case of D3 trying to parse empty strings during initial load
+        if (!val) {
+            if (varName.includes('error')) return '#ef4444';
+            if (varName.includes('success')) return '#10b981';
+            return '#94a3b8';
+        }
+        return val;
     }
 
     private renderChart(): void {
         const container = this.chartContainer.nativeElement;
         if (!container) return;
 
-        // VIO-02 FIX: Noms corrigés pour correspondre à _variables.scss
-        const colorPos         = this.getCssVar('--error');           // barres positives SHAP (risque haut)
-        const colorNeg         = this.getCssVar('--success');          // barres négatives SHAP (protecteur)
-        const colorAxis        = this.getCssVar('--border-strong');
-        const colorTextPrimary = this.getCssVar('--text-primary');
-        const colorTextSecondary = this.getCssVar('--text-secondary');
+        const colorPos = this.getCssVar('--color-error');
+        const colorNeg = this.getCssVar('--color-success');
+        const colorAxis = this.getCssVar('--color-border-strong');
+        const colorTextPrimary = this.getCssVar('--color-content-primary');
+        const colorTextSecondary = this.getCssVar('--color-content-secondary');
 
         const width = container.clientWidth || 800;
         const leftMargin = width < 500 ? 100 : 150;
@@ -109,9 +109,8 @@ export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDe
         const chartWidth = width - margin.left - margin.right;
         const barHeight = 32;
         const chartHeight = this.displayedFeatures.length * barHeight;
-        const totalHeight = chartHeight + margin.top + margin.bottom;
+        const totalHeight = Math.max(chartHeight + margin.top + margin.bottom, this.height());
 
-        // Clear previous SVG
         d3.select(container).selectAll('svg').remove();
 
         const svg = d3.select(container)
@@ -121,7 +120,7 @@ export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDe
             .attr('viewBox', `0 0 ${width} ${totalHeight}`)
             .attr('preserveAspectRatio', 'xMinYMin meet');
 
-        const maxAbsValue = Math.max(0.01, ...this.displayedFeatures.map(f => Math.abs(f.shapValue)));
+        const maxAbsValue = Math.max(0.01, ...this.displayedFeatures.map(f => Math.abs(f.shap_value)));
 
         const xScale = d3.scaleLinear()
             .domain([-maxAbsValue * 1.2, maxAbsValue * 1.2])
@@ -135,7 +134,6 @@ export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDe
         const g = svg.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-        // Zero line
         g.append('line')
             .attr('x1', xScale(0)).attr('x2', xScale(0))
             .attr('y1', -15).attr('y2', chartHeight + 10)
@@ -143,7 +141,6 @@ export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDe
             .attr('stroke-width', 2)
             .attr('stroke-dasharray', '4,4');
 
-        // X-axis
         const xAxis = d3.axisTop(xScale)
             .ticks(5)
             .tickFormat((domainValue) => (domainValue as number).toFixed(2));
@@ -152,7 +149,6 @@ export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDe
         xAxisGroup.selectAll('path, line').attr('stroke', colorAxis);
         xAxisGroup.selectAll('text').attr('fill', colorTextSecondary).style('font-size', '11px');
 
-        // Bar groups
         const barGroups = g.selectAll('g.bar-group')
             .data(this.displayedFeatures)
             .join('g')
@@ -161,35 +157,33 @@ export class FinacesShapChartComponent implements OnChanges, AfterViewInit, OnDe
 
         barGroups.append('rect')
             .attr('class', 'shap-bar')
-            .attr('x', d => Math.min(xScale(0), xScale(d.shapValue)))
+            .attr('x', d => Math.min(xScale(0), xScale(d.shap_value)))
             .attr('y', 0)
-            .attr('width', d => Math.abs(xScale(d.shapValue) - xScale(0)))
+            .attr('width', d => Math.abs(xScale(d.shap_value) - xScale(0)))
             .attr('height', yScale.bandwidth())
-            .attr('fill', d => d.shapValue > 0 ? colorPos : colorNeg)
+            .attr('fill', d => d.shap_value > 0 ? colorPos : colorNeg)
             .attr('rx', 2)
             .style('cursor', 'pointer')
-            .on('click', (event, d) => this.featureClick.emit(d))
+            .on('click', (event, d) => this.ngZone.run(() => this.featureClick.emit(d)))
             .append('title')
-            .text(d => `${d.label || d.name}\nValeur brute: ${d.rawValue}\nSHAP: ${d.shapValue.toFixed(4)}`);
+            .text(d => `${d.feature_name}\nValue: ${d.feature_value}\nSHAP: ${d.shap_value.toFixed(4)}`);
 
-        // Left labels
         barGroups.append('text')
             .attr('x', -12).attr('y', yScale.bandwidth() / 2)
             .attr('dy', '0.32em').attr('text-anchor', 'end')
             .attr('fill', colorTextPrimary)
             .style('font-size', '12px').style('font-weight', '500').style('pointer-events', 'none')
-            .text(d => width < 500 && d.name.length > 12 ? d.name.substring(0, 10) + '...' : d.name);
+            .text(d => width < 500 && d.feature_name.length > 12 ? d.feature_name.substring(0, 10) + '...' : d.feature_name);
 
-        // Right labels (SHAP values)
-        if (this.showValues) {
+        if (this.showValues()) {
             barGroups.append('text')
-                .attr('x', d => xScale(d.shapValue) + (d.shapValue > 0 ? 8 : -8))
+                .attr('x', d => xScale(d.shap_value) + (d.shap_value > 0 ? 8 : -8))
                 .attr('y', yScale.bandwidth() / 2)
                 .attr('dy', '0.32em')
-                .attr('text-anchor', d => d.shapValue > 0 ? 'start' : 'end')
-                .attr('fill', d => d.shapValue > 0 ? colorPos : colorNeg)
+                .attr('text-anchor', d => d.shap_value > 0 ? 'start' : 'end')
+                .attr('fill', d => d.shap_value > 0 ? colorPos : colorNeg)
                 .style('font-size', '12px').style('font-weight', '600').style('pointer-events', 'none')
-                .text(d => `${d.shapValue > 0 ? '+' : ''}${d.shapValue.toFixed(2)}`);
+                .text(d => `${d.shap_value > 0 ? '+' : ''}${d.shap_value.toFixed(2)}`);
         }
     }
 }

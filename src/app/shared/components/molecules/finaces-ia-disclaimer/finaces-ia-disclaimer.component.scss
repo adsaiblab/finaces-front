@@ -4,9 +4,16 @@
     transition: all 200ms ease-in-out;
     animation: disclaimer-slide-in 300ms ease-out;
 
-    // Variables internes IA
-    --ia-color: var(--color-primary, #6366F1);
-    --ia-bg-light: rgba(99, 102, 241, 0.08);
+    // Fix VIO-02: Utilisation du design system avec color-mix pour l'opacité dynamique
+    --ia-color: var(--color-info);
+    --ia-bg-light: color-mix(in srgb, var(--color-info) 8%, transparent);
+    --ia-border: color-mix(in srgb, var(--color-info) 20%, transparent);
+
+    &.is-pilot {
+        --ia-color: var(--color-warning);
+        --ia-bg-light: color-mix(in srgb, var(--color-warning) 8%, transparent);
+        --ia-border: color-mix(in srgb, var(--color-warning) 30%, transparent);
+    }
 
     &.ia-banner {
         width: 100%;
@@ -37,17 +44,12 @@
                 color: var(--color-content-primary);
                 margin: 0;
             }
-
-            .disclaimer-pilot {
-                font-size: 12px;
-                color: var(--color-content-secondary);
-                font-style: italic;
-                margin: 4px 0 0 0;
-            }
         }
 
         .dismiss-button {
             margin-left: auto;
+            margin-top: -8px;
+            margin-right: -8px;
 
             mat-icon {
                 color: var(--color-content-secondary);
@@ -59,7 +61,7 @@
     &.ia-inline {
         padding: 8px 12px;
         background-color: var(--ia-bg-light);
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        border: 1px solid var(--ia-border);
         border-radius: 4px;
 
         .disclaimer-content {
@@ -81,8 +83,13 @@
             margin: 0;
         }
 
-        .disclaimer-pilot {
-            display: none;
+        .dismiss-button {
+            margin-left: auto;
+
+            mat-icon {
+                font-size: 16px;
+                color: var(--color-content-secondary);
+            }
         }
     }
 
@@ -108,13 +115,16 @@
 
         .disclaimer-main {
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 700;
             color: var(--ia-color);
             margin: 0;
         }
 
-        .disclaimer-pilot {
-            display: none;
+        .dismiss-button {
+            mat-icon {
+                font-size: 14px;
+                color: var(--ia-color);
+            }
         }
     }
 }
