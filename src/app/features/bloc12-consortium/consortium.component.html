@@ -1,161 +1,180 @@
 <div class="w-full h-full p-6" *ngIf="!isLoading()">
 
-    <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center justify-between mb-8 print:mb-4">
         <div>
-            <h1 class="text-2xl font-bold text-content-primary">Consortium Evaluation</h1>
-            <p class="text-sm text-content-secondary mt-1">Joint Venture structural analysis and aggregation</p>
+            <h1 class="text-2xl font-bold text-content-primary print:text-black">Consortium Structural Analysis</h1>
+            <p class="text-sm text-content-secondary mt-1 print:text-gray-700">Detailed joint venture evaluation and
+                member breakdown</p>
         </div>
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-4 items-center print:hidden">
             <span class="text-sm font-medium px-3 py-1 rounded border border-border-default bg-surface-default">
-                Type: {{ currentConsortium()?.joint_venture_type || 'UNKNOWN' }}
+                Joint Venture Solidaire (Simulated)
             </span>
-            <button mat-stroked-button (click)="goBack()">
-                <span class="material-icons mr-1 text-sm">arrow_back</span> Return
+            <button mat-stroked-button (click)="router.navigate(['/cases', caseId, 'dashboard'])">
+                <span class="material-icons mr-1 text-sm">arrow_back</span> Dashboard
             </button>
         </div>
     </div>
 
     @if (currentConsortium()) {
 
-    <div class="mb-6 space-y-4">
+    <div class="mb-6 space-y-3 print:hidden">
         @if (totalParticipation() !== 100) {
-        <div class="bg-error-lighter border-l-4 border-error-default p-4 rounded flex gap-3">
+        <div class="bg-error-lighter border-l-4 border-error-default p-3 rounded flex gap-3 text-sm">
             <span class="material-icons text-error-dark">warning</span>
-            <div>
-                <h4 class="font-bold text-error-dark">Invalid Participation Sum</h4>
-                <p class="text-sm text-error-dark">Total participation is {{ totalParticipation() }}%. It must be
-                    exactly 100% to proceed.</p>
-            </div>
+            <p class="text-error-dark">Participation must equal exactly 100% to proceed. Current total is {{
+                totalParticipation() }}%.</p>
         </div>
         }
 
         @if (isLeaderBlocking()) {
-        <div class="bg-error-lighter border-l-4 border-error-default p-4 rounded flex gap-3">
+        <div class="bg-error-lighter border-l-4 border-error-default p-3 rounded flex gap-3 text-sm">
             <span class="material-icons text-error-dark">block</span>
-            <div>
-                <h4 class="font-bold text-error-dark">LEADER NON VIABLE</h4>
-                <p class="text-sm text-error-dark">
-                    The leader ({{ leaderMember()?.member_name }}) has a critical score ({{ leaderMember()?.score }}).
-                    The consortium cannot proceed.
-                </p>
-            </div>
-        </div>
-        }
-
-        @if (weakLinkMember()) {
-        <div class="bg-warning-lighter border-l-4 border-warning-default p-4 rounded flex gap-3">
-            <span class="material-icons text-warning-dark">link_off</span>
-            <div>
-                <h4 class="font-bold text-warning-dark">MAILLON FAIBLE DÉTECTÉ</h4>
-                <p class="text-sm text-warning-dark">
-                    {{ weakLinkMember()?.member_name }} heavily degrades the global score. Risk class may be impacted.
-                </p>
-            </div>
+            <p class="text-error-dark">The leader has a critical score. Evaluation is suspended.</p>
         </div>
         }
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 print:grid-cols-1 print:gap-4">
 
-        <div
-            class="col-span-1 lg:col-span-1 bg-surface-card rounded-xl shadow-md border border-border-default p-6 flex flex-col items-center text-center justify-center">
-            <h3 class="text-sm font-bold text-content-secondary uppercase mb-4">Consolidated Score</h3>
-            <finaces-score-gauge
-                [score]="currentConsortium()?.combined_scorecard?.final_score || 0"></finaces-score-gauge>
-            <div class="mt-6 flex flex-col gap-2 w-full">
-                <div class="flex justify-between items-center border-b border-border-default pb-2">
-                    <span class="text-sm text-content-secondary">Risk Class</span>
-                    <finaces-risk-badge
-                        [riskClass]="currentConsortium()?.combined_scorecard?.risk_class || 'UNKNOWN'"></finaces-risk-badge>
-                </div>
-                <div class="flex justify-between items-center pb-2">
-                    <span class="text-sm text-content-secondary">Synergy Bonus</span>
-                    <span class="text-sm font-bold text-success-default">+{{ currentConsortium()?.synergy_index || 0 }}
-                        pts</span>
+        <section
+            class="lg:col-span-1 bg-surface-card rounded-xl shadow-md border border-border-default p-6 flex flex-col items-center justify-center text-center print:border-gray-300 print:shadow-none break-inside-avoid">
+            <span class="text-4xl font-extrabold text-content-primary mb-3">{{
+                currentConsortium()?.combined_scorecard?.final_score | number:'1.2-2' }}</span>
+            <finaces-risk-badge [riskClass]="$any(currentConsortium()?.combined_scorecard?.risk_class) || 'MODERATE'"
+                mb="4"></finaces-risk-badge>
+            <span class="text-sm font-medium text-content-secondary">Combined Consortium Viability</span>
+        </section>
+
+        <section
+            class="md:col-span-1 lg:col-span-2 bg-surface-card rounded-xl shadow-md border border-border-default p-6 print:border-gray-300 print:shadow-none break-inside-avoid">
+            <h3 class="text-base font-bold text-content-primary mb-4 flex items-center gap-2">
+                <span class="material-icons text-sm">bar_chart</span>
+                Aggregated Structural Pillars (Target UI)
+            </h3>
+            <p class="text-xs text-content-tertiary mb-6 bg-surface-disabled p-2 rounded italic">
+                This aggregation is simulated based on member inputs while waiting for exact backend mapping logic per
+                pillar.
+            </p>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                <div *ngFor="let pillarKey of ['liquidity', 'solvency', 'profitability', 'capacity', 'quality']"
+                    class="flex flex-col gap-1.5 p-3 bg-surface-hover rounded border border-border-default">
+                    <span class="text-xs font-semibold text-content-secondary capitalize">{{ pillarKey }}</span>
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-lg">{{ detailedCombinedPillars()[pillarKey].score |
+                            number:'1.1-1' }}</span>
+                        <finaces-score-gauge [score]="detailedCombinedPillars()[pillarKey].score" [size]="80"
+                            [showLabel]="false" class="w-6 h-6"></finaces-score-gauge>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="col-span-1 lg:col-span-2 bg-surface-card rounded-xl shadow-md border border-border-default p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-content-primary">Members Allocation</h3>
-                <button mat-flat-button color="primary" (click)="openMemberDialog()">
-                    <span class="material-icons mr-1 text-sm">add</span> Add Member
-                </button>
+        <section
+            class="lg:col-span-2 bg-surface-card rounded-xl shadow-md border border-border-default p-6 print:hidden">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-lg font-bold text-content-primary">Members Shares & Global Scores</h3>
+                <div class="flex gap-3">
+                    <button mat-flat-button color="primary" (click)="openMemberDialog()"
+                        [disabled]="isLoading() || isEditingShares()">
+                        <span class="material-icons mr-1 text-sm">add</span> New Member
+                    </button>
+                    <button *ngIf="!isEditingShares()" mat-stroked-button (click)="isEditingShares.set(true)">
+                        <span class="material-icons mr-1 text-sm">edit</span> Inline Edit Shares
+                    </button>
+                    <button *ngIf="isEditingShares()" mat-flat-button color="accent" (click)="saveSharesInline({})">
+                        <span class="material-icons mr-1 text-sm">save</span> Save Shares
+                    </button>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left text-sm border-collapse">
                     <thead>
-                        <tr class="border-b border-border-strong text-content-secondary text-sm">
-                            <th class="py-3 px-2">Member</th>
-                            <th class="py-3 px-2">Role</th>
-                            <th class="py-3 px-2 text-right">Share %</th>
+                        <tr
+                            class="border-b-2 border-border-default text-content-secondary uppercase tracking-wider text-xs">
+                            <th class="py-3 px-2">Member Reference</th>
                             <th class="py-3 px-2 text-center">Score</th>
+                            <th class="py-3 px-2 text-right w-36">Share %</th>
                             <th class="py-3 px-2 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @for (member of currentConsortium()?.members; track member.member_id) {
-                        <tr class="border-b border-border-default hover:bg-surface-hover transition-colors">
+                        <tr class="border-b hover:bg-surface-hover transition-colors">
                             <td class="py-3 px-2 font-medium text-content-primary">{{ member.member_name }}</td>
-                            <td class="py-3 px-2">
-                                <span class="text-xs px-2 py-1 rounded font-bold"
-                                    [ngClass]="{'bg-primary-lighter text-primary-dark': member.role === 'LEADER', 'bg-surface-default text-content-secondary border border-border-default': member.role === 'MEMBER'}">
-                                    {{ member.role }}
-                                </span>
+                            <td class="py-3 px-2 text-center font-bold text-base text-content-primary">
+                                {{ member.score | number:'1.1-1' }}
                             </td>
-                            <td class="py-3 px-2 text-right font-medium">{{ member.participation_pct }}%</td>
-                            <td class="py-3 px-2 text-center">
-                                <span class="font-bold text-content-primary">{{ member.score | number:'1.1-2' }}</span>
+                            <td class="py-1 px-2 text-right">
+                                @if(isEditingShares()){
+                                <mat-form-field appearance="outline" class="w-24 text-right inline-edit-field">
+                                    <input matInput type="number" min="1" max="100" [value]="member.participation_pct"
+                                        class="text-right">
+                                    <span matSuffix class="text-xs text-content-tertiary">%</span>
+                                </mat-form-field>
+                                } @else {
+                                <span class="font-bold text-lg">{{ member.participation_pct }}%</span>
+                                }
                             </td>
                             <td class="py-3 px-2 text-right">
-                                <button mat-icon-button color="primary" (click)="openMemberDialog(member)"><span
-                                        class="material-icons text-sm">edit</span></button>
-                                <button mat-icon-button color="warn" (click)="removeMember(member.member_id)"><span
-                                        class="material-icons text-sm">delete</span></button>
+                                <button mat-icon-button (click)="removeMember(member.member_id)"
+                                    [disabled]="isEditingShares()">
+                                    <span class="material-icons text-sm text-error-default">delete</span>
+                                </button>
                             </td>
                         </tr>
                         }
                     </tbody>
-                    <tfoot>
-                        <tr class="bg-surface-default font-bold">
-                            <td colspan="2" class="py-3 px-2 text-right">TOTAL:</td>
-                            <td class="py-3 px-2 text-right"
-                                [ngClass]="totalParticipation() === 100 ? 'text-success-default' : 'text-error-default'">
-                                {{ totalParticipation() }}%
-                            </td>
-                            <td colspan="2"></td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
-        </div>
+        </section>
+
+        <section
+            class="lg:col-span-1 bg-surface-card rounded-xl shadow-md border border-border-default p-6 flex flex-col items-center justify-center print:border-gray-300 print:shadow-none break-inside-avoid">
+            <span class="material-icons text-4xl text-success-default mb-3">merge</span>
+            <span class="text-sm font-semibold text-content-secondary uppercase mb-2">Structural Synergy Bonus</span>
+            <span class="text-2xl font-bold text-success-default bg-success-lighter px-3 py-1 rounded-md">
+                +{{ currentConsortium()?.synergy_index || 0 | number:'1.1-1' }} pts
+            </span>
+        </section>
+
+        <section class="lg:col-span-3 mt-4 print:mt-2">
+            <h3 class="text-lg font-bold text-content-primary mb-5 print:text-xl print:text-black">Member Detailed
+                Scoring Breakdown (Backend Pending)</h3>
+
+            @for (member of currentConsortium()?.members; track member.member_id) {
+            <app-consortium-member-accordion [member]="member"
+                [isBlocking]="member.role === 'LEADER' && isLeaderBlocking()"
+                [isWeakLink]="member.member_id === weakLinkMemberId()">
+            </app-consortium-member-accordion>
+            }
+        </section>
     </div>
 
-    <div class="flex justify-between items-center border-t border-border-default pt-6">
+    <div class="flex justify-between items-center border-t border-border-default pt-6 print:hidden">
         <button mat-stroked-button color="primary" (click)="recalculateScore()"
-            [disabled]="totalParticipation() !== 100 || isCalculating()">
+            [disabled]="totalParticipation() !== 100 || isCalculating() || isEditingShares()">
             <span class="material-icons mr-1 text-sm">sync</span>
-            {{ isCalculating() ? 'Calculating...' : 'Recalculate Consolidated Score' }}
+            {{ isCalculating() ? 'Calculating...' : 'Force Aggregation' }}
         </button>
 
         <button mat-flat-button color="accent" (click)="continueToStress()"
-            [disabled]="totalParticipation() !== 100 || isLeaderBlocking()">
-            Continue to Stress Test <span class="material-icons ml-1 text-sm">arrow_forward</span>
+            [disabled]="totalParticipation() !== 100 || isLeaderBlocking() || isEditingShares()">
+            Validate structural analysis <span class="material-icons ml-1 text-sm">arrow_forward</span>
         </button>
     </div>
 
     } @else {
-    <div class="text-center py-12 text-content-secondary">
+    <div class="text-center py-12 text-content-secondary print:hidden">
         <span class="material-icons text-4xl mb-4 text-content-tertiary">group_off</span>
-        <p>No consortium data found. Please initialize the consortium.</p>
+        <p>This case is not initialized as a Consortium. Initialize through step 1.</p>
     </div>
     }
 </div>
 
 <div *ngIf="isLoading()"
-    class="absolute inset-0 bg-surface-background/80 flex flex-col justify-center items-center z-50">
+    class="absolute inset-0 bg-surface-background/80 flex flex-col justify-center items-center z-50 print:hidden">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>
-    <p class="text-content-secondary font-medium">Loading Consortium Data...</p>
+    <p class="text-content-secondary font-medium">Processing Consortium Structural Data...</p>
 </div>
