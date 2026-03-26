@@ -13,6 +13,7 @@ par des implémentations RÉELLES et FONCTIONNELLES:
 2. **CaseStatusGuard**: Vérifier case.status vs route requiredStatuses, rediriger selon status
 
 Le système garantit que :
+
 - Utilisateurs non authentifiés → redirect /auth/login
 - Utilisateurs avec mauvais rôle → redirect /access-denied
 - Case au mauvais statut → redirect vers l'étape courante (via resolveRouteFromStatus)
@@ -22,6 +23,7 @@ Ceci complète le flux sécurisé end-to-end et garantit l'intégrité du workfl
 ## RÈGLES MÉTIER APPLICABLES
 
 **Workflow Status Transitions:**
+
 ```
 DRAFT
   ↓
@@ -71,6 +73,7 @@ CLOSED (rapport final, case closed)
    - CLOSED → /cases/{id}/rapport
 
 **Exception Handling:**
+
 - If CaseService fails (404, 500) → show error toast + stay on current page
 - If user is ANALYST but ADMIN-only route → finaces-alert-box error
 - If case inexistant → finaces-alert-box error + redirect to /cases (list)
@@ -78,14 +81,17 @@ CLOSED (rapport final, case closed)
 ## FICHIERS À CRÉER / MODIFIER
 
 **Créer:**
+
 - `src/app/core/guards/auth.guard.ts`
 - `src/app/core/guards/case-status.guard.ts`
 
 **Modifier:**
+
 - `src/app/app.routes.ts` → replace placeholder guard imports, ensure real guards used
 - `src/app/core/services/auth.service.ts` → ensure isAuthenticated(), getCurrentRole() methods exist
 
 **Dépendances Existantes:**
+
 - AuthService (should exist from P3)
 - CaseService.getCaseStatus(caseId): Observable<{status: string}>
 - Router, ActivatedRoute
@@ -674,26 +680,31 @@ export class NotificationService {
 ## CONTRAINTES ANGULAR
 
 **Guard Architecture:**
+
 - Use `CanActivateFn` (functional, Angular 15+) for simplicity and tree-shaking
 - Fallback: service-based `CanActivate` if functional guards not available
 - Both implementations provided above
 
 **HttpClient & Error Handling:**
+
 - Guards call HttpClient to fetch case status
 - HTTP errors (404, 500) caught and handled gracefully
 - Redirect logic in catch block
 
 **Navigation:**
+
 - Use `Router.navigate()` for redirects
 - Include queryParams for returnUrl on login redirect
 - Toast messages via NotificationService for user feedback
 
 **Route Data:**
+
 - Use `route.data['requiredStatuses']` to specify allowed statuses
 - Use `route.data['roles']` for role-based access
 - Use `route.data['caseTypeRequired']` for case type checks (optional)
 
 **Observable Chains:**
+
 - Use `switchMap` to chain API calls
 - Use `catchError` for error handling
 - Use `map` to extract relevant data
@@ -701,6 +712,7 @@ export class NotificationService {
 ## BINDING API
 
 ### GET Case Status (Lightweight)
+
 ```
 GET /api/v1/cases/{caseId}/status
 Response: {
@@ -710,6 +722,7 @@ Response: {
 ```
 
 ### GET Full Case (if needed)
+
 ```
 GET /api/v1/cases/{caseId}
 Response: CaseDetailDTO {...}
@@ -718,6 +731,7 @@ Response: CaseDetailDTO {...}
 ## CRITÈRES DE VALIDATION
 
 ### Guard Functionality
+
 1. ✅ AuthGuard blocks unauthenticated users (redirect to /auth/login)
 2. ✅ AuthGuard checks roles (redirect to /access-denied if insufficient)
 3. ✅ AuthGuard preserves returnUrl (queryParam on redirect)
@@ -728,6 +742,7 @@ Response: CaseDetailDTO {...}
 8. ✅ Error handling graceful (404 → alert + redirect to /cases)
 
 ### Route Configuration
+
 1. ✅ All case routes have [authGuard, caseStatusGuard]
 2. ✅ All admin routes have [authGuard] with roles check
 3. ✅ route.data properly configured with roles and requiredStatuses
@@ -735,6 +750,7 @@ Response: CaseDetailDTO {...}
 5. ✅ Wildcard route redirects to 404 component (not 500 error)
 
 ### User Experience
+
 1. ✅ Toast message clear and localized ("Ce dossier est à l'étape...")
 2. ✅ Redirect smooth (no flickering)
 3. ✅ returnUrl preserved for post-login redirect
@@ -766,4 +782,3 @@ Response: CaseDetailDTO {...}
    - CaseService.getCaseStatus(caseId)
    - NotificationService.showWarning()
    - NotificationService.showError()
-

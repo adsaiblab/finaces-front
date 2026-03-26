@@ -1,0 +1,40 @@
+<section class="bg-surface-card border border-border-default rounded-xl shadow-sm p-6">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-content-primary flex items-center gap-2">
+            <span class="material-icons text-primary-default">account_tree</span>
+            Model Registry & Lifecycle
+        </h3>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+            <thead>
+                <tr class="border-b-2 border-border-default text-content-secondary uppercase tracking-wider text-xs">
+                    <th class="py-3 px-2">Version</th>
+                    <th class="py-3 px-2">Status</th>
+                    <th class="py-3 px-2">Deployed At</th>
+                    <th class="py-3 px-2">Accuracy</th>
+                    <th class="py-3 px-2 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let m of models()" class="border-b border-border-default hover:bg-surface-hover">
+                    <td class="py-3 px-2 font-bold text-content-primary">{{ m.version }}</td>
+                    <td class="py-3 px-2">
+                        <span class="px-2 py-1 rounded text-xs font-bold"
+                            [ngClass]="{'bg-success-lighter text-success-dark': m.status === 'ACTIVE', 'bg-warning-lighter text-warning-dark': m.status === 'TESTING', 'bg-surface-disabled text-content-tertiary': m.status === 'ARCHIVED'}">
+                            {{ m.status }}
+                        </span>
+                    </td>
+                    <td class="py-3 px-2 text-content-secondary">{{ m.deployed_at | date:'shortDate' }}</td>
+                    <td class="py-3 px-2 font-medium">{{ m.accuracy | percent:'1.1-2' }}</td>
+                    <td class="py-3 px-2 text-right">
+                        <button mat-icon-button color="primary" (click)="viewConfig.emit(m)" title="View Config">
+                            <span class="material-icons text-sm">code</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
