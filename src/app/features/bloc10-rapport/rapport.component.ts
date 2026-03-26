@@ -1,15 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { catchError, of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CaseService } from '../../core/services/case.service';
 import { RapportExportService } from './services/rapport-export.service';
-import { EvaluationCaseDetailOut } from '../../core/models';
+import { EvaluationCaseDetailOut } from '../../core/models/case.model';
 import { RapportGridComponent, RapportMetricsComponent } from './components';
-import { FinacesRiskBadgeComponent, RiskClass } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
-import { FinacesTensionBadgeComponent, TensionLevel } from '../../shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component';
+import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
+import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component';
+import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 
 @Component({
   selector: 'app-rapport-final',
@@ -17,7 +17,6 @@ import { FinacesTensionBadgeComponent, TensionLevel } from '../../shared/compone
   imports: [
     CommonModule,
     MatButtonModule,
-    MatSnackBarModule,
     RapportGridComponent,
     RapportMetricsComponent,
     FinacesRiskBadgeComponent,
@@ -34,16 +33,41 @@ export class RapportComponent implements OnInit {
   private exportService = inject(RapportExportService);
   private snackBar = inject(MatSnackBar);
 
-  // ✅ Clé correcte : route = cases/:id
+  // Règle 1 & 3: Safe routing extraction
   caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
 
   currentCase = signal<EvaluationCaseDetailOut | null>(null);
   isLoading = signal<boolean>(true);
   isExporting = signal<boolean>(false);
 
-  // Exposer les types pour le template
-  readonly riskClass = signal<RiskClass>('MODERATE');
-  readonly tensionLevel = signal<TensionLevel>('NONE');
+  // [UI SIMULATION] - Computed properties to generate realistic mock data for the 14 sections
+  mockedFinancials = computed(() => {
+    return {
+      revenue: '4,500,000 €',
+      netIncome: '320,000 €',
+      ebitdaMargin: '12.5%',
+      equity: '1,200,000 €',
+      debt: '450,000 €'
+    };
+  });
+
+  mockedExpertPillars = computed(() => {
+    // Simulated expert qualitative analysis per pillar
+    return {
+      liquidity: 'Liquidity position is adequate. The current ratio stands above industry benchmarks, ensuring short-term obligations can be met without external financing.',
+      solvency: 'Strong solvency with low gearing. The company relies heavily on equity rather than debt.',
+      profitability: 'Margins are stable despite recent inflationary pressures on raw materials.',
+      capacity: 'Execution capacity is validated by three recent similar projects delivered on time.',
+      quality: 'Financial statements are audited by a Tier-1 firm without any reservations.'
+    };
+  });
+
+  mockedConditions = computed(() => {
+    return [
+      { type: 'REPORTING', text: 'Provide quarterly cash flow statements during the first year of execution.' },
+      { type: 'CAUTION', text: 'Maintain a minimum cash reserve of 100,000 €.' }
+    ];
+  });
 
   ngOnInit(): void {
     if (!this.caseId) {
@@ -55,24 +79,14 @@ export class RapportComponent implements OnInit {
 
   private loadCaseData(): void {
     this.isLoading.set(true);
-    this.caseService.getCaseDetail(this.caseId).pipe(
-      catchError(() => of({
-        id: this.caseId,
-        bidder_name: 'Simulation Entreprise SA',
-        sector: 'BTP',
-        contract_value: 1500000,
-        contract_currency: 'MAD',
-        contract_months: 24,
-        case_type: 'SINGLE' as any,
-        status: 'EXPERT_REVIEWED' as any,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        created_by: 'admin'
-      } as EvaluationCaseDetailOut))
-    ).subscribe({
+    this.caseService.getCaseDetail(this.caseId).subscribe({
       next: (data: EvaluationCaseDetailOut) => {
         this.currentCase.set(data);
         this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.snackBar.open('Error loading final report data.', 'Close', { duration: 3000 });
       }
     });
   }

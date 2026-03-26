@@ -198,3 +198,65 @@ this.service.callApi(id).pipe(
 ```
 
 **Règle** : avant d'utiliser un composant partagé, ouvrir son `.ts` et lire tous ses `input()` / `@Input()`.
+
+---
+
+## 14. 🛡️ Typage Strict dans le HTML (String vs Type Alias)
+
+```html
+<!-- ❌ Le paramètre backend est un 'string', mais le composant attend strictement 'LOW' | 'MODERATE' -->
+<finaces-risk-badge [riskClass]="case()?.risk_class || 'MODERATE'"></finaces-risk-badge>
+
+<!-- ✅ Utiliser $any() pour forcer le cast si la valeur backend est garantie valide -->
+<finaces-risk-badge [riskClass]="$any(case()?.risk_class) || 'MODERATE'"></finaces-risk-badge>
+```
+
+**Règle** : Les templates Angular v17+ en mode strict refusent de binder un `string` large vers un type alias strict. Utilisez `$any()` dans le template ou mappez la valeur dans le TypeScript.
+
+---
+
+## 15. 🔓 Visibilité des Injections de Dépendances utilisées dans le HTML
+
+```typescript
+// ❌ Injection privée utilisée directement dans le (click) du HTML
+private router = inject(Router); 
+// HTML: <button (click)="router.navigate(['/home'])">
+
+// ✅ Injection publique pour que le template y ait accès
+public router = inject(Router);
+```
+
+**Règle** : Toute variable ou service injecté via constructeur ou `inject()` qui est appelé DIRECTEMENT dans le fichier `.html` **doit** être `public`. Sinon le compilateur AOT plante (erreur d'accès à un membre privé).
+
+---
+
+## 16. 🎭 Mock-First Development & Defensive UI
+
+```typescript
+// ❌ Retourner null en attendant que le backend soit prêt masque l'UI et empêche le dev frontend
+this.apiService.getData().pipe(
+    catchError(() => of(null))
+).subscribe(data => this.pageData.set(data));
+
+// ✅ Réinjecter un Mock complet dans le catchError pour afficher l'interface complète
+const MOCK_DATA = { ... };
+this.apiService.getData().pipe(
+    catchError(() => of(MOCK_DATA)) // 🔧 Permet de valider l'UI même avec une API 404
+).subscribe(data => this.pageData.set(data));
+```
+
+**Règle** : En phase de prototypage (ex: Blocs P16, P17, P18), si l'API backend n'existe pas encore (404), chargez toujours un gros objet `MOCK_DATA` dans le `catchError`. Cela permet d'intégrer le HTML/CSS/Composants sans être bloqué par les routes d'API manquantes.
+
+---
+
+## 17. 📏 Ne pas inventer d'Inputs sur les composants UI complexes (ex: Gauges)
+
+```html
+<!-- ❌ Tenter d'injecter des propriétés SVG arbitraires -->
+<finaces-score-gauge [score]="3.5" [radius]="10" [stroke]="3"></finaces-score-gauge>
+
+<!-- ✅ Utiliser l'API définie par le design system -->
+<finaces-score-gauge [score]="3.5" [size]="80" [showLabel]="false"></finaces-score-gauge>
+```
+
+**Règle** : Ne devinez jamais les inputs graphiques. Lisez la définition. Pour FinaCES, la taille des gauges est régie par l'input `size` (80, 120, 160) et les labels par `showLabel`, non par des dimensions SVG natives.
