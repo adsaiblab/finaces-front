@@ -1,1 +1,107 @@
-<h2>Evaluation Cases List</h2>
+<div class="w-full h-full flex flex-col p-6 bg-default">
+    <!-- Header Stratégique -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-primary flex items-center gap-3">
+                <span class="material-icons text-primary">account_balance</span>
+                Evaluation Hub
+            </h1>
+            <p class="text-sm text-secondary mt-1">Resume active workflows or inspect completed evaluation phases.</p>
+        </div>
+        <button mat-flat-button color="primary" routerLink="/cases/new">
+            <span class="material-icons text-sm mr-2">add</span> New Request
+        </button>
+    </div>
+
+    <!-- Filtres et Recherche -->
+    <div class="bg-card rounded-t-xl border border-strong border-b-0 p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'ALL' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('ALL')">All Workloads</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'PENDING_GATE' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('PENDING_GATE')">Pending Gate</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'REQUIRE_ATTENTION' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('REQUIRE_ATTENTION')">Require Attention</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'READY_REPORT' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('READY_REPORT')">Ready for Report</button>
+        </div>
+        <div class="relative w-full sm:w-64">
+            <span class="material-icons absolute left-3 top-2.5 text-disabled text-[18px]">search</span>
+            <input type="text" placeholder="Search entity or ID..." class="w-full bg-sidebar-active-bg border border-strong rounded-md py-2 pl-9 pr-3 text-sm text-primary focus:outline-none focus:border-primary transition-colors" [ngModel]="searchQuery()" (input)="updateSearch($event)">
+        </div>
+    </div>
+
+    <!-- Data Grid Matrix -->
+    <div class="flex-grow bg-card rounded-b-xl shadow-md border border-strong overflow-hidden flex flex-col relative w-full overflow-x-auto">
+
+        @if (isLoading()) {
+            <div class="p-4"><finaces-skeleton-loader variant="table" [rows]="5"></finaces-skeleton-loader></div>
+        } @else {
+            @if (filteredCases().length === 0) {
+            <div class="flex-grow flex items-center justify-center p-8">
+                <finaces-empty-state icon="filter_list_off" title="No workflows found" description="There are no evaluation cases matching the current filters." ctaText="Clear Filters" ctaColor="accent" (ctaClick)="setFilterMode('ALL'); searchQuery.set('')"></finaces-empty-state>
+            </div>
+            } @else {
+            <div class="overflow-x-auto flex-grow w-full">
+                <table class="w-full text-left border-collapse min-w-[1000px] table-fixed">
+                    <thead class="bg-sidebar-active-bg sticky top-0 z-10 border-b-2 border-strong shadow-sm">
+                        <tr class="text-secondary text-[11px] font-bold uppercase tracking-wider">
+                            <th class="py-3 px-4 w-1/4">Evaluation Case (Entity)</th>
+                            <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Documentary Gate</th>
+                            <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Financials</th>
+                            <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Scoring / IA</th>
+                            <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Expert Review</th>
+                            <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Final Report</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-strong">
+                        <tr *ngFor="let caseItem of filteredCases()" class="hover:bg-sidebar-active-bg transition-colors group">
+                            <!-- Couloir de gauche : Infos Dossier -->
+                            <td class="py-4 px-4 align-middle">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-primary bg-opacity-10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+                                        {{ caseItem.assignee.substring(0, 1) }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-primary text-sm truncate" [matTooltip]="caseItem.bidder_name">{{ caseItem.bidder_name }}</div>
+                                        <div class="text-[11px] text-disabled font-mono mt-0.5 truncate">{{ caseItem.id }} • {{ caseItem.updated_at | date:'MMM d' }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <!-- Les 5 Portes d'Evaluation -->
+                            <td *ngFor="let step of caseItem.steps" class="py-4 px-3 align-middle text-center border-l border-strong bg-default bg-opacity-30">
+                                
+                                @if (step.status === 'COMPLETED') {
+                                    <button mat-icon-button (click)="goToStep(caseItem.id, step)" [matTooltip]="'Review ' + step.name" class="!text-success opacity-80 hover:opacity-100 transition-all">
+                                        <span class="material-icons">check_circle</span>
+                                    </button>
+                                } @else if (step.status === 'ACTIVE') {
+                                    <div class="flex flex-col items-center gap-1">
+                                        <button mat-stroked-button color="primary" class="!rounded-md border-primary text-primary" (click)="goToStep(caseItem.id, step)">
+                                            <span class="font-bold">Resume</span>
+                                        </button>
+                                    </div>
+                                } @else {
+                                    <div class="flex justify-center items-center w-full h-full text-disabled opacity-40">
+                                        <span class="material-icons text-xl" [matTooltip]="'Locked: Complete previous steps'">lock</span>
+                                    </div>
+                                }
+                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            }
+        }
+
+        <div class="bg-default border-t border-strong px-4 py-3 flex justify-between items-center text-xs text-disabled">
+            @if (!isLoading()) {
+                <span>Tracking {{ filteredCases().length }} of {{ cases().length }} workflows.</span>
+            } @else {
+                <span>Synchronizing workflows...</span>
+            }
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full cursor-help transition-colors" [ngClass]="isLoading() ? 'bg-warning animate-pulse' : 'bg-success'"></span>
+                Process Control Matrix Active
+            </span>
+        </div>
+    </div>
+</div>
