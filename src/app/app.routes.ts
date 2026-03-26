@@ -55,7 +55,7 @@ export const routes: Routes = [
                     { path: 'stress', loadComponent: () => import('./features/bloc8-stress/stress.component').then(m => m.StressComponent) },
                     { path: 'expert', loadComponent: () => import('./features/bloc9-expert/expert.component').then(m => m.ExpertComponent) },
                     { path: 'rapport', loadComponent: () => import('./features/bloc10-rapport/rapport.component').then(m => m.RapportComponent) },
-                    { path: 'consortium', loadComponent: () => import('./features/consortium/consortium.component').then(m => m.ConsortiumComponent) },
+                    { path: 'consortium', loadComponent: () => import('./features/bloc12-consortium/consortium.component').then(m => m.ConsortiumComponent) },
                 ]
             }
         ]

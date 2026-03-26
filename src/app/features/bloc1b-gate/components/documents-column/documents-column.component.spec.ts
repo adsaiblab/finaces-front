@@ -30,8 +30,7 @@ describe('DocumentsColumnComponent', () => {
         const mockDocs: GateDocumentOut[] = [
             { id: '1', case_id: 'c1', filename: 'test.pdf', original_filename: 'test.pdf', file_size: 1024, document_type: 'BILAN', fiscal_year: 2023, reliability_level: 'AUDITED', integrity_status: 'OK', upload_status: 'DONE', processing_status: 'DONE', red_flags: [], uploaded_at: '' }
         ];
-        fixture.componentRef.setInput('documents', mockDocs);
-        fixture.detectChanges();
+        component.documents = mockDocs;
         fixture.detectChanges();
 
         expect(component.dataSource.data.length).toBe(1);

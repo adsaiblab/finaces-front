@@ -5,6 +5,7 @@ export interface ConsortiumMember {
     participation_pct: number;
     score?: number;
     risk_class?: string;
+    status?: 'ACTIVE' | 'WITHDRAWN';
 }
 
 export interface ConsortiumMemberCreate {
