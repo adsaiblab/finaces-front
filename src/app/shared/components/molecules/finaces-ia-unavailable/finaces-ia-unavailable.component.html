@@ -1,0 +1,22 @@
+<div
+    class="bg-surface-card border-2 border-dashed border-error-default rounded-xl p-6 flex flex-col items-center text-center">
+    <div class="w-16 h-16 bg-error-lighter rounded-full flex justify-center items-center mb-4">
+        <span class="material-icons text-error-dark text-3xl">smart_toy</span>
+        <span
+            class="material-icons text-error-dark absolute -bottom-1 -right-1 bg-surface-card rounded-full text-lg">signal_wifi_off</span>
+    </div>
+
+    <h3 class="text-lg font-bold text-error-dark mb-2">AI Scoring Temporarily Unavailable</h3>
+    <p class="text-sm text-content-secondary max-w-md mb-4">{{ errorMessage() }}</p>
+
+    <div
+        class="bg-surface-hover p-3 rounded-lg border border-border-default mb-6 max-w-lg text-xs text-content-tertiary italic">
+        <strong>Disclaimer:</strong> AI scoring is a decision-support tool, not a decision-maker. The absence of AI
+        scoring does not block the evaluation process. The MCC score remains the sole authority.
+    </div>
+
+    <button mat-flat-button color="warn" (click)="onRetry()" [disabled]="isRetrying()">
+        <span class="material-icons mr-2 text-sm">{{ isRetrying() ? 'hourglass_empty' : 'refresh' }}</span>
+        {{ isRetrying() ? 'Retrying...' : 'Retry Connection' }}
+    </button>
+</div>
