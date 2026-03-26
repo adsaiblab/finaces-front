@@ -41,9 +41,8 @@ describe('ChecklistColumnComponent', () => {
 
         // setInput ne déclenche pas ngOnChanges sur les composants @Input classiques
         // → on assigne directement et on force le recalcul
-        component.documents = mockDocs as GateDocumentOut[];
-        component.fiscalYears = [2023, 2022, 2021];
-        component.ngOnChanges({ documents: { currentValue: mockDocs, previousValue: [], firstChange: false, isFirstChange: () => false } });
+        fixture.componentRef.setInput('documents', mockDocs as GateDocumentOut[]);
+        fixture.componentRef.setInput('fiscalYears', [2023, 2022, 2021]);
         fixture.detectChanges();
 
         // 4 requis sur 4 pour 2023 = 100% pour l'année

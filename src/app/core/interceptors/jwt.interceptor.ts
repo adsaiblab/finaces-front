@@ -9,11 +9,10 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private authService: AuthService) { }
 
     intercept(
         request: HttpRequest<unknown>,
@@ -32,7 +31,7 @@ export class JwtInterceptor implements HttpInterceptor {
             catchError((error: HttpErrorResponse) => {
                 if (error.status === 401) {
                     this.authService.logout();
-                    this.router.navigate(['/auth/login']);
+                    // Navigation will be handled by a higher-level guard or service later
                 }
                 return throwError(() => error);
             })

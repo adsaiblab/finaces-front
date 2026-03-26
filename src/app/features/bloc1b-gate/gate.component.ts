@@ -6,7 +6,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Observable, BehaviorSubject, Subject, timer, of } from 'rxjs';
-import { switchMap, takeUntil, shareReplay, catchError, tap, filter } from 'rxjs/operators';
+import { switchMap, takeUntil, shareReplay, catchError, tap, filter, delay } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 import { CaseService } from '../../core/services/case.service';
 import { DocumentService } from '../../core/services/document.service';
@@ -67,8 +68,7 @@ export class GateComponent implements OnInit, OnDestroy {
     }
 
     // 1. Fetch Case Details
-    this.case$ = this.caseService.getCaseDetail(this.caseId).pipe(
-      catchError(() => of({
+    const mockCase = {
         id: this.caseId,
         name: 'Dossier de Simulation',
         bidder_name: 'Entreprise Fictive SA',
@@ -82,7 +82,15 @@ export class GateComponent implements OnInit, OnDestroy {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         created_by: 'admin'
-      } as EvaluationCaseDetailOut)),
+    } as EvaluationCaseDetailOut;
+
+    const caseReq$ = environment.features.mockData ? of(mockCase).pipe(delay(400)) : this.caseService.getCaseDetail(this.caseId);
+
+    this.case$ = caseReq$.pipe(
+      catchError((err) => {
+        this.snackBar.open('Case not strictly found on server.', 'Close', { duration: 3000 });
+        throw err;
+      }),
       shareReplay(1)
     );
 
@@ -165,11 +173,8 @@ export class GateComponent implements OnInit, OnDestroy {
     this.isEvaluatingSubject.next(true);
     this.decisionSubject.next(null);
 
-    this.caseService.evaluateGate(this.caseId).pipe(
-      takeUntil(this.destroy$),
-      catchError(() => {
-        // 🔧 Mock fallback — backend indisponible ou dossier fictif
-        const mockDecision: GateDecisionSchema = {
+    const evaluate$ = environment.features.mockData
+      ? of({
           id: 'mock-decision-id',
           case_id: this.caseId,
           is_passed: true,
@@ -189,8 +194,15 @@ export class GateComponent implements OnInit, OnDestroy {
           audit_log: [],
           evaluated_at: new Date().toISOString(),
           evaluated_by: 'mock-engine'
-        };
-        return of(mockDecision);
+        } as GateDecisionSchema).pipe(delay(1500))
+      : this.caseService.evaluateGate(this.caseId);
+
+    evaluate$.pipe(
+      takeUntil(this.destroy$),
+      catchError((err) => {
+        this.isEvaluatingSubject.next(false);
+        this.snackBar.open('Evaluation failed: backend error.', 'Close', { duration: 4000, panelClass: 'snack-error' });
+        throw err;
       })
     ).subscribe({
       next: (decision) => {

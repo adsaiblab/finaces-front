@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
     CaseCreate,
@@ -29,105 +30,112 @@ export class CaseService {
 
     constructor(private http: HttpClient) { }
 
+    private handleError(error: HttpErrorResponse) {
+        console.error('CaseService API Error:', error);
+        return throwError(() => new Error(error.message || 'Server Error'));
+    }
+
     getCases(): Observable<EvaluationCaseOut[]> {
-        return this.http.get<EvaluationCaseOut[]>(this.apiUrl);
+        return this.http.get<EvaluationCaseOut[]>(this.apiUrl)
+            .pipe(catchError(this.handleError));
     }
 
     getCaseDetail(caseId: string): Observable<EvaluationCaseDetailOut> {
-        return this.http.get<EvaluationCaseDetailOut>(`${this.apiUrl}/${caseId}`);
+        return this.http.get<EvaluationCaseDetailOut>(`${this.apiUrl}/${caseId}`)
+            .pipe(catchError(this.handleError));
     }
 
     createCase(payload: CaseCreate): Observable<EvaluationCaseDetailOut> {
-        return this.http.post<EvaluationCaseDetailOut>(this.apiUrl, payload);
+        return this.http.post<EvaluationCaseDetailOut>(this.apiUrl, payload)
+            .pipe(catchError(this.handleError));
     }
 
     saveCaseDraft(payload: Partial<CaseCreate>): Observable<EvaluationCaseDetailOut> {
         const draftPayload = { ...payload, status: 'DRAFT' };
-        return this.http.post<EvaluationCaseDetailOut>(this.apiUrl, draftPayload);
+        return this.http.post<EvaluationCaseDetailOut>(this.apiUrl, draftPayload)
+            .pipe(catchError(this.handleError));
     }
 
     getCaseStatus(caseId: string): Observable<CaseStatusResponse> {
-        return this.http.get<CaseStatusResponse>(`${this.apiUrl}/${caseId}/status`);
+        return this.http.get<CaseStatusResponse>(`${this.apiUrl}/${caseId}/status`)
+            .pipe(catchError(this.handleError));
     }
 
-    transitionStatus(
-        caseId: string,
-        payload: StatusTransition
-    ): Observable<CaseStatusResponse> {
+    transitionStatus(caseId: string, payload: StatusTransition): Observable<CaseStatusResponse> {
         return this.http.patch<CaseStatusResponse>(
-            `${this.apiUrl}/${caseId}/status`,
-            payload
-        );
+            `${this.apiUrl}/${caseId}/status`, payload
+        ).pipe(catchError(this.handleError));
     }
 
     getBidders(): Observable<BidderOut[]> {
-        return this.http.get<BidderOut[]>(`${this.apiUrl}/bidders`);
+        return this.http.get<BidderOut[]>(`${this.apiUrl}/bidders`)
+            .pipe(catchError(this.handleError));
     }
 
     getDashboardStats(): Observable<DashboardStatsOut> {
-        return this.http.get<DashboardStatsOut>(this.dashboardUrl);
+        return this.http.get<DashboardStatsOut>(this.dashboardUrl)
+            .pipe(catchError(this.handleError));
     }
 
     getRecentCases(limit: number = 5): Observable<EvaluationCaseDetailOut[]> {
         const params = new HttpParams()
             .set('limit', limit.toString())
             .set('sort', '-updated_at');
-        return this.http.get<EvaluationCaseDetailOut[]>(this.apiUrl, { params });
+        return this.http.get<EvaluationCaseDetailOut[]>(this.apiUrl, { params })
+            .pipe(catchError(this.handleError));
     }
 
     getConvergenceChart(days: number = 30): Observable<ConvergenceChartOut> {
         const params = new HttpParams().set('days', days.toString());
-        return this.http.get<ConvergenceChartOut>(`${this.analyticsUrl}/convergence`, { params });
+        return this.http.get<ConvergenceChartOut>(`${this.analyticsUrl}/convergence`, { params })
+            .pipe(catchError(this.handleError));
     }
 
     getActiveTensionCases(): Observable<TensionAlertOut[]> {
         const params = new HttpParams().set('filter', 'divergence_level:MODERATE,SEVERE');
-        return this.http.get<TensionAlertOut[]>(this.apiUrl, { params });
+        return this.http.get<TensionAlertOut[]>(this.apiUrl, { params })
+            .pipe(catchError(this.handleError));
     }
 
     evaluateGate(caseId: string): Observable<GateDecisionSchema> {
         return this.http.post<GateDecisionSchema>(
-            `${this.apiUrl}/${caseId}/gate/evaluate`,
-            {}
-        );
+            `${this.apiUrl}/${caseId}/gate/evaluate`, {}
+        ).pipe(catchError(this.handleError));
     }
 
     patchCaseStatus(caseId: string, status: string): Observable<EvaluationCaseDetailOut> {
         return this.http.patch<EvaluationCaseDetailOut>(
-            `${this.apiUrl}/${caseId}`,
-            { status }
-        );
+            `${this.apiUrl}/${caseId}`, { status }
+        ).pipe(catchError(this.handleError));
     }
 
-    // =========================================================================
-    // NOUVELLES MÉTHODES POUR LES ÉTATS FINANCIERS (BLOC 2)
-    // =========================================================================
-
     getFinancials(caseId: string): Observable<FinancialStatementRawOut[]> {
-        return this.http.get<FinancialStatementRawOut[]>(`${this.apiUrl}/${caseId}/financials`);
+        return this.http.get<FinancialStatementRawOut[]>(`${this.apiUrl}/${caseId}/financials`)
+            .pipe(catchError(this.handleError));
     }
 
     saveFinancials(caseId: string, data: FinancialStatementCreate): Observable<FinancialStatementRawOut> {
-        return this.http.post<FinancialStatementRawOut>(`${this.apiUrl}/${caseId}/financials`, data);
+        return this.http.post<FinancialStatementRawOut>(`${this.apiUrl}/${caseId}/financials`, data)
+            .pipe(catchError(this.handleError));
     }
 
     deleteFinancials(caseId: string, stmtId: string): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${caseId}/financials/${stmtId}`);
+        return this.http.delete<void>(`${this.apiUrl}/${caseId}/financials/${stmtId}`)
+            .pipe(catchError(this.handleError));
     }
 
     normalizeFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema> {
-        return this.http.post<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalize`, {});
+        return this.http.post<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalize`, {})
+            .pipe(catchError(this.handleError));
     }
 
-    // =========================================================================
-    // NOUVELLES MÉTHODES POUR LA NORMALISATION & RATIOS (BLOCS 3 & 4)
-    // =========================================================================
-
     getNormalizedFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema> {
-        return this.http.get<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalized-financials`);
+        return this.http.get<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalized-financials`)
+            .pipe(catchError(this.handleError));
     }
 
     computeRatios(caseId: string): Observable<any> {
-        return this.http.post<any>(`${this.apiUrl}/${caseId}/ratios/compute`, {});
+        return this.http.post<any>(`${this.apiUrl}/${caseId}/ratios/compute`, {})
+            .pipe(catchError(this.handleError));
     }
 }

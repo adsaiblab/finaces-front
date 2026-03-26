@@ -5,7 +5,7 @@
 
 .finaces-primary-btn {
     background-color: var(--color-primary);
-    color: white;
+    color: var(--color-content-inverse);
 
     &:hover:not([disabled]) {
         filter: brightness(1.1);

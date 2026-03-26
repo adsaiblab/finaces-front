@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, catchError, of } from 'rxjs';
+import { forkJoin, catchError, of, delay } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -81,24 +81,26 @@ export class TensionComponent implements OnInit {
   }
 
   private loadMockTension(): void {
-    setTimeout(() => {
-      this.tensionData.set({
-        level: 'SEVERE' as any,
-        direction: 'UP',
-        delta_score: 1.2,
-        mcc_class: 'MODERATE',
-        ia_class: 'LOW',
-        class_divergence: true,
-        pillars_comparison: [
-          { pillar_name: 'Liquidity', mcc_score: 3.0, ia_impact: 4.2, delta: 1.2, is_divergent: true },
-          { pillar_name: 'Solvency', mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
-          { pillar_name: 'Profitability', mcc_score: 4.0, ia_impact: 4.0, delta: 0, is_divergent: false }
-        ],
-        system_recommendation: 'Critical divergence detected. Deep investigation strongly advised.',
-        requires_justification: true
-      });
+    const mockResponse = {
+      level: 'SEVERE' as any,
+      direction: 'UP',
+      delta_score: 1.2,
+      mcc_class: 'MODERATE',
+      ia_class: 'LOW',
+      class_divergence: true,
+      pillars_comparison: [
+        { pillar_name: 'Liquidity', mcc_score: 3.0, ia_impact: 4.2, delta: 1.2, is_divergent: true },
+        { pillar_name: 'Solvency', mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
+        { pillar_name: 'Profitability', mcc_score: 4.0, ia_impact: 4.0, delta: 0, is_divergent: false }
+      ],
+      system_recommendation: 'Critical divergence detected. Deep investigation strongly advised.',
+      requires_justification: true
+    };
+
+    of(mockResponse).pipe(delay(800)).subscribe(data => {
+      this.tensionData.set(data as any);
       this.isLoading.set(false);
-    }, 800);
+    });
   }
 
   public handleDecision(payload: AnalystDecisionPayload): void {
@@ -106,7 +108,7 @@ export class TensionComponent implements OnInit {
     // Simulation de la sauvegarde de la décision
     setTimeout(() => {
       this.isSubmitting.set(false);
-      this.snackBar.open('Analyst decision recorded successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-white'] });
+      this.snackBar.open('Analyst decision recorded successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
 
       // Si le user a choisi INVESTIGATE on l'envoie vers Stress Test (Bloc 8) ou Expert (Bloc 9).
       // Sinon on passe au Rapport (Bloc 10). On va l'envoyer au Bloc 8 pour le moment.

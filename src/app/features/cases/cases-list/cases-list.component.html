@@ -16,10 +16,10 @@
     <!-- Filtres et Recherche -->
     <div class="bg-card rounded-t-xl border border-strong border-b-0 p-4 flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
-            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'ALL' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('ALL')">All Workloads</button>
-            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'PENDING_GATE' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('PENDING_GATE')">Pending Gate</button>
-            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'REQUIRE_ATTENTION' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('REQUIRE_ATTENTION')">Require Attention</button>
-            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'READY_REPORT' ? 'bg-primary text-white' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('READY_REPORT')">Ready for Report</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'ALL' ? 'bg-primary text-inverse' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('ALL')">All Workloads</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'PENDING_GATE' ? 'bg-primary text-inverse' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('PENDING_GATE')">Pending Gate</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'REQUIRE_ATTENTION' ? 'bg-primary text-inverse' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('REQUIRE_ATTENTION')">Require Attention</button>
+            <button class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors" [class]="filterMode() === 'READY_REPORT' ? 'bg-primary text-inverse' : 'bg-sidebar-active-bg text-secondary hover:text-primary'" (click)="setFilterMode('READY_REPORT')">Ready for Report</button>
         </div>
         <div class="relative w-full sm:w-64">
             <span class="material-icons absolute left-3 top-2.5 text-disabled text-[18px]">search</span>

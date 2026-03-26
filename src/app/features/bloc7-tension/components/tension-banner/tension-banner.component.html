@@ -13,7 +13,7 @@
 
             @if (level() !== 'NONE') {
             <div
-                class="flex items-center gap-2 text-sm font-semibold px-3 py-1 rounded bg-white bg-opacity-50 border border-current border-opacity-20">
+                class="flex items-center gap-2 text-sm font-semibold px-3 py-1 rounded bg-surface-card bg-opacity-50 border border-current border-opacity-20">
                 <span>Δ Score: {{ deltaScore() | number:'1.2-2' }}</span>
                 <span class="opacity-50 mx-1">|</span>
                 <span class="text-xs uppercase">{{ getDirectionText() }}</span>

@@ -17,7 +17,8 @@ import { ConsortiumMemberDialogComponent } from './components/consortium-member-
 import { ConsortiumMemberAccordionComponent } from './components/consortium-member-accordion/consortium-member-accordion.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
-import { catchError, of } from 'rxjs';
+import { catchError, of, delay } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-consortium',
@@ -139,11 +140,15 @@ export class ConsortiumComponent implements OnInit {
             ]
         } as ConsortiumScorecardOutput;
 
-        this.consortiumService.getConsortium(this.caseId).pipe(
-            catchError(() => {
+        const req$ = environment.features.mockData 
+            ? of(MOCK_CONSORTIUM).pipe(delay(800))
+            : this.consortiumService.getConsortium(this.caseId);
+
+        req$.pipe(
+            catchError((err) => {
                 this.isLoading.set(false);
-                // 🔧 Fallback to show the FULL UI since backend is missing / mocked ID
-                return of(MOCK_CONSORTIUM);
+                this.snackBar.open('Erreur de chargement du consortium (backend)', 'Close');
+                throw err;
             })
         ).subscribe(data => {
             if (data) this.currentConsortium.set(data);

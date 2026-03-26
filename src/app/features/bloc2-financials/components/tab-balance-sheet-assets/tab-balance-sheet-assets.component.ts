@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-tab-balance-sheet-assets',
@@ -13,6 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class TabBalanceSheetAssetsComponent implements OnInit {
     private fb = inject(FormBuilder);
+    private destroyRef = inject(DestroyRef);
 
     public year = input<number>(0);
     public assetsDataChange = output<{ total: number, data: any }>();
@@ -45,7 +46,9 @@ export class TabBalanceSheetAssetsComponent implements OnInit {
     });
 
     ngOnInit(): void {
-        this.assetsForm.valueChanges.subscribe(val => {
+        this.assetsForm.valueChanges.pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(val => {
             if (this.assetsForm.valid) {
                 this.assetsDataChange.emit({
                     total: this.totalAssets(),

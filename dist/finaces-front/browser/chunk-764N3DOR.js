@@ -1,0 +1,1 @@
+import{Hb as o,Ib as i,dc as a,ed as c,ib as n}from"./chunk-WFV5GYLM.js";var m=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-recevabilite"]],decls:2,vars:0,template:function(e,p){e&1&&(o(0,"h2"),a(1,"Bloc 1A : Recevabilit\xE9"),i())},dependencies:[c],encapsulation:2,changeDetection:0})};export{m as RecevabiliteComponent};

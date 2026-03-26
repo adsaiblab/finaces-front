@@ -13,6 +13,35 @@ describe('FinacesStressChartComponent', () => {
     ];
 
     beforeAll(() => {
+        // Mock Canvas for Vitest/JSDOM
+        if (typeof HTMLCanvasElement !== 'undefined') {
+            vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+                fillRect: () => { },
+                clearRect: () => { },
+                getImageData: (x: any, y: any, w: any, h: any) => ({ data: new Array(w * h * 4).fill(0) }),
+                putImageData: () => { },
+                createImageData: () => ({ data: new Array(1).fill(0) }),
+                setTransform: () => { },
+                drawImage: () => { },
+                save: () => { },
+                restore: () => { },
+                beginPath: () => { },
+                moveTo: () => { },
+                lineTo: () => { },
+                closePath: () => { },
+                stroke: () => { },
+                translate: () => { },
+                scale: () => { },
+                rotate: () => { },
+                arc: () => { },
+                fill: () => { },
+                measureText: (text: string) => ({ width: text.length * 10 }),
+                transform: () => { },
+                rect: () => { },
+                clip: () => { },
+            } as any);
+        }
+
         vi.stubGlobal('ResizeObserver', class ResizeObserver {
             observe() { }
             unobserve() { }

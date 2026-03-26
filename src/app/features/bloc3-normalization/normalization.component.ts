@@ -102,7 +102,7 @@ export class NormalizationComponent implements OnInit {
     this.isRecalculating.set(true);
     this.caseService.normalizeFinancials(this.caseId()).subscribe({
       next: () => {
-        this.snackBar.open('Normalization recalculated successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-white'] });
+        this.snackBar.open('Normalization recalculated successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
         this.loadNormalizedData();
         this.isRecalculating.set(false);
       },
@@ -121,7 +121,7 @@ export class NormalizationComponent implements OnInit {
     this.caseService.computeRatios(this.caseId()).subscribe({
       next: () => {
         this.isComputingRatios.set(false);
-        this.snackBar.open('Ratios computed successfully. Ready for evaluation.', 'OK', { duration: 4000, panelClass: ['bg-success', 'text-white'] });
+        this.snackBar.open('Ratios computed successfully. Ready for evaluation.', 'OK', { duration: 4000, panelClass: ['bg-success', 'text-inverse'] });
         this.router.navigate(['/cases', this.caseId(), 'ratios']);
       },
       error: () => {

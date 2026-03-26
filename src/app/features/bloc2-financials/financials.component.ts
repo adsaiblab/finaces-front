@@ -88,7 +88,7 @@ export class FinancialsComponent {
     // Prototype Enterprise-Grade (Simulation sans backend)
     setTimeout(() => {
       this.isSubmitting.set(false);
-      this.snackBar.open('Normalisation terminée avec succès', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-white'] });
+      this.snackBar.open('Normalisation terminée avec succès', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
       this.router.navigate(['/cases', this.caseId(), 'normalization']);
     }, 1500);
   }

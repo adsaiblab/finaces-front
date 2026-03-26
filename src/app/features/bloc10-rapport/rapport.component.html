@@ -1,4 +1,4 @@
-<div class="w-full h-full p-6 bg-surface-background print:bg-white print:p-0" *ngIf="!isLoading()">
+<div class="w-full h-full p-6 bg-surface-background print:bg-surface-card print:p-0" *ngIf="!isLoading()">
 
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 print:hidden gap-4">
         <div>
@@ -18,10 +18,10 @@
         </div>
     </div>
 
-    <div class="max-w-5xl mx-auto space-y-6 print:space-y-4 text-sm">
+    <div class="space-y-6 print:space-y-4 text-sm">
 
         <div class="hidden print:block mb-8 border-b-2 border-gray-800 pb-4">
-            <h1 class="text-3xl font-extrabold text-black uppercase tracking-wider">FinaCES Evaluation Report</h1>
+            <h1 class="text-3xl font-extrabold text-content-primary uppercase tracking-wider">FinaCES Evaluation Report</h1>
             <p class="text-gray-600 mt-2">Generated on: {{ currentCase()?.updated_at | date:'medium' }}</p>
             <p class="text-gray-600">Case ID: {{ caseId }}</p>
             <p class="text-gray-600 mt-4 italic">[CONFIDENTIAL - INTERNAL USE ONLY]</p>
@@ -102,7 +102,7 @@
         <app-rapport-grid title="5. Altman Z-Score & Risk Profile" icon="radar">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-16 h-16 rounded-full bg-success-default flex items-center justify-center text-white font-bold text-xl">
+                    class="w-16 h-16 rounded-full bg-success-default flex items-center justify-center text-inverse font-bold text-xl">
                     2.8</div>
                 <div>
                     <h4 class="font-bold text-content-primary">SAFE ZONE</h4>
@@ -117,10 +117,10 @@
 
         <app-rapport-grid title="6. MCC Final Score (Authoritative)" icon="gavel">
             <div
-                class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default print:border-gray-300 print:bg-gray-50 h-full">
+                class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default border-border-default print:bg-surface-hover h-full">
                 <span class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black">Final
                     Score</span>
-                <span class="text-4xl font-extrabold text-primary-dark print:text-black">
+                <span class="text-4xl font-extrabold text-primary-dark">
                     {{ currentCase()?.mcc_score || '3.5' }}
                 </span>
             </div>
@@ -137,7 +137,7 @@
             </div>
         </app-rapport-grid>
 
-        <section class="bg-surface-disabled rounded-xl border border-border-default p-6 print:border-gray-200">
+        <section class="bg-surface-disabled rounded-xl border border-border-default p-6">
             <div class="flex items-start gap-3 mb-4">
                 <span class="material-icons text-content-tertiary">smart_toy</span>
                 <div>

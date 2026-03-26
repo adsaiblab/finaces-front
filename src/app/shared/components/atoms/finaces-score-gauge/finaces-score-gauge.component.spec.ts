@@ -68,6 +68,7 @@ describe('FinacesScoreGaugeComponent', () => {
     });
 
     it('should generate a valid SVG arc path for score 2.5/5', () => {
+        // Force les propriétés pour le calcul du path
         component.displayScore = 2.5;
         component.maxScore = 5;
         const path = component.getProgressPath();
@@ -78,7 +79,8 @@ describe('FinacesScoreGaugeComponent', () => {
     });
 
     it('should return empty arc path when displayScore is 0', () => {
-        component.displayScore = 0;
+        fixture.componentRef.setInput('score', 0);
+        fixture.detectChanges();
         const path = component.getProgressPath();
         expect(path).toBe('');
     });

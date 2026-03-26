@@ -104,7 +104,7 @@ export class ScoringMccComponent implements OnInit {
       next: (updatedData) => {
         this.scoringData.set(updatedData);
         this.isOverriding.set(false);
-        this.snackBar.open('Score override applied successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-white'] });
+        this.snackBar.open('Score override applied successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
       },
       error: () => {
         // Fallback simulate success

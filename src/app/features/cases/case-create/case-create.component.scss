@@ -1,6 +1,6 @@
 .case-create-container {
     padding: 1.5rem;
-    max-width: 1600px;
+
     margin: 0 auto;
 }
 
@@ -73,7 +73,7 @@
                 &.mat-step-icon-state-edit,
                 &.mat-mdc-step-icon-state-edit {
                     background-color: var(--color-primary);
-                    color: #ffffff;
+                    color: var(--color-content-inverse);
                 }
             }
 

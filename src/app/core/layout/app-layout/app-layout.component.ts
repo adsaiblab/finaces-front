@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService } from '../../services/theme/theme.service';
@@ -8,7 +8,8 @@ import { ThemeService } from '../../services/theme/theme.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './app-layout.component.html',
-  styleUrls: ['./app-layout.component.scss']
+  styleUrls: ['./app-layout.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppLayoutComponent {
   themeService = inject(ThemeService);

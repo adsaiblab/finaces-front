@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AnalystDecisionPayload } from '../../../../core/models/tension.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-analyst-decision',
@@ -23,6 +24,7 @@ import { AnalystDecisionPayload } from '../../../../core/models/tension.model';
 })
 export class AnalystDecisionComponent {
     private fb = inject(FormBuilder);
+    private destroyRef = inject(DestroyRef);
 
     public requiresJustification = input<boolean>(false);
     public decisionSubmitted = output<AnalystDecisionPayload>();
@@ -35,7 +37,9 @@ export class AnalystDecisionComponent {
 
     constructor() {
         // Règle MCC: si justification requise (tension Moderate/Severe), ou si on suit l'IA, on force la justification
-        this.decisionForm.valueChanges.subscribe(val => {
+        this.decisionForm.valueChanges.pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(val => {
             const justifControl = this.decisionForm.get('justification');
             if (!justifControl) return;
 

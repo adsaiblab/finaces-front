@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, of } from 'rxjs';
+import { catchError, of, delay } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../core/services/case.service';
 import { ExpertService } from '../../core/services/expert.service';
@@ -124,22 +125,26 @@ export class ExpertComponent implements OnInit {
 
     this.isSubmitting.set(true);
 
-    this.expertService.submitExpertReview(this.caseId, reviewPayload).pipe(
-      catchError(() => {
-        // 🔧 Mock fallback — backend indisponible ou dossier fictif
-        return of({ id: 'mock-review-id', case_id: this.caseId } as any);
+    this.isSubmitting.set(true);
+
+    const submission$ = environment.features.mockData 
+      ? of({ id: 'mock-review-id', case_id: this.caseId } as any).pipe(delay(1500))
+      : this.expertService.submitExpertReview(this.caseId, reviewPayload);
+
+    submission$.pipe(
+      catchError((err) => {
+        this.isSubmitting.set(false);
+        this.snackBar.open('Submission failed : Backend Error', 'Close', { duration: 3000, panelClass: 'snack-error' });
+        throw err;
       })
     ).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.isSubmitted.set(true);
         this.reviewForm.disable();
-        this.snackBar.open('Review mock-submitted successfully', 'Close', { duration: 3000 });
+        const msg = environment.features.mockData ? 'Review mock-submitted successfully' : 'Review submitted successfully';
+        this.snackBar.open(msg, 'Close', { duration: 3000 });
         // Appel de this.expertService.submitConclusion(this.caseId, conclusionPayload) ici dans le futur
-      },
-      error: () => {
-        this.isSubmitting.set(false);
-        this.snackBar.open('Submission failed', 'Close', { duration: 3000 });
       }
     });
   }

@@ -74,8 +74,7 @@ export class Bloc4RatiosComponent implements OnInit {
     }
 
     private loadMockData(): void {
-        setTimeout(() => {
-            this.ratioSet.set({
+        const mockResponse = {
                 case_id: this.caseId(),
                 fiscal_year: 2023,
                 liquidity: {
@@ -127,9 +126,12 @@ export class Bloc4RatiosComponent implements OnInit {
                 calculation_date: new Date().toISOString(),
                 normalization_source: 'normalized_financial_data',
                 sector_code: 'TECH'
-            });
+            };
+
+        of(mockResponse).pipe(delay(1200)).subscribe(data => {
+            this.ratioSet.set(data as RatioSetSchema);
             this.isLoading.set(false);
-        }, 1200);
+        });
     }
 
     public launchScoringAndPrediction(): void {
@@ -143,7 +145,7 @@ export class Bloc4RatiosComponent implements OnInit {
         forkJoin([mockMccScoreCall, mockIaPredictCall]).subscribe({
             next: () => {
                 this.snackBar.open('MCC Scoring & AI Prediction launched successfully.', 'OK', {
-                    duration: 3000, panelClass: ['bg-success', 'text-white']
+                    duration: 3000, panelClass: ['bg-success', 'text-inverse']
                 });
                 this.scoringInProgress.set(false);
                 this.router.navigate(['/cases', this.caseId(), 'scoring-mcc']);
