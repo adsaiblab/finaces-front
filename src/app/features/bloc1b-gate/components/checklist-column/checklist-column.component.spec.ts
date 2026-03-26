@@ -31,7 +31,7 @@ describe('ChecklistColumnComponent', () => {
         expect(component.yearlyProgress[0].progressPercent).toBe(0);
     });
 
-    it('devrait calculer correctement la progression avec des documents valides', async () => {
+    it('devrait calculer correctement la progression avec des documents valides', () => {
         const mockDocs: Partial<GateDocumentOut>[] = [
             { document_type: 'BILAN', fiscal_year: 2023, integrity_status: 'OK' },
             { document_type: 'CPC', fiscal_year: 2023, integrity_status: 'WARN' },
@@ -39,9 +39,11 @@ describe('ChecklistColumnComponent', () => {
             { document_type: 'ATTESTATION_FISCALE', fiscal_year: 2023, integrity_status: 'OK' }
         ];
 
-        fixture.componentRef.setInput('documents', mockDocs as GateDocumentOut[]);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        // setInput ne déclenche pas ngOnChanges sur les composants @Input classiques
+        // → on assigne directement et on force le recalcul
+        component.documents = mockDocs as GateDocumentOut[];
+        component.fiscalYears = [2023, 2022, 2021];
+        component.ngOnChanges({ documents: { currentValue: mockDocs, previousValue: [], firstChange: false, isFirstChange: () => false } });
         fixture.detectChanges();
 
         // 4 requis sur 4 pour 2023 = 100% pour l'année

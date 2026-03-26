@@ -25,7 +25,7 @@ interface RiskMetadata {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinacesRiskBadgeComponent {
-    readonly riskClass = input.required<RiskClass>();
+    readonly riskClass = input<RiskClass>('MODERATE');
     readonly rail = input<Rail>('MCC');
     readonly size = input<'sm' | 'md'>('md');
     readonly showLabel = input<boolean>(true);

@@ -1,0 +1,10 @@
+<div
+    class="flex items-center justify-between p-4 bg-surface-default border border-border-default rounded-lg print:border-gray-200">
+    <span class="text-sm font-medium text-content-secondary print:text-gray-600">{{ label() }}</span>
+    <div class="flex items-center gap-2">
+        <span class="text-lg font-bold text-content-primary print:text-black">{{ value() }}</span>
+        <span *ngIf="trend() === 'up'" class="material-icons text-success-default text-sm">trending_up</span>
+        <span *ngIf="trend() === 'down'" class="material-icons text-error-default text-sm">trending_down</span>
+        <span *ngIf="trend() === 'flat'" class="material-icons text-content-tertiary text-sm">trending_flat</span>
+    </div>
+</div>

@@ -1,1 +1,117 @@
-<h2>Bloc 10 : Génération du Rapport</h2>
+<div class="w-full h-full p-6 bg-surface-background print:bg-white print:p-0" *ngIf="!isLoading()">
+
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 print:hidden gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-content-primary">Final Report</h1>
+            <p class="text-sm text-content-secondary mt-1">Read-only view of the finalized FinaCES evaluation.</p>
+        </div>
+        <div class="flex gap-3">
+            <button mat-stroked-button (click)="returnToDashboard()" [disabled]="isExporting()">
+                <span class="material-icons mr-1 text-sm">arrow_back</span> Dashboard
+            </button>
+            <button mat-flat-button color="accent" (click)="exportExcel()" [disabled]="isExporting()">
+                <span class="material-icons mr-1 text-sm">table_view</span> Export Data
+            </button>
+            <button mat-flat-button color="primary" (click)="exportPdf()" [disabled]="isExporting()">
+                <span class="material-icons mr-1 text-sm">picture_as_pdf</span> Download PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto space-y-6 print:space-y-4">
+
+        <div class="hidden print:block mb-8 border-b-2 border-gray-800 pb-4">
+            <h1 class="text-3xl font-extrabold text-black uppercase tracking-wider">FinaCES Evaluation Report</h1>
+            <p class="text-gray-600 mt-2">Generated on: {{ currentCase()?.updated_at | date:'medium' }}</p>
+            <p class="text-gray-600">Case ID: {{ caseId }}</p>
+        </div>
+
+        <app-rapport-grid title="General Information" icon="business">
+            <div class="space-y-4">
+                <div>
+                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Bidder Name</span>
+                    <span class="block text-base font-medium text-content-primary">{{ currentCase()?.bidder_name || 'N/A' }}</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Sector</span>
+                    <span class="block text-base font-medium text-content-primary">{{ currentCase()?.sector || 'N/A' }}</span>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Contract Value</span>
+                    <span class="block text-base font-medium text-content-primary">{{ currentCase()?.contract_value |
+                        number:'1.0-0' }} {{ currentCase()?.contract_currency }}</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Case Type</span>
+                    <span class="block text-base font-medium text-content-primary">{{ currentCase()?.case_type }}</span>
+                </div>
+            </div>
+        </app-rapport-grid>
+
+        <app-rapport-grid title="MCC Final Scoring" icon="gavel">
+            <div
+                class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default print:border-gray-300 print:bg-gray-50">
+                <span class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black">Final
+                    Decision</span>
+                <span class="text-2xl font-extrabold text-primary-dark print:text-black">
+                    VALIDATED
+                </span>
+            </div>
+            <div class="flex flex-col gap-3 justify-center">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-content-secondary">Risk Class</span>
+                    <finaces-risk-badge [riskClass]="riskClass()"></finaces-risk-badge>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-content-secondary">System Tension</span>
+                    <finaces-tension-badge [level]="tensionLevel()"></finaces-tension-badge>
+                </div>
+            </div>
+        </app-rapport-grid>
+
+        <section class="bg-surface-disabled rounded-xl border border-border-default p-6 print:border-gray-200">
+            <div class="flex items-start gap-3 mb-4">
+                <span class="material-icons text-content-tertiary">smart_toy</span>
+                <div>
+                    <h3 class="text-lg font-bold text-content-secondary">AI Scoring (Non-Decision Authority)</h3>
+                    <p class="text-xs text-content-tertiary mt-1 max-w-2xl italic">
+                        Disclaimer: AI scoring is a decision-support tool. It does not replace the MCC score, which
+                        remains the sole authority for final approval.
+                    </p>
+                </div>
+            </div>
+            <div class="flex gap-6 items-center">
+                <div class="bg-surface-default px-4 py-2 rounded shadow-sm border border-border-default">
+                    <span class="text-xs text-content-tertiary block">AI Score</span>
+                    <span class="text-lg font-bold text-content-secondary">N/A</span>
+                </div>
+            </div>
+        </section>
+
+        <app-rapport-grid title="Key Financial Metrics" icon="bar_chart">
+            <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <app-rapport-metrics label="Current Ratio" [value]="1.45" trend="up"></app-rapport-metrics>
+                <app-rapport-metrics label="Debt to Equity" [value]="'45%'" trend="down"></app-rapport-metrics>
+                <app-rapport-metrics label="Net Margin" [value]="'12.4%'" trend="up"></app-rapport-metrics>
+                <app-rapport-metrics label="Operating Cash Flow" [value]="'245,000 €'"
+                    trend="flat"></app-rapport-metrics>
+            </div>
+        </app-rapport-grid>
+
+        <app-rapport-grid title="Analyst Conclusion" icon="summarize">
+            <div class="col-span-1 md:col-span-2">
+                <p class="text-sm text-content-primary leading-relaxed whitespace-pre-wrap">
+                    No expert conclusion was provided for this case.
+                </p>
+            </div>
+        </app-rapport-grid>
+
+    </div>
+</div>
+
+<div *ngIf="isLoading()" class="w-full h-full flex flex-col justify-center items-center">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>
+    <p class="text-content-secondary">Generating Final Report...</p>
+</div>

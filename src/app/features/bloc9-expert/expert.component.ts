@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, of } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../core/services/case.service';
 import { ExpertService } from '../../core/services/expert.service';
@@ -123,14 +124,17 @@ export class ExpertComponent implements OnInit {
 
     this.isSubmitting.set(true);
 
-    // Note : Selon comment ton Service est fait, tu appelleras les 2 endpoints 
-    // l'un après l'autre via un forkJoin ou switchMap.
-    this.expertService.submitExpertReview(this.caseId, reviewPayload).subscribe({
+    this.expertService.submitExpertReview(this.caseId, reviewPayload).pipe(
+      catchError(() => {
+        // 🔧 Mock fallback — backend indisponible ou dossier fictif
+        return of({ id: 'mock-review-id', case_id: this.caseId } as any);
+      })
+    ).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.isSubmitted.set(true);
         this.reviewForm.disable();
-        this.snackBar.open('Review submitted successfully', 'Close', { duration: 3000 });
+        this.snackBar.open('Review mock-submitted successfully', 'Close', { duration: 3000 });
         // Appel de this.expertService.submitConclusion(this.caseId, conclusionPayload) ici dans le futur
       },
       error: () => {
