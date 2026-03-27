@@ -1,10 +1,15 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+
+import { FinancialStatementRawOut } from '../../core/models';
 
 import {
   ExerciseSelectorComponent,
@@ -12,7 +17,7 @@ import {
   TabBalanceSheetAssetsComponent,
   TabBalanceSheetLiabilitiesComponent,
   TabIncomeStatementComponent,
-  TabCashFlowComponent
+  TabCashFlowComponent,
 } from './components';
 import { TabOthersComponent } from './components/tab-others/tab-others.component';
 
@@ -20,7 +25,6 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
   selector: 'app-financials',
   standalone: true,
   imports: [
-    CommonModule,
     MatIconModule,
     MatButtonModule,
     MatSnackBarModule,
@@ -31,16 +35,17 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
     TabBalanceSheetLiabilitiesComponent,
     TabIncomeStatementComponent,
     TabCashFlowComponent,
-    TabOthersComponent
+    TabOthersComponent,
   ],
   templateUrl: './financials.component.html',
   styleUrls: ['./financials.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinancialsComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
 
   public caseId = signal<string>('');
 
@@ -57,7 +62,10 @@ export class FinancialsComponent {
 
   constructor() {
     // Résolution robuste du caseId
-    const resolvedId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+    const resolvedId =
+      this.route.parent?.snapshot.paramMap.get('id') ||
+      this.route.snapshot.paramMap.get('id') ||
+      '';
     this.caseId.set(resolvedId);
   }
 
@@ -65,19 +73,19 @@ export class FinancialsComponent {
     this.currentExercise.set(year);
   }
 
-  public onAssetsUpdate(event: { total: number, data: any }): void {
+  public onAssetsUpdate(event: { total: number; data: FinancialStatementRawOut }): void {
     this.currentAssetsTotal.set(event.total);
   }
 
-  public onLiabilitiesUpdate(event: { total: number, data: any }): void {
+  public onLiabilitiesUpdate(event: { total: number; data: FinancialStatementRawOut }): void {
     this.currentLiabilitiesTotal.set(event.total);
   }
 
-  public onPnlUpdate(event: { netIncome: number, ebitda: number, data: any }): void {
+  public onPnlUpdate(event: { netIncome: number; ebitda: number; data: FinancialStatementRawOut }): void {
     // KPI Updates
   }
 
-  public onCashFlowUpdate(event: { netCashFlow: number, data: any }): void {
+  public onCashFlowUpdate(event: { netCashFlow: number; data: FinancialStatementRawOut }): void {
     // KPI Updates
   }
 
@@ -86,10 +94,13 @@ export class FinancialsComponent {
     this.snackBar.open('Normalisation en cours...', '', { duration: 2000 });
 
     // Prototype Enterprise-Grade (Simulation sans backend)
-    setTimeout(() => {
+    of(null).pipe(delay(1500), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.isSubmitting.set(false);
-      this.snackBar.open('Normalisation terminée avec succès', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
+      this.snackBar.open('Normalisation terminée avec succès', 'OK', {
+        duration: 3000,
+        panelClass: 'snack-success',
+      });
       this.router.navigate(['/cases', this.caseId(), 'normalization']);
-    }, 1500);
+    });
   }
 }

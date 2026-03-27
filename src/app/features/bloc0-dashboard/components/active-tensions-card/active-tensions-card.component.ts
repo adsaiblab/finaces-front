@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, DecimalPipe, SlicePipe } from '@angular/common';
+import {  DecimalPipe, SlicePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,7 @@ import { FinacesTensionBadgeComponent } from '../../../../shared/components/atom
     selector: 'app-active-tensions-card',
     standalone: true,
     imports: [
-        CommonModule,
+        
         MatCardModule,
         MatIconModule,
         MatButtonModule,

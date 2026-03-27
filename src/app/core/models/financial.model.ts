@@ -11,6 +11,10 @@ export enum CurrencyCode {
     XOF = 'XOF',
     XAF = 'XAF',
     ZAR = 'ZAR',
+    MAD = 'MAD',
+    TND = 'TND',
+    EGP = 'EGP',
+    DZD = 'DZD',
 }
 
 export interface BilanActifSchema {

@@ -1,36 +1,47 @@
-<h2 mat-dialog-title class="text-content-primary">{{ isEditMode ? 'Edit Member' : 'Add Consortium Member' }}</h2>
+<h2 mat-dialog-title class="text-content-primary">
+  {{ isEditMode ? 'Edit Member' : 'Add Consortium Member' }}
+</h2>
 
 <mat-dialog-content class="mat-typography">
-    <form [formGroup]="form" class="flex flex-col gap-4 pt-2">
+  <form [formGroup]="form" class="flex flex-col gap-4 pt-2">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Member ID / Reference</mat-label>
+      <input matInput formControlName="member_id" placeholder="Enter member identifier" />
+      @if (form.get('member_id')?.hasError('required')) {
+        <mat-error>Member ID is required</mat-error>
+      }
+    </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Member ID / Reference</mat-label>
-            <input matInput formControlName="member_id" placeholder="Enter member identifier">
-            <mat-error *ngIf="form.get('member_id')?.hasError('required')">Member ID is required</mat-error>
-        </mat-form-field>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option value="LEADER">LEADER (Mandataire)</mat-option>
+        <mat-option value="MEMBER">MEMBER (Cotraitant)</mat-option>
+      </mat-select>
+      @if (form.get('role')?.hasError('required')) {
+        <mat-error>Role is required</mat-error>
+      }
+    </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Role</mat-label>
-            <mat-select formControlName="role">
-                <mat-option value="LEADER">LEADER (Mandataire)</mat-option>
-                <mat-option value="MEMBER">MEMBER (Cotraitant)</mat-option>
-            </mat-select>
-            <mat-error *ngIf="form.get('role')?.hasError('required')">Role is required</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Participation (%)</mat-label>
-            <input matInput type="number" formControlName="participation_pct" min="1" max="100">
-            <mat-error *ngIf="form.get('participation_pct')?.hasError('required')">Participation is required</mat-error>
-            <mat-error
-                *ngIf="form.get('participation_pct')?.hasError('min') || form.get('participation_pct')?.hasError('max')">Must
-                be between 1 and 100</mat-error>
-        </mat-form-field>
-
-    </form>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Participation (%)</mat-label>
+      <input matInput type="number" formControlName="participation_pct" min="1" max="100" />
+      @if (form.get('participation_pct')?.hasError('required')) {
+        <mat-error>Participation is required</mat-error>
+      }
+      @if (
+        form.get('participation_pct')?.hasError('min') ||
+        form.get('participation_pct')?.hasError('max')
+      ) {
+        <mat-error>Must be between 1 and 100</mat-error>
+      }
+    </mat-form-field>
+  </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" (click)="onSubmit()">{{ isEditMode ? 'Update' : 'Add' }}</button>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()">
+    {{ isEditMode ? 'Update' : 'Add' }}
+  </button>
 </mat-dialog-actions>

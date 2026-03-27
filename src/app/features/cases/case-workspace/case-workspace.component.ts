@@ -1,13 +1,22 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+
+import { RouterModule, ActivatedRoute } from '@angular/router';
+import { CaseContextService } from '../../../core/services/case-context.service';
 
 @Component({
   selector: 'app-case-workspace',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './case-workspace.component.html',
   styleUrls: ['./case-workspace.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CaseWorkspaceComponent {}
+export class CaseWorkspaceComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly caseContextService = inject(CaseContextService);
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id') ?? '';
+    this.caseContextService.setCaseId(id);
+  }
+}

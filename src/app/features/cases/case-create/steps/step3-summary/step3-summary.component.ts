@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import {  DecimalPipe } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-step3-summary',
     standalone: true,
-    imports: [CommonModule, MatIconModule, DecimalPipe],
+    imports: [ MatIconModule, DecimalPipe],
     templateUrl: './step3-summary.component.html',
     styleUrls: ['./step3-summary.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

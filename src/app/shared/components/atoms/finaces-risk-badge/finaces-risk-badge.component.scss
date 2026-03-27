@@ -37,20 +37,20 @@
     }
 
     &.badge-mcc-low {
-        background-color: var(--mcc-low);
-        color: var(--text-inverse);
+        background-color: var(--color-mcc-low);
+        color: var(--color-content-inverse);
     }
     &.badge-mcc-moderate {
-        background-color: var(--mcc-moderate);
-        color: var(--text-inverse);
+        background-color: var(--color-mcc-moderate);
+        color: var(--color-content-inverse);
     }
     &.badge-mcc-high {
-        background-color: var(--mcc-high);
-        color: var(--text-inverse);
+        background-color: var(--color-mcc-high);
+        color: var(--color-content-inverse);
     }
     &.badge-mcc-critical {
-        background-color: var(--mcc-critical);
-        color: var(--text-inverse);
+        background-color: var(--color-mcc-critical);
+        color: var(--color-content-inverse);
     }
 
     // ── Rail IA (fond teinté, bordure colorée) ─────────────────
@@ -59,24 +59,24 @@
     }
 
     &.badge-ia-low {
-        background-color: color-mix(in srgb, var(--ia-low) 15%, transparent);
-        color: var(--ia-low);
-        border-color: var(--ia-low);
+        background-color: color-mix(in srgb, var(--color-ia-low) 15%, transparent);
+        color: var(--color-ia-low);
+        border-color: var(--color-ia-low);
     }
     &.badge-ia-moderate {
-        background-color: color-mix(in srgb, var(--ia-moderate) 15%, transparent);
-        color: var(--ia-moderate);
-        border-color: var(--ia-moderate);
+        background-color: color-mix(in srgb, var(--color-ia-moderate) 15%, transparent);
+        color: var(--color-ia-moderate);
+        border-color: var(--color-ia-moderate);
     }
     &.badge-ia-high {
-        background-color: color-mix(in srgb, var(--ia-high) 15%, transparent);
-        color: var(--ia-high);
-        border-color: var(--ia-high);
+        background-color: color-mix(in srgb, var(--color-ia-high) 15%, transparent);
+        color: var(--color-ia-high);
+        border-color: var(--color-ia-high);
     }
     &.badge-ia-critical {
-        background-color: color-mix(in srgb, var(--ia-critical) 15%, transparent);
-        color: var(--ia-critical);
-        border-color: var(--ia-critical);
+        background-color: color-mix(in srgb, var(--color-ia-critical) 15%, transparent);
+        color: var(--color-ia-critical);
+        border-color: var(--color-ia-critical);
     }
 
     // ── Éléments internes ──────────────────────────────────────

@@ -1,0 +1,1398 @@
+❯ Building...
+✔ Building...
+Application bundle generation failed. [3.720 seconds] - 2026-03-27T08:56:50.060Z
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/feature-importance/feature-importance.component.html:24:14:
+[37m      24 │               [32m[ngClass]="getPillarColor(f.pillar)"[37m
+         ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FeatureImportanceComponent.
+
+    src/app/features/admin-ia/components/feature-importance/feature-importance.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./feature-importance.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/feature-importance/feature-importance.component.html:30:12:
+[37m      30 │             [32m[ngClass]="f.direction === 'POSITIVE' ? 'text-success-[37m...
+         ╵             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FeatureImportanceComponent.
+
+    src/app/features/admin-ia/components/feature-importance/feature-importance.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./feature-importance.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/feature-importance/feature-importance.component.html:32:80:
+[37m      32 │ ...POSITIVE' ? '+' : '-' }}{{ f.importance_score | [32mnumber[37m: '1.2-2' }}
+         ╵                                                    [32m~~~~~~[0m
+
+  Error occurs in the template of component FeatureImportanceComponent.
+
+    src/app/features/admin-ia/components/feature-importance/feature-importance.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./feature-importance.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'json'.
+To fix this, import the "JsonPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/model-config-dialog/model-config-dialog.component.html:4:25:
+[37m      4 │         {{ data.config | [32mjson[37m }}
+        ╵                          [32m~~~~[0m
+
+  Error occurs in the template of component ModelConfigDialogComponent.
+
+    src/app/features/admin-ia/components/model-config-dialog/model-config-dialog.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./model-config-dialog.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/model-list/model-list.component.html:29:16:
+[37m      29 │                 [32m[ngClass]="{[37m
+         ╵                 [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ModelListComponent.
+
+    src/app/features/admin-ia/components/model-list/model-list.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./model-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/model-list/model-list.component.html:39:33:
+[37m      39 │               {{ m.deployed_at | [32mdate[37m: 'shortDate' }}
+         ╵                                  [32m~~~~[0m
+
+  Error occurs in the template of component ModelListComponent.
+
+    src/app/features/admin-ia/components/model-list/model-list.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./model-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'percent'.
+To fix this, import the "PercentPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/model-list/model-list.component.html:41:62:
+[37m      41 │ ...s="py-3 px-2 font-medium">{{ m.accuracy | [32mpercent[37m: '1.1-2' }}</td>
+         ╵                                              [32m~~~~~~~[0m
+
+  Error occurs in the template of component ModelListComponent.
+
+    src/app/features/admin-ia/components/model-list/model-list.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./model-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.html:18:8:
+[37m      18 │         [32m[ngClass]="{[37m
+         ╵         [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component MonitoringAlertsComponent.
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./monitoring-alerts.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.html:27:10:
+[37m      27 │           [32m[ngClass]="{[37m
+         ╵           [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component MonitoringAlertsComponent.
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./monitoring-alerts.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.html:45:14:
+[37m      45 │               [32m[ngClass]="{[37m
+         ╵               [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component MonitoringAlertsComponent.
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./monitoring-alerts.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.html:54:34:
+[37m      54 │               alert.detected_at | [32mdate[37m: 'short'
+         ╵                                   [32m~~~~[0m
+
+  Error occurs in the template of component MonitoringAlertsComponent.
+
+    src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./monitoring-alerts.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'percent'.
+To fix this, import the "PercentPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.html:13:24:
+[37m      13 │                         [32mpercent[37m:'1.1-1' }}</span>
+         ╵                         [32m~~~~~~~[0m
+
+  Error occurs in the template of component PerformanceMetricsComponent.
+
+    src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./performance-metrics.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.html:18:24:
+[37m      18 │                         [32mnumber[37m:'1.2-2' }}</span>
+         ╵                         [32m~~~~~~[0m
+
+  Error occurs in the template of component PerformanceMetricsComponent.
+
+    src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./performance-metrics.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.html:23:24:
+[37m      23 │                         [32mnumber[37m:'1.2-2' }}</span>
+         ╵                         [32m~~~~~~[0m
+
+  Error occurs in the template of component PerformanceMetricsComponent.
+
+    src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./performance-metrics.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'h3'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc0-dashboard/components/kpi-row/kpi-row.component.html:51:38:
+[37m      51 │                 <h3 class="kpi-value" [32m[ngClass]="{[37m
+         ╵                                       [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component KpiRowComponent.
+
+    src/app/features/bloc0-dashboard/components/kpi-row/kpi-row.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./kpi-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc10-rapport/rapport.component.html:30:55:
+[37m      30 │ ...    Generated on: {{ currentCase()?.updated_at | [32mdate[37m: 'medium' }}
+         ╵                                                     [32m~~~~[0m
+
+  Error occurs in the template of component RapportComponent.
+
+    src/app/features/bloc10-rapport/rapport.component.ts:25:15:
+[37m      25 │   templateUrl: [32m'./rapport.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc10-rapport/rapport.component.html:63:50:
+[37m      63 │               >{{ currentCase()?.contract_value | [32mnumber[37m: '1.0-0' }}
+         ╵                                                   [32m~~~~~~[0m
+
+  Error occurs in the template of component RapportComponent.
+
+    src/app/features/bloc10-rapport/rapport.component.ts:25:15:
+[37m      25 │   templateUrl: [32m'./rapport.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'mat-expansion-panel'.
+1. If 'mat-expansion-panel' is an Angular component and it has 'ngClass' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.html:3:2:
+[37m      3 │   [32m[ngClass]="{[37m
+        ╵   [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumMemberAccordionComponent.
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./consortium-member-accordion.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.html:14:10:
+[37m      14 │           [32m[ngClass]="{[37m
+         ╵           [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumMemberAccordionComponent.
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./consortium-member-accordion.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.html:66:59:
+[37m      66 │ ...      detailedScoring().pillars[pillarKey].score | [32mnumber[37m: '1.1-2'
+         ╵                                                       [32m~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumMemberAccordionComponent.
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./consortium-member-accordion.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.html:73:14:
+[37m      73 │               [32m[ngClass]="{[37m
+         ╵               [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumMemberAccordionComponent.
+
+    src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./consortium-member-accordion.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2341: Property 'router' is private and only accessible within class 'ConsortiumComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/consortium.component.html:18:44:
+[37m      18 │ ... mat-stroked-button (click)="[32mrouter[37m.navigate(['/cases', caseId,...
+         ╵                                 [32m~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumComponent.
+
+    src/app/features/bloc12-consortium/consortium.component.ts:38:17:
+[37m      38 │     templateUrl: [32m'./consortium.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/consortium.component.html:52:67:
+[37m      52 │ ...entConsortium()?.combined_scorecard?.final_score | [32mnumber[37m: '1.2-2'
+         ╵                                                       [32m~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumComponent.
+
+    src/app/features/bloc12-consortium/consortium.component.ts:38:17:
+[37m      38 │     templateUrl: [32m'./consortium.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/consortium.component.html:86:65:
+[37m      86 │ ...      detailedCombinedPillars()[pillarKey].score | [32mnumber[37m: '1.1-1'
+         ╵                                                       [32m~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumComponent.
+
+    src/app/features/bloc12-consortium/consortium.component.ts:38:17:
+[37m      38 │     templateUrl: [32m'./consortium.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/consortium.component.html:144:40:
+[37m      144 │                       {{ member.score | [32mnumber[37m: '1.1-1' }}
+          ╵                                         [32m~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumComponent.
+
+    src/app/features/bloc12-consortium/consortium.component.ts:38:17:
+[37m      38 │     templateUrl: [32m'./consortium.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/consortium.component.html:191:58:
+[37m      191 │ ... currentConsortium()?.synergy_index || 0 | [32mnumber[37m: '1.1-1' }} pts
+          ╵                                               [32m~~~~~~[0m
+
+  Error occurs in the template of component ConsortiumComponent.
+
+    src/app/features/bloc12-consortium/consortium.component.ts:38:17:
+[37m      38 │     templateUrl: [32m'./consortium.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/decision-column/decision-column.component.html:48:6:
+[37m      48 │       [32m[ngClass]="{ 'is-passed': isPassed(), 'is-blocked': isBlocke[37m...
+         ╵       [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component DecisionColumnComponent.
+
+    src/app/features/bloc1b-gate/components/decision-column/decision-column.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./decision-column.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/decision-column/decision-column.component.html:135:56:
+[37m      135 │ ...n class="log-time">{{ log.timestamp | [32mdate[37m: 'shortTime' }}</span>
+          ╵                                          [32m~~~~[0m
+
+  Error occurs in the template of component DecisionColumnComponent.
+
+    src/app/features/bloc1b-gate/components/decision-column/decision-column.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./decision-column.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/documents-column/documents-column.component.html:58:37:
+[37m      58 │ ...tus-cell" [32m[ngClass]="'status-' + doc.integrity_status.toLowerCa[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component DocumentsColumnComponent.
+
+    src/app/features/bloc1b-gate/components/documents-column/documents-column.component.ts:18:17:
+[37m      18 │     templateUrl: [32m'./documents-column.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'async'.
+To fix this, import the "AsyncPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.html:1:13:
+[37m      1 │ @if (case$ | [32masync[37m; as caseData) {
+        ╵              [32m~~~~~[0m
+
+  Error occurs in the template of component GateComponent.
+
+    src/app/features/bloc1b-gate/gate.component.ts:36:15:
+[37m      36 │   templateUrl: [32m'./gate.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.html:10:37:
+[37m      10 │ ... class="status-badge" [32m[ngClass]="caseData.status.toLowerCase()"[37m>{{
+         ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component GateComponent.
+
+    src/app/features/bloc1b-gate/gate.component.ts:36:15:
+[37m      36 │   templateUrl: [32m'./gate.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'async'.
+To fix this, import the "AsyncPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.html:18:57:
+[37m      18 │ ...n [documents]="(documents$ | [32masync[37m) || []"> </app-checklist-col...
+         ╵                                 [32m~~~~~[0m
+
+  Error occurs in the template of component GateComponent.
+
+    src/app/features/bloc1b-gate/gate.component.ts:36:15:
+[37m      36 │   templateUrl: [32m'./gate.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'async'.
+To fix this, import the "AsyncPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.html:22:37:
+[37m      22 │           [documents]="(documents$ | [32masync[37m) || []"
+         ╵                                      [32m~~~~~[0m
+
+  Error occurs in the template of component GateComponent.
+
+    src/app/features/bloc1b-gate/gate.component.ts:36:15:
+[37m      36 │   templateUrl: [32m'./gate.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'async'.
+To fix this, import the "AsyncPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.html:32:34:
+[37m      32 │           [decision]="decision$ | [32masync[37m"
+         ╵                                   [32m~~~~~[0m
+
+  Error occurs in the template of component GateComponent.
+
+    src/app/features/bloc1b-gate/gate.component.ts:36:15:
+[37m      36 │   templateUrl: [32m'./gate.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'async'.
+To fix this, import the "AsyncPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.html:33:43:
+[37m      33 │           [isEvaluating]="(isEvaluating$ | [32masync[37m) || false"
+         ╵                                            [32m~~~~~[0m
+
+  Error occurs in the template of component GateComponent.
+
+    src/app/features/bloc1b-gate/gate.component.ts:36:15:
+[37m      36 │   templateUrl: [32m'./gate.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.html:2:4:
+[37m      2 │     [32m[ngClass]="isBalanced() ? 'balanced-card' : 'unbalanced-card'"[37m>
+        ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component BalanceCheckComponent.
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./balance-check.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.html:13:59:
+[37m      13 │ ...sets: <strong>{{ totalAssets() | [32mnumber[37m:'1.2-2' }}</strong></span>
+         ╵                                     [32m~~~~~~[0m
+
+  Error occurs in the template of component BalanceCheckComponent.
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./balance-check.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.html:14:69:
+[37m      14 │ ... <strong>{{ totalLiabilities() | [32mnumber[37m:'1.2-2' }}</strong></span>
+         ╵                                     [32m~~~~~~[0m
+
+  Error occurs in the template of component BalanceCheckComponent.
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./balance-check.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.html:21:90:
+[37m      21 │ ...or:var(--color-error)]">{{ difference() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component BalanceCheckComponent.
+
+    src/app/features/bloc2-financials/components/balance-check/balance-check.component.ts:9:17:
+[37m      9 │     templateUrl: [32m'./balance-check.component.html'[37m,
+        ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-balance-sheet-assets/tab-balance-sheet-assets.component.html:54:109:
+[37m      54 │ ...ary)] text-right pr-4">{{ totalAssets() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabBalanceSheetAssetsComponent.
+
+    src/app/features/bloc2-financials/components/tab-balance-sheet-assets/tab-balance-sheet-assets.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-balance-sheet-assets.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-balance-sheet-liabilities/tab-balance-sheet-liabilities.component.html:70:114:
+[37m      70 │ ... text-right pr-4">{{ totalLiabilities() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabBalanceSheetLiabilitiesComponent.
+
+    src/app/features/bloc2-financials/components/tab-balance-sheet-liabilities/tab-balance-sheet-liabilities.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-balance-sheet-liabilities.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-cash-flow/tab-cash-flow.component.html:38:122:
+[37m      38 │ ...ry)] text-right pr-4">{{ changeInCash() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabCashFlowComponent.
+
+    src/app/features/bloc2-financials/components/tab-cash-flow/tab-cash-flow.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-cash-flow.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-cash-flow/tab-cash-flow.component.html:44:119:
+[37m      44 │ ...text-right pr-4">{{ endingCashBalance() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabCashFlowComponent.
+
+    src/app/features/bloc2-financials/components/tab-cash-flow/tab-cash-flow.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-cash-flow.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.html:57:125:
+[37m      57 │ ...] text-right pr-4">{{ operatingIncome() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabIncomeStatementComponent.
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-income-statement.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.html:63:116:
+[37m      63 │ ...-primary)] text-right pr-4">{{ ebitda() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabIncomeStatementComponent.
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-income-statement.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.html:81:128:
+[37m      81 │ ...ext-right pr-4">{{ netFinancialResult() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabIncomeStatementComponent.
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-income-statement.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.html:87:124:
+[37m      87 │ ...)] text-right pr-4">{{ ordinaryIncome() | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component TabIncomeStatementComponent.
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-income-statement.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.html:105:111:
+[37m      105 │ ...mary)] text-right pr-4">{{ netIncome() | [32mnumber[37m:'1.2-2' }}</span>
+          ╵                                             [32m~~~~~~[0m
+
+  Error occurs in the template of component TabIncomeStatementComponent.
+
+    src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./tab-income-statement.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/accounting-standard-section/accounting-standard-section.component.html:25:66:
+[37m      25 │ ... USD = {{ (data()!.exchange_rate_used || 10.5) | [32mnumber[37m:'1.2-4' }}
+         ╵                                                     [32m~~~~~~[0m
+
+  Error occurs in the template of component AccountingStandardSectionComponent.
+
+    src/app/features/bloc3-normalization/components/accounting-standard-section/accounting-standard-section.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./accounting-standard-section.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/adjustments-list/adjustments-list.component.html:32:70:
+[37m      32 │ ...lass="font-bold" [32m[ngClass]="getPercentageClass(adj.confidence)"[37m>{{
+         ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component AdjustmentsListComponent.
+
+    src/app/features/bloc3-normalization/components/adjustments-list/adjustments-list.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./adjustments-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/adjustments-list/adjustments-list.component.html:41:24:
+[37m      41 │ ...          [32m[ngClass]="getDeltaColorClass(adj.adjusted_value - ad[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component AdjustmentsListComponent.
+
+    src/app/features/bloc3-normalization/components/adjustments-list/adjustments-list.component.ts:10:17:
+[37m      10 │     templateUrl: [32m'./adjustments-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.html:12:16:
+[37m      12 │ ...          [32m[ngClass]="{'font-bold uppercase text-[color:var(--co[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ComparativeTableComponent.
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:25:17:
+[37m      25 │     templateUrl: [32m'./comparative-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.html:24:16:
+[37m      24 │                 [32m[ngClass]="{'hidden-cell': row.isHeader}"[37m>
+         ╵                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ComparativeTableComponent.
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:25:17:
+[37m      25 │     templateUrl: [32m'./comparative-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.html:37:16:
+[37m      37 │                 [32m[ngClass]="{'hidden-cell': row.isHeader}"[37m>
+         ╵                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ComparativeTableComponent.
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:25:17:
+[37m      25 │     templateUrl: [32m'./comparative-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.html:50:16:
+[37m      50 │                 [32m[ngClass]="getDeltaColorClass(row.deltaPct)"[37m>
+         ╵                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ComparativeTableComponent.
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:25:17:
+[37m      25 │     templateUrl: [32m'./comparative-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.html:67:67:
+[37m      67 │ ...ow" class="text-center" [32m[ngClass]="{'hidden-cell': row.isHeader}"[37m>
+         ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ComparativeTableComponent.
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:25:17:
+[37m      25 │     templateUrl: [32m'./comparative-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'tr'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.html:86:108:
+[37m      86 │ ...layedColumns;" class="transition-colors duration-200" [32m[ngClass]="{[37m
+         ╵                                                          [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ComparativeTableComponent.
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:25:17:
+[37m      25 │     templateUrl: [32m'./comparative-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'mat-icon'.
+1. If 'mat-icon' is an Angular component and it has 'ngClass' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc4-ratios/bloc4-ratios.component.html:93:20:
+[37m      93 │ ...          [32m[ngClass]="ratios.coherence_alerts.length > 0 ? 'text[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component Bloc4RatiosComponent.
+
+    src/app/features/bloc4-ratios/bloc4-ratios.component.ts:33:17:
+[37m      33 │     templateUrl: [32m'./bloc4-ratios.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc4-ratios/components/coherence-alerts/coherence-alerts.component.html:3:4:
+[37m      3 │     [32m[ngClass]="status() === 'CRITICAL' ? 'border-[color:var(--color[37m...
+        ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component CoherenceAlertsComponent.
+
+    src/app/features/bloc4-ratios/components/coherence-alerts/coherence-alerts.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./coherence-alerts.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'mat-expansion-panel'.
+1. If 'mat-expansion-panel' is an Angular component and it has 'ngClass' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-expansion-panel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc4-ratios/components/coherence-alerts/coherence-alerts.component.html:14:12:
+[37m      14 │             [32m[ngClass]="alert.severity === 'CRITICAL' ? 'border-l-4[37m...
+         ╵             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component CoherenceAlertsComponent.
+
+    src/app/features/bloc4-ratios/components/coherence-alerts/coherence-alerts.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./coherence-alerts.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc4-ratios/components/ratio-group-card/ratio-group-card.component.html:54:20:
+[37m      54 │ ...          [32m[ngClass]="element.value.variation_pct > 0 ? 'text-[c[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component RatioGroupCardComponent.
+
+    src/app/features/bloc4-ratios/components/ratio-group-card/ratio-group-card.component.ts:19:17:
+[37m      19 │     templateUrl: [32m'./ratio-group-card.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'mat-card'.
+1. If 'mat-card' is an Angular component and it has 'ngClass' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-card' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc4-ratios/components/zscore-card/zscore-card.component.html:3:4:
+[37m      3 │     [32m[ngClass]="{[37m
+        ╵     [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ZscoreCardComponent.
+
+    src/app/features/bloc4-ratios/components/zscore-card/zscore-card.component.ts:11:17:
+[37m      11 │     templateUrl: [32m'./zscore-card.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.html:29:60:
+[37m      29 │ ...      overrideDetails()!.original_score | [32mnumber[37m:'1.2-2' }}</span>
+         ╵                                              [32m~~~~~~[0m
+
+  Error occurs in the template of component OverrideZoneComponent.
+
+    src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.ts:24:17:
+[37m      24 │     templateUrl: [32m'./override-zone.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.html:35:24:
+[37m      35 │                         [32mnumber[37m:'1.2-2' }}</span>
+         ╵                         [32m~~~~~~[0m
+
+  Error occurs in the template of component OverrideZoneComponent.
+
+    src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.ts:24:17:
+[37m      24 │     templateUrl: [32m'./override-zone.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.html:69:24:
+[37m      69 │                         [32mnumber[37m:'1.2-2' }} / 5</span>
+         ╵                         [32m~~~~~~[0m
+
+  Error occurs in the template of component OverrideZoneComponent.
+
+    src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.ts:24:17:
+[37m      24 │     templateUrl: [32m'./override-zone.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc5-scoring-mcc/components/recommendations-section/recommendations-section.component.html:43:20:
+[37m      43 │                     [32m[ngClass]="getRecommendationBgClass(rec.type)"[37m>
+         ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component RecommendationsSectionComponent.
+
+    src/app/features/bloc5-scoring-mcc/components/recommendations-section/recommendations-section.component.ts:11:17:
+[37m      11 │     templateUrl: [32m'./recommendations-section.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc5-scoring-mcc/scoring-mcc.component.html:26:16:
+[37m      26 │ ...          [32m[ngClass]="data.status === 'COMPUTED' ? 'bg-[color:va[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ScoringMccComponent.
+
+    src/app/features/bloc5-scoring-mcc/scoring-mcc.component.ts:35:15:
+[37m      35 │   templateUrl: [32m'./scoring-mcc.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'percent'.
+To fix this, import the "PercentPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc6-ia/ia.component.html:32:20:
+[37m      32 │                     [32mpercent[37m }}</span>
+         ╵                     [32m~~~~~~~[0m
+
+  Error occurs in the template of component IaComponent.
+
+    src/app/features/bloc6-ia/ia.component.ts:35:15:
+[37m      35 │   templateUrl: [32m'./ia.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc6-ia/ia.component.html:37:20:
+[37m      37 │                     [32mnumber[37m:'1.1-2' }} - {{ data.confidence_interva...
+         ╵                     [32m~~~~~~[0m
+
+  Error occurs in the template of component IaComponent.
+
+    src/app/features/bloc6-ia/ia.component.ts:35:15:
+[37m      35 │   templateUrl: [32m'./ia.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc6-ia/ia.component.html:37:76:
+[37m      37 │ ...}} - {{ data.confidence_interval.upper | [32mnumber[37m:'1.1-2' }}]</span>
+         ╵                                             [32m~~~~~~[0m
+
+  Error occurs in the template of component IaComponent.
+
+    src/app/features/bloc6-ia/ia.component.ts:35:15:
+[37m      35 │   templateUrl: [32m'./ia.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc6-ia/ia.component.html:56:16:
+[37m      56 │ ...          [32m[ngClass]="{'opacity-50 grayscale transition-all': si[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component IaComponent.
+
+    src/app/features/bloc6-ia/ia.component.ts:35:15:
+[37m      35 │   templateUrl: [32m'./ia.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'td'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc7-tension/components/pillar-tension-table/pillar-tension-table.component.html:49:16:
+[37m      49 │                 [32m[ngClass]="getDeltaColorClass(row.delta)"[37m>
+         ╵                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component PillarTensionTableComponent.
+
+    src/app/features/bloc7-tension/components/pillar-tension-table/pillar-tension-table.component.ts:11:17:
+[37m      11 │     templateUrl: [32m'./pillar-tension-table.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc7-tension/components/tension-banner/tension-banner.component.html:2:4:
+[37m      2 │     [32m[ngClass]="getBannerConfig().classes"[37m>
+        ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component TensionBannerComponent.
+
+    src/app/features/bloc7-tension/components/tension-banner/tension-banner.component.ts:11:17:
+[37m      11 │     templateUrl: [32m'./tension-banner.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc7-tension/components/tension-banner/tension-banner.component.html:17:49:
+[37m      17 │ ...        <span>Δ Score: {{ deltaScore() |[32m numbe[37mr:'1.2-2' }}</span>
+         ╵                                            [32m~~~~~~[0m
+
+  Error occurs in the template of component TensionBannerComponent.
+
+    src/app/features/bloc7-tension/components/tension-banner/tension-banner.component.ts:11:17:
+[37m      11 │     templateUrl: [32m'./tension-banner.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc7-tension/components/tension-comparison/tension-comparison.component.html:24:70:
+[37m      24 │ ...ck mb-2 flex items-center gap-1" [32m[ngClass]="getDeltaColorClass()"[37m>
+         ╵                                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component TensionComparisonComponent.
+
+    src/app/features/bloc7-tension/components/tension-comparison/tension-comparison.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./tension-comparison.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc7-tension/components/tension-comparison/tension-comparison.component.html:28:63:
+[37m      28 │ ... deltaScore() > 0 ? '+' : '' }}{{ deltaScore() | [32mnumber[37m:'1.2-2' }}
+         ╵                                                     [32m~~~~~~[0m
+
+  Error occurs in the template of component TensionComparisonComponent.
+
+    src/app/features/bloc7-tension/components/tension-comparison/tension-comparison.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./tension-comparison.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.html:36:36:
+[37m      36 │ ...          [32m[ngClass]="scenario.min_cash_balance < 0 ? 'text-[col[37m...
+         ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ScenarioResultsComponent.
+
+    src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./scenario-results.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.html:37:67:
+[37m      37 │ ...              {{ scenario.min_cash_balance | [32mnumber[37m:'1.0-0' }} MAD
+         ╵                                                 [32m~~~~~~[0m
+
+  Error occurs in the template of component ScenarioResultsComponent.
+
+    src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./scenario-results.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.html:41:32:
+[37m      41 │ ...                      [32m[ngClass]="getStatusClass(scenario.status)"[37m>
+         ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ScenarioResultsComponent.
+
+    src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.ts:13:17:
+[37m      13 │     templateUrl: [32m'./scenario-results.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.html:54:16:
+[37m      54 │                 [32m[ngClass]="{[37m
+         ╵                 [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component DecisionRecapComponent.
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./decision-recap.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.html:75:74:
+[37m      75 │ ...eData()!.stress_test_results?.stress60d?.minCash | [32mnumber[37m: '1.0-0'
+         ╵                                                       [32m~~~~~~[0m
+
+  Error occurs in the template of component DecisionRecapComponent.
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./decision-recap.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.html:86:16:
+[37m      86 │                 [32m[ngClass]="{[37m
+         ╵                 [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component DecisionRecapComponent.
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./decision-recap.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.html:107:74:
+[37m      107 │ ...Data()!.stress_test_results?.stress90d?.minCash | [32mnumber[37m: '1.0-0'
+          ╵                                                      [32m~~~~~~[0m
+
+  Error occurs in the template of component DecisionRecapComponent.
+
+    src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./decision-recap.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.html:36:14:
+[37m      36 │               [32m[ngClass]="{[37m
+         ╵               [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component MccConditionsComponent.
+
+    src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./mcc-conditions.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.html:45:14:
+[37m      45 │               [32m[ngClass]="[37m
+         ╵               [32m~~~~~~~~~~~[0m
+
+  Error occurs in the template of component MccConditionsComponent.
+
+    src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./mcc-conditions.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.html:56:39:
+[37m      56 │                 Due: {{ cond.dueDate | [32mdate[37m: 'shortDate' }}
+         ╵                                        [32m~~~~[0m
+
+  Error occurs in the template of component MccConditionsComponent.
+
+    src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./mcc-conditions.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'async'.
+To fix this, import the "AsyncPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/cases/case-create/steps/step2-bidder/step2-bidder.component.html:20:52:
+[37m      20 │ ...    @for (bidder of (filteredBidders$ | [32masync[37m); track bidder.id) {
+         ╵                                            [32m~~~~~[0m
+
+  Error occurs in the template of component Step2BidderComponent.
+
+    src/app/features/cases/case-create/steps/step2-bidder/step2-bidder.component.ts:17:17:
+[37m      17 │     templateUrl: [32m'./step2-bidder.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/cases/cases-list/cases-list.component.html:136:71:
+[37m      136 │ ...  {{ caseItem.id }} • {{ caseItem.updated_at [32m| da[37mte: 'MMM d' }}
+          ╵                                                 [32m~~~~[0m
+
+  Error occurs in the template of component CasesListComponent.
+
+    src/app/features/cases/cases-list/cases-list.component.ts:41:17:
+[37m      41 │     templateUrl: [32m'./cases-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/cases/cases-list/cases-list.component.html:198:10:
+[37m      198 │           [32m[ngClass]="isLoading() ? 'bg-warning animate-pulse' : '[37m...
+          ╵           [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component CasesListComponent.
+
+    src/app/features/cases/cases-list/cases-list.component.ts:41:17:
+[37m      41 │     templateUrl: [32m'./cases-list.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component.html:1:6:
+[37m      1 │ <span [32m[ngClass]="badgeClasses()"[37m>
+        ╵       [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesRiskBadgeComponent.
+
+    src/app/shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component.ts:23:17:
+[37m      23 │     templateUrl: [32m'./finaces-risk-badge.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of ':svg:svg'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component.html:3:55:
+[37m      3 │ ...height]="metrics.size" class="gauge-svg" [32m[ngClass]="arcColorClass"[37m>
+        ╵                                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesScoreGaugeComponent.
+
+    src/app/shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component.ts:29:17:
+[37m      29 │     templateUrl: [32m'./finaces-score-gauge.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component.html:1:5:
+[37m      1 │ <div [32m[ngClass]="badgeClasses"[37m>
+        ╵      [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesTensionBadgeComponent.
+
+    src/app/shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component.ts:14:17:
+[37m      14 │     templateUrl: [32m'./finaces-tension-badge.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-ia-disclaimer/finaces-ia-disclaimer.component.html:2:27:
+[37m      2 │ ...isclaimer" [32m[ngClass]="['ia-' + variant(), pilotMode() ? 'is-pilo[37m...
+        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesIaDisclaimerComponent.
+
+    src/app/shared/components/molecules/finaces-ia-disclaimer/finaces-ia-disclaimer.component.ts:12:17:
+[37m      12 │     templateUrl: [32m'./finaces-ia-disclaimer.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'mat-icon'.
+1. If 'mat-icon' is an Angular component and it has 'ngClass' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'mat-icon' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.html:9:16:
+[37m      9 │       <mat-icon [32m[ngClass]="metadata?.colorClass"[37m class="pillar-icon">
+        ╵                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesPillarRowComponent.
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.ts:70:17:
+[37m      70 │     templateUrl: [32m'./finaces-pillar-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.html:16:29:
+[37m      16 │           >{{ pillar.score | [32mnumber[37m: '1.0-1' }}/{{ pillar.maxScore...
+         ╵                              [32m~~~~~~[0m
+
+  Error occurs in the template of component FinacesPillarRowComponent.
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.ts:70:17:
+[37m      70 │     templateUrl: [32m'./finaces-pillar-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'div'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.html:22:12:
+[37m      22 │             [32m[ngClass]="getProgressColorClass()"[37m
+         ╵             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesPillarRowComponent.
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.ts:70:17:
+[37m      70 │     templateUrl: [32m'./finaces-pillar-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.html:58:59:
+[37m      58 │ ...ass="indicator-score">{{ element.score | [32mnumber[37m: '1.1-1' }}</span>
+         ╵                                             [32m~~~~~~[0m
+
+  Error occurs in the template of component FinacesPillarRowComponent.
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.ts:70:17:
+[37m      70 │     templateUrl: [32m'./finaces-pillar-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.html:73:79:
+[37m      73 │ ...tion > 0 ? '+' : '' }}{{ element.contribution | [32mnumber[37m: '1.2-2' }}
+         ╵                                                    [32m~~~~~~[0m
+
+  Error occurs in the template of component FinacesPillarRowComponent.
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.ts:70:17:
+[37m      70 │     templateUrl: [32m'./finaces-pillar-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.html:109:66:
+[37m      109 │ ....slope > 0 ? '+' : '' }}{{ trend.slope | [32mnumber[37m: '1.3-3' }}</span
+          ╵                                             [32m~~~~~~[0m
+
+  Error occurs in the template of component FinacesPillarRowComponent.
+
+    src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.ts:70:17:
+[37m      70 │     templateUrl: [32m'./finaces-pillar-row.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.html:8:10:
+[37m      8 │           [32m[ngClass]="{[37m
+        ╵           [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesStressChartComponent.
+
+    src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.ts:47:17:
+[37m      47 │     templateUrl: [32m'./finaces-stress-chart.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'ngClass' since it isn't a known property of 'span'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.html:30:10:
+[37m      30 │           [32m[ngClass]="{[37m
+         ╵           [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component FinacesStressChartComponent.
+
+    src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.ts:47:17:
+[37m      47 │     templateUrl: [32m'./finaces-stress-chart.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/shared/components/organisms/finaces-what-if/finaces-what-if.component.html:42:87:
+[37m      42 │ ...ntValue(feat.feature_name, feat.feature_value) | [32mnumber[37m:'1.1-2' }}
+         ╵                                                     [32m~~~~~~[0m
+
+  Error occurs in the template of component FinacesWhatIfComponent.
+
+    src/app/shared/components/organisms/finaces-what-if/finaces-what-if.component.ts:15:17:
+[37m      15 │     templateUrl: [32m'./finaces-what-if.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+

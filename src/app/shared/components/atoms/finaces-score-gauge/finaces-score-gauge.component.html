@@ -3,16 +3,17 @@
         [attr.height]="metrics.size" class="gauge-svg" [ngClass]="arcColorClass">
         <path [attr.d]="arcPath" [style.stroke]="backgroundColor" stroke-width="8" fill="none" stroke-linecap="round" />
 
-        <path *ngIf="getProgressPath()" [attr.d]="getProgressPath()" stroke-width="8" fill="none" stroke-linecap="round"
-            class="progress-arc" />
+        @if (getProgressPath()) {
+        <path [attr.d]="getProgressPath()" stroke-width="8" fill="none" stroke-linecap="round" class="progress-arc" />
+        }
 
-        <text *ngIf="showLabel" [attr.x]="metrics.cx" [attr.y]="metrics.cy - 2" text-anchor="middle"
-            class="gauge-score-value">
+        @if (showLabel()) {
+        <text [attr.x]="metrics.cx" [attr.y]="metrics.cy - 2" text-anchor="middle" class="gauge-score-value">
             {{ displayScoreStr }}
         </text>
-        <text *ngIf="showLabel" [attr.x]="metrics.cx" [attr.y]="metrics.cy + 16" text-anchor="middle"
-            class="gauge-max-label">
-            / {{ maxScore }}
+        <text [attr.x]="metrics.cx" [attr.y]="metrics.cy + 16" text-anchor="middle" class="gauge-max-label">
+            / {{ maxScore() }}
         </text>
+        }
     </svg>
 </div>

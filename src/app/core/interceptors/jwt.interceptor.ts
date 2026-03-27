@@ -1,40 +1,28 @@
-import { Injectable } from '@angular/core';
-import {
-    HttpRequest,
-    HttpHandler,
-    HttpEvent,
-    HttpInterceptor,
-    HttpErrorResponse,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
-@Injectable()
-export class JwtInterceptor implements HttpInterceptor {
-    constructor(private authService: AuthService) { }
+export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+    const authService = inject(AuthService);
+    const router = inject(Router);
 
-    intercept(
-        request: HttpRequest<unknown>,
-        next: HttpHandler
-    ): Observable<HttpEvent<unknown>> {
-        const token = this.authService.getToken();
-        if (token && !request.url.includes('login')) {
-            request = request.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-        }
+    const token = authService.getToken();
+    const isLoginEndpoint = req.url.includes('login');
+    
+    const authReq = (token && !isLoginEndpoint)
+        ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+        : req;
 
-        return next.handle(request).pipe(
-            catchError((error: HttpErrorResponse) => {
-                if (error.status === 401) {
-                    this.authService.logout();
-                    // Navigation will be handled by a higher-level guard or service later
-                }
-                return throwError(() => error);
-            })
-        );
-    }
-}
+    return next(authReq).pipe(
+        catchError((error: HttpErrorResponse) => {
+            if (error.status === 401) {
+                authService.logout();
+                // logout() in authService now handles router.navigate(['/auth/login']) 
+                // but we also can explicitly do it here just in case as requested.
+            }
+            return throwError(() => error);
+        })
+    );
+};

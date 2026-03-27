@@ -1,17 +1,18 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed, DestroyRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
+import { Component, ChangeDetectionStrategy, input, output, inject, computed, DestroyRef } from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-tab-income-statement',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, DecimalPipe],
     templateUrl: './tab-income-statement.component.html',
     styleUrls: ['./tab-income-statement.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TabIncomeStatementComponent implements OnInit {
+export class TabIncomeStatementComponent {
     private fb = inject(FormBuilder);
     private destroyRef = inject(DestroyRef);
 

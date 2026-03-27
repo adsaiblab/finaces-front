@@ -1,24 +1,23 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-exercise-selector',
-    standalone: true,
-    imports: [CommonModule],
-    templateUrl: './exercise-selector.component.html',
-    styleUrls: ['./exercise-selector.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-exercise-selector',
+  standalone: true,
+  imports: [],
+  templateUrl: './exercise-selector.component.html',
+  styleUrls: ['./exercise-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExerciseSelectorComponent {
-    // Utilisation de la nouvelle API Angular Signals pour les Inputs/Outputs
-    public years = input<number[]>([]);
-    public selectedYear = input<number>(new Date().getFullYear());
+  // Utilisation de la nouvelle API Angular Signals pour les Inputs/Outputs
+  public years = input<number[]>([]);
+  public selectedYear = input<number>(new Date().getFullYear());
 
-    public yearChange = output<number>();
+  public yearChange = output<number>();
 
-    public selectYear(year: number): void {
-        if (year !== this.selectedYear()) {
-            this.yearChange.emit(year);
-        }
+  public selectYear(year: number): void {
+    if (year !== this.selectedYear()) {
+      this.yearChange.emit(year);
     }
+  }
 }

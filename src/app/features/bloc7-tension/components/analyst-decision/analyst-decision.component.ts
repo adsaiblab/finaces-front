@@ -1,5 +1,12 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, DestroyRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  inject,
+  DestroyRef,
+} from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
@@ -12,52 +19,59 @@ import { AnalystDecisionPayload } from '../../../../core/models/tension.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'app-analyst-decision',
-    standalone: true,
-    imports: [
-        CommonModule, ReactiveFormsModule, MatCardModule, MatRadioModule,
-        MatCheckboxModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule
-    ],
-    templateUrl: './analyst-decision.component.html',
-    styleUrls: ['./analyst-decision.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-analyst-decision',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatCardModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  templateUrl: './analyst-decision.component.html',
+  styleUrls: ['./analyst-decision.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalystDecisionComponent {
-    private fb = inject(FormBuilder);
-    private destroyRef = inject(DestroyRef);
+  private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
-    public requiresJustification = input<boolean>(false);
-    public decisionSubmitted = output<AnalystDecisionPayload>();
+  public requiresJustification = input<boolean>(false);
+  public decisionSubmitted = output<AnalystDecisionPayload>();
 
-    public decisionForm: FormGroup = this.fb.group({
-        decision: ['FOLLOW_MCC', Validators.required],
-        escalate_to_senior: [false],
-        justification: ['']
+  public decisionForm: FormGroup = this.fb.group({
+    decision: ['FOLLOW_MCC', Validators.required],
+    escalate_to_senior: [false],
+    justification: [''],
+  });
+
+  constructor() {
+    // Règle MCC: si justification requise (tension Moderate/Severe), ou si on suit l'IA, on force la justification
+    this.decisionForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
+      const justifControl = this.decisionForm.get('justification');
+      if (!justifControl) return;
+
+      const needsJustif =
+        this.requiresJustification() ||
+        val.decision === 'FOLLOW_IA' ||
+        val.decision === 'INVESTIGATE';
+
+      if (needsJustif && !justifControl.hasValidator(Validators.required)) {
+        justifControl.setValidators([Validators.required, Validators.minLength(10)]);
+        justifControl.updateValueAndValidity({ emitEvent: false });
+      } else if (!needsJustif && justifControl.hasValidator(Validators.required)) {
+        justifControl.clearValidators();
+        justifControl.updateValueAndValidity({ emitEvent: false });
+      }
     });
+  }
 
-    constructor() {
-        // Règle MCC: si justification requise (tension Moderate/Severe), ou si on suit l'IA, on force la justification
-        this.decisionForm.valueChanges.pipe(
-            takeUntilDestroyed(this.destroyRef)
-        ).subscribe(val => {
-            const justifControl = this.decisionForm.get('justification');
-            if (!justifControl) return;
-
-            const needsJustif = this.requiresJustification() || val.decision === 'FOLLOW_IA' || val.decision === 'INVESTIGATE';
-
-            if (needsJustif && !justifControl.hasValidator(Validators.required)) {
-                justifControl.setValidators([Validators.required, Validators.minLength(10)]);
-                justifControl.updateValueAndValidity({ emitEvent: false });
-            } else if (!needsJustif && justifControl.hasValidator(Validators.required)) {
-                justifControl.clearValidators();
-                justifControl.updateValueAndValidity({ emitEvent: false });
-            }
-        });
+  public submitDecision(): void {
+    if (this.decisionForm.valid) {
+      this.decisionSubmitted.emit(this.decisionForm.value as AnalystDecisionPayload);
     }
-
-    public submitDecision(): void {
-        if (this.decisionForm.valid) {
-            this.decisionSubmitted.emit(this.decisionForm.value as AnalystDecisionPayload);
-        }
-    }
+  }
 }

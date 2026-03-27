@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinacesScoreGaugeComponent } from './finaces-score-gauge.component';
-import { vi, afterEach } from 'vitest';
+import { vitest, vi } from 'vitest';
 
 describe('FinacesScoreGaugeComponent', () => {
     let component: FinacesScoreGaugeComponent;
@@ -17,9 +17,6 @@ describe('FinacesScoreGaugeComponent', () => {
         fixture.detectChanges();
     });
 
-    afterEach(() => {
-        vi.useRealTimers();
-    });
 
     it('should create with default size 120', () => {
         expect(component).toBeTruthy();
@@ -40,7 +37,7 @@ describe('FinacesScoreGaugeComponent', () => {
         fixture.componentRef.setInput('score', 99);
         fixture.detectChanges();
 
-        expect(component.displayScore).toBeLessThanOrEqual(component.maxScore);
+        expect(component.displayScore).toBeLessThanOrEqual(component.maxScore());
     });
 
     it('should emit rendered synchronously when animated is false', () => {
@@ -54,8 +51,6 @@ describe('FinacesScoreGaugeComponent', () => {
     });
 
     it('should cancel pending rAF on destroy to prevent memory leak', () => {
-        // Vitest fake timers contrôlent requestAnimationFrame
-        vi.useFakeTimers();
         const cancelSpy = vi.spyOn(globalThis, 'cancelAnimationFrame');
 
         fixture.componentRef.setInput('animated', true);
@@ -68,9 +63,13 @@ describe('FinacesScoreGaugeComponent', () => {
     });
 
     it('should generate a valid SVG arc path for score 2.5/5', () => {
-        // Force les propriétés pour le calcul du path
+        fixture.componentRef.setInput('animated', false);
+        fixture.componentRef.setInput('score', 2.5);
+        fixture.detectChanges();
+        TestBed.flushEffects();
+        // Force metrics explicitly to bypass effect laziness
+        component['initializeMetrics'](120);
         component.displayScore = 2.5;
-        component.maxScore = 5;
         const path = component.getProgressPath();
 
         expect(path).toBeTruthy();

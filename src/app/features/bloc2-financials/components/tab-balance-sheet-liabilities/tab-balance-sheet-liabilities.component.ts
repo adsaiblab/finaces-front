@@ -1,17 +1,18 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
+import { Component, ChangeDetectionStrategy, input, output, inject, computed } from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-tab-balance-sheet-liabilities',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, DecimalPipe],
     templateUrl: './tab-balance-sheet-liabilities.component.html',
     styleUrls: ['./tab-balance-sheet-liabilities.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TabBalanceSheetLiabilitiesComponent implements OnInit {
+export class TabBalanceSheetLiabilitiesComponent {
     private fb = inject(FormBuilder);
 
     public year = input<number>(0);

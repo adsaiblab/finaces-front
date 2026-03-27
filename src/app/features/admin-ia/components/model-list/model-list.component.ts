@@ -1,12 +1,13 @@
+import { NgClass, DatePipe, PercentPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { IaModelInfo } from '../../../../core/models/ia-admin.model';
 
 @Component({
     selector: 'app-model-list',
     standalone: true,
-    imports: [CommonModule, MatButtonModule],
+    imports: [MatButtonModule, NgClass, DatePipe, PercentPipe],
     templateUrl: './model-list.component.html',
     styleUrls: ['./model-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

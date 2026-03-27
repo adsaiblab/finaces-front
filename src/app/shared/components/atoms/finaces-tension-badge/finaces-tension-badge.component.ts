@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 
 export type TensionLevel = 'NONE' | 'MILD' | 'MODERATE' | 'SEVERE';
@@ -10,7 +11,7 @@ interface TensionScheme { icon: string; labelFr: string; colorClass: string; }
 @Component({
     selector: 'finaces-tension-badge',
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [MatIconModule, NgClass],
     templateUrl: './finaces-tension-badge.component.html',
     styleUrls: ['./finaces-tension-badge.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

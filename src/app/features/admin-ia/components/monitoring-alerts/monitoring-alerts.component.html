@@ -1,47 +1,69 @@
 <section class="bg-surface-card border border-border-default rounded-xl shadow-sm p-6">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-content-primary flex items-center gap-2">
-            <span class="material-icons text-primary-default">monitor_heart</span>
-            Monitoring & Drift Alerts (7 Days)
-        </h3>
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-bold text-content-primary flex items-center gap-2">
+      <span class="material-icons text-primary-default">monitor_heart</span>
+      Monitoring & Drift Alerts (7 Days)
+    </h3>
+    <span
+      class="px-2 py-1 rounded text-xs font-bold bg-error-lighter text-error-dark border border-error-default flex items-center gap-1"
+    >
+      <span class="material-icons text-xs">notifications_active</span> {{ alerts().length }} Active
+    </span>
+  </div>
+
+  <div class="space-y-3">
+    @for (alert of alerts(); track alert) {
+      <div
+        class="p-3 rounded-lg border flex gap-3 items-start"
+        [ngClass]="{
+          'bg-error-lighter border-error-default':
+            alert.severity === 'CRITICAL' || alert.severity === 'HIGH',
+          'bg-warning-lighter border-warning-default': alert.severity === 'MEDIUM',
+          'bg-surface-default border-border-default': alert.severity === 'LOW',
+        }"
+      >
         <span
-            class="px-2 py-1 rounded text-xs font-bold bg-error-lighter text-error-dark border border-error-default flex items-center gap-1">
-            <span class="material-icons text-xs">notifications_active</span> {{ alerts().length }} Active
+          class="material-icons mt-0.5 text-sm"
+          [ngClass]="{
+            'text-error-dark': alert.severity === 'CRITICAL' || alert.severity === 'HIGH',
+            'text-warning-dark': alert.severity === 'MEDIUM',
+            'text-content-secondary': alert.severity === 'LOW',
+          }"
+        >
+          {{
+            alert.type === 'DATA_DRIFT'
+              ? 'waves'
+              : alert.type === 'ANOMALY'
+                ? 'error_outline'
+                : 'trending_down'
+          }}
         </span>
-    </div>
-
-    <div class="space-y-3">
-        <div *ngFor="let alert of alerts()" class="p-3 rounded-lg border flex gap-3 items-start" [ngClass]="{
-           'bg-error-lighter border-error-default': alert.severity === 'CRITICAL' || alert.severity === 'HIGH',
-           'bg-warning-lighter border-warning-default': alert.severity === 'MEDIUM',
-           'bg-surface-default border-border-default': alert.severity === 'LOW'
-         }">
-            <span class="material-icons mt-0.5 text-sm" [ngClass]="{
-               'text-error-dark': alert.severity === 'CRITICAL' || alert.severity === 'HIGH',
-               'text-warning-dark': alert.severity === 'MEDIUM',
-               'text-content-secondary': alert.severity === 'LOW'
-            }">
-                {{ alert.type === 'DATA_DRIFT' ? 'waves' : (alert.type === 'ANOMALY' ? 'error_outline' :
-                'trending_down') }}
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span
+              class="text-xs font-bold uppercase tracking-wider"
+              [ngClass]="{
+                'text-error-dark': alert.severity === 'CRITICAL' || alert.severity === 'HIGH',
+                'text-warning-dark': alert.severity === 'MEDIUM',
+                'text-content-secondary': alert.severity === 'LOW',
+              }"
+            >
+              [{{ alert.severity }}] {{ alert.type }}
             </span>
-            <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-xs font-bold uppercase tracking-wider" [ngClass]="{
-                   'text-error-dark': alert.severity === 'CRITICAL' || alert.severity === 'HIGH',
-                   'text-warning-dark': alert.severity === 'MEDIUM',
-                   'text-content-secondary': alert.severity === 'LOW'
-                }">
-                        [{{ alert.severity }}] {{ alert.type }}
-                    </span>
-                    <span class="text-xs text-content-tertiary">{{ alert.detected_at | date:'short' }}</span>
-                </div>
-                <p class="text-sm text-content-primary">{{ alert.message }}</p>
-            </div>
+            <span class="text-xs text-content-tertiary">{{
+              alert.detected_at | date: 'short'
+            }}</span>
+          </div>
+          <p class="text-sm text-content-primary">{{ alert.message }}</p>
         </div>
+      </div>
+    }
 
-        <div *ngIf="alerts().length === 0" class="text-center py-6 text-content-tertiary">
-            <span class="material-icons text-3xl mb-2">check_circle_outline</span>
-            <p class="text-sm">No drift detected. Models are performing within bounds.</p>
-        </div>
-    </div>
+    @if (alerts().length === 0) {
+      <div class="text-center py-6 text-content-tertiary">
+        <span class="material-icons text-3xl mb-2">check_circle_outline</span>
+        <p class="text-sm">No drift detected. Models are performing within bounds.</p>
+      </div>
+    }
+  </div>
 </section>

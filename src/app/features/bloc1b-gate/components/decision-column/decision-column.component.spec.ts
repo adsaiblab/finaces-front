@@ -53,7 +53,11 @@ describe('DecisionColumnComponent', () => {
     it('devrait afficher les flags si présents', () => {
         // CORRECTION APPLIQUÉE ICI : Ajout de audit_log: [] dans le mock
         const mockDecision: Partial<GateDecisionSchema> = {
-            verdict: 'BLOQUÉ',
+            id: 'mock-dec-2',
+            case_id: '123',
+            is_passed: false,
+            verdict: 'BLOCKED',
+            reliability_score: 85,
             blocking_reasons: ['Bilan manquant'],
             reserve_flags: [],
             audit_log: []

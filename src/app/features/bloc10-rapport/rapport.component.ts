@@ -1,8 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CaseService } from '../../core/services/case.service';
 import { RapportExportService } from './services/rapport-export.service';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
@@ -14,27 +16,28 @@ import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finace
 @Component({
   selector: 'app-rapport-final',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
+  imports: [MatButtonModule,
     RapportGridComponent,
     RapportMetricsComponent,
     FinacesRiskBadgeComponent,
-    FinacesTensionBadgeComponent
-  ],
+    FinacesTensionBadgeComponent,
+    FinacesScoreGaugeComponent,
+    MatSnackBarModule,
+    DatePipe, DecimalPipe],
   templateUrl: './rapport.component.html',
   styleUrls: ['./rapport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RapportComponent implements OnInit {
+export class RapportComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private caseService = inject(CaseService);
   private exportService = inject(RapportExportService);
   private snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Règle 1 & 3: Safe routing extraction
-  caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+  caseId = '';
 
   currentCase = signal<EvaluationCaseDetailOut | null>(null);
   isLoading = signal<boolean>(true);
@@ -70,6 +73,7 @@ export class RapportComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
     if (!this.caseId) {
       this.router.navigate(['/dashboard']);
       return;
@@ -79,7 +83,9 @@ export class RapportComponent implements OnInit {
 
   private loadCaseData(): void {
     this.isLoading.set(true);
-    this.caseService.getCaseDetail(this.caseId).subscribe({
+    this.caseService.getCaseDetail(this.caseId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (data: EvaluationCaseDetailOut) => {
         this.currentCase.set(data);
         this.isLoading.set(false);
@@ -93,14 +99,18 @@ export class RapportComponent implements OnInit {
 
   exportPdf(): void {
     this.isExporting.set(true);
-    this.exportService.exportToPdf(this.caseId).subscribe(() => {
+    this.exportService.exportToPdf(this.caseId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
       this.isExporting.set(false);
     });
   }
 
   exportExcel(): void {
     this.isExporting.set(true);
-    this.exportService.exportToExcel(this.caseId, this.currentCase()).subscribe(() => {
+    this.exportService.exportToExcel(this.caseId, this.currentCase()).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
       this.isExporting.set(false);
       this.snackBar.open('Excel Exported Successfully.', 'Close', { duration: 3000 });
     });

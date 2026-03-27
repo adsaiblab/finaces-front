@@ -9,3 +9,4 @@ export * from './document.model';
 export * from './consortium.model';
 export * from './gate.model';
 export * from './tension.model';
+export * from './ratio.model';

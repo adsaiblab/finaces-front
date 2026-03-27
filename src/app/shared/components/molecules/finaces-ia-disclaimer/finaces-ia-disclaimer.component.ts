@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -8,7 +9,7 @@ export type DisclaimerVariant = 'banner' | 'inline' | 'chip';
 @Component({
     selector: 'app-finaces-ia-disclaimer', // Note: Standalone components generally use 'app-' prefix
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatButtonModule],
+    imports: [MatIconModule, MatButtonModule, NgClass],
     templateUrl: './finaces-ia-disclaimer.component.html',
     styleUrls: ['./finaces-ia-disclaimer.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -17,7 +17,8 @@ import {
     GateDecisionSchema,
     FinancialStatementRawOut,
     FinancialStatementCreate,
-    FinancialStatementNormalizedSchema
+    FinancialStatementNormalizedSchema,
+    RatioSetSchema
 } from '../models';
 
 @Injectable({
@@ -28,12 +29,14 @@ export class CaseService {
     private analyticsUrl = `${environment.apiUrl}/analytics`;
     private dashboardUrl = `${environment.apiUrl}/dashboard`;
 
-    constructor(private http: HttpClient) { }
+    private readonly http = inject(HttpClient);
 
-    private handleError(error: HttpErrorResponse) {
-        console.error('CaseService API Error:', error);
+    private readonly handleError = (error: HttpErrorResponse): Observable<never> => {
+        if (!environment.production) {
+            console.error('CaseService API Error:', error);
+        }
         return throwError(() => new Error(error.message || 'Server Error'));
-    }
+    };
 
     getCases(): Observable<EvaluationCaseOut[]> {
         return this.http.get<EvaluationCaseOut[]>(this.apiUrl)
@@ -67,10 +70,7 @@ export class CaseService {
         ).pipe(catchError(this.handleError));
     }
 
-    getBidders(): Observable<BidderOut[]> {
-        return this.http.get<BidderOut[]>(`${this.apiUrl}/bidders`)
-            .pipe(catchError(this.handleError));
-    }
+
 
     getDashboardStats(): Observable<DashboardStatsOut> {
         return this.http.get<DashboardStatsOut>(this.dashboardUrl)
@@ -134,8 +134,8 @@ export class CaseService {
             .pipe(catchError(this.handleError));
     }
 
-    computeRatios(caseId: string): Observable<any> {
-        return this.http.post<any>(`${this.apiUrl}/${caseId}/ratios/compute`, {})
+    computeRatios(caseId: string): Observable<RatioSetSchema> {
+        return this.http.post<RatioSetSchema>(`${this.apiUrl}/${caseId}/ratios/compute`, {})
             .pipe(catchError(this.handleError));
     }
 }

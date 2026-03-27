@@ -1,5 +1,6 @@
+import { NgClass, DatePipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MccCondition } from '../../../../core/models/expert.model';
@@ -8,7 +9,7 @@ import { AddConditionDialogComponent } from '../add-condition-dialog/add-conditi
 @Component({
     selector: 'app-mcc-conditions',
     standalone: true,
-    imports: [CommonModule, MatButtonModule, MatDialogModule],
+    imports: [MatButtonModule, MatDialogModule, NgClass, DatePipe],
     templateUrl: './mcc-conditions.component.html',
     styleUrls: ['./mcc-conditions.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

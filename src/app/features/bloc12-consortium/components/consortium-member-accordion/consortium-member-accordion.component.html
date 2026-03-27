@@ -1,63 +1,92 @@
 <mat-expansion-panel
-    class="border border-border-default rounded-lg mb-3 hover:border-primary-lighter transition-colors print:break-inside-avoid print:border-gray-300"
-    [ngClass]="{'border-l-4 border-l-error-default': isBlocking(), 'border-l-4 border-l-warning-default': isWeakLink()}">
+  class="border border-border-default rounded-lg mb-3 hover:border-primary-lighter transition-colors print:break-inside-avoid print:border-gray-300"
+  [ngClass]="{
+    'border-l-4 border-l-error-default': isBlocking(),
+    'border-l-4 border-l-warning-default': isWeakLink(),
+  }"
+>
+  <mat-expansion-panel-header class="h-16">
+    <mat-panel-title class="flex items-center gap-4">
+      <div class="font-bold text-content-primary text-base flex items-center gap-3">
+        {{ member().member_name }}
+        <span
+          class="text-xs px-2 py-1 rounded font-bold"
+          [ngClass]="{
+            'bg-primary-lighter text-primary-dark': member().role === 'LEADER',
+            'bg-surface-default text-content-secondary border border-border-default':
+              member().role === 'MEMBER',
+          }"
+        >
+          {{ member().role }}
+        </span>
+      </div>
+    </mat-panel-title>
 
-    <mat-expansion-panel-header class="h-16">
-        <mat-panel-title class="flex items-center gap-4">
-            <div class="font-bold text-content-primary text-base flex items-center gap-3">
-                {{ member().member_name }}
-                <span class="text-xs px-2 py-1 rounded font-bold"
-                    [ngClass]="{'bg-primary-lighter text-primary-dark': member().role === 'LEADER', 'bg-surface-default text-content-secondary border border-border-default': member().role === 'MEMBER'}">
-                    {{ member().role }}
-                </span>
-            </div>
-        </mat-panel-title>
+    <mat-panel-description class="flex items-center justify-end gap-6 w-full text-right">
+      <div class="text-content-secondary">
+        Share: <span class="font-bold text-content-primary">{{ member().participation_pct }}%</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-content-tertiary">Global</span>
+        <finaces-score-gauge
+          [score]="member().score || 0"
+          [size]="80"
+          [showLabel]="false"
+        ></finaces-score-gauge>
+      </div>
+      <finaces-risk-badge
+        [riskClass]="$any(member().risk_class) || 'MODERATE'"
+        [size]="'sm'"
+        [showLabel]="false"
+        [showIcon]="true"
+      ></finaces-risk-badge>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
 
-        <mat-panel-description class="flex items-center justify-end gap-6 w-full text-right">
-            <div class="text-content-secondary">
-                Share: <span class="font-bold text-content-primary">{{ member().participation_pct }}%</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-content-tertiary">Global</span>
-                <finaces-score-gauge [score]="member().score || 0" [size]="80"
-                    [showLabel]="false"></finaces-score-gauge>
-            </div>
-            <finaces-risk-badge [riskClass]="$any(member().risk_class) || 'MODERATE'"
-                [size]="'sm'" [showLabel]="false" [showIcon]="true"></finaces-risk-badge>
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div class="py-4 space-y-6">
-
-        <div class="bg-surface-default p-3 rounded-md text-xs text-content-tertiary italic flex items-center gap-2">
-            <span class="material-icons text-sm">construction</span>
-            Detailed pillar scores below are simulated based on the member's global score and target structure. Backend
-            integration pending.
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div *ngFor="let pillarKey of ['liquidity', 'solvency', 'profitability', 'capacity', 'quality']"
-                class="p-4 bg-surface-background border border-border-default rounded-lg">
-
-                <div class="flex items-center justify-between mb-3">
-                    <span class="font-semibold text-sm text-content-primary capitalize">{{ pillarKey }}</span>
-                    <span class="font-extrabold text-base">{{ detailedScoring().pillars[pillarKey].score |
-                        number:'1.1-2' }}</span>
-                </div>
-
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs text-content-secondary">Assesment</span>
-                    <span class="text-xs font-bold px-2 py-0.5 rounded"
-                        [ngClass]="{'text-success-dark': detailedScoring().pillars[pillarKey].label === 'STRONG', 'text-warning-dark': detailedScoring().pillars[pillarKey].label === 'MODERATE', 'text-error-dark': detailedScoring().pillars[pillarKey].label === 'WEAK'}">
-                        {{ detailedScoring().pillars[pillarKey].label }}
-                    </span>
-                </div>
-
-                <div class="flex flex-col gap-1 text-xs text-content-secondary bg-surface-hover p-2 rounded">
-                    <span class="font-bold">Comment:</span>
-                    <span>{{ detailedScoring().pillars[pillarKey].comment }}</span>
-                </div>
-            </div>
-        </div>
+  <div class="py-4 space-y-6">
+    <div
+      class="bg-surface-default p-3 rounded-md text-xs text-content-tertiary italic flex items-center gap-2"
+    >
+      <span class="material-icons text-sm">construction</span>
+      Detailed pillar scores below are simulated based on the member's global score and target
+      structure. Backend integration pending.
     </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (
+        pillarKey of ['liquidity', 'solvency', 'profitability', 'capacity', 'quality'];
+        track pillarKey
+      ) {
+        <div class="p-4 bg-surface-background border border-border-default rounded-lg">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-semibold text-sm text-content-primary capitalize">{{
+              pillarKey
+            }}</span>
+            <span class="font-extrabold text-base">{{
+              detailedScoring().pillars[pillarKey].score | number: '1.1-2'
+            }}</span>
+          </div>
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-xs text-content-secondary">Assesment</span>
+            <span
+              class="text-xs font-bold px-2 py-0.5 rounded"
+              [ngClass]="{
+                'text-success-dark': detailedScoring().pillars[pillarKey].label === 'STRONG',
+                'text-warning-dark': detailedScoring().pillars[pillarKey].label === 'MODERATE',
+                'text-error-dark': detailedScoring().pillars[pillarKey].label === 'WEAK',
+              }"
+            >
+              {{ detailedScoring().pillars[pillarKey].label }}
+            </span>
+          </div>
+          <div
+            class="flex flex-col gap-1 text-xs text-content-secondary bg-surface-hover p-2 rounded"
+          >
+            <span class="font-bold">Comment:</span>
+            <span>{{ detailedScoring().pillars[pillarKey].comment }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
 </mat-expansion-panel>

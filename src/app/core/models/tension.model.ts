@@ -23,7 +23,7 @@ export interface TensionAnalysisResult {
 }
 
 export interface AnalystDecisionPayload {
-    decision: 'FOLLOW_MCC' | 'FOLLOW_IA' | 'INVESTIGATE';
+    decision: 'FOLLOW_MCC' | 'FOLLOW_IA' | 'INVESTIGATE' | 'EXPERT_REVIEW';
     justification: string;
     escalate_to_senior: boolean;
 }

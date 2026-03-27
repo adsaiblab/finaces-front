@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,20 +30,17 @@ export interface HubCase {
 @Component({
     selector: 'app-cases-list',
     standalone: true,
-    imports: [
-        CommonModule,
-        RouterModule,
+    imports: [RouterModule,
         FormsModule,
         MatButtonModule,
         MatTooltipModule,
         FinacesSkeletonLoaderComponent,
-        FinacesEmptyStateComponent
-    ],
+        FinacesEmptyStateComponent, DatePipe, NgClass],
     templateUrl: './cases-list.component.html',
     styleUrls: ['./cases-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CasesListComponent implements OnInit {
+export class CasesListComponent {
     public router = inject(Router);
 
     cases = signal<HubCase[]>([]);

@@ -1,12 +1,13 @@
+import { JsonPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'app-model-config-dialog',
     standalone: true,
-    imports: [CommonModule, MatDialogModule, MatButtonModule],
+    imports: [MatDialogModule, MatButtonModule, JsonPipe],
     templateUrl: './model-config-dialog.component.html',
     styleUrls: ['./model-config-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

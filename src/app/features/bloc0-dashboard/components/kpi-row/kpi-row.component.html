@@ -1,8 +1,8 @@
 @if (stats()) {
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-    <mat-card class="kpi-card kpi-mcc-border" routerLink="/cases" [queryParams]="{ status: 'active' }">
-        <mat-card-content class="flex items-center p-6">
+    <div class="kpi-card kpi-mcc-border" routerLink="/cases" [queryParams]="{ status: 'active' }">
+        <div class="flex items-center p-6">
             <div class="kpi-icon-container mcc-bg">
                 <mat-icon class="kpi-icon kpi-icon--primary">folder_open</mat-icon>
             </div>
@@ -11,11 +11,11 @@
                 <h3 class="kpi-value">{{ stats()?.total_active_cases }}</h3>
                 <p class="kpi-subtitle">Active this week</p>
             </div>
-        </mat-card-content>
-    </mat-card>
+        </div>
+    </div>
 
-    <mat-card class="kpi-card kpi-mcc-border" routerLink="/cases" [queryParams]="{ status: 'PENDING_GATE' }">
-        <mat-card-content class="flex items-center p-6">
+    <div class="kpi-card kpi-mcc-border" routerLink="/cases" [queryParams]="{ status: 'PENDING_GATE' }">
+        <div class="flex items-center p-6">
             <div class="kpi-icon-container mcc-bg">
                 <mat-icon class="kpi-icon kpi-icon--primary">pending_actions</mat-icon>
             </div>
@@ -24,11 +24,11 @@
                 <h3 class="kpi-value">{{ stats()?.cases_pending_gate }}</h3>
                 <p class="kpi-subtitle">Document Gate</p>
             </div>
-        </mat-card-content>
-    </mat-card>
+        </div>
+    </div>
 
-    <mat-card class="kpi-card kpi-warning-border" routerLink="/cases" [queryParams]="{ filter: 'tension_alert' }">
-        <mat-card-content class="flex items-center p-6">
+    <div class="kpi-card kpi-warning-border" routerLink="/cases" [queryParams]="{ filter: 'tension_alert' }">
+        <div class="flex items-center p-6">
             <div class="kpi-icon-container warning-bg" [matBadge]="stats()?.cases_with_tension_alert || 0"
                 [matBadgeHidden]="(stats()?.cases_with_tension_alert || 0) === 0" matBadgeColor="warn">
                 <mat-icon class="kpi-icon kpi-icon--warning">warning</mat-icon>
@@ -38,11 +38,11 @@
                 <h3 class="kpi-value">{{ stats()?.cases_with_tension_alert }}</h3>
                 <p class="kpi-subtitle">MCC/AI divergences detected</p>
             </div>
-        </mat-card-content>
-    </mat-card>
+        </div>
+    </div>
 
-    <mat-card class="kpi-card kpi-ia-border">
-        <mat-card-content class="flex items-center p-6">
+    <div class="kpi-card kpi-ia-border">
+        <div class="flex items-center p-6">
             <div class="kpi-icon-container ia-bg">
                 <mat-icon class="kpi-icon kpi-icon--info">smart_toy</mat-icon>
             </div>
@@ -57,8 +57,8 @@
                 </h3>
                 <p class="kpi-subtitle">Overall MCC/AI agreement</p>
             </div>
-        </mat-card-content>
-    </mat-card>
+        </div>
+    </div>
 
 </div>
 }

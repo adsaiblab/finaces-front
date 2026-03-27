@@ -1,3 +1,9 @@
+export enum OverrideRecommendation {
+    NONE = 'NONE',
+    WEAKEN = 'WEAKEN',
+    STRENGTHEN = 'STRENGTHEN'
+}
+
 export interface ExpertReviewInputSchema {
     liquidity_comment: string;
     solvability_comment: string;
@@ -7,7 +13,7 @@ export interface ExpertReviewInputSchema {
     dynamic_analysis_comment: string;
     mitigating_factors?: string;
     risk_factors?: string;
-    override_recommendation?: string;
+    override_recommendation?: OverrideRecommendation;
 }
 
 export interface ExpertReviewOutputSchema {
@@ -24,7 +30,7 @@ export interface ExpertReviewOutputSchema {
     dynamic_analysis_comment: string;
     mitigating_factors?: string;
     risk_factors?: string;
-    override_recommendation?: string;
+    override_recommendation?: OverrideRecommendation;
     approved: boolean;
     approved_at?: string;
 }

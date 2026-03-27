@@ -1,10 +1,11 @@
+import { NgClass } from '@angular/common';
 import {
     Component,
     ChangeDetectionStrategy,
     computed,
     input
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 
 export type RiskClass = 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
@@ -19,7 +20,7 @@ interface RiskMetadata {
 @Component({
     selector: 'finaces-risk-badge',
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [MatIconModule, NgClass],
     templateUrl: './finaces-risk-badge.component.html',
     styleUrls: ['./finaces-risk-badge.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -32,12 +33,12 @@ export class FinacesRiskBadgeComponent {
     readonly showIcon = input<boolean>(false);
 
     // Metadata sémantique uniquement (labels + icônes) — ZÉRO couleur
-    private readonly metadataMap: Record<RiskClass, RiskMetadata> = {
+    private readonly metadataMap = {
         LOW: { label: 'Low', icon: 'check_circle' },
         MODERATE: { label: 'Moderate', icon: 'warning' },
         HIGH: { label: 'High', icon: 'error' },
         CRITICAL: { label: 'Critical', icon: 'crisis_alert' }
-    };
+    } as const satisfies Record<RiskClass, RiskMetadata>;
 
     readonly metadata = computed<RiskMetadata>(() =>
         this.metadataMap[this.riskClass()] ?? this.metadataMap.LOW

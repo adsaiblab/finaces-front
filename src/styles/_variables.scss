@@ -2,6 +2,15 @@
 // TOKENS SÉMANTIQUES — LIGHT MODE ("Papier & Minéral")
 // ═══════════════════════════════════════════════════════════
 :root {
+    // ── TYPOGRAPHIE ──────────────────────────────────────────
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-size-display: 28px;
+    --font-size-h1: 22px;
+    --font-size-h2: 18px;
+    --font-size-body: 14px;
+    --font-size-small: 12px;
+
     // ── SURFACES (Fonds) ──────────────────────────────────────
     // Zéro blanc pur, zéro gris clinique
     --bg-default: #F2EFE9;       // Fond parchemin chaud
@@ -57,6 +66,7 @@
     --color-surface-default:   var(--bg-default);
     --color-surface-card:      var(--bg-card);
     --color-surface-sidebar:   var(--bg-sidebar);
+    --color-surface-hover:     color-mix(in srgb, var(--color-primary) 8%, transparent);
 
     --color-content-primary:   var(--text-primary);
     --color-content-secondary: var(--text-secondary);
@@ -73,6 +83,18 @@
     --color-warning:           var(--warning);
     --color-error:             var(--error);
     --color-info:              var(--info);
+
+    --color-mcc-low:           var(--mcc-low);
+    --color-mcc-moderate:      var(--mcc-moderate);
+    --color-mcc-high:          var(--mcc-high);
+    --color-mcc-critical:      var(--mcc-critical);
+    --color-mcc-surface:       var(--mcc-surface);
+    --color-mcc-border:        var(--mcc-border);
+
+    --color-ia-low:            var(--ia-low);
+    --color-ia-moderate:       var(--ia-moderate);
+    --color-ia-high:           var(--ia-high);
+    --color-ia-critical:       var(--ia-critical);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -131,6 +153,7 @@
     --color-surface-default:   var(--bg-default);
     --color-surface-card:      var(--bg-card);
     --color-surface-sidebar:   var(--bg-sidebar);
+    --color-surface-hover:     color-mix(in srgb, var(--color-primary) 12%, transparent);
 
     --color-content-primary:   var(--text-primary);
     --color-content-secondary: var(--text-secondary);
@@ -147,4 +170,16 @@
     --color-warning:           var(--warning);
     --color-error:             var(--error);
     --color-info:              var(--info);
+
+    --color-mcc-low:           var(--mcc-low);
+    --color-mcc-moderate:      var(--mcc-moderate);
+    --color-mcc-high:          var(--mcc-high);
+    --color-mcc-critical:      var(--mcc-critical);
+    --color-mcc-surface:       var(--mcc-surface);
+    --color-mcc-border:        var(--mcc-border);
+
+    --color-ia-low:            var(--ia-low);
+    --color-ia-moderate:       var(--ia-moderate);
+    --color-ia-high:           var(--ia-high);
+    --color-ia-critical:       var(--ia-critical);
 }

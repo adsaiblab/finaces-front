@@ -41,7 +41,7 @@ describe('FinacesWhatIfComponent', () => {
         component.triggerSimulation();
         expect(emitSpy).toHaveBeenCalledWith({
             scenario_name: 'Custom User Simulation',
-            feature_modifications: { 'EBITDA': 30 }
+            parameter_overrides: { 'EBITDA': 30 }
         });
     });
 });

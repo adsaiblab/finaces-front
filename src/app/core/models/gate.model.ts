@@ -1,6 +1,15 @@
 export type DocumentDocType = 'BILAN' | 'CPC' | 'TFT' | 'ATTESTATION_FISCALE' | 'STATUTS' | 'OTHER';
 export type ReliabilityLevel = 'AUDITED' | 'REVIEWED' | 'COMPILED' | 'UNAUDITED';
 export type IntegrityStatus = 'OK' | 'WARN' | 'KO';
+export type GateVerdict = 'PASSED' | 'BLOCKED' | 'PENDING';
+
+export interface DocumentIntegrityResult {
+  doc_id: string;
+  is_valid: boolean;
+  hash_match: boolean;
+  virus_scan: 'CLEAN' | 'INFECTED' | 'PENDING';
+  checked_at: string;
+}
 
 export interface GateDocumentOut {
     id: string;
@@ -34,7 +43,7 @@ export interface GateDecisionSchema {
     id: string;
     case_id: string;
     is_passed: boolean;
-    verdict: 'PASSÉ' | 'BLOQUÉ' | 'EN ATTENTE';
+    verdict: GateVerdict;
     reliability_score: number;
     reliability_level: 'HIGH' | 'MEDIUM' | 'LOW' | 'CRITICAL';
     blocking_reasons: string[];

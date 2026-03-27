@@ -1,277 +1,323 @@
-<div class="w-full h-full p-6 bg-surface-background print:bg-surface-card print:p-0" *ngIf="!isLoading()">
-
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 print:hidden gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-content-primary">Official FinaCES Report</h1>
-            <p class="text-sm text-content-secondary mt-1">Full 14-section architectural read-only view.</p>
-        </div>
-        <div class="flex gap-3">
-            <button mat-stroked-button (click)="returnToDashboard()" [disabled]="isExporting()">
-                <span class="material-icons mr-1 text-sm">arrow_back</span> Dashboard
-            </button>
-            <button mat-flat-button color="accent" (click)="exportExcel()" [disabled]="isExporting()">
-                <span class="material-icons mr-1 text-sm">table_view</span> Export Data
-            </button>
-            <button mat-flat-button color="primary" (click)="exportPdf()" [disabled]="isExporting()">
-                <span class="material-icons mr-1 text-sm">picture_as_pdf</span> Download PDF
-            </button>
-        </div>
+@if (!isLoading()) {
+  <div class="w-full h-full p-6 bg-surface-background print:bg-surface-card print:p-0">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 print:hidden gap-4"
+    >
+      <div>
+        <h1 class="text-2xl font-bold text-content-primary">Official FinaCES Report</h1>
+        <p class="text-sm text-content-secondary mt-1">
+          Full 14-section architectural read-only view.
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <button mat-stroked-button (click)="returnToDashboard()" [disabled]="isExporting()">
+          <span class="material-icons mr-1 text-sm">arrow_back</span> Dashboard
+        </button>
+        <button mat-flat-button color="accent" (click)="exportExcel()" [disabled]="isExporting()">
+          <span class="material-icons mr-1 text-sm">table_view</span> Export Data
+        </button>
+        <button mat-flat-button color="primary" (click)="exportPdf()" [disabled]="isExporting()">
+          <span class="material-icons mr-1 text-sm">picture_as_pdf</span> Download PDF
+        </button>
+      </div>
     </div>
-
     <div class="space-y-6 print:space-y-4 text-sm">
-
-        <div class="hidden print:block mb-8 border-b-2 border-gray-800 pb-4">
-            <h1 class="text-3xl font-extrabold text-content-primary uppercase tracking-wider">FinaCES Evaluation Report</h1>
-            <p class="text-gray-600 mt-2">Generated on: {{ currentCase()?.updated_at | date:'medium' }}</p>
-            <p class="text-gray-600">Case ID: {{ caseId }}</p>
-            <p class="text-gray-600 mt-4 italic">[CONFIDENTIAL - INTERNAL USE ONLY]</p>
+      <div class="hidden print:block mb-8 border-b-2 border-gray-800 pb-4">
+        <h1 class="text-3xl font-extrabold text-content-primary uppercase tracking-wider">
+          FinaCES Evaluation Report
+        </h1>
+        <p class="text-gray-600 mt-2">
+          Generated on: {{ currentCase()?.updated_at | date: 'medium' }}
+        </p>
+        <p class="text-gray-600">Case ID: {{ caseId }}</p>
+        <p class="text-gray-600 mt-4 italic">[CONFIDENTIAL - INTERNAL USE ONLY]</p>
+      </div>
+      <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">
+        CHAPTER I: CONTEXT & COMPLIANCE
+      </h2>
+      <app-rapport-grid title="1. General Information" icon="business">
+        <div class="space-y-4">
+          <div>
+            <span class="block text-xs text-content-secondary uppercase tracking-wider"
+              >Bidder Name</span
+            >
+            <span class="block text-base font-bold text-content-primary">{{
+              currentCase()?.bidder_name || 'N/A'
+            }}</span>
+          </div>
+          <div>
+            <span class="block text-xs text-content-secondary uppercase tracking-wider"
+              >Sector</span
+            >
+            <span class="block text-base font-medium text-content-primary">{{
+              currentCase()?.sector || 'N/A'
+            }}</span>
+          </div>
         </div>
-
-        <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">CHAPTER I: CONTEXT &
-            COMPLIANCE</h2>
-
-        <app-rapport-grid title="1. General Information" icon="business">
-            <div class="space-y-4">
-                <div>
-                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Bidder Name</span>
-                    <span class="block text-base font-bold text-content-primary">{{ currentCase()?.bidder_name || 'N/A'
-                        }}</span>
-                </div>
-                <div>
-                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Sector</span>
-                    <span class="block text-base font-medium text-content-primary">{{ currentCase()?.sector || 'N/A'
-                        }}</span>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Contract Value</span>
-                    <span class="block text-base font-bold text-content-primary">{{ currentCase()?.contract_value |
-                        number:'1.0-0' }} {{ currentCase()?.contract_currency }}</span>
-                </div>
-                <div>
-                    <span class="block text-xs text-content-secondary uppercase tracking-wider">Case Type</span>
-                    <span class="block text-base font-medium text-content-primary">{{ currentCase()?.case_type }}</span>
-                </div>
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="2. Gate & Document Compliance" icon="fact_check">
-            <div class="col-span-1 md:col-span-2">
-                <div class="flex items-center gap-3 bg-success-lighter border border-success-default p-3 rounded">
-                    <span class="material-icons text-success-dark">verified</span>
-                    <p class="text-success-dark font-medium">All mandatory documents (Audited Financials, Tax Clearance)
-                        have been successfully submitted and verified.</p>
-                </div>
-            </div>
-        </app-rapport-grid>
-
-        <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">CHAPTER II:
-            FINANCIAL DATA</h2>
-
-        <app-rapport-grid title="3. Normalized Statements Summary" icon="account_balance">
-            <div class="col-span-1 md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="bg-surface-hover p-3 rounded border border-border-default">
-                    <span class="text-xs text-content-secondary block">Revenue (Y-1)</span>
-                    <span class="font-bold text-content-primary">{{ mockedFinancials().revenue }}</span>
-                </div>
-                <div class="bg-surface-hover p-3 rounded border border-border-default">
-                    <span class="text-xs text-content-secondary block">Net Income</span>
-                    <span class="font-bold text-content-primary">{{ mockedFinancials().netIncome }}</span>
-                </div>
-                <div class="bg-surface-hover p-3 rounded border border-border-default">
-                    <span class="text-xs text-content-secondary block">Total Equity</span>
-                    <span class="font-bold text-content-primary">{{ mockedFinancials().equity }}</span>
-                </div>
-                <div class="bg-surface-hover p-3 rounded border border-border-default">
-                    <span class="text-xs text-content-secondary block">Total Debt</span>
-                    <span class="font-bold text-content-primary">{{ mockedFinancials().debt }}</span>
-                </div>
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="4. Key Financial Ratios" icon="calculate">
-            <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <app-rapport-metrics label="Current Ratio" [value]="1.45" trend="up"></app-rapport-metrics>
-                <app-rapport-metrics label="Debt to Equity" [value]="'37.5%'" trend="down"></app-rapport-metrics>
-                <app-rapport-metrics label="Net Profit Margin" [value]="'7.1%'" trend="flat"></app-rapport-metrics>
-                <app-rapport-metrics label="Operating Cash Flow" [value]="'245,000 €'" trend="up"></app-rapport-metrics>
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="5. Altman Z-Score & Risk Profile" icon="radar">
-            <div class="flex items-center gap-4">
-                <div
-                    class="w-16 h-16 rounded-full bg-success-default flex items-center justify-center text-inverse font-bold text-xl">
-                    2.8</div>
-                <div>
-                    <h4 class="font-bold text-content-primary">SAFE ZONE</h4>
-                    <p class="text-xs text-content-secondary">Probability of bankruptcy within 2 years is statistically
-                        extremely low.</p>
-                </div>
-            </div>
-        </app-rapport-grid>
-
-        <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">CHAPTER III: SCORING
-            & INTELLIGENCE</h2>
-
-        <app-rapport-grid title="6. MCC Final Score (Authoritative)" icon="gavel">
-            <div
-                class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default border-border-default print:bg-surface-hover h-full">
-                <span class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black">Final
-                    Score</span>
-                <span class="text-4xl font-extrabold text-primary-dark">
-                    {{ currentCase()?.mcc_score || '3.5' }}
-                </span>
-            </div>
-            <div class="flex flex-col gap-4 justify-center">
-                <div class="flex items-center justify-between border-b border-border-default pb-2">
-                    <span class="text-sm font-medium text-content-secondary">Calculated Risk Class</span>
-                    <finaces-risk-badge
-                        [riskClass]="$any(currentCase()?.risk_class) || 'MODERATE'"></finaces-risk-badge>
-                </div>
-                <div class="flex items-center justify-between border-b border-border-default pb-2">
-                    <span class="text-sm font-medium text-content-secondary">Risk Profile Type</span>
-                    <span class="font-bold text-content-primary">BALANCED</span>
-                </div>
-            </div>
-        </app-rapport-grid>
-
-        <section class="bg-surface-disabled rounded-xl border border-border-default p-6">
-            <div class="flex items-start gap-3 mb-4">
-                <span class="material-icons text-content-tertiary">smart_toy</span>
-                <div>
-                    <h3 class="text-lg font-bold text-content-secondary">7. AI Scoring (Non-Decision Authority)</h3>
-                    <p class="text-xs text-content-tertiary mt-1 max-w-2xl italic">
-                        Disclaimer: AI scoring is a decision-support tool. It does not replace the MCC score, which
-                        remains the sole authority for final approval.
-                    </p>
-                </div>
-            </div>
-            <div class="flex gap-6 items-center">
-                <div class="bg-surface-default px-6 py-3 rounded shadow-sm border border-border-default">
-                    <span class="text-xs text-content-tertiary block">AI Global Score</span>
-                    <span class="text-2xl font-bold text-content-secondary">{{ currentCase()?.ia_score || '3.2'
-                        }}</span>
-                </div>
-                <div class="text-xs text-content-secondary max-w-sm">
-                    <strong>Key AI Drivers:</strong> High liquidity positively impacts the model, while recent sector
-                    volatility slightly penalizes the final prediction.
-                </div>
-            </div>
-        </section>
-
-        <app-rapport-grid title="8. System Tension Detection" icon="warning">
-            <div class="col-span-1 md:col-span-2 flex items-center gap-6">
-                <finaces-tension-badge [level]="'NONE'"></finaces-tension-badge>
-                <p class="text-sm text-content-secondary">No major contradictions detected between traditional financial
-                    ratios and the AI predictive model. System coherence is verified.</p>
-            </div>
-        </app-rapport-grid>
-
-        <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">CHAPTER IV:
-            RESILIENCE</h2>
-
-        <app-rapport-grid title="9. Consortium Structure (If Applicable)" icon="group">
-            <div class="col-span-1 md:col-span-2 text-center py-4 text-content-tertiary italic">
-                This case is processed as a SINGLE bidder. No consortium joint-venture data applies.
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="10. Stress Test Scenarios" icon="compress">
-            <div class="space-y-4">
-                <div class="flex justify-between items-center border-b border-border-default pb-2">
-                    <span class="font-medium text-content-secondary">60-Day Payment Delay Scenario</span>
-                    <span class="font-bold text-success-default">SOLVENT (Cash > 0)</span>
-                </div>
-                <div class="flex justify-between items-center pb-2">
-                    <span class="font-medium text-content-secondary">90-Day Critical Delay Scenario</span>
-                    <span class="font-bold text-warning-default">LIMIT (Cash ~ 0)</span>
-                </div>
-            </div>
-            <div class="text-xs text-content-secondary bg-surface-hover p-3 rounded">
-                The entity demonstrates sufficient resilience to absorb standard public procurement payment delays
-                without requiring immediate external bridging loans.
-            </div>
-        </app-rapport-grid>
-
-        <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">CHAPTER V: EXPERT
-            REVIEW & CONCLUSION</h2>
-
-        <app-rapport-grid title="11. Qualitative Pillar Analysis" icon="format_quote">
-            <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div class="bg-surface-default p-3 border border-border-default rounded">
-                    <span class="font-bold text-content-primary block mb-1">Liquidity</span>
-                    <p class="text-content-secondary">{{ mockedExpertPillars().liquidity }}</p>
-                </div>
-                <div class="bg-surface-default p-3 border border-border-default rounded">
-                    <span class="font-bold text-content-primary block mb-1">Solvency</span>
-                    <p class="text-content-secondary">{{ mockedExpertPillars().solvency }}</p>
-                </div>
-                <div class="bg-surface-default p-3 border border-border-default rounded">
-                    <span class="font-bold text-content-primary block mb-1">Profitability</span>
-                    <p class="text-content-secondary">{{ mockedExpertPillars().profitability }}</p>
-                </div>
-                <div class="bg-surface-default p-3 border border-border-default rounded">
-                    <span class="font-bold text-content-primary block mb-1">Capacity & Quality</span>
-                    <p class="text-content-secondary">{{ mockedExpertPillars().capacity }}</p>
-                </div>
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="12. Mitigating & Risk Factors" icon="balance">
+        <div class="space-y-4">
+          <div>
+            <span class="block text-xs text-content-secondary uppercase tracking-wider"
+              >Contract Value</span
+            >
+            <span class="block text-base font-bold text-content-primary"
+              >{{ currentCase()?.contract_value | number: '1.0-0' }}
+              {{ currentCase()?.contract_currency }}</span
+            >
+          </div>
+          <div>
+            <span class="block text-xs text-content-secondary uppercase tracking-wider"
+              >Case Type</span
+            >
+            <span class="block text-base font-medium text-content-primary">{{
+              currentCase()?.case_type
+            }}</span>
+          </div>
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="2. Gate & Document Compliance" icon="fact_check">
+        <div class="col-span-1 md:col-span-2">
+          <div
+            class="flex items-center gap-3 bg-success-lighter border border-success-default p-3 rounded"
+          >
+            <span class="material-icons text-success-dark">verified</span>
+            <p class="text-success-dark font-medium">
+              All mandatory documents (Audited Financials, Tax Clearance) have been successfully
+              submitted and verified.
+            </p>
+          </div>
+        </div>
+      </app-rapport-grid>
+      <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">
+        CHAPTER II: FINANCIAL DATA
+      </h2>
+      <app-rapport-grid title="3. Normalized Statements Summary" icon="account_balance">
+        <div class="col-span-1 md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-surface-hover p-3 rounded border border-border-default">
+            <span class="text-xs text-content-secondary block">Revenue (Y-1)</span>
+            <span class="font-bold text-content-primary">{{ mockedFinancials().revenue }}</span>
+          </div>
+          <div class="bg-surface-hover p-3 rounded border border-border-default">
+            <span class="text-xs text-content-secondary block">Net Income</span>
+            <span class="font-bold text-content-primary">{{ mockedFinancials().netIncome }}</span>
+          </div>
+          <div class="bg-surface-hover p-3 rounded border border-border-default">
+            <span class="text-xs text-content-secondary block">Total Equity</span>
+            <span class="font-bold text-content-primary">{{ mockedFinancials().equity }}</span>
+          </div>
+          <div class="bg-surface-hover p-3 rounded border border-border-default">
+            <span class="text-xs text-content-secondary block">Total Debt</span>
+            <span class="font-bold text-content-primary">{{ mockedFinancials().debt }}</span>
+          </div>
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="4. Key Financial Ratios" icon="calculate">
+        <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <app-rapport-metrics
+            label="Current Ratio"
+            [value]="1.45"
+            trend="up"
+          ></app-rapport-metrics>
+          <app-rapport-metrics
+            label="Debt to Equity"
+            [value]="'37.5%'"
+            trend="down"
+          ></app-rapport-metrics>
+          <app-rapport-metrics
+            label="Net Profit Margin"
+            [value]="'7.1%'"
+            trend="flat"
+          ></app-rapport-metrics>
+          <app-rapport-metrics
+            label="Operating Cash Flow"
+            [value]="'245,000 €'"
+            trend="up"
+          ></app-rapport-metrics>
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="5. Altman Z-Score & Risk Profile" icon="radar">
+        <div class="flex items-center gap-4">
+          <div
+            class="w-16 h-16 rounded-full bg-success-default flex items-center justify-center text-inverse font-bold text-xl"
+          >
+            2.8
+          </div>
+          <div>
+            <h4 class="font-bold text-content-primary">SAFE ZONE</h4>
+            <p class="text-xs text-content-secondary">
+              Probability of bankruptcy within 2 years is statistically extremely low.
+            </p>
+          </div>
+        </div>
+      </app-rapport-grid>
+      <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">
+        CHAPTER III: SCORING & INTELLIGENCE
+      </h2>
+      <app-rapport-grid title="6. MCC Final Score (Authoritative)" icon="gavel">
+        <div
+          class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default border-border-default print:bg-surface-hover h-full"
+        >
+          <span
+            class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black"
+            >Final Score</span
+          >
+          <span class="text-4xl font-extrabold text-primary-dark">
+            {{ currentCase()?.mcc_score || '3.5' }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-4 justify-center">
+          <div class="flex items-center justify-between border-b border-border-default pb-2">
+            <span class="text-sm font-medium text-content-secondary">Calculated Risk Class</span>
+            <finaces-risk-badge
+              [riskClass]="$any(currentCase()?.risk_class) || 'MODERATE'"
+            ></finaces-risk-badge>
+          </div>
+          <div class="flex items-center justify-between border-b border-border-default pb-2">
+            <span class="text-sm font-medium text-content-secondary">Risk Profile Type</span>
+            <span class="font-bold text-content-primary">BALANCED</span>
+          </div>
+        </div>
+      </app-rapport-grid>
+      <section class="bg-surface-disabled rounded-xl border border-border-default p-6">
+        <div class="flex items-start gap-3 mb-4">
+          <span class="material-icons text-content-tertiary">smart_toy</span>
+          <div>
+            <h3 class="text-lg font-bold text-content-secondary">
+              7. AI Scoring (Non-Decision Authority)
+            </h3>
+            <p class="text-xs text-content-tertiary mt-1 max-w-2xl italic">
+              Disclaimer: AI scoring is a decision-support tool. It does not replace the MCC score,
+              which remains the sole authority for final approval.
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-6 items-center">
+          <div class="bg-surface-default px-6 py-3 rounded shadow-sm border border-border-default">
+            <span class="text-xs text-content-tertiary block">AI Global Score</span>
+            <span class="text-2xl font-bold text-content-secondary">{{
+              currentCase()?.ia_score || '3.2'
+            }}</span>
+          </div>
+          <div class="text-xs text-content-secondary max-w-sm">
+            <strong>Key AI Drivers:</strong> High liquidity positively impacts the model, while
+            recent sector volatility slightly penalizes the final prediction.
+          </div>
+        </div>
+      </section>
+      <app-rapport-grid title="8. System Tension Detection" icon="warning">
+        <div class="col-span-1 md:col-span-2 flex items-center gap-6">
+          <finaces-tension-badge [level]="'NONE'"></finaces-tension-badge>
+          <p class="text-sm text-content-secondary">
+            No major contradictions detected between traditional financial ratios and the AI
+            predictive model. System coherence is verified.
+          </p>
+        </div>
+      </app-rapport-grid>
+      <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">
+        CHAPTER IV: RESILIENCE
+      </h2>
+      <app-rapport-grid title="9. Consortium Structure (If Applicable)" icon="group">
+        <div class="col-span-1 md:col-span-2 text-center py-4 text-content-tertiary italic">
+          This case is processed as a SINGLE bidder. No consortium joint-venture data applies.
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="10. Stress Test Scenarios" icon="compress">
+        <div class="space-y-4">
+          <div class="flex justify-between items-center border-b border-border-default pb-2">
+            <span class="font-medium text-content-secondary">60-Day Payment Delay Scenario</span>
+            <span class="font-bold text-success-default">SOLVENT (Cash > 0)</span>
+          </div>
+          <div class="flex justify-between items-center pb-2">
+            <span class="font-medium text-content-secondary">90-Day Critical Delay Scenario</span>
+            <span class="font-bold text-warning-default">LIMIT (Cash ~ 0)</span>
+          </div>
+        </div>
+        <div class="text-xs text-content-secondary bg-surface-hover p-3 rounded">
+          The entity demonstrates sufficient resilience to absorb standard public procurement
+          payment delays without requiring immediate external bridging loans.
+        </div>
+      </app-rapport-grid>
+      <h2 class="text-xl font-bold text-content-primary border-b border-border-default pb-2 mt-8">
+        CHAPTER V: EXPERT REVIEW & CONCLUSION
+      </h2>
+      <app-rapport-grid title="11. Qualitative Pillar Analysis" icon="format_quote">
+        <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <div class="bg-surface-default p-3 border border-border-default rounded">
+            <span class="font-bold text-content-primary block mb-1">Liquidity</span>
+            <p class="text-content-secondary">{{ mockedExpertPillars().liquidity }}</p>
+          </div>
+          <div class="bg-surface-default p-3 border border-border-default rounded">
+            <span class="font-bold text-content-primary block mb-1">Solvency</span>
+            <p class="text-content-secondary">{{ mockedExpertPillars().solvency }}</p>
+          </div>
+          <div class="bg-surface-default p-3 border border-border-default rounded">
+            <span class="font-bold text-content-primary block mb-1">Profitability</span>
+            <p class="text-content-secondary">{{ mockedExpertPillars().profitability }}</p>
+          </div>
+          <div class="bg-surface-default p-3 border border-border-default rounded">
+            <span class="font-bold text-content-primary block mb-1">Capacity & Quality</span>
+            <p class="text-content-secondary">{{ mockedExpertPillars().capacity }}</p>
+          </div>
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="12. Mitigating & Risk Factors" icon="balance">
+        <div>
+          <h4 class="font-bold text-success-dark text-sm mb-2">Mitigating Factors</h4>
+          <ul class="list-disc list-inside text-xs text-content-secondary">
+            <li>Strong historical relationship with local banks.</li>
+            <li>Diversified client portfolio outside of public sector.</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-error-dark text-sm mb-2">Risk Factors</h4>
+          <ul class="list-disc list-inside text-xs text-content-secondary">
+            <li>Exposure to currency fluctuations on imported materials.</li>
+          </ul>
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="13. Conditions & Recommendations" icon="assignment_turned_in">
+        <div class="col-span-1 md:col-span-2">
+          <ul class="space-y-2">
+            @for (cond of mockedConditions(); track cond) {
+              <li
+                class="flex items-start gap-2 text-sm bg-warning-lighter p-2 rounded border border-warning-default"
+              >
+                <span class="font-bold text-warning-dark">[{{ cond.type }}]</span>
+                <span class="text-content-primary">{{ cond.text }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </app-rapport-grid>
+      <app-rapport-grid title="14. Final Expert Conclusion" icon="gavel">
+        <div class="col-span-1 md:col-span-2">
+          <div
+            class="flex items-center gap-3 mb-4 p-4 bg-primary-lighter border border-primary-default rounded-lg"
+          >
+            <span class="material-icons text-primary-dark text-3xl">verified_user</span>
             <div>
-                <h4 class="font-bold text-success-dark text-sm mb-2">Mitigating Factors</h4>
-                <ul class="list-disc list-inside text-xs text-content-secondary">
-                    <li>Strong historical relationship with local banks.</li>
-                    <li>Diversified client portfolio outside of public sector.</li>
-                </ul>
+              <span class="block text-xs uppercase tracking-widest text-primary-dark font-bold"
+                >Final Validation Decision</span
+              >
+              <span class="block text-xl font-extrabold text-primary-dark">VALIDATED</span>
             </div>
-            <div>
-                <h4 class="font-bold text-error-dark text-sm mb-2">Risk Factors</h4>
-                <ul class="list-disc list-inside text-xs text-content-secondary">
-                    <li>Exposure to currency fluctuations on imported materials.</li>
-                </ul>
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="13. Conditions & Recommendations" icon="assignment_turned_in">
-            <div class="col-span-1 md:col-span-2">
-                <ul class="space-y-2">
-                    <li *ngFor="let cond of mockedConditions()"
-                        class="flex items-start gap-2 text-sm bg-warning-lighter p-2 rounded border border-warning-default">
-                        <span class="font-bold text-warning-dark">[{{ cond.type }}]</span>
-                        <span class="text-content-primary">{{ cond.text }}</span>
-                    </li>
-                </ul>
-            </div>
-        </app-rapport-grid>
-
-        <app-rapport-grid title="14. Final Expert Conclusion" icon="gavel">
-            <div class="col-span-1 md:col-span-2">
-                <div
-                    class="flex items-center gap-3 mb-4 p-4 bg-primary-lighter border border-primary-default rounded-lg">
-                    <span class="material-icons text-primary-dark text-3xl">verified_user</span>
-                    <div>
-                        <span class="block text-xs uppercase tracking-widest text-primary-dark font-bold">Final
-                            Validation Decision</span>
-                        <span class="block text-xl font-extrabold text-primary-dark">VALIDATED</span>
-                    </div>
-                </div>
-                <p
-                    class="text-sm text-content-primary leading-relaxed whitespace-pre-wrap p-4 bg-surface-default border border-border-default rounded">
-                    Based on the comprehensive financial analysis, the bidder demonstrates adequate financial capacity
-                    to execute the contract within the required fiduciary constraints. Ratios are sound, stress tests
-                    show resilience, and no major critical alerts have been flagged. Recommended for immediate
-                    engagement.
-                </p>
-            </div>
-        </app-rapport-grid>
-
+          </div>
+          <p
+            class="text-sm text-content-primary leading-relaxed whitespace-pre-wrap p-4 bg-surface-default border border-border-default rounded"
+          >
+            Based on the comprehensive financial analysis, the bidder demonstrates adequate
+            financial capacity to execute the contract within the required fiduciary constraints.
+            Ratios are sound, stress tests show resilience, and no major critical alerts have been
+            flagged. Recommended for immediate engagement.
+          </p>
+        </div>
+      </app-rapport-grid>
     </div>
-</div>
+  </div>
+}
 
-<div *ngIf="isLoading()" class="w-full h-full flex flex-col justify-center items-center">
+@if (isLoading()) {
+  <div class="w-full h-full flex flex-col justify-center items-center">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>
     <p class="text-content-secondary">Generating 14-Section Official Report...</p>
-</div>
+  </div>
+}

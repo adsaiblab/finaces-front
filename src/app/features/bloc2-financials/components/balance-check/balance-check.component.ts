@@ -1,11 +1,12 @@
+import { NgClass, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-balance-check',
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [MatIconModule, NgClass, DecimalPipe],
     templateUrl: './balance-check.component.html',
     styleUrls: ['./balance-check.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

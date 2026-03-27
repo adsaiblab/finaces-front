@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard.component';
 import { CaseService } from '../../core/services/case.service';
+import { ThemeService } from '../../core/services/theme/theme.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -42,7 +43,8 @@ describe('DashboardComponent', () => {
             providers: [
                 provideRouter([]),
                 provideAnimations(),
-                { provide: CaseService, useValue: mockCaseService }
+                { provide: CaseService, useValue: mockCaseService },
+                { provide: ThemeService, useValue: { isDarkMode: () => false, toggleTheme: vi.fn() } }
             ]
         }).compileComponents();
 

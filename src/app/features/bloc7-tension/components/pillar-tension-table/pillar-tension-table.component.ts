@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import {  DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { PillarComparison } from '../../../../core/models/tension.model';
@@ -7,7 +8,7 @@ import { PillarComparison } from '../../../../core/models/tension.model';
 @Component({
     selector: 'app-pillar-tension-table',
     standalone: true,
-    imports: [CommonModule, MatTableModule, MatIconModule, DecimalPipe],
+    imports: [MatTableModule, MatIconModule, DecimalPipe, NgClass],
     templateUrl: './pillar-tension-table.component.html',
     styleUrls: ['./pillar-tension-table.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

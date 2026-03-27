@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
     Component,
     ChangeDetectionStrategy,
@@ -11,7 +12,7 @@ import {
     inject,
     NgZone
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import {
     Chart,
@@ -43,7 +44,7 @@ export type SolventStatus = 'RESILIENT' | 'MARGINAL' | 'BREACH'; // Updated to P
 @Component({
     selector: 'app-finaces-stress-chart', // Standard Angular prefix
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [MatIconModule, NgClass],
     templateUrl: './finaces-stress-chart.component.html',
     styleUrls: ['./finaces-stress-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

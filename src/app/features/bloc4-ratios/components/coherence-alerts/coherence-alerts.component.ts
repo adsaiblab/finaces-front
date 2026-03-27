@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -8,7 +9,7 @@ import { CoherenceAlert } from '../../../../core/models/ratio.model';
 @Component({
     selector: 'app-coherence-alerts',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatIconModule, MatExpansionModule],
+    imports: [MatCardModule, MatIconModule, MatExpansionModule, NgClass],
     templateUrl: './coherence-alerts.component.html',
     styleUrls: ['./coherence-alerts.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -2,18 +2,22 @@
 
     <div class="dashboard-header">
         <div class="title-wrapper">
-            <h1>FinaCES — Dashboard</h1>
-            <p>Global overview of evaluation activity and AI convergence.</p>
+            <h1>{{ UI_LABELS.dashboard.title }}</h1>
+            <p>{{ UI_LABELS.dashboard.subtitle }}</p>
         </div>
 
-        <button mat-raised-button color="primary" routerLink="/cases/new"
+        <button mat-flat-button color="primary" routerLink="/cases/new"
             class="btn-new-case">
             <mat-icon>add</mat-icon>
-            New Case
+            {{ UI_LABELS.dashboard.newCase }}
         </button>
     </div>
 
-    <app-kpi-row [stats]="stats$ | async" />
+    @if (stats$ | async; as stats) {
+        <app-kpi-row [stats]="stats" />
+    } @else {
+        <finaces-skeleton-loader [rows]="4" />
+    }
 
     <div class="dashboard-grid">
         <div class="col-span-2">

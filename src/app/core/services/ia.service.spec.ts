@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { IaService } from './ia.service';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { environment } from '../../../environments/environment';
-import { WhatIfScenario } from '../models/ia.model';
+import { WhatIfScenarioInput } from '../models/ia.model';
 
 describe('IaService', () => {
     let service: IaService;
@@ -39,9 +39,9 @@ describe('IaService', () => {
     });
 
     it('should call POST on /simulate endpoint with WhatIfScenario', () => {
-        const mockScenario: WhatIfScenario = {
+        const mockScenario: WhatIfScenarioInput = {
             scenario_name: 'Stress Test',
-            feature_modifications: { 'EBITDA Margin': 15.5 }
+            parameter_overrides: { 'EBITDA Margin': 15.5 }
         };
 
         service.simulateWhatIf('case-123', mockScenario).subscribe();

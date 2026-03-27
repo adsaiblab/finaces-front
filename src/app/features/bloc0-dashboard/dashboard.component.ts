@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { CaseService } from '../../core/services/case.service';
 import { DashboardStatsOut, ConvergenceChartOut, TensionAlertOut } from '../../core/models/dashboard.model';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component';
+import { UI_LABELS } from '../../shared/constants/ui-labels';
 
 import { KpiRowComponent } from './components/kpi-row/kpi-row.component';
 import { RecentCasesTableComponent } from './components/recent-cases-table/recent-cases-table.component';
@@ -25,7 +28,8 @@ import { ConvergenceChartComponent } from './components/convergence-chart/conver
     KpiRowComponent,
     RecentCasesTableComponent,
     ActiveTensionsCardComponent,
-    ConvergenceChartComponent
+    ConvergenceChartComponent,
+    FinacesSkeletonLoaderComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -33,9 +37,10 @@ import { ConvergenceChartComponent } from './components/convergence-chart/conver
 })
 export class DashboardComponent {
   private readonly caseService = inject(CaseService);
+  public UI_LABELS = UI_LABELS;
 
-  readonly stats$: Observable<DashboardStatsOut> = this.caseService.getDashboardStats();
-  readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService.getRecentCases(5);
-  readonly tensions$: Observable<TensionAlertOut[]> = this.caseService.getActiveTensionCases();
-  readonly chartData$: Observable<ConvergenceChartOut> = this.caseService.getConvergenceChart(30);
+  readonly stats$: Observable<DashboardStatsOut | null> = this.caseService.getDashboardStats().pipe(catchError(() => of(null)));
+  readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService.getRecentCases(5).pipe(catchError(() => of([])));
+  readonly tensions$: Observable<TensionAlertOut[]> = this.caseService.getActiveTensionCases().pipe(catchError(() => of([])));
+  readonly chartData$: Observable<ConvergenceChartOut | null> = this.caseService.getConvergenceChart(30).pipe(catchError(() => of(null)));
 }

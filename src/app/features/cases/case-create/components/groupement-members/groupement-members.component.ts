@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,40 +8,39 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-groupement-members',
-    standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatButtonModule,
-        MatIconModule
-    ],
-    templateUrl: './groupement-members.component.html',
-    styleUrls: ['./groupement-members.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-groupement-members',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  templateUrl: './groupement-members.component.html',
+  styleUrls: ['./groupement-members.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupementMembersComponent {
-    readonly membersArray = input<FormArray>(new FormArray<any>([]));
-    private readonly fb = inject(FormBuilder);
+  readonly membersArray = input<FormArray>(new FormArray<any>([]));
+  private readonly fb = inject(FormBuilder);
 
-    // CORRECTIF : Getter typé pour le template HTML
-    get memberGroups(): FormGroup[] {
-        return this.membersArray().controls as FormGroup[];
-    }
+  // CORRECTIF : Getter typé pour le template HTML
+  get memberGroups(): FormGroup[] {
+    return this.membersArray().controls as FormGroup[];
+  }
 
-    addMember(): void {
-        const memberGroup = this.fb.group({
-            name: ['', Validators.required],
-            role: ['MEMBER', Validators.required],
-            participation_percentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]]
-        });
-        this.membersArray().push(memberGroup);
-    }
+  addMember(): void {
+    const memberGroup = this.fb.group({
+      name: ['', Validators.required],
+      role: ['MEMBER', Validators.required],
+      participation_percentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+    });
+    this.membersArray().push(memberGroup);
+  }
 
-    removeMember(index: number): void {
-        this.membersArray().removeAt(index);
-    }
+  removeMember(index: number): void {
+    this.membersArray().removeAt(index);
+  }
 }

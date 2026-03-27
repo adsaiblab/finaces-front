@@ -1,13 +1,16 @@
-import { Component, ChangeDetectionStrategy, input, viewChild, ElementRef, afterNextRender, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { Component, ChangeDetectionStrategy, input, viewChild, ElementRef, effect, OnDestroy, PLATFORM_ID, inject, LOCALE_ID } from '@angular/core';
+import { DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ConvergenceChartOut } from '../../../../core/models/dashboard.model';
-import Chart from 'chart.js/auto';
+import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler } from 'chart.js';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
+
+Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler);
 
 @Component({
     selector: 'app-convergence-chart',
     standalone: true,
-    imports: [CommonModule, MatIconModule, DecimalPipe],
+    imports: [ MatIconModule, DecimalPipe],
     templateUrl: './convergence-chart.component.html',
     styleUrls: ['./convergence-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -17,14 +20,21 @@ export class ConvergenceChartComponent implements OnDestroy {
     readonly canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('chartCanvas');
 
     private chartInstance?: Chart;
-    private readonly isBrowser: boolean;
+    private readonly themeService = inject(ThemeService);
+    private readonly localeId = inject(LOCALE_ID);
+    private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-    constructor(@Inject(PLATFORM_ID) platformId: Object) {
-        this.isBrowser = isPlatformBrowser(platformId);
+    constructor() {
 
-        afterNextRender(() => {
-            if (this.isBrowser && this.chartData() && this.canvasRef()) {
-                this.renderChart(this.chartData()!, this.canvasRef()!.nativeElement);
+        effect(() => {
+            const data = this.chartData();
+            const canvas = this.canvasRef();
+            const isDark = this.themeService.isDarkMode(); // triggers reactivity on theme change
+            if (this.isBrowser && data && canvas) {
+                if (this.chartInstance) {
+                    this.chartInstance.destroy();
+                }
+                this.renderChart(data, canvas.nativeElement);
             }
         });
     }
@@ -44,15 +54,15 @@ export class ConvergenceChartComponent implements OnDestroy {
             }
         };
 
-        const mccColor   = getCssVar('--color-success', '#2B8A5A');   // var(--success) light
-        const iaColor    = getCssVar('--color-info',    '#4A7A9E');   // var(--info) light
-        const alertColor = getCssVar('--color-error',   '#BC3B3B');   // var(--error) light
-        const textColor  = getCssVar('--color-content-secondary', '#5C6773');  // var(--text-secondary) light
-        const gridColor  = getCssVar('--color-border-default',    '#E5E0D8');  // var(--border) light
+        const mccColor   = getCssVar('--color-success', 'transparent');   // var(--success) light
+        const iaColor    = getCssVar('--color-info',    'transparent');   // var(--info) light
+        const alertColor = getCssVar('--color-error',   'transparent');   // var(--error) light
+        const textColor  = getCssVar('--color-content-secondary', 'transparent');  // var(--text-secondary) light
+        const gridColor  = getCssVar('--color-border-default',    'transparent');  // var(--border) light
 
         const formattedDates = data.dates.map(dateStr => {
             const d = new Date(dateStr);
-            return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+            return d.toLocaleDateString(this.localeId, { day: 'numeric', month: 'short' });
         });
 
         const alertPoints = data.mcc_scores.map((score, index) =>

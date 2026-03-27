@@ -1,5 +1,6 @@
+import { NgClass, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -9,7 +10,7 @@ import { FinacesStressChartComponent, ScenarioFlowSchema } from '../../../../sha
 @Component({
     selector: 'app-scenario-results',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatIconModule, MatTabsModule, FinacesStressChartComponent],
+    imports: [MatCardModule, MatIconModule, MatTabsModule, FinacesStressChartComponent, NgClass, DecimalPipe],
     templateUrl: './scenario-results.component.html',
     styleUrls: ['./scenario-results.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

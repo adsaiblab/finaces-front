@@ -1,9 +1,15 @@
 <span [ngClass]="badgeClasses()">
-    <mat-icon *ngIf="showIcon() && metadata().icon" class="badge-icon">
-        {{ metadata().icon }}
+  @if (showIcon() && metadata().icon) {
+    <mat-icon class="badge-icon">
+      {{ metadata().icon }}
     </mat-icon>
-    <span class="badge-prefix" *ngIf="!isMcc() && showLabel()">IA</span>
-    <span class="badge-label" *ngIf="showLabel()">
-        {{ metadata().label }}
+  }
+  @if (!isMcc() && showLabel()) {
+    <span class="badge-prefix">IA</span>
+  }
+  @if (showLabel()) {
+    <span class="badge-label">
+      {{ metadata().label }}
     </span>
+  }
 </span>

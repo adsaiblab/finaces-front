@@ -1,5 +1,6 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import {  DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,16 +12,13 @@ import { ScoreOverridePayload, ScoreOverride } from '../../../../core/models/sco
 @Component({
     selector: 'app-override-zone',
     standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
+    imports: [ReactiveFormsModule,
         MatCardModule,
         MatIconModule,
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        DatePipe
-    ],
+        DatePipe, DecimalPipe],
     templateUrl: './override-zone.component.html',
     styleUrls: ['./override-zone.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

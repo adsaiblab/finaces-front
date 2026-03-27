@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import {  DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ZScoreGroup } from '../../../../core/models/ratio.model';
@@ -7,7 +8,7 @@ import { ZScoreGroup } from '../../../../core/models/ratio.model';
 @Component({
     selector: 'app-zscore-card',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatIconModule, DecimalPipe],
+    imports: [MatCardModule, MatIconModule, DecimalPipe, NgClass],
     templateUrl: './zscore-card.component.html',
     styleUrls: ['./zscore-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,21 +1,24 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
   selector: 'app-app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule, MatIconModule],
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppLayoutComponent {
-  themeService = inject(ThemeService);
+  private readonly themeService = inject(ThemeService);
+  protected readonly isDark = this.themeService.isDarkMode;
+  protected readonly toggleTheme = () => this.themeService.toggleTheme();
   isSidebarOpen = signal(true);
 
   toggleSidebar() {
-    this.isSidebarOpen.update(v => !v);
+    this.isSidebarOpen.update((v) => !v);
   }
 }

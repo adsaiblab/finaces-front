@@ -1,5 +1,6 @@
+import { NgClass, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { FinacesScoreGaugeComponent, FinacesRiskBadgeComponent } from '../../../../shared/components';
@@ -7,13 +8,10 @@ import { FinacesScoreGaugeComponent, FinacesRiskBadgeComponent } from '../../../
 @Component({
     selector: 'app-tension-comparison',
     standalone: true,
-    imports: [
-        CommonModule,
-        MatCardModule,
+    imports: [MatCardModule,
         MatIconModule,
         FinacesScoreGaugeComponent,
-        FinacesRiskBadgeComponent
-    ],
+        FinacesRiskBadgeComponent, NgClass, DecimalPipe],
     templateUrl: './tension-comparison.component.html',
     styleUrls: ['./tension-comparison.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

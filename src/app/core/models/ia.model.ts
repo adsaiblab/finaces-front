@@ -39,9 +39,14 @@ export interface FeatureImportance {
     correlation_with_target: number;
 }
 
-export interface WhatIfScenario {
+export interface WhatIfScenarioInput {
     scenario_name: string;
-    feature_modifications: Record<string, number>;
-    predicted_score_if?: number;
-    predicted_class_if?: string;
+    parameter_overrides: Record<string, number>;
+}
+
+export interface WhatIfScenarioResult {
+    scenario_name: string;
+    predicted_score_if: number;
+    predicted_class_if: string;
+    delta_score: number;
 }

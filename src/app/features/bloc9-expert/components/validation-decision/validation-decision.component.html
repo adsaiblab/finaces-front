@@ -1,48 +1,71 @@
 @if (decisionControlName()) {
-<section class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6" [formGroup]="parentGroup()">
+  <section
+    class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6"
+    [formGroup]="parentGroup()"
+  >
     <h2 class="text-xl font-bold text-content-primary mb-6 flex items-center gap-2">
-        <span class="material-icons text-primary-default">gavel</span>
-        Final Validation Decision
+      <span class="material-icons text-primary-default">gavel</span>
+      Final Validation Decision
     </h2>
 
     <mat-radio-group [formControlName]="decisionControlName()" class="flex flex-col gap-4 mb-6">
-        <mat-radio-button value="VALIDATED" class="bg-surface-default p-3 rounded-lg border border-border-default">
-            <span class="font-bold text-success-dark">VALIDATED (✅)</span>
-            <p class="text-sm text-content-secondary mt-1 whitespace-normal">Direct approval without reserves.
-                Recommended for engagement.</p>
-        </mat-radio-button>
+      <mat-radio-button
+        value="VALIDATED"
+        class="bg-surface-default p-3 rounded-lg border border-border-default"
+      >
+        <span class="font-bold text-success-dark">VALIDATED (✅)</span>
+        <p class="text-sm text-content-secondary mt-1 whitespace-normal">
+          Direct approval without reserves. Recommended for engagement.
+        </p>
+      </mat-radio-button>
 
-        <mat-radio-button value="VALIDATED_WITH_RESERVES"
-            class="bg-surface-default p-3 rounded-lg border border-border-default">
-            <span class="font-bold text-warning-dark">VALIDATED WITH RESERVES (🟡)</span>
-            <p class="text-sm text-content-secondary mt-1 whitespace-normal">Approval conditioned by additional measures
-                (define them in MCC conditions).</p>
-        </mat-radio-button>
+      <mat-radio-button
+        value="VALIDATED_WITH_RESERVES"
+        class="bg-surface-default p-3 rounded-lg border border-border-default"
+      >
+        <span class="font-bold text-warning-dark">VALIDATED WITH RESERVES (🟡)</span>
+        <p class="text-sm text-content-secondary mt-1 whitespace-normal">
+          Approval conditioned by additional measures (define them in MCC conditions).
+        </p>
+      </mat-radio-button>
 
-        <mat-radio-button value="REJECTED" class="bg-surface-default p-3 rounded-lg border border-border-default">
-            <span class="font-bold text-error-dark">REJECTED (🔴)</span>
-            <p class="text-sm text-content-secondary mt-1 whitespace-normal">Unacceptable risk. Engagement is not
-                recommended.</p>
-        </mat-radio-button>
+      <mat-radio-button
+        value="REJECTED"
+        class="bg-surface-default p-3 rounded-lg border border-border-default"
+      >
+        <span class="font-bold text-error-dark">REJECTED (🔴)</span>
+        <p class="text-sm text-content-secondary mt-1 whitespace-normal">
+          Unacceptable risk. Engagement is not recommended.
+        </p>
+      </mat-radio-button>
 
-        <mat-radio-button value="PENDING_INVESTIGATION"
-            class="bg-surface-default p-3 rounded-lg border border-border-default">
-            <span class="font-bold text-info-dark">PENDING INVESTIGATION (🔵)</span>
-            <p class="text-sm text-content-secondary mt-1 whitespace-normal">Elements to clarify before final decision.
-                Request additional documents.</p>
-        </mat-radio-button>
+      <mat-radio-button
+        value="PENDING_INVESTIGATION"
+        class="bg-surface-default p-3 rounded-lg border border-border-default"
+      >
+        <span class="font-bold text-info-dark">PENDING INVESTIGATION (🔵)</span>
+        <p class="text-sm text-content-secondary mt-1 whitespace-normal">
+          Elements to clarify before final decision. Request additional documents.
+        </p>
+      </mat-radio-button>
     </mat-radio-group>
 
-    <mat-form-field appearance="outline" class="w-full" *ngIf="requiresReason">
+    @if (requiresReason) {
+      <mat-form-field appearance="outline" class="w-full">
         <mat-label>Reason / Clarifications Requested</mat-label>
-        <textarea matInput [formControlName]="reasonControlName()" rows="4"
-            placeholder="Specify the reason for rejection or the exact documents needed..."></textarea>
-        <mat-error *ngIf="parentGroup().get(reasonControlName())?.hasError('required')">
-            A detailed reason is required for this decision.
-        </mat-error>
-        <mat-error *ngIf="parentGroup().get(reasonControlName())?.hasError('minlength')">
-            Minimum 30 characters required.
-        </mat-error>
-    </mat-form-field>
-</section>
+        <textarea
+          matInput
+          [formControlName]="reasonControlName()"
+          rows="4"
+          placeholder="Specify the reason for rejection or the exact documents needed..."
+        ></textarea>
+        @if (parentGroup().get(reasonControlName())?.hasError('required')) {
+          <mat-error> A detailed reason is required for this decision. </mat-error>
+        }
+        @if (parentGroup().get(reasonControlName())?.hasError('minlength')) {
+          <mat-error> Minimum 30 characters required. </mat-error>
+        }
+      </mat-form-field>
+    }
+  </section>
 }

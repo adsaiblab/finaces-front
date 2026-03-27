@@ -1,11 +1,13 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { forkJoin, timeout, catchError, of, delay } from 'rxjs';
+import { forkJoin, catchError, of, delay } from 'rxjs';
 
 import { RatioCalculationService } from './services/ratio-calculation.service';
 import { CaseService } from '../../core/services/case.service';
@@ -20,21 +22,18 @@ import {
 @Component({
     selector: 'app-bloc4-ratios',
     standalone: true,
-    imports: [
-        CommonModule,
-        MatButtonModule,
+    imports: [MatButtonModule,
         MatIconModule,
         MatProgressSpinnerModule,
         MatSnackBarModule,
         CoherenceAlertsComponent,
         RatioGroupCardComponent,
-        ZscoreCardComponent
-    ],
+        ZscoreCardComponent, NgClass],
     templateUrl: './bloc4-ratios.component.html',
     styleUrls: ['./bloc4-ratios.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Bloc4RatiosComponent implements OnInit {
+export class Bloc4RatiosComponent {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private ratioService = inject(RatioCalculationService);
@@ -42,6 +41,7 @@ export class Bloc4RatiosComponent implements OnInit {
     private snackBar = inject(MatSnackBar);
 
     public caseId = signal<string>('');
+    private readonly destroyRef = inject(DestroyRef);
 
     // State Signals
     public ratioSet = signal<RatioSetSchema | null>(null);
@@ -61,7 +61,9 @@ export class Bloc4RatiosComponent implements OnInit {
         this.isLoading.set(true);
         this.error.set(null);
 
-        this.ratioService.computeRatios(this.caseId()).subscribe({
+        this.ratioService.computeRatios(this.caseId()).pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
             next: (data) => {
                 this.ratioSet.set(data);
                 this.isLoading.set(false);
@@ -128,7 +130,7 @@ export class Bloc4RatiosComponent implements OnInit {
                 sector_code: 'TECH'
             };
 
-        of(mockResponse).pipe(delay(1200)).subscribe(data => {
+        of(mockResponse).pipe(delay(1200), takeUntilDestroyed(this.destroyRef)).subscribe(data => {
             this.ratioSet.set(data as RatioSetSchema);
             this.isLoading.set(false);
         });
@@ -142,10 +144,12 @@ export class Bloc4RatiosComponent implements OnInit {
         const mockMccScoreCall = of({ status: 'SUCCESS' }).pipe(delay(2000));
         const mockIaPredictCall = of({ status: 'SUCCESS' }).pipe(delay(2500));
 
-        forkJoin([mockMccScoreCall, mockIaPredictCall]).subscribe({
+        forkJoin([mockMccScoreCall, mockIaPredictCall]).pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
             next: () => {
                 this.snackBar.open('MCC Scoring & AI Prediction launched successfully.', 'OK', {
-                    duration: 3000, panelClass: ['bg-success', 'text-inverse']
+                    duration: 3000, panelClass: 'snack-success'
                 });
                 this.scoringInProgress.set(false);
                 this.router.navigate(['/cases', this.caseId(), 'scoring-mcc']);

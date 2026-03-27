@@ -1,17 +1,18 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
+import { Component, ChangeDetectionStrategy, input, output, inject, computed } from '@angular/core';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-tab-cash-flow',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, DecimalPipe],
     templateUrl: './tab-cash-flow.component.html',
     styleUrls: ['./tab-cash-flow.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TabCashFlowComponent implements OnInit {
+export class TabCashFlowComponent {
     private fb = inject(FormBuilder);
 
     public year = input<number>(0);

@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ScoringRecommendation } from '../../../../core/models/scoring.model';
@@ -7,7 +8,7 @@ import { ScoringRecommendation } from '../../../../core/models/scoring.model';
 @Component({
     selector: 'app-recommendations-section',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatIconModule],
+    imports: [MatCardModule, MatIconModule, NgClass],
     templateUrl: './recommendations-section.component.html',
     styleUrls: ['./recommendations-section.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

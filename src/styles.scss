@@ -21,7 +21,17 @@ $finaces-dummy-theme: mat.define-theme((
   )
 ));
 
-@include mat.all-component-themes($finaces-dummy-theme);
+@include mat.core-theme($finaces-dummy-theme);
+@include mat.form-field-theme($finaces-dummy-theme);
+@include mat.input-theme($finaces-dummy-theme);
+@include mat.button-theme($finaces-dummy-theme);
+@include mat.dialog-theme($finaces-dummy-theme);
+@include mat.snack-bar-theme($finaces-dummy-theme);
+@include mat.tabs-theme($finaces-dummy-theme);
+@include mat.table-theme($finaces-dummy-theme);
+@include mat.progress-spinner-theme($finaces-dummy-theme);
+@include mat.icon-theme($finaces-dummy-theme);
+@include mat.toolbar-theme($finaces-dummy-theme);
 
 // ─ BLOC 3 : Tailwind (après Material pour qu'il garde la priorité sur les utilitaires)
 @tailwind base;
@@ -53,7 +63,7 @@ body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: var(--font-sans, sans-serif);
+    font-family: var(--font-sans);
     background-color: var(--color-surface-default);
     color: var(--color-content-primary);
     -webkit-font-smoothing: antialiased;
@@ -169,6 +179,20 @@ body {
     }
 }
 
+// styles.scss — Classes snackbar globales (hors encapsulation)
+.snack-success {
+  background: var(--color-success) !important;
+  color: var(--color-content-inverse) !important;
+}
+.snack-error {
+  background: var(--color-error) !important;
+  color: var(--color-content-inverse) !important;
+}
+.snack-warning {
+  background: var(--color-warning) !important;
+  color: var(--color-content-primary) !important;
+}
+
 /* 5. Force text colors on inputs & selects (Overriding Material Light-mode fallback) */
 .mat-mdc-input-element,
 .mat-mdc-select-value-text,
@@ -189,10 +213,7 @@ button:disabled,
 /* ─────────────────────────────────────────────────────────
    🌙 OVERRIDES MATERIAL : EXCLUSIF DARK MODE (SaaS Outline)
    ───────────────────────────────────────────────────────── */
-html.dark body, 
-html[data-theme="dark"] body,
-body.dark,
-body[data-theme="dark"] {
+html[data-theme="dark"] body {
   /* Textes & Curseurs */
   --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
   --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);

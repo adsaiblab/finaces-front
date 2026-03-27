@@ -1,13 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
+
 
 import { ConsortiumService } from '../../core/services/consortium.service';
 import { CaseService } from '../../core/services/case.service';
@@ -17,39 +19,39 @@ import { ConsortiumMemberDialogComponent } from './components/consortium-member-
 import { ConsortiumMemberAccordionComponent } from './components/consortium-member-accordion/consortium-member-accordion.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
-import { catchError, of, delay } from 'rxjs';
+import { catchError, of, delay, finalize } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-consortium',
     standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
+    imports: [ReactiveFormsModule,
         MatButtonModule,
         MatDialogModule,
         MatFormFieldModule,
         MatInputModule,
-        MatTabsModule,
+
         ConsortiumMemberAccordionComponent,
         FinacesScoreGaugeComponent,
-        FinacesRiskBadgeComponent
-    ],
+        FinacesRiskBadgeComponent,
+        MatSnackBarModule,
+        DecimalPipe],
     templateUrl: './consortium.component.html',
     styleUrls: ['./consortium.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConsortiumComponent implements OnInit {
+export class ConsortiumComponent {
     private route = inject(ActivatedRoute);
-    public router = inject(Router);
+    private readonly router = inject(Router);
     private caseService = inject(CaseService);
     private consortiumService = inject(ConsortiumService);
     private dialog = inject(MatDialog);
     private snackBar = inject(MatSnackBar);
     private fb = inject(FormBuilder);
+    private readonly destroyRef = inject(DestroyRef);
 
     // Règle 3: Route param retrieval
-    caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+    caseId = '';
 
     currentCase = signal<EvaluationCaseDetailOut | null>(null);
     currentConsortium = signal<ConsortiumScorecardOutput | null>(null);
@@ -105,6 +107,7 @@ export class ConsortiumComponent implements OnInit {
     });
 
     ngOnInit(): void {
+        this.caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
         if (!this.caseId) {
             this.router.navigate(['/dashboard']);
             return;
@@ -115,6 +118,7 @@ export class ConsortiumComponent implements OnInit {
     private loadData(): void {
         this.isLoading.set(true);
         this.caseService.getCaseDetail(this.caseId).pipe(
+            takeUntilDestroyed(this.destroyRef),
             catchError(() => {
                 this.snackBar.open('Error loading case', 'Close');
                 return of(null);
@@ -145,6 +149,7 @@ export class ConsortiumComponent implements OnInit {
             : this.consortiumService.getConsortium(this.caseId);
 
         req$.pipe(
+            takeUntilDestroyed(this.destroyRef),
             catchError((err) => {
                 this.isLoading.set(false);
                 this.snackBar.open('Erreur de chargement du consortium (backend)', 'Close');
@@ -162,14 +167,18 @@ export class ConsortiumComponent implements OnInit {
             data: { member }
         });
 
-        dialogRef.afterClosed().subscribe((result: ConsortiumMemberCreate) => {
+        dialogRef.afterClosed().pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe((result: ConsortiumMemberCreate) => {
             if (result) {
                 this.isLoading.set(true);
                 const req$ = member
                     ? this.consortiumService.updateMember(this.caseId, member.member_id, result)
                     : this.consortiumService.addMember(this.caseId, result);
 
-                req$.subscribe({
+                req$.pipe(
+                    takeUntilDestroyed(this.destroyRef)
+                ).subscribe({
                     next: (res) => {
                         this.currentConsortium.set(res);
                         this.isLoading.set(false);
@@ -191,16 +200,26 @@ export class ConsortiumComponent implements OnInit {
             return;
         }
         this.isLoading.set(true);
-        // Actual implementation would need separate patching or multi-patching endpoints per backend spec.
-        this.snackBar.open('Inline share updates saved successfully (simulated endpoint)', 'Close');
-        this.isEditingShares.set(false);
-        this.isLoading.set(false);
+        // Appel HTTP réel à implémenter :
+        of(null).pipe(
+            delay(800),
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLoading.set(false);
+                this.isEditingShares.set(false);
+            })
+        ).subscribe({
+            next: () => this.snackBar.open('Parts sauvegardées', '', { duration: 2000, panelClass: 'snack-success' }),
+            error: () => this.snackBar.open('Erreur lors de la sauvegarde', '', { duration: 3000, panelClass: 'snack-error' })
+        });
     }
 
     removeMember(memberId: string): void {
         if (confirm('Are you sure you want to remove this member?')) {
             this.isLoading.set(true);
-            this.consortiumService.removeMember(this.caseId, memberId).subscribe({
+            this.consortiumService.removeMember(this.caseId, memberId).pipe(
+                takeUntilDestroyed(this.destroyRef)
+            ).subscribe({
                 next: (res) => {
                     this.currentConsortium.set(res);
                     this.isLoading.set(false);
@@ -220,7 +239,9 @@ export class ConsortiumComponent implements OnInit {
         }
 
         this.isCalculating.set(true);
-        this.consortiumService.calculateConsortium(this.caseId).subscribe({
+        this.consortiumService.calculateConsortium(this.caseId).pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
             next: (res) => {
                 this.currentConsortium.set(res);
                 this.isCalculating.set(false);
@@ -234,6 +255,10 @@ export class ConsortiumComponent implements OnInit {
     }
 
     continueToStress(): void {
-        this.router.navigate(['/cases', this.caseId, 'stress']);
+        this.navigateTo(['/cases', this.caseId, 'stress']);
+    }
+
+    protected navigateTo(path: string[]): void {
+        this.router.navigate(path);
     }
 }

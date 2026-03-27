@@ -4,7 +4,7 @@
     border: 1px solid var(--color-border-default);
     border-radius: 0.75rem;
     padding: 1.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .chart-header {
@@ -27,8 +27,9 @@
 .canvas-wrapper {
     position: relative;
     width: 100%;
-    height: 16rem;
-    /* 256px fixe pour garantir la responsivité de Chart.js */
+    aspect-ratio: 16 / 5;
+    min-height: 8rem;
+    max-height: 24rem;
 }
 
 /* Légende custom HTML pour un stylage parfait avec nos tokens */

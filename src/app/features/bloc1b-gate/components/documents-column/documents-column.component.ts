@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,10 +12,8 @@ import { GateDocumentOut } from '../../../../core/models/gate.model';
 @Component({
     selector: 'app-documents-column',
     standalone: true,
-    imports: [
-        CommonModule, MatTableModule, MatButtonModule,
-        MatIconModule, MatMenuModule, DragDropModule, MatTooltipModule
-    ],
+    imports: [MatTableModule, MatButtonModule,
+        MatIconModule, MatMenuModule, DragDropModule, MatTooltipModule, NgClass],
     templateUrl: './documents-column.component.html',
     styleUrl: './documents-column.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConvergenceChartComponent } from './convergence-chart.component';
 import { ConvergenceChartOut } from '../../../../core/models/dashboard.model';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 describe('ConvergenceChartComponent', () => {
@@ -17,15 +18,21 @@ describe('ConvergenceChartComponent', () => {
     };
 
     beforeEach(async () => {
-        HTMLCanvasElement.prototype.getContext = vi.fn() as any;
+        // Re-assign ResizeObserver as a class (required by Angular CDK new ResizeObserver())
         globalThis.ResizeObserver = class {
-            observe() { }
-            unobserve() { }
-            disconnect() { }
-        };
+            observe = vi.fn();
+            unobserve = vi.fn();
+            disconnect = vi.fn();
+        } as any;
 
         await TestBed.configureTestingModule({
-            imports: [ConvergenceChartComponent]
+            imports: [ConvergenceChartComponent],
+            providers: [
+                {
+                    provide: ThemeService,
+                    useValue: { isDarkMode: () => false, toggleTheme: vi.fn() }
+                }
+            ]
         }).compileComponents();
 
         fixture = TestBed.createComponent(ConvergenceChartComponent);

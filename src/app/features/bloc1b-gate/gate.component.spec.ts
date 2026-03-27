@@ -26,7 +26,7 @@ describe('GateComponent', () => {
                 id: '1', name: 'Test Case', bidder_name: 'Test Corp', status: 'PENDING_GATE'
             })),
             evaluateGate: vi.fn().mockReturnValue(of({
-                id: 'dec-1', case_id: '1', verdict: 'PASSÉ', is_passed: true,
+                id: 'dec-1', case_id: '1', verdict: 'PASSED', is_passed: true,
                 reliability_score: 80, reliability_level: 'HIGH',
                 blocking_reasons: [], reserve_flags: [], missing_docs: [],
                 documents_received: {}, audit_log: [], evaluated_at: '', evaluated_by: ''
@@ -44,7 +44,13 @@ describe('GateComponent', () => {
         await TestBed.configureTestingModule({
             imports: [GateComponent, NoopAnimationsModule],
             providers: [
-                { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        snapshot: { paramMap: { get: () => '1' } },
+                        parent: { snapshot: { paramMap: { get: () => '1' } } }
+                    }
+                },
                 { provide: Router, useValue: mockRouter },
                 { provide: CaseService, useValue: mockCaseService },
                 { provide: DocumentService, useValue: mockDocumentService },
@@ -82,7 +88,7 @@ describe('GateComponent', () => {
         const decision = await firstValueFrom(component.decision$);
         expect(mockCaseService.evaluateGate).toHaveBeenCalledWith('1');
         expect(decision).toBeTruthy();
-        expect(decision?.verdict).toBe('PASSÉ');
+        expect(decision?.verdict).toBe('PASSED');
     });
 
     it('devrait sceller le gate et naviguer', async () => {

@@ -18,7 +18,7 @@ describe('IaComponent', () => {
             confidence_interval: { lower: 3.0, upper: 4.0 },
             shap_values: { features: [] }
         })),
-        simulateWhatIf: vi.fn().mockReturnValue(of({ predicted_score: 4.0 }))
+        simulateWhatIf: vi.fn().mockReturnValue(of({ predicted_score_if: 4.0 }))
     };
 
     const mockActivatedRoute = {
@@ -47,7 +47,7 @@ describe('IaComponent', () => {
     });
 
     it('should handle simulation and update temporary state', () => {
-        component.onSimulate({ scenario_name: 'Test', feature_modifications: {} });
+        component.onSimulate({ scenario_name: 'Test', parameter_overrides: {} });
         expect(mockIaService.simulateWhatIf).toHaveBeenCalled();
         expect(component.simulationScore()).toBe(4.0);
     });

@@ -1,44 +1,59 @@
-<section class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6" [formGroup]="parentGroup()">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-content-primary flex items-center gap-2">
-            <span class="material-icons text-primary-default">tune</span>
-            Manual Risk Override (Optional)
-        </h2>
-        <button *ngIf="isOverridden" mat-stroked-button color="warn" (click)="resetOverride()">
-            <span class="material-icons text-sm mr-1">restart_alt</span>
-            Reset Override
-        </button>
+<section
+  class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-6"
+  [formGroup]="parentGroup()"
+>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold text-content-primary flex items-center gap-2">
+      <span class="material-icons text-primary-default">tune</span>
+      Manual Risk Override (Optional)
+    </h2>
+    @if (isOverridden) {
+      <button mat-stroked-button color="warn" (click)="resetOverride()">
+        <span class="material-icons text-sm mr-1">restart_alt</span>
+        Reset Override
+      </button>
+    }
+  </div>
+
+  <p class="text-sm text-content-secondary mb-6">
+    The override allows a maximum correction of ±1 class. Any modification must be thoroughly
+    justified in the qualitative notes above.
+  </p>
+
+  <div class="flex items-start gap-6">
+    <div
+      class="bg-surface-default border border-border-default rounded-lg p-4 flex flex-col justify-center items-center min-w-[150px]"
+    >
+      <span class="text-xs text-content-secondary uppercase tracking-wider mb-1"
+        >Current Class</span
+      >
+      <span class="font-bold text-lg text-content-primary">{{ currentRiskClass() }}</span>
     </div>
 
-    <p class="text-sm text-content-secondary mb-6">
-        The override allows a maximum correction of ±1 class. Any modification must be thoroughly justified in the
-        qualitative notes above.
-    </p>
+    <mat-form-field appearance="outline" class="flex-grow">
+      <mat-label>Adjust Risk Class</mat-label>
+      <mat-select [formControlName]="controlName()">
+        @for (opt of overrideOptions; track opt) {
+          <mat-option [value]="opt">
+            {{ opt === 'AUCUN' ? 'NO OVERRIDE' : opt }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-    <div class="flex items-start gap-6">
-        <div
-            class="bg-surface-default border border-border-default rounded-lg p-4 flex flex-col justify-center items-center min-w-[150px]">
-            <span class="text-xs text-content-secondary uppercase tracking-wider mb-1">Current Class</span>
-            <span class="font-bold text-lg text-content-primary">{{ currentRiskClass() }}</span>
-        </div>
-
-        <mat-form-field appearance="outline" class="flex-grow">
-            <mat-label>Adjust Risk Class</mat-label>
-            <mat-select [formControlName]="controlName()">
-                <mat-option *ngFor="let opt of overrideOptions" [value]="opt">
-                    {{ opt === 'AUCUN' ? 'NO OVERRIDE' : opt }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+  @if (isOverridden) {
+    <div
+      class="mt-4 bg-error-lighter border-l-4 border-error-default p-4 rounded-r-md flex items-start gap-3"
+    >
+      <span class="material-icons text-error-dark mt-0.5">gavel</span>
+      <div>
+        <h4 class="text-sm font-bold text-error-dark">Audit Trail Active</h4>
+        <p class="text-sm text-error-dark mt-1">
+          You are modifying the core MCC Score decision. This action is permanently logged and
+          strictly audited.
+        </p>
+      </div>
     </div>
-
-    <div *ngIf="isOverridden"
-        class="mt-4 bg-error-lighter border-l-4 border-error-default p-4 rounded-r-md flex items-start gap-3">
-        <span class="material-icons text-error-dark mt-0.5">gavel</span>
-        <div>
-            <h4 class="text-sm font-bold text-error-dark">Audit Trail Active</h4>
-            <p class="text-sm text-error-dark mt-1">You are modifying the core MCC Score decision. This action is
-                permanently logged and strictly audited.</p>
-        </div>
-    </div>
+  }
 </section>

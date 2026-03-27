@@ -1,17 +1,18 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ShapFeature, WhatIfScenario } from '../../../../core/models/ia.model';
+import { ShapFeature, WhatIfScenarioInput } from '../../../../core/models/ia.model';
 
 @Component({
     selector: 'app-finaces-what-if',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressSpinnerModule],
+    imports: [FormsModule, MatCardModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressSpinnerModule, DecimalPipe],
     templateUrl: './finaces-what-if.component.html',
     styleUrls: ['./finaces-what-if.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,7 +21,7 @@ export class FinacesWhatIfComponent {
     public features = input<ShapFeature[]>([]);
     public isSimulating = input<boolean>(false);
 
-    public simulate = output<WhatIfScenario>();
+    public simulate = output<WhatIfScenarioInput>();
     public reset = output<void>();
 
     // État local pour stocker les modifications
@@ -63,7 +64,7 @@ export class FinacesWhatIfComponent {
         if (this.hasAdjustments()) {
             this.simulate.emit({
                 scenario_name: 'Custom User Simulation',
-                feature_modifications: this.adjustments()
+                parameter_overrides: this.adjustments()
             });
         }
     }

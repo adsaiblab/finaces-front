@@ -1,5 +1,6 @@
+import { NgClass, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { TensionLevel } from '../../../../core/models/scoring.model';
 import { TensionDirection } from '../../../../core/models/tension.model';
@@ -7,7 +8,7 @@ import { TensionDirection } from '../../../../core/models/tension.model';
 @Component({
     selector: 'app-tension-banner',
     standalone: true,
-    imports: [CommonModule, MatIconModule],
+    imports: [MatIconModule, NgClass, DecimalPipe],
     templateUrl: './tension-banner.component.html',
     styleUrls: ['./tension-banner.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

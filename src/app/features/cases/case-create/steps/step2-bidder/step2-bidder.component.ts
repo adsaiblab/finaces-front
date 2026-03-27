@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
+import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
+
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,12 +14,12 @@ import { BidderSearchOut } from '../../../../../core/models/bidder.model';
 @Component({
     selector: 'app-step2-bidder',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatIconModule, MatButtonModule],
+    imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatIconModule, MatButtonModule, AsyncPipe],
     templateUrl: './step2-bidder.component.html',
     styleUrls: ['./step2-bidder.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Step2BidderComponent implements OnInit {
+export class Step2BidderComponent {
     readonly formGroup = input<FormGroup>(new FormGroup({}));
     private readonly bidderService = inject(BidderService);
     filteredBidders$!: Observable<BidderSearchOut[]>;

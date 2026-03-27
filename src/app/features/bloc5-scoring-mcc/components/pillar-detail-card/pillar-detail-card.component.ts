@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import {  DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { PillarScore } from '../../../../core/models/scoring.model';
@@ -7,7 +7,7 @@ import { PillarScore } from '../../../../core/models/scoring.model';
 @Component({
     selector: 'app-pillar-detail-card',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatIconModule, DecimalPipe],
+    imports: [ MatCardModule, MatIconModule, DecimalPipe],
     templateUrl: './pillar-detail-card.component.html',
     styleUrls: ['./pillar-detail-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,12 +1,13 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import {  CurrencyPipe, DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { NormalizationAdjustment } from '../../../../core/models';
 
 @Component({
     selector: 'app-adjustments-list',
     standalone: true,
-    imports: [CommonModule, MatIconModule, CurrencyPipe],
+    imports: [MatIconModule, CurrencyPipe, NgClass],
     templateUrl: './adjustments-list.component.html',
     styleUrls: ['./adjustments-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

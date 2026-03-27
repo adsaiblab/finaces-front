@@ -1,5 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { PercentPipe, DecimalPipe, NgClass } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { IaService } from '../../core/services/ia.service';
-import { IAPredictionResult, WhatIfScenario } from '../../core/models/ia.model';
+import { IAPredictionResult, WhatIfScenarioInput } from '../../core/models/ia.model';
 
 import {
   FinacesIaDisclaimerComponent,
@@ -20,9 +25,7 @@ import {
 @Component({
   selector: 'app-bloc6-ia',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
+  imports: [MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
@@ -30,19 +33,19 @@ import {
     FinacesShapChartComponent,
     FinacesWhatIfComponent,
     FinacesScoreGaugeComponent,
-    FinacesRiskBadgeComponent
-  ],
+    FinacesRiskBadgeComponent, PercentPipe, DecimalPipe, NgClass],
   templateUrl: './ia.component.html',
   styleUrls: ['./ia.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IaComponent implements OnInit {
+export class IaComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private iaService = inject(IaService);
   private snackBar = inject(MatSnackBar);
 
   public caseId = signal<string>('');
+  private readonly destroyRef = inject(DestroyRef);
 
   public predictionData = signal<IAPredictionResult | null>(null);
   public isLoading = signal<boolean>(true);
@@ -64,20 +67,27 @@ export class IaComponent implements OnInit {
     this.error.set(null);
     this.simulationScore.set(null);
 
-    this.iaService.getPrediction(this.caseId()).subscribe({
+    this.iaService.getPrediction(this.caseId()).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (data) => {
         this.predictionData.set(data);
         this.isLoading.set(false);
       },
-      error: (err) => {
-        console.warn('Backend IA unavailable, injecting Enterprise-Grade Mock');
+      error: () => {
+        if (!environment.production) {
+          console.warn('Backend IA unavailable, injecting Enterprise-Grade Mock');
+        }
         this.loadMockData();
       }
     });
   }
 
   private loadMockData(): void {
-    setTimeout(() => {
+    of(null).pipe(
+      delay(1200),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
       this.predictionData.set({
         case_id: this.caseId(),
         model_version: 'v2.4.1-xgboost',
@@ -101,30 +111,32 @@ export class IaComponent implements OnInit {
         }
       });
       this.isLoading.set(false);
-    }, 1200);
+    });
   }
 
-  public onSimulate(scenario: WhatIfScenario): void {
+  public onSimulate(scenario: WhatIfScenarioInput): void {
     this.isSimulating.set(true);
-    this.iaService.simulateWhatIf(this.caseId(), scenario).subscribe({
+    this.iaService.simulateWhatIf(this.caseId(), scenario).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (result) => {
         // Dans une vraie app, le backend renvoie le résultat complet
         // Ici on simule localement le retour pour l'UX
-        this.simulationScore.set(result.predicted_score || 3.1);
-        this.simulationClass.set(result.predicted_risk_class || 'MODERATE');
+        this.simulationScore.set(result.predicted_score_if || 3.1);
+        this.simulationClass.set(result.predicted_class_if || 'MODERATE');
         this.isSimulating.set(false);
         this.snackBar.open('Simulation applied successfully.', 'OK', { duration: 3000 });
       },
       error: () => {
         // Mock Simulation Success
-        setTimeout(() => {
+        of(null).pipe(delay(1000), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           // Logique naïve de mock : si on simule, on améliore le score artificiellement pour l'UX
           const baseScore = this.predictionData()?.predicted_score || 0;
           this.simulationScore.set(Math.min(5, baseScore + 0.7));
           this.simulationClass.set('MODERATE');
           this.isSimulating.set(false);
           this.snackBar.open('Simulation complete (Mock Mode).', 'OK', { duration: 3000 });
-        }, 1000);
+        });
       }
     });
   }

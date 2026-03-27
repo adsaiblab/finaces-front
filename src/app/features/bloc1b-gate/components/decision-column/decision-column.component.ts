@@ -1,5 +1,6 @@
+import { NgClass, DatePipe } from '@angular/common';
 import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -8,7 +9,7 @@ import { GateDecisionSchema } from '../../../../core/models/gate.model';
 @Component({
     selector: 'app-decision-column',
     standalone: true,
-    imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+    imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, NgClass, DatePipe],
     templateUrl: './decision-column.component.html',
     styleUrl: './decision-column.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -23,6 +24,6 @@ export class DecisionColumnComponent {
     readonly correctDocuments = output<void>();
     readonly goToDashboard = output<void>();
 
-    readonly isPassed = computed(() => this.decision()?.verdict === 'PASSÉ');
-    readonly isBlocked = computed(() => this.decision()?.verdict === 'BLOQUÉ');
+    readonly isPassed = computed(() => this.decision()?.verdict === 'PASSED');
+    readonly isBlocked = computed(() => this.decision()?.verdict === 'BLOCKED');
 }

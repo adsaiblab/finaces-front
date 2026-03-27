@@ -36,7 +36,7 @@ export enum RiskProfile {
 // 2. EXISTING SCHEMAS (Translated to English properties)
 // ============================================================================
 
-export interface RatioSetSchema {
+export interface RatioSetFlat {
     case_id: string;
     fiscal_year: number;
     current_ratio: number;

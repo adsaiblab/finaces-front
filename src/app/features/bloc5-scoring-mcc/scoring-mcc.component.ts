@@ -1,5 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,9 +24,7 @@ import {
 @Component({
   selector: 'app-scoring-mcc',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
+  imports: [MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
@@ -30,19 +32,19 @@ import {
     OverrideZoneComponent,
     RecommendationsSectionComponent,
     FinacesScoreGaugeComponent,
-    FinacesRiskBadgeComponent
-  ],
+    FinacesRiskBadgeComponent, NgClass],
   templateUrl: './scoring-mcc.component.html',
   styleUrls: ['./scoring-mcc.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ScoringMccComponent implements OnInit {
+export class ScoringMccComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private scoringService = inject(ScoringMccService);
   private snackBar = inject(MatSnackBar);
 
   public caseId = signal<string>('');
+  private readonly destroyRef = inject(DestroyRef);
 
   public scoringData = signal<ScoringMccSchema | null>(null);
   public isLoading = signal<boolean>(true);
@@ -59,7 +61,9 @@ export class ScoringMccComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.scoringService.getScoring(this.caseId()).subscribe({
+    this.scoringService.getScoring(this.caseId()).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (data) => {
         this.scoringData.set(data);
         this.isLoading.set(false);
@@ -72,7 +76,10 @@ export class ScoringMccComponent implements OnInit {
   }
 
   private loadMockData(): void {
-    setTimeout(() => {
+    of(null).pipe(
+      delay(1000),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
       this.scoringData.set({
         case_id: this.caseId(),
         global_score: 3.8,
@@ -95,20 +102,22 @@ export class ScoringMccComponent implements OnInit {
         ]
       });
       this.isLoading.set(false);
-    }, 1000);
+    });
   }
 
   public handleOverride(payload: ScoreOverridePayload): void {
     this.isOverriding.set(true);
-    this.scoringService.overrideScore(this.caseId(), payload).subscribe({
+    this.scoringService.overrideScore(this.caseId(), payload).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (updatedData) => {
         this.scoringData.set(updatedData);
         this.isOverriding.set(false);
-        this.snackBar.open('Score override applied successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
+        this.snackBar.open('Score override applied successfully.', 'OK', { duration: 3000, panelClass: 'snack-success' });
       },
       error: () => {
         // Fallback simulate success
-        setTimeout(() => {
+        of(null).pipe(delay(800), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           const currentData = this.scoringData();
           if (currentData) {
             this.scoringData.set({
@@ -128,7 +137,7 @@ export class ScoringMccComponent implements OnInit {
           }
           this.isOverriding.set(false);
           this.snackBar.open('Score override applied (Mock Mode).', 'OK', { duration: 3000 });
-        }, 800);
+        });
       }
     });
   }

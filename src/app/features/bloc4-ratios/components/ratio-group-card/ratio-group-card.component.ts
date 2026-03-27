@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import {  DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +16,7 @@ export interface RatioRow {
 @Component({
     selector: 'app-ratio-group-card',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatTableModule, MatIconModule, MatTooltipModule, DecimalPipe],
+    imports: [MatCardModule, MatTableModule, MatIconModule, MatTooltipModule, DecimalPipe, NgClass],
     templateUrl: './ratio-group-card.component.html',
     styleUrls: ['./ratio-group-card.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

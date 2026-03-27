@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule, DecimalPipe, SlicePipe, NgStyle } from '@angular/common';
+import {  DecimalPipe, SlicePipe, NgStyle } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +11,7 @@ import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/f
     selector: 'app-recent-cases-table',
     standalone: true,
     imports: [
-        CommonModule,
+        
         NgStyle,
         MatTableModule,
         MatButtonModule,

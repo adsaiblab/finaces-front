@@ -5,35 +5,35 @@
 
     .gauge-svg {
         &.gauge-success .progress-arc {
-            stroke: var(--success);
+            stroke: var(--color-success);
         }
 
         &.gauge-warning .progress-arc {
-            stroke: var(--warning);
+            stroke: var(--color-warning);
         }
 
         &.gauge-orange .progress-arc {
-            stroke: var(--mcc-high);
+            stroke: var(--color-mcc-high);
         }
 
         &.gauge-error .progress-arc {
-            stroke: var(--error);
+            stroke: var(--color-error);
         }
 
         &.gauge-ia .progress-arc {
-            stroke: var(--primary);
+            stroke: var(--color-primary);
         }
 
         .gauge-score-value {
             font-size: 26px;
             font-weight: 700;
-            fill: var(--text-primary);
+            fill: var(--color-content-primary);
         }
 
         .gauge-max-label {
             font-size: 12px;
             font-weight: 500;
-            fill: var(--text-secondary);
+            fill: var(--color-content-secondary);
         }
     }
 }

@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, catchError, of, delay } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,14 +18,13 @@ import {
   TensionBannerComponent,
   TensionComparisonComponent,
   PillarTensionTableComponent,
-  AnalystDecisionComponent
+  AnalystDecisionComponent,
 } from './components';
 
 @Component({
   selector: 'app-bloc7-tension',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -32,13 +32,13 @@ import {
     TensionBannerComponent,
     TensionComparisonComponent,
     PillarTensionTableComponent,
-    AnalystDecisionComponent
+    AnalystDecisionComponent,
   ],
   templateUrl: './tension.component.html',
   styleUrls: ['./tension.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TensionComponent implements OnInit {
+export class TensionComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private scoringService = inject(ScoringMccService);
@@ -47,6 +47,7 @@ export class TensionComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   public caseId = signal<string>('');
+  private readonly destroyRef = inject(DestroyRef);
 
   public tensionData = signal<TensionAnalysisResult | null>(null);
   public isLoading = signal<boolean>(true);
@@ -54,7 +55,10 @@ export class TensionComponent implements OnInit {
   public error = signal<string | null>(null);
 
   ngOnInit(): void {
-    const resolvedId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+    const resolvedId =
+      this.route.parent?.snapshot.paramMap.get('id') ||
+      this.route.snapshot.paramMap.get('id') ||
+      '';
     this.caseId.set(resolvedId);
     this.loadTensionAnalysis();
   }
@@ -64,8 +68,10 @@ export class TensionComponent implements OnInit {
 
     forkJoin({
       mcc: this.scoringService.getScoring(this.caseId()).pipe(catchError(() => of(null))),
-      ia: this.iaService.getPrediction(this.caseId()).pipe(catchError(() => of(null)))
-    }).subscribe(data => {
+      ia: this.iaService.getPrediction(this.caseId()).pipe(catchError(() => of(null))),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((data) => {
       // Dans une vraie application, on vérifierait si MCC et IA sont dispos.
       // Pour le prototype, si ça échoue, on mock.
       if (!data.mcc || !data.ia) {
@@ -89,31 +95,52 @@ export class TensionComponent implements OnInit {
       ia_class: 'LOW',
       class_divergence: true,
       pillars_comparison: [
-        { pillar_name: 'Liquidity', mcc_score: 3.0, ia_impact: 4.2, delta: 1.2, is_divergent: true },
+        {
+          pillar_name: 'Liquidity',
+          mcc_score: 3.0,
+          ia_impact: 4.2,
+          delta: 1.2,
+          is_divergent: true,
+        },
         { pillar_name: 'Solvency', mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
-        { pillar_name: 'Profitability', mcc_score: 4.0, ia_impact: 4.0, delta: 0, is_divergent: false }
+        {
+          pillar_name: 'Profitability',
+          mcc_score: 4.0,
+          ia_impact: 4.0,
+          delta: 0,
+          is_divergent: false,
+        },
       ],
       system_recommendation: 'Critical divergence detected. Deep investigation strongly advised.',
-      requires_justification: true
+      requires_justification: true,
     };
 
-    of(mockResponse).pipe(delay(800)).subscribe(data => {
-      this.tensionData.set(data as any);
-      this.isLoading.set(false);
-    });
+    of(mockResponse)
+      .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        this.tensionData.set(data as any);
+        this.isLoading.set(false);
+      });
   }
 
   public handleDecision(payload: AnalystDecisionPayload): void {
     this.isSubmitting.set(true);
     // Simulation de la sauvegarde de la décision
-    setTimeout(() => {
+    of(null).pipe(delay(1000), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.isSubmitting.set(false);
-      this.snackBar.open('Analyst decision recorded successfully.', 'OK', { duration: 3000, panelClass: ['bg-success', 'text-inverse'] });
+      this.snackBar.open('Analyst decision recorded successfully.', 'OK', {
+        duration: 3000,
+        panelClass: 'snack-success',
+      });
 
-      // Si le user a choisi INVESTIGATE on l'envoie vers Stress Test (Bloc 8) ou Expert (Bloc 9).
-      // Sinon on passe au Rapport (Bloc 10). On va l'envoyer au Bloc 8 pour le moment.
-      this.router.navigate(['/cases', this.caseId(), 'stress']);
-    }, 1000);
+      if (payload.decision === 'INVESTIGATE') {
+        this.router.navigate(['/cases', this.caseId(), 'stress']);
+      } else if (payload.decision === 'EXPERT_REVIEW') {
+        this.router.navigate(['/cases', this.caseId(), 'expert']);
+      } else {
+        this.router.navigate(['/cases', this.caseId(), 'rapport']);
+      }
+    });
   }
 
   public navigateBack(): void {

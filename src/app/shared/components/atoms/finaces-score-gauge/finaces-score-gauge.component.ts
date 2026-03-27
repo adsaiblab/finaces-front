@@ -1,16 +1,17 @@
+import { NgClass } from '@angular/common';
 import {
     Component,
-    Input,
+    input,
     Output,
     EventEmitter,
     ChangeDetectionStrategy,
-    OnChanges,
-    SimpleChanges,
     ChangeDetectorRef,
     NgZone,
-    OnDestroy
+    OnDestroy,
+    effect,
+    inject
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export type GaugeSize = 80 | 120 | 160;
 
@@ -25,47 +26,45 @@ interface GaugeMetrics {
 @Component({
     selector: 'finaces-score-gauge',
     standalone: true,
-    imports: [CommonModule],
+    imports: [NgClass],
     templateUrl: './finaces-score-gauge.component.html',
     styleUrls: ['./finaces-score-gauge.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
-    @Input({ required: true }) score: number = 0;
-    @Input() maxScore: number = 5;
-    @Input() rail: 'MCC' | 'IA' = 'MCC';
-    @Input() riskClass?: string;
-    @Input() size: GaugeSize = 120;
-    @Input() animated: boolean = true;
-    @Input() showLabel: boolean = true;
+export class FinacesScoreGaugeComponent implements OnDestroy {
+    readonly score = input.required<number>();
+    readonly maxScore = input<number>(5);
+    readonly rail = input<'MCC' | 'IA'>('MCC');
+    readonly riskClass = input<string | undefined>(undefined);
+    readonly size = input<GaugeSize>(120);
+    readonly animated = input<boolean>(true);
+    readonly showLabel = input<boolean>(true);
 
     @Output() rendered = new EventEmitter<void>();
 
     metrics!: GaugeMetrics;
     arcPath: string = '';
-    // VIO-08 FIX: token corrigé → --border (existant dans _variables.scss)
-    backgroundColor: string = 'var(--border)';
+    backgroundColor: string = 'var(--color-border-default)';
     arcColorClass: string = 'gauge-warning';
     displayScore: number = 0;
     displayScoreStr: string = '0.0';
     animationId: number | null = null;
+    private destroyed = false;
 
     private readonly startAngle = -135;
     private readonly totalArcAngle = 270;
 
-    constructor(private cdr: ChangeDetectorRef, private ngZone: NgZone) {
-        this.initializeMetrics(120);
-    }
+    private readonly cdr = inject(ChangeDetectorRef);
+    private readonly ngZone = inject(NgZone);
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['size']) {
-            this.initializeMetrics(this.size);
-        }
-        if (changes['score'] || changes['riskClass'] || changes['rail'] || changes['size']) {
+    constructor() {
+        effect(() => {
+            const currentSize = this.size();
+            this.initializeMetrics(currentSize);
             this.updateArcColor();
             this.updateBackground();
             this.startAnimation();
-        }
+        });
     }
 
     private initializeMetrics(size: GaugeSize): void {
@@ -80,8 +79,8 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
     }
 
     private updateArcColor(): void {
-        const risk = this.riskClass?.toUpperCase() || 'MODERATE';
-        if (this.rail === 'IA') {
+        const risk = this.riskClass()?.toUpperCase() || 'MODERATE';
+        if (this.rail() === 'IA') {
             this.arcColorClass = 'gauge-ia';
         } else {
             const map: Record<string, string> = {
@@ -109,9 +108,9 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
 
     private startAnimation(): void {
         if (this.animationId !== null) cancelAnimationFrame(this.animationId);
-        const safeScore = Math.max(0, Math.min(this.score, this.maxScore));
+        const safeScore = Math.max(0, Math.min(this.score(), this.maxScore()));
 
-        if (!this.animated) {
+        if (!this.animated()) {
             this.displayScore = safeScore;
             this.displayScoreStr = safeScore.toFixed(1);
             this.cdr.markForCheck();
@@ -123,13 +122,14 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
         const duration = 800;
 
         const animate = (currentTime: number) => {
+            if (this.destroyed) return;
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             const easeProgress = 1 - Math.pow(1 - progress, 3);
 
             this.displayScore = safeScore * easeProgress;
             this.displayScoreStr = this.displayScore.toFixed(1);
-            this.cdr.markForCheck();
+            this.ngZone.run(() => { this.cdr.markForCheck(); });
 
             if (progress < 1) {
                 this.animationId = requestAnimationFrame(animate);
@@ -151,7 +151,7 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
     getProgressPath(): string {
         if (!this.metrics) return '';
         const { cx, cy, arcRadius } = this.metrics;
-        const safeMax = Math.max(0.1, this.maxScore);
+        const safeMax = Math.max(0.1, this.maxScore());
         const progressPercent = Math.max(0, Math.min(1, this.displayScore / safeMax));
         const angleSpan = this.totalArcAngle * progressPercent;
         if (angleSpan <= 0.1) return '';
@@ -168,6 +168,7 @@ export class FinacesScoreGaugeComponent implements OnChanges, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.destroyed = true;
         if (this.animationId !== null) cancelAnimationFrame(this.animationId);
     }
 }

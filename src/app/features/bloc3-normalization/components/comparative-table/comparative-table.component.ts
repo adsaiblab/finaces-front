@@ -1,5 +1,6 @@
+import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, output } from '@angular/core';
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import {  CurrencyPipe, DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -21,7 +22,7 @@ export interface ComparativeRow {
 @Component({
     selector: 'app-comparative-table',
     standalone: true,
-    imports: [CommonModule, MatTableModule, MatIconModule, MatTooltipModule, CurrencyPipe, DecimalPipe],
+    imports: [MatTableModule, MatIconModule, MatTooltipModule, CurrencyPipe, DecimalPipe, NgClass],
     templateUrl: './comparative-table.component.html',
     styleUrls: ['./comparative-table.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush

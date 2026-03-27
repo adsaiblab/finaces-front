@@ -1,12 +1,14 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, NgClass, DOCUMENT } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Observable, BehaviorSubject, Subject, timer, of } from 'rxjs';
-import { switchMap, takeUntil, shareReplay, catchError, tap, filter, delay } from 'rxjs/operators';
+import { switchMap, shareReplay, catchError, tap, filter, delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 import { CaseService } from '../../core/services/case.service';
@@ -18,25 +20,23 @@ import { ChecklistColumnComponent } from './components/checklist-column/checklis
 import { DocumentsColumnComponent } from './components/documents-column/documents-column.component';
 import { DecisionColumnComponent } from './components/decision-column/decision-column.component';
 import { DocumentUploadDialogComponent } from './components/document-upload-dialog/document-upload-dialog.component';
+import { ConfirmDialogComponent } from '../../shared/components/molecules/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-gate',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
+  imports: [MatDialogModule,
     MatSnackBarModule,
     MatIconModule,
     MatButtonModule,
     ChecklistColumnComponent,
     DocumentsColumnComponent,
-    DecisionColumnComponent
-  ],
+    DecisionColumnComponent, AsyncPipe, NgClass],
   templateUrl: './gate.component.html',
   styleUrl: './gate.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GateComponent implements OnInit, OnDestroy {
+export class GateComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private caseService = inject(CaseService);
@@ -44,10 +44,11 @@ export class GateComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  private destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
   private manualRefresh$ = new BehaviorSubject<void>(undefined);
 
-  caseId!: string;
+  caseId = signal<string>('');
   case$!: Observable<EvaluationCaseDetailOut>;
   documents$!: Observable<GateDocumentOut[]>;
 
@@ -60,16 +61,17 @@ export class GateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // L'ID '/cases/:id' se trouve dans les paramètres de la route parente (CaseWorkspace)
-    this.caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+    const id = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+    this.caseId.set(id);
 
-    if (!this.caseId) {
+    if (!this.caseId()) {
       this.router.navigate(['/dashboard']);
       return;
     }
 
     // 1. Fetch Case Details
     const mockCase = {
-        id: this.caseId,
+        id: this.caseId(),
         name: 'Dossier de Simulation',
         bidder_name: 'Entreprise Fictive SA',
         country: 'France',
@@ -84,7 +86,7 @@ export class GateComponent implements OnInit, OnDestroy {
         created_by: 'admin'
     } as EvaluationCaseDetailOut;
 
-    const caseReq$ = environment.features.mockData ? of(mockCase).pipe(delay(400)) : this.caseService.getCaseDetail(this.caseId);
+    const caseReq$ = environment.features.mockData ? of(mockCase).pipe(delay(400)) : this.caseService.getCaseDetail(this.caseId());
 
     this.case$ = caseReq$.pipe(
       catchError((err) => {
@@ -97,17 +99,12 @@ export class GateComponent implements OnInit, OnDestroy {
     // 2. Setup Document Polling (Toutes les 2s + rafraîchissement manuel)
     this.documents$ = this.manualRefresh$.pipe(
       switchMap(() => timer(0, 2000)),
-      switchMap(() => this.documentService.getGateDocuments(this.caseId).pipe(
+      switchMap(() => this.documentService.getGateDocuments(this.caseId()).pipe(
         catchError(() => of([])) // Sécurité si erreur réseau
       )),
-      takeUntil(this.destroy$),
+      takeUntilDestroyed(this.destroyRef),
       shareReplay(1)
     );
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   // --- ACTIONS COLONNE 2 (DOCUMENTS) ---
@@ -129,9 +126,9 @@ export class GateComponent implements OnInit, OnDestroy {
             formData.append(key, result.metadata[key]);
           }
         });
-        return this.documentService.uploadGateDocument(this.caseId, formData);
+        return this.documentService.uploadGateDocument(this.caseId(), formData);
       }),
-      takeUntil(this.destroy$)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: () => {
         this.snackBar.open('Document uploadé avec succès', 'Fermer', { duration: 3000, panelClass: 'snack-success' });
@@ -144,22 +141,37 @@ export class GateComponent implements OnInit, OnDestroy {
   }
 
   onDeleteDocument(docId: string): void {
-    if (confirm('Voulez-vous vraiment supprimer ce document ?')) {
-      this.documentService.deleteDocument(this.caseId, docId).pipe(
-        takeUntil(this.destroy$)
-      ).subscribe({
-        next: () => {
-          this.snackBar.open('Document supprimé', 'Fermer', { duration: 3000 });
-          this.manualRefresh$.next();
-        },
-        error: () => this.snackBar.open('Erreur de suppression', 'Fermer', { duration: 3000, panelClass: 'snack-error' })
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Voulez-vous vraiment supprimer ce document ?' }
+    });
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(confirmed => {
+      if (confirmed) {
+        this.documentService.deleteDocument(this.caseId(), docId).pipe(
+          takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
+          next: () => {
+            this.snackBar.open('Document supprimé', 'Fermer', { duration: 3000 });
+            this.manualRefresh$.next();
+          },
+          error: () => this.snackBar.open('Erreur de suppression', 'Fermer', { duration: 3000, panelClass: 'snack-error' })
+        });
+      }
+    });
   }
 
   onDownloadDocument(docId: string): void {
-    // Dans un vrai projet, on gèrerait le blob. Ici on simule une ouverture d'URL.
-    this.snackBar.open('Téléchargement démarré...', 'Fermer', { duration: 2000 });
+    this.documentService.downloadDocument(this.caseId(), docId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = this.document.createElement('a');
+      a.href = url;
+      a.download = `document-${docId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
   }
 
   onViewDetails(doc: GateDocumentOut): void {
@@ -176,9 +188,9 @@ export class GateComponent implements OnInit, OnDestroy {
     const evaluate$ = environment.features.mockData
       ? of({
           id: 'mock-decision-id',
-          case_id: this.caseId,
+          case_id: this.caseId(),
           is_passed: true,
-          verdict: 'PASSÉ',
+          verdict: 'PASSED',
           reliability_level: 'HIGH',
           reliability_score: 87,
           blocking_reasons: [],
@@ -195,10 +207,10 @@ export class GateComponent implements OnInit, OnDestroy {
           evaluated_at: new Date().toISOString(),
           evaluated_by: 'mock-engine'
         } as GateDecisionSchema).pipe(delay(1500))
-      : this.caseService.evaluateGate(this.caseId);
+      : this.caseService.evaluateGate(this.caseId());
 
     evaluate$.pipe(
-      takeUntil(this.destroy$),
+      takeUntilDestroyed(this.destroyRef),
       catchError((err) => {
         this.isEvaluatingSubject.next(false);
         this.snackBar.open('Evaluation failed: backend error.', 'Close', { duration: 4000, panelClass: 'snack-error' });
@@ -213,12 +225,12 @@ export class GateComponent implements OnInit, OnDestroy {
   }
 
   onSealGate(): void {
-    this.caseService.patchCaseStatus(this.caseId, 'FINANCIAL_INPUT').pipe(
-      takeUntil(this.destroy$)
+    this.caseService.patchCaseStatus(this.caseId(), 'FINANCIAL_INPUT').pipe(
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: () => {
         this.snackBar.open('Gate scellé. Financials déverrouillés.', 'Fermer', { duration: 3000, panelClass: 'snack-success' });
-        this.router.navigate([`/cases/${this.caseId}/financials`]);
+        this.router.navigate([`/cases/${this.caseId()}/financials`]);
       },
       error: () => {
         this.snackBar.open('Erreur lors du scellement du Gate', 'Fermer', { duration: 3000, panelClass: 'snack-error' });
@@ -227,7 +239,7 @@ export class GateComponent implements OnInit, OnDestroy {
   }
 
   onGoToFinancials(): void {
-    this.router.navigate([`/cases/${this.caseId}/financials`]);
+    this.router.navigate([`/cases/${this.caseId()}/financials`]);
   }
 
   onCorrectDocuments(): void {

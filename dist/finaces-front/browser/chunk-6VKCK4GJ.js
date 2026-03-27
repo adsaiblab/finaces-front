@@ -1,1 +1,0 @@
-import{Hb as o,Ib as i,dc as a,ed as m,ib as t}from"./chunk-WFV5GYLM.js";var p=class n{static \u0275fac=function(e){return new(e||n)};static \u0275cmp=t({type:n,selectors:[["app-login"]],decls:2,vars:0,template:function(e,s){e&1&&(o(0,"h2"),a(1,"FinaCES Login"),i())},dependencies:[m],encapsulation:2,changeDetection:0})};export{p as LoginComponent};

@@ -1,5 +1,8 @@
 import { ConsortiumMember } from './consortium.model';
-
+import { GateDocumentOut } from './gate.model';
+import { FinancialStatementRawOut } from './financial.model';
+import { ScorecardOutputSchema } from './scoring.model';
+import { ExpertReviewOutputSchema } from './expert.model';
 export enum CaseType {
     SINGLE = 'SINGLE',
     GROUPEMENT = 'GROUPEMENT',
@@ -27,11 +30,7 @@ export enum DocumentStatus {
     REJECTED = 'REJECTED',
 }
 
-export enum GateVerdict {
-    PASS = 'PASS',
-    FAIL = 'FAIL',
-    REVIEW = 'REVIEW',
-}
+
 
 export interface GroupementMember {
     name: string;
@@ -95,11 +94,11 @@ export interface EvaluationCaseOut {
 }
 
 export interface EvaluationCaseDetailOut extends EvaluationCaseOut {
-    documents?: any[];
-    financial_statements?: any[];
-    scorecard?: any;
+    documents?: GateDocumentOut[];
+    financial_statements?: FinancialStatementRawOut[];
+    scorecard?: ScorecardOutputSchema;
     consortium_data?: ConsortiumMember[];
-    expert_review?: any;
+    expert_review?: ExpertReviewOutputSchema;
     // Expert Review enriched fields
     mcc_score_final?: number;
     tension_label?: string;

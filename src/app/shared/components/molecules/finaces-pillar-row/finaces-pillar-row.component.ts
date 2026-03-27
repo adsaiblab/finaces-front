@@ -1,14 +1,14 @@
+import { NgClass, DecimalPipe } from '@angular/common';
 import {
     Component,
     Input,
     Output,
     EventEmitter,
     ChangeDetectionStrategy,
-    OnInit,
     OnChanges,
     SimpleChanges
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
@@ -57,22 +57,19 @@ interface PillarMetadata {
 @Component({
     selector: 'finaces-pillar-row',
     standalone: true,
-    imports: [
-        CommonModule,
-        FormsModule,
+    imports: [FormsModule,
         MatExpansionModule,
         MatTableModule,
         MatIconModule,
         MatButtonModule,
         MatFormFieldModule,
         MatInputModule,
-        FinacesRiskBadgeComponent
-    ],
+        FinacesRiskBadgeComponent, NgClass, DecimalPipe],
     templateUrl: './finaces-pillar-row.component.html',
     styleUrls: ['./finaces-pillar-row.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FinacesPillarRowComponent implements OnInit, OnChanges {
+export class FinacesPillarRowComponent implements  OnChanges {
     @Input({ required: true }) pillar!: PillarDetailSchema;
     @Input() isExpanded: boolean = false;   // Lecture seule — muté uniquement par le parent
     @Input() readonly: boolean = false;

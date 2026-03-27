@@ -1,5 +1,6 @@
+import { NgClass, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ConsortiumMember } from '../../../../core/models/consortium.model';
 import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
@@ -9,7 +10,7 @@ import { UiDetailedPillarScore, UiMemberDetailedScoring } from '../../consortium
 @Component({
     selector: 'app-consortium-member-accordion',
     standalone: true,
-    imports: [CommonModule, MatExpansionModule, FinacesRiskBadgeComponent, FinacesScoreGaugeComponent],
+    imports: [MatExpansionModule, FinacesRiskBadgeComponent, FinacesScoreGaugeComponent, NgClass, DecimalPipe],
     templateUrl: './consortium-member-accordion.component.html',
     styleUrls: ['./consortium-member-accordion.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
