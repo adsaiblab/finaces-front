@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    @if(marketData.case_type === 'GROUPEMENT' && members.length > 0) {
+    @if((marketData.case_type === 'CONSORTIUM' || marketData.case_type === 'LOTS') && members.length > 0) {
     <div class="summary-card">
         <h3><mat-icon>group</mat-icon> Joint Venture Members ({{ members.length }})</h3>
         <div class="groupement-list">

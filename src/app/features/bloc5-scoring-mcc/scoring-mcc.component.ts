@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -50,6 +50,23 @@ export class ScoringMccComponent {
   public isLoading = signal<boolean>(true);
   public isOverriding = signal<boolean>(false);
   public error = signal<string | null>(null);
+
+  // T36: Computed pillar accessors for template convenience (ScorecardOut.pillars[])
+  readonly liquidityPillar = computed(() =>
+    this.scoringData()?.pillars.find(p => p.name.toLowerCase().includes('liquid')) ?? null
+  );
+  readonly solvencyPillar = computed(() =>
+    this.scoringData()?.pillars.find(p => p.name.toLowerCase().includes('solven')) ?? null
+  );
+  readonly profitabilityPillar = computed(() =>
+    this.scoringData()?.pillars.find(p => p.name.toLowerCase().includes('profit')) ?? null
+  );
+  readonly capacityPillar = computed(() =>
+    this.scoringData()?.pillars.find(p => p.name.toLowerCase().includes('capaci')) ?? null
+  );
+  readonly qualityPillar = computed(() =>
+    this.scoringData()?.pillars.find(p => p.name.toLowerCase().includes('quality')) ?? null
+  );
 
   ngOnInit(): void {
     const resolvedId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';

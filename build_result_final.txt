@@ -1,0 +1,67 @@
+❯ Building...
+✔ Building...
+Initial chunk files | Names                 |  Raw size | Estimated transfer size
+chunk-MYPPQ2PG.js   | -                     | 177.66 kB |                51.46 kB
+chunk-KYPQHS6R.js   | -                     |  96.62 kB |                22.41 kB
+chunk-7W4QH7I6.js   | -                     |  83.17 kB |                20.62 kB
+main-LYMCOY4M.js    | main                  |  71.97 kB |                19.33 kB
+chunk-NQVBA4TK.js   | -                     |  62.16 kB |                17.39 kB
+styles-46MOTYPJ.css | styles                |  61.88 kB |                 8.94 kB
+chunk-DS4JCWDI.js   | -                     |  56.36 kB |                 9.24 kB
+chunk-VEXVNWRB.js   | -                     |  12.39 kB |                 3.77 kB
+chunk-H6QXHAKR.js   | -                     |   2.51 kB |               692 bytes
+chunk-6DRCW3YF.js   | -                     |   1.77 kB |               789 bytes
+chunk-7Z6EY43P.js   | -                     |   1.35 kB |               556 bytes
+chunk-QWO2K56B.js   | -                     | 870 bytes |               870 bytes
+chunk-SEECABX4.js   | -                     | 164 bytes |               164 bytes
+
+                    | Initial total         | 628.89 kB |               156.24 kB
+
+Lazy chunk files    | Names                 |  Raw size | Estimated transfer size
+chunk-DS2XCV7R.js   | -                     | 170.03 kB |                52.17 kB
+chunk-RVLFZQAJ.js   | gate-component        | 123.98 kB |                28.11 kB
+chunk-WKEC5J7D.js   | -                     | 106.82 kB |                28.46 kB
+chunk-KJWJQBOP.js   | case-create-component |  84.48 kB |                18.63 kB
+chunk-YAAYRTOE.js   | financials-component  |  57.54 kB |                10.18 kB
+chunk-LNJCPDFQ.js   | -                     |  47.94 kB |                 9.56 kB
+chunk-2XGDB7QF.js   | -                     |  45.92 kB |                 7.41 kB
+chunk-I4GQ3YNV.js   | -                     |  42.48 kB |                 9.14 kB
+chunk-6OL7ZAR3.js   | -                     |  42.26 kB |                 9.21 kB
+chunk-XFPWYX5N.js   | -                     |  39.52 kB |                 9.25 kB
+chunk-WVILOAZW.js   | expert-component      |  30.69 kB |                 7.36 kB
+chunk-MKJT5DLV.js   | -                     |  28.07 kB |                 6.67 kB
+chunk-ILIV2W6M.js   | -                     |  27.15 kB |                 4.71 kB
+chunk-IUOA3GNR.js   | dashboard-component   |  26.90 kB |                 6.48 kB
+chunk-C5E6OYHV.js   | tension-component     |  25.97 kB |                 6.52 kB
+...and 32 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [6.567 seconds] - 2026-03-28T12:45:11.956Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: ModelConfigDialogComponent is not used within the template of AdminIaComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/admin-ia.component.ts:25:4:
+[37m      25 │     [32mModelConfigDialogComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: FinacesScoreGaugeComponent is not used within the template of RapportComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc10-rapport/rapport.component.ts:24:4:
+[37m      24 │     [32mFinacesScoreGaugeComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mbundle initial exceeded maximum budget. Budget 500.00 kB was not met by 128.89 kB with a total of 628.89 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/bloc1b-gate/components/decision-column/decision-column.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.01 kB with a total of 5.01 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.55 kB with a total of 5.55 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/auth/login/login.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 417 bytes with a total of 4.42 kB.[0m
+
+
+Output location: /Users/adsa/Documents/aDSa.DEV/FinaCES/finaces-front/dist/finaces-front
+

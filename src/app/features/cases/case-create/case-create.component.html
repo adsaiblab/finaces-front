@@ -27,7 +27,7 @@
         <mat-step [stepControl]="bidderForm">
             <ng-template matStepLabel>Bidder</ng-template>
             <app-step2-bidder [formGroup]="bidderForm" />
-            @if(marketInfoForm.get('case_type')?.value === 'GROUPEMENT') {
+            @if(marketInfoForm.get('case_type')?.value === 'CONSORTIUM' || marketInfoForm.get('case_type')?.value === 'LOTS') {
             <div class="groupement-members-wrapper">
                 <app-groupement-members [membersArray]="groupementMembersArray" />
             </div>

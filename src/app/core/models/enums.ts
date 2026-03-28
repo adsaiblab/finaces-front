@@ -1,0 +1,106 @@
+// Canonical enums — Single Source of Truth
+
+export enum CaseStatus {
+  DRAFT = 'DRAFT',
+  PENDING_GATE = 'PENDING_GATE',
+  FINANCIAL_INPUT = 'FINANCIAL_INPUT',
+  NORMALIZATION_DONE = 'NORMALIZATION_DONE',
+  RATIOS_COMPUTED = 'RATIOS_COMPUTED',
+  SCORING_DONE = 'SCORING_DONE',
+  STRESS_DONE = 'STRESS_DONE',
+  EXPERT_REVIEWED = 'EXPERT_REVIEWED',
+  CLOSED = 'CLOSED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+export enum CaseType {
+  SINGLE = 'SINGLE',
+  CONSORTIUM = 'CONSORTIUM',
+  LOTS = 'LOTS',
+}
+
+export enum RiskClass {
+  LOW = 'LOW',
+  MODERATE = 'MODERATE',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
+}
+
+export enum GateVerdict {
+  OK = 'OK',
+  RESERVE = 'RESERVE',
+  BLOCKING = 'BLOCKING',
+}
+
+export enum ReliabilityLevel {
+  HIGH = 'HIGH',
+  MEDIUM = 'MEDIUM',
+  LOW = 'LOW',
+  UNAUDITED = 'UNAUDITED',
+}
+
+export enum DocType {
+  FINANCIAL_STATEMENTS = 'FINANCIAL_STATEMENTS',
+  AUDITOR_OPINION = 'AUDITOR_OPINION',
+  ANNEXES = 'ANNEXES',
+  CA_DECLARATION = 'CA_DECLARATION',
+  BANK_REFERENCES = 'BANK_REFERENCES',
+  OTHER = 'OTHER',
+}
+
+export enum DocStatus {
+  PRESENT = 'PRESENT',
+  MISSING = 'MISSING',
+  INCOMPLETE = 'INCOMPLETE',
+  REJECTED = 'REJECTED',
+}
+
+export enum PillarLabel {
+  INADEQUATE = 'INADEQUATE',
+  WEAK = 'WEAK',
+  MODERATE = 'MODERATE',
+  STRONG = 'STRONG',
+  VERY_STRONG = 'VERY_STRONG',
+}
+
+export enum RiskProfile {
+  BALANCED = 'BALANCED',
+  ASYMMETRICAL = 'ASYMMETRICAL',
+  AGGRESSIVE = 'AGGRESSIVE',
+  DEFENSIVE = 'DEFENSIVE',
+  CLASSIC = 'CLASSIC',
+}
+
+export enum JVType {
+  JOINT_AND_SEVERAL = 'JOINT_AND_SEVERAL',
+  JOINT = 'JOINT',
+  SEPARATE = 'SEPARATE',
+}
+
+export enum OverrideRecommendation {
+  NONE = 'NONE',
+  UPGRADE = 'UPGRADE',
+  DOWNGRADE = 'DOWNGRADE',
+}
+
+export enum StressMode {
+  CONTRACT = 'CONTRACT',
+  MACRO_SHOCK = 'MACRO_SHOCK',
+}
+
+export enum ShapDirection {
+  POSITIVE = 'POSITIVE',
+  NEGATIVE = 'NEGATIVE',
+}
+
+export enum ShapMagnitude {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+}
+
+export enum FinalDecision {
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  ESCALATED = 'ESCALATED',
+}

@@ -1,4 +1,4 @@
-import { PillarLabel } from '../../core/models/scoring.model';
+import { PillarLabel } from '../../core/models/enums';
 
 // [UI SIMULATION] - This interface defines the target structure for detailed member scoring.
 // Currently simulated in the UI while waiting for Backend updates.

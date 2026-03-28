@@ -46,7 +46,7 @@ export class ConsortiumMemberDialogComponent {
 
   onSubmit(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.getRawValue() as ConsortiumMemberCreate);
+      this.dialogRef.close(this.form.getRawValue() as any as ConsortiumMemberCreate);
     } else {
       this.form.markAllAsTouched();
     }

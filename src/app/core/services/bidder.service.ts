@@ -25,6 +25,10 @@ export class BidderService {
             .pipe(catchError(this.handleError));
     }
 
+    /**
+     * @deprecated T38/Q27:B — Bidders are now created alongside cases via POST /cases.
+     * Use CaseService.createCase() with bidder_name/bidder_id instead.
+     */
     createBidder(data: BidderCreateSchema): Observable<BidderOut> {
         return this.http.post<BidderOut>(this.apiUrl, data)
             .pipe(catchError(this.handleError));

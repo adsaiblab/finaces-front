@@ -121,8 +121,8 @@ export class ExpertComponent {
       capacity_comment: formVal.capacity_comment || '',
       quality_comment: formVal.quality_comment || '',
       dynamic_analysis_comment: formVal.dynamic_analysis_comment || '',
-      mitigating_factors: formVal.mitigating_factors || undefined,
-      risk_factors: formVal.risk_factors || undefined,
+      mitigating_factors: formVal.mitigating_factors ? (Array.isArray(formVal.mitigating_factors) ? formVal.mitigating_factors : [formVal.mitigating_factors]) : undefined,
+      risk_factors: formVal.risk_factors ? (Array.isArray(formVal.risk_factors) ? formVal.risk_factors : [formVal.risk_factors]) : undefined,
       override_recommendation:
         formVal.override_recommendation === OverrideRecommendation.NONE
           ? undefined

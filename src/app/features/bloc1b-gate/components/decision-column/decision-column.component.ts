@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { GateDecisionSchema } from '../../../../core/models/gate.model';
+import { GateVerdict } from '../../../../core/models/enums';
 
 @Component({
     selector: 'app-decision-column',
@@ -24,6 +25,6 @@ export class DecisionColumnComponent {
     readonly correctDocuments = output<void>();
     readonly goToDashboard = output<void>();
 
-    readonly isPassed = computed(() => this.decision()?.verdict === 'PASSED');
-    readonly isBlocked = computed(() => this.decision()?.verdict === 'BLOCKED');
+    readonly isPassed = computed(() => this.decision()?.verdict === GateVerdict.OK);
+    readonly isBlocked = computed(() => this.decision()?.verdict === GateVerdict.BLOCKING);
 }

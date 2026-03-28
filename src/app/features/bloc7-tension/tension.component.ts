@@ -80,7 +80,7 @@ export class TensionComponent {
         return;
       }
 
-      const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia);
+      const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia as any);
       this.tensionData.set(result);
       this.isLoading.set(false);
     });

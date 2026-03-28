@@ -12,6 +12,7 @@ export interface DashboardStatsOut {
     last_updated: string;
 }
 
+
 export interface ConvergenceChartOut {
     dates: string[];
     mcc_scores: number[];

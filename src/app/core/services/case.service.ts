@@ -70,10 +70,8 @@ export class CaseService {
         ).pipe(catchError(this.handleError));
     }
 
-
-
     getDashboardStats(): Observable<DashboardStatsOut> {
-        return this.http.get<DashboardStatsOut>(this.dashboardUrl)
+        return this.http.get<DashboardStatsOut>(`${this.dashboardUrl}/stats`)
             .pipe(catchError(this.handleError));
     }
 
@@ -103,9 +101,9 @@ export class CaseService {
         ).pipe(catchError(this.handleError));
     }
 
-    patchCaseStatus(caseId: string, status: string): Observable<EvaluationCaseDetailOut> {
+    patchCaseStatus(caseId: string, transition: StatusTransition): Observable<EvaluationCaseDetailOut> {
         return this.http.patch<EvaluationCaseDetailOut>(
-            `${this.apiUrl}/${caseId}`, { status }
+            `${this.apiUrl}/${caseId}/status`, transition
         ).pipe(catchError(this.handleError));
     }
 

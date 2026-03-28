@@ -17,7 +17,7 @@ export const consortiumGuard: CanActivateFn = (route) => {
 
     return caseService.getCaseDetail(caseId).pipe(
         map(detail => {
-            if (detail.case_type === 'GROUPEMENT') {
+            if (detail.case_type === 'CONSORTIUM' || detail.case_type === 'LOTS') {
                 return true;
             }
             router.navigate(['/dashboard']);

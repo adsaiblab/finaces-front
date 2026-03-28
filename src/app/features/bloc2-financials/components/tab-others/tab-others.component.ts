@@ -2,11 +2,14 @@ import { Component, ChangeDetectionStrategy, input, output, inject } from '@angu
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-tab-others',
   standalone: true,
-  imports: [ReactiveFormsModule, MatSlideToggleModule],
+  imports: [ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './tab-others.component.html',
   styleUrls: ['./tab-others.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,6 +21,12 @@ export class TabOthersComponent {
   public othersDataChange = output<{ data: any }>();
 
   public othersForm: FormGroup = this.fb.group({
+    // T08: Metadata fields exposed in the form
+    currency_original: ['MAD', Validators.required],
+    exchange_rate_to_usd: [1.0, [Validators.required, Validators.min(0)]],
+    referentiel: ['PCM', Validators.required],
+    is_consolidated: [false, Validators.required],
+    // Existing fields
     headcount: [0, [Validators.required, Validators.min(0)]],
     backlogValue: [0, [Validators.required, Validators.min(0)]],
     distributedDividends: [0, [Validators.required, Validators.min(0)]],

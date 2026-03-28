@@ -15,6 +15,7 @@ import { CaseService } from '../../core/services/case.service';
 import { DocumentService } from '../../core/services/document.service';
 import { EvaluationCaseDetailOut } from '../../core/models';
 import { GateDocumentOut, GateDecisionSchema } from '../../core/models/gate.model';
+import { GateVerdict, CaseStatus } from '../../core/models/enums';
 
 import { ChecklistColumnComponent } from './components/checklist-column/checklist-column.component';
 import { DocumentsColumnComponent } from './components/documents-column/documents-column.component';
@@ -176,7 +177,7 @@ export class GateComponent {
 
   onViewDetails(doc: GateDocumentOut): void {
     // Optionnel: Ouvrir un dialog de détails en Read-Only
-    this.snackBar.open(`Détails du document: ${doc.filename}`, 'Fermer', { duration: 2000 });
+    this.snackBar.open(`Détails du document: ${doc.file_name}`, 'Fermer', { duration: 2000 });
   }
 
   // --- ACTIONS COLONNE 3 (DECISION) ---
@@ -190,7 +191,7 @@ export class GateComponent {
           id: 'mock-decision-id',
           case_id: this.caseId(),
           is_passed: true,
-          verdict: 'PASSED',
+          verdict: GateVerdict.OK,
           reliability_level: 'HIGH',
           reliability_score: 87,
           blocking_reasons: [],
@@ -225,7 +226,7 @@ export class GateComponent {
   }
 
   onSealGate(): void {
-    this.caseService.patchCaseStatus(this.caseId(), 'FINANCIAL_INPUT').pipe(
+    this.caseService.patchCaseStatus(this.caseId(), { new_status: CaseStatus.FINANCIAL_INPUT }).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: () => {

@@ -1,0 +1,313 @@
+❯ Building...
+✔ Building...
+Application bundle generation failed. [4.682 seconds] - 2026-03-28T10:37:16.915Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: ModelConfigDialogComponent is not used within the template of AdminIaComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/admin-ia/admin-ia.component.ts:25:4:
+[37m      25 │     [32mModelConfigDialogComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: FinacesScoreGaugeComponent is not used within the template of RapportComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc10-rapport/rapport.component.ts:24:4:
+[37m      24 │     [32mFinacesScoreGaugeComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"DRAFT"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:116:8:
+[37m      116 │         [32m'DRAFT'[37m, 'PENDING_GATE', 'FINANCIAL_INPUT', 'NORMALIZATIO...
+          ╵         [32m~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"PENDING_GATE"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:116:17:
+[37m      116 │         'DRAFT', [32m'PENDING_GATE'[37m, 'FINANCIAL_INPUT', 'NORMALIZATIO...
+          ╵                  [32m~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"FINANCIAL_INPUT"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:116:33:
+[37m      116 │ ...'DRAFT', 'PENDING_GATE', [32m'FINANCIAL_INPUT'[37m, 'NORMALIZATION_DONE',
+          ╵                             [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"NORMALIZATION_DONE"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:116:52:
+[37m      116 │ ...'DRAFT', 'PENDING_GATE', 'FINANCIAL_INPUT', [32m'NORMALIZATION_DONE'[37m,
+          ╵                                                [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"RATIOS_COMPUTED"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:117:8:
+[37m      117 │         [32m'RATIOS_COMPUTED'[37m, 'SCORING_DONE', 'STRESS_DONE', 'EXPERT...
+          ╵         [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"SCORING_DONE"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:117:27:
+[37m      117 │         'RATIOS_COMPUTED', [32m'SCORING_DONE'[37m, 'STRESS_DONE', 'EXPERT...
+          ╵                            [32m~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"STRESS_DONE"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:117:43:
+[37m      117 │ ...TIOS_COMPUTED', 'SCORING_DONE', [32m'STRESS_DONE'[37m, 'EXPERT_REVIEWED',
+          ╵                                    [32m~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"EXPERT_REVIEWED"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:117:58:
+[37m      117 │ ...TIOS_COMPUTED', 'SCORING_DONE', 'STRESS_DONE', [32m'EXPERT_REVIEWED'[37m,
+          ╵                                                   [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"CLOSED"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:118:8:
+[37m      118 │         [32m'CLOSED'[37m, 'ARCHIVED'
+          ╵         [32m~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"ARCHIVED"' is not assignable to type 'CaseStatus'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:118:18:
+[37m      118 │         'CLOSED', [32m'ARCHIVED'[37m
+          ╵                   [32m~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"SINGLE"' is not assignable to type 'CaseType'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:124:36:
+[37m      124 │     const validTypes: CaseType[] = [[32m'SINGLE'[37m, 'CONSORTIUM', 'LOTS'];
+          ╵                                     [32m~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"CONSORTIUM"' is not assignable to type 'CaseType'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:124:46:
+[37m      124 │     const validTypes: CaseType[] = ['SINGLE', [32m'CONSORTIUM'[37m, 'LOTS'];
+          ╵                                               [32m~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type '"LOTS"' is not assignable to type 'CaseType'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/case.model.ts:124:60:
+[37m      124 │     const validTypes: CaseType[] = ['SINGLE', 'CONSORTIUM', [32m'LOTS'[37m];
+          ╵                                                             [32m~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2308: Module './enums' has already exported a member named 'PillarLabel'. Consider explicitly re-exporting to resolve the ambiguity.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/models/index.ts:5:0:
+[37m      5 │ [32mexport * from './scoring.model';[37m
+        ╵ [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2352: Conversion of type '{ member_id: string | null; role: string | null; participation_pct: number | null; }' to type 'ConsortiumMemberCreate' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ member_id: string | null; role: string | null; participation_pct: number | null; }' is missing the following properties from type 'ConsortiumMemberCreate': bidder_id, bidder_name[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc12-consortium/components/consortium-member-dialog/consortium-member-dialog.component.ts:49:27:
+[37m      49 │ ...ialogRef.close([32mthis.form.getRawValue() as ConsortiumMemberCreate[37m);
+         ╵                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'fiscal_year' does not exist on type 'GateDocumentOut'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/checklist-column/checklist-column.component.ts:65:14:
+[37m      65 │             d.[32mfiscal_year[37m === year && d.document_type === rt.type ...
+         ╵               [32m~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'integrity_status' does not exist on type 'GateDocumentOut'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/checklist-column/checklist-column.component.ts:65:71:
+[37m      65 │ ...ear && d.document_type === rt.type && d.[32mintegrity_status[37m !== 'KO',
+         ╵                                            [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2367: This comparison appears to be unintentional because the types 'GateVerdict | undefined' and '"PASSED"' have no overlap.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/decision-column/decision-column.component.ts:27:39:
+[37m      27 │ ... isPassed = computed(() => [32mthis.decision()?.verdict === 'PASSED'[37m);
+         ╵                               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2367: This comparison appears to be unintentional because the types 'GateVerdict | undefined' and '"BLOCKED"' have no overlap.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/components/decision-column/decision-column.component.ts:28:40:
+[37m      28 │ ...sBlocked = computed(() => [32mthis.decision()?.verdict === 'BLOCKED'[37m);
+         ╵                              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'filename' does not exist on type 'GateDocumentOut'. Did you mean 'file_name'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.ts:179:51:
+[37m      179 │ ...Détails du document: ${doc[32m.filenam[37me}`, 'Fermer', { duration: ...
+          ╵                              [32m~~~~~~~~[0m
+
+  'file_name' is declared here.
+
+    src/app/core/models/gate.model.ts:18:2:
+[37m      18 │   [32mfile_name[37m: string;
+         ╵   [32m~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2352: Conversion of type '{ id: string; case_id: string; is_passed: true; verdict: "PASSED"; reliability_level: "HIGH"; reliability_score: number; blocking_reasons: never[]; reserve_flags: never[]; missing_docs: never[]; documents_received: { ...; }; audit_log: never[]; evaluated_at: string; evaluated_by: string; }' to type 'GateDecisionSchema' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'verdict' are incompatible.
+    Type '"PASSED"' is not comparable to type 'GateVerdict'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.ts:189:11:
+[37m      189 │       ? of([32m{[37m
+          ╵            [32m^[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2345: Argument of type 'string' is not assignable to parameter of type 'StatusTransition'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc1b-gate/gate.component.ts:228:52:
+[37m      228 │ ...seService.patchCaseStatus(this.caseId(), [32m'FINANCIAL_INPUT'[37m).pipe(
+          ╵                                             [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'accounts_receivable' does not exist on type 'BalanceSheetAssets'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:48:81:
+[37m      48 │ ...rmalized_bilan_actif?.[32maccounts_receivable[37m || 234567, rawData.no...
+         ╵                          [32m~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'accounts_receivable' does not exist on type 'BalanceSheetAssets'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:48:144:
+[37m      48 │ ...rawData.normalized_bilan_actif?.[32maccounts_receivable[37m || 234567, 1),
+         ╵                                    [32m~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'tangible_assets' does not exist on type 'BalanceSheetAssets'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:53:85:
+[37m      53 │ ...wData.normalized_bilan_actif?.[32mtangible_assets[37m || 612345, 1, 'Δ'),
+         ╵                                  [32m~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'intangible_assets' does not exist on type 'BalanceSheetAssets'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:54:79:
+[37m      54 │ ...ormalized_bilan_actif?.[32mintangible_assets[37m || 678901, rawData.nor...
+         ╵                           [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'intangible_assets' does not exist on type 'BalanceSheetAssets'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:54:140:
+[37m      54 │ ..., rawData.normalized_bilan_actif?.[32mintangible_assets[37m || 678901, 1),
+         ╵                                      [32m~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'non_current_assets' does not exist on type 'BalanceSheetAssets'. Did you mean 'current_assets'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:55:127:
+[37m      55 │ ...ormalized_bilan_actif?.[32mnon_current_assets[37m || 3065781, deltaAmou...
+         ╵                           [32m~~~~~~~~~~~~~~~~~~[0m
+
+  'current_assets' is declared here.
+
+    src/app/core/models/financial.model.ts:8:2:
+[37m      8 │   [32mcurrent_assets[37m: number;
+        ╵   [32m~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'total_actif' does not exist on type 'BalanceSheetAssets'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:57:115:
+[37m      57 │ ...a.normalized_bilan_actif?.[32mtotal_actif[37m || 4208787, deltaAmount: ...
+         ╵                              [32m~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'share_capital' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:60:84:
+[37m      60 │ ...000, rawData.normalized_bilan_passif?.[32mshare_capital[37m || 100000, 1),
+         ╵                                          [32m~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'retained_earnings_prior' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:61:88:
+[37m      61 │ ...ta.normalized_bilan_passif?.[32mretained_earnings_prior[37m || 300000, 1),
+         ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'current_year_earnings' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:62:92:
+[37m      62 │ ...ormalized_bilan_passif?.[32mcurrent_year_earnings[37m || 450000, 1, 'Δ'),
+         ╵                            [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'total_equity' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:63:116:
+[37m      63 │ ....normalized_bilan_passif?.[32mtotal_equity[37m || 1050000, deltaAmount:...
+         ╵                              [32m~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'short_term_debt' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:66:87:
+[37m      66 │ ...Data.normalized_bilan_passif?.[32mshort_term_debt[37m || 950000, 1, 'Δ'),
+         ╵                                  [32m~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'accounts_payable' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:67:87:
+[37m      67 │ ..., rawData.normalized_bilan_passif?.[32maccounts_payable[37m || 600000, 1),
+         ╵                                       [32m~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2551: Property 'total_current_liabilities' does not exist on type 'BalanceSheetLiabilities'. Did you mean 'current_liabilities'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:68:129:
+[37m      68 │ ...ized_bilan_passif?.[32mtotal_current_liabilities[37m || 2450000, deltaA...
+         ╵                       [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  'current_liabilities' is declared here.
+
+    src/app/core/models/financial.model.ts:16:2:
+[37m      16 │   [32mcurrent_liabilities[37m: number;
+         ╵   [32m~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'total_non_current_liabilities' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:72:127:
+[37m      72 │ ...ed_bilan_passif?.[32mtotal_non_current_liabilities[37m || 1650000, delt...
+         ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'total_liabilities_and_equity' does not exist on type 'BalanceSheetLiabilities'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.ts:74:130:
+[37m      74 │ ...zed_bilan_passif?.[32mtotal_liabilities_and_equity[37m || 5150000, delt...
+         ╵                      [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2345: Argument of type 'IAPredictionOut' is not assignable to parameter of type 'IAPredictionResult'.
+  Type 'IAPredictionOut' is missing the following properties from type 'IAPredictionResult': model_version, prediction_timestamp, predicted_score, predicted_risk_class, and 5 more.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/bloc7-tension/tension.component.ts:83:72:
+[37m      83 │ ...ult = this.tensionCalc.calculateTension(data.mcc as any, [32mdata.ia[37m);
+         ╵                                                             [32m~~~~~~~[0m
+
+

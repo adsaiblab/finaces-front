@@ -1,8 +1,8 @@
 import { PercentPipe, DecimalPipe, NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { of, forkJoin } from 'rxjs';
+import { delay, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -67,11 +67,23 @@ export class IaComponent {
     this.error.set(null);
     this.simulationScore.set(null);
 
-    this.iaService.getPrediction(this.caseId()).pipe(
-      takeUntilDestroyed(this.destroyRef)
+    // T40: forkJoin prediction + model info for enriched display
+    forkJoin({
+      prediction: this.iaService.getPrediction(this.caseId()),
+      model: this.iaService.getActiveModel(),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      map(({ prediction, model }) => ({
+        ...prediction,
+        model_performance: {
+          auc_roc: model.auc_roc,
+          accuracy: model.accuracy,
+          f1_score: model.f1_score,
+        },
+      }))
     ).subscribe({
-      next: (data) => {
-        this.predictionData.set(data);
+      next: (enriched) => {
+        this.predictionData.set(enriched as any);
         this.isLoading.set(false);
       },
       error: () => {

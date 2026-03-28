@@ -1,3 +1,4 @@
+export * from './enums';
 export * from './dashboard.model';
 export * from './case.model';
 export * from './financial.model';

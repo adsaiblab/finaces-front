@@ -62,7 +62,7 @@ export class ChecklistColumnComponent implements OnChanges {
         // Un document est considéré valide s'il est présent et n'est pas en statut d'intégrité KO
         const isUploaded = this.documents.some(
           (d) =>
-            d.fiscal_year === year && d.document_type === rt.type && d.integrity_status !== 'KO',
+            d.document_type === rt.type && d.status !== 'REJECTED',
         );
 
         if (rt.required) {

@@ -1,129 +1,90 @@
-export enum AccountingStandard {
-    IFRS = 'IFRS',
-    LOCAL = 'LOCAL',
-    USGAAP = 'USGAAP',
+import { CaseStatus } from './enums';
+
+export enum AccountingStandard { IFRS = 'IFRS', LOCAL = 'LOCAL', USGAAP = 'USGAAP' }
+export enum CurrencyCode { USD = 'USD', EUR = 'EUR', GBP = 'GBP', XOF = 'XOF', XAF = 'XAF', ZAR = 'ZAR', MAD = 'MAD', TND = 'TND', EGP = 'EGP', DZD = 'DZD' }
+
+export interface BalanceSheetAssets {
+  total_assets: number;
+  current_assets: number;
+  liquid_assets: number;
+  inventory: number;
+  other_noncurrent_assets: number;
 }
 
-export enum CurrencyCode {
-    USD = 'USD',
-    EUR = 'EUR',
-    GBP = 'GBP',
-    XOF = 'XOF',
-    XAF = 'XAF',
-    ZAR = 'ZAR',
-    MAD = 'MAD',
-    TND = 'TND',
-    EGP = 'EGP',
-    DZD = 'DZD',
+export interface BalanceSheetLiabilities {
+  total_liabilities: number;
+  current_liabilities: number;
+  long_term_debt: number;
+  equity: number;
 }
 
-export interface BilanActifSchema {
-    liquid_assets: number;
-    accounts_receivable: number;
-    inventory: number;
-    other_current_assets: number;
-    current_assets?: number;
-    tangible_assets: number;
-    intangible_assets: number;
-    financial_assets: number;
-    other_noncurrent_assets: number;
-    non_current_assets?: number;
-    total_actif?: number;
+export interface IncomeStatement {
+  revenue: number;
+  gross_profit: number;
+  operating_income: number;
+  ebitda: number;
+  net_income: number;
+  extraordinary_expenses: number;
+  dividends: number;
 }
 
-export interface BilanPassifSchema {
-    share_capital: number;
-    reserves: number;
-    retained_earnings_prior: number;
-    current_year_earnings: number;
-    total_equity?: number;
-    short_term_debt: number;
-    accounts_payable: number;
-    tax_and_social_liabilities: number;
-    other_current_liabilities: number;
-    total_current_liabilities?: number;
-    long_term_debt: number;
-    long_term_provisions: number;
-    total_non_current_liabilities?: number;
-    total_liabilities_and_equity?: number;
-}
-
-export interface IncomeStatementSchema {
-    revenue: number;
-    sold_production: number;
-    other_operating_revenue: number;
-    operating_revenue?: number;
-    operating_expenses: number;
-    operating_income?: number;
-    financial_revenue: number;
-    financial_expenses: number;
-    financial_income?: number;
-    income_before_tax?: number;
-    extraordinary_income: number;
-    extraordinary_expenses: number;
-    income_tax: number;
-    net_income?: number;
-    ebitda: number;
-}
-
-export interface CashFlowSchema {
-    operating_cash_flow: number;
-    investing_cash_flow: number;
-    financing_cash_flow: number;
-    change_in_cash?: number;
-    beginning_cash: number;
-    ending_cash?: number;
-    headcount: number;
-    backlog_value: number;
-    capex: number;
-    dividends: number;
+export interface CashFlowStatement {
+  operating_cash_flow: number;
+  investing_cash_flow: number;
+  financing_cash_flow: number;
+  free_cash_flow: number;
 }
 
 export interface FinancialStatementCreate {
-    fiscal_year: number;
-    bilan_actif: BilanActifSchema;
-    bilan_passif: BilanPassifSchema;
-    income_statement: IncomeStatementSchema;
-    cash_flow: CashFlowSchema;
+  fiscal_year: number;
+  currency_original: string;
+  exchange_rate_to_usd: number;
+  referentiel: string;
+  is_consolidated: boolean;
+  balance_sheet_assets: BalanceSheetAssets;
+  balance_sheet_liabilities: BalanceSheetLiabilities;
+  income_statement: IncomeStatement;
+  cash_flow: CashFlowStatement;
 }
 
-export interface FinancialStatementRawOut {
-    id: string;
-    case_id: string;
-    fiscal_year: number;
-    bilan_actif: BilanActifSchema;
-    bilan_passif: BilanPassifSchema;
-    income_statement: IncomeStatementSchema;
-    cash_flow: CashFlowSchema;
-    created_at: string;
-    updated_at: string;
+export interface FinancialStatementOut extends FinancialStatementCreate {
+  id: string;
+  case_id: string;
+  created_at: string;
 }
+
+// Legacy aliases for backward compatibility
+export type BilanActifSchema = BalanceSheetAssets;
+export type BilanPassifSchema = BalanceSheetLiabilities;
+export type IncomeStatementSchema = IncomeStatement;
+export type CashFlowSchema = CashFlowStatement;
+export type FinancialStatementRawOut = FinancialStatementOut;
 
 export interface FinancialStatementNormalizedSchema {
-    statement_id: string;
-    fiscal_year: number;
-    normalized_revenue: number;
-    normalized_ebitda: number;
-    normalized_net_income: number;
-    normalized_working_capital: number;
-    normalized_cash_flow: number;
-    adjustments: NormalizationAdjustment[];
-    confidence_score: number;
-    normalization_date: string;
-    normalized_bilan_actif?: BilanActifSchema;
-    normalized_bilan_passif?: BilanPassifSchema;
-    normalized_income_statement?: IncomeStatementSchema;
-    normalized_cash_flow_statement?: CashFlowSchema;
-    source_standard?: string;
-    applied_standard?: string;
-    exchange_rate_used?: number;
-    exchange_rate_date?: string;
+  statement_id: string;
+  fiscal_year: number;
+  normalized_revenue: number;
+  normalized_ebitda: number;
+  normalized_net_income: number;
+  normalized_working_capital: number;
+  normalized_cash_flow: number;
+  adjustments: NormalizationAdjustment[];
+  confidence_score: number;
+  normalization_date: string;
+  normalized_bilan_actif?: BalanceSheetAssets;
+  normalized_bilan_passif?: BalanceSheetLiabilities;
+  normalized_income_statement?: IncomeStatement;
+  normalized_cash_flow_statement?: CashFlowStatement;
+  source_standard?: string;
+  applied_standard?: string;
+  exchange_rate_used?: number;
+  exchange_rate_date?: string;
 }
 
 export interface NormalizationAdjustment {
-    line_item: string;
-    original_value: number;
-    adjusted_value: number;
-    reason: string;
-    confidence: number;
+  line_item: string;
+  original_value: number;
+  adjusted_value: number;
+  reason: string;
+  confidence: number;
 }

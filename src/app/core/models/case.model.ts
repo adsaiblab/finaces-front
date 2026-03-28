@@ -1,26 +1,12 @@
+import { CaseStatus, CaseType } from './enums';
 import { ConsortiumMember } from './consortium.model';
 import { GateDocumentOut } from './gate.model';
 import { FinancialStatementRawOut } from './financial.model';
 import { ScorecardOutputSchema } from './scoring.model';
 import { ExpertReviewOutputSchema } from './expert.model';
-export enum CaseType {
-    SINGLE = 'SINGLE',
-    GROUPEMENT = 'GROUPEMENT',
-    LOTS = 'LOTS',
-}
 
-export enum CaseStatus {
-    DRAFT = 'DRAFT',
-    PENDING_GATE = 'PENDING_GATE',
-    FINANCIAL_INPUT = 'FINANCIAL_INPUT',
-    NORMALIZATION_DONE = 'NORMALIZATION_DONE',
-    RATIOS_COMPUTED = 'RATIOS_COMPUTED',
-    SCORING_DONE = 'SCORING_DONE',
-    STRESS_DONE = 'STRESS_DONE',
-    EXPERT_REVIEWED = 'EXPERT_REVIEWED',
-    CLOSED = 'CLOSED',
-    CANCELLED = 'CANCELLED',
-}
+// Re-export canonical types so existing imports still work
+export { CaseStatus, CaseType } from './enums';
 
 export enum DocumentStatus {
     UPLOADED = 'UPLOADED',
@@ -30,8 +16,6 @@ export enum DocumentStatus {
     REJECTED = 'REJECTED',
 }
 
-
-
 export interface GroupementMember {
     name: string;
     role: 'LEADER' | 'MEMBER';
@@ -39,7 +23,7 @@ export interface GroupementMember {
 }
 
 export interface CaseCreate {
-    // Etape 1: Info Marché
+    // Etape 1: Info Marche
     case_type: CaseType;
     market_reference: string;
     market_label: string;
@@ -52,18 +36,18 @@ export interface CaseCreate {
     notes?: string;
 
     // Etape 2: Soumissionnaire
-    bidder_id?: string | null; // Renseigné si sélectionné via recherche
-    bidder_name?: string;      // Renseigné si nouveau soumissionnaire
-    legal_form?: string;       // Renseigné si nouveau soumissionnaire
+    bidder_id?: string | null;
+    bidder_name?: string;
+    legal_form?: string;
     registration_number?: string;
     email?: string;
     phone?: string;
 
-    // Optionnel si case_type === GROUPEMENT
+    // Optionnel si case_type === CONSORTIUM
     members?: GroupementMember[];
 
-    // Meta gérées par le Stepper
-    status: 'DRAFT' | 'PENDING_GATE';
+    // Meta gerees par le Stepper
+    status: CaseStatus.DRAFT | CaseStatus.PENDING_GATE;
     case_manager_id?: string;
 }
 
@@ -128,9 +112,9 @@ export interface BidderOut {
 }
 
 export function isCaseStatus(value: any): value is CaseStatus {
-    return Object.values(CaseStatus).includes(value);
+    return Object.values(CaseStatus).includes(value as CaseStatus);
 }
 
 export function isCaseType(value: any): value is CaseType {
-    return Object.values(CaseType).includes(value);
+    return Object.values(CaseType).includes(value as CaseType);
 }
