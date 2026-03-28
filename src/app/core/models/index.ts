@@ -11,3 +11,5 @@ export * from './consortium.model';
 export * from './gate.model';
 export * from './tension.model';
 export * from './ratio.model';
+export * from './report.model';
+export * from './audit.model';

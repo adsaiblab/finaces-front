@@ -1,3 +1,9 @@
+// ═══════════════════════════════════════════════════════════════
+// T41 + T42 + T43 — RapportComponent (V2)
+//   T41: Wire POST /cases/{id}/report/build
+//   T42: Wire Word/PDF export (replaces window.print())
+//   T43: Wire audit trail /api/v1/audit/*
+// ═══════════════════════════════════════════════════════════════
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -5,118 +11,246 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CaseService } from '../../core/services/case.service';
+import { ReportService } from '../../core/services/report.service';
+import { AuditService } from '../../core/services/audit.service';
 import { RapportExportService } from './services/rapport-export.service';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
+import { MCCGradeReportOut, REPORT_SECTION_LABELS } from '../../core/models/report.model';
+import { AuditEvent } from '../../core/models/audit.model';
 import { RapportGridComponent, RapportMetricsComponent } from './components';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 
 @Component({
-  selector: 'app-rapport-final',
-  standalone: true,
-  imports: [MatButtonModule,
-    RapportGridComponent,
-    RapportMetricsComponent,
-    FinacesRiskBadgeComponent,
-    FinacesTensionBadgeComponent,
-    FinacesScoreGaugeComponent,
-    MatSnackBarModule,
-    DatePipe, DecimalPipe],
-  templateUrl: './rapport.component.html',
-  styleUrls: ['./rapport.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-rapport-final',
+    standalone: true,
+    imports: [
+        MatButtonModule,
+        MatProgressBarModule,
+        MatChipsModule,
+        MatIconModule,
+        MatTooltipModule,
+        RapportGridComponent,
+        RapportMetricsComponent,
+        FinacesRiskBadgeComponent,
+        FinacesTensionBadgeComponent,
+        FinacesScoreGaugeComponent,
+        MatSnackBarModule,
+        DatePipe,
+        DecimalPipe,
+    ],
+    templateUrl: './rapport.component.html',
+    styleUrls: ['./rapport.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RapportComponent {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private caseService = inject(CaseService);
-  private exportService = inject(RapportExportService);
-  private snackBar = inject(MatSnackBar);
-  private readonly destroyRef = inject(DestroyRef);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    private caseService = inject(CaseService);
+    private reportService = inject(ReportService);
+    private auditService = inject(AuditService);
+    private exportService = inject(RapportExportService);
+    private snackBar = inject(MatSnackBar);
+    private readonly destroyRef = inject(DestroyRef);
 
-  // Règle 1 & 3: Safe routing extraction
-  caseId = '';
+    // ─── State ───────────────────────────────────────────────
+    caseId = '';
+    currentCase = signal<EvaluationCaseDetailOut | null>(null);
+    report = signal<MCCGradeReportOut | null>(null);
+    auditTrail = signal<AuditEvent[]>([]);
+    isLoading = signal<boolean>(true);
+    isBuilding = signal<boolean>(false);
+    isExporting = signal<boolean>(false);
+    exportFormat = signal<string>('');
 
-  currentCase = signal<EvaluationCaseDetailOut | null>(null);
-  isLoading = signal<boolean>(true);
-  isExporting = signal<boolean>(false);
+    // ─── Computed ────────────────────────────────────────────
+    sectionLabels = REPORT_SECTION_LABELS;
 
-  // [UI SIMULATION] - Computed properties to generate realistic mock data for the 14 sections
-  mockedFinancials = computed(() => {
-    return {
-      revenue: '4,500,000 €',
-      netIncome: '320,000 €',
-      ebitdaMargin: '12.5%',
-      equity: '1,200,000 €',
-      debt: '450,000 €'
-    };
-  });
+    reportProgress = computed(() => {
+        const r = this.report();
+        if (!r) return 0;
+        return Math.round((r.sections_complete / r.sections_total) * 100);
+    });
 
-  mockedExpertPillars = computed(() => {
-    // Simulated expert qualitative analysis per pillar
-    return {
-      liquidity: 'Liquidity position is adequate. The current ratio stands above industry benchmarks, ensuring short-term obligations can be met without external financing.',
-      solvency: 'Strong solvency with low gearing. The company relies heavily on equity rather than debt.',
-      profitability: 'Margins are stable despite recent inflationary pressures on raw materials.',
-      capacity: 'Execution capacity is validated by three recent similar projects delivered on time.',
-      quality: 'Financial statements are audited by a Tier-1 firm without any reservations.'
-    };
-  });
+    hasReport = computed(() => !!this.report());
 
-  mockedConditions = computed(() => {
-    return [
-      { type: 'REPORTING', text: 'Provide quarterly cash flow statements during the first year of execution.' },
-      { type: 'CAUTION', text: 'Maintain a minimum cash reserve of 100,000 €.' }
-    ];
-  });
+    isReportFinal = computed(() => this.report()?.status === 'FINAL');
 
-  ngOnInit(): void {
-    this.caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
-    if (!this.caseId) {
-      this.router.navigate(['/dashboard']);
-      return;
+    // ─── Lifecycle ───────────────────────────────────────────
+    ngOnInit(): void {
+        this.caseId =
+            this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+        if (!this.caseId) {
+            this.router.navigate(['/dashboard']);
+            return;
+        }
+        this.loadCaseData();
     }
-    this.loadCaseData();
-  }
 
-  private loadCaseData(): void {
-    this.isLoading.set(true);
-    this.caseService.getCaseDetail(this.caseId).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (data: EvaluationCaseDetailOut) => {
-        this.currentCase.set(data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.snackBar.open('Error loading final report data.', 'Close', { duration: 3000 });
-      }
-    });
-  }
+    // ─── Data Loading ────────────────────────────────────────
+    private loadCaseData(): void {
+        this.isLoading.set(true);
+        this.caseService
+            .getCaseDetail(this.caseId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (data: EvaluationCaseDetailOut) => {
+                    this.currentCase.set(data);
+                    this.loadExistingReport();
+                    this.loadAuditTrail();
+                },
+                error: () => {
+                    this.isLoading.set(false);
+                    this.snackBar.open('Error loading case data.', 'Close', { duration: 3000 });
+                },
+            });
+    }
 
-  exportPdf(): void {
-    this.isExporting.set(true);
-    this.exportService.exportToPdf(this.caseId).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => {
-      this.isExporting.set(false);
-    });
-  }
+    private loadExistingReport(): void {
+        this.reportService
+            .getReport(this.caseId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (report) => {
+                    this.report.set(report);
+                    this.isLoading.set(false);
+                },
+                error: () => {
+                    // No report yet — that's fine
+                    this.report.set(null);
+                    this.isLoading.set(false);
+                },
+            });
+    }
 
-  exportExcel(): void {
-    this.isExporting.set(true);
-    this.exportService.exportToExcel(this.caseId, this.currentCase()).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => {
-      this.isExporting.set(false);
-      this.snackBar.open('Excel Exported Successfully.', 'Close', { duration: 3000 });
-    });
-  }
+    /** T43: Load audit trail for this case */
+    private loadAuditTrail(): void {
+        this.auditService
+            .getTrail({ case_id: this.caseId, limit: 100 })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (events) => this.auditTrail.set(events),
+                error: () => {
+                    // Audit trail is non-critical, silent fail
+                },
+            });
+    }
 
-  returnToDashboard(): void {
-    this.router.navigate(['/dashboard']);
-  }
+    // ─── T41: Build Report ───────────────────────────────────
+    buildReport(): void {
+        this.isBuilding.set(true);
+        this.reportService
+            .buildReport(this.caseId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (report) => {
+                    this.report.set(report);
+                    this.isBuilding.set(false);
+                    this.loadAuditTrail(); // Refresh audit trail after build
+                    this.snackBar.open(
+                        `Report generated: ${report.sections_complete}/${report.sections_total} sections complete.`,
+                        'Close',
+                        { duration: 5000 },
+                    );
+                },
+                error: (err) => {
+                    this.isBuilding.set(false);
+                    this.snackBar.open(`Error generating report: ${err.message}`, 'Close', { duration: 5000 });
+                },
+            });
+    }
+
+    finalizeReport(): void {
+        const r = this.report();
+        if (!r) return;
+        this.reportService
+            .finalizeReport(this.caseId, r.report_id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: () => {
+                    this.report.set({ ...r, status: 'FINAL' });
+                    this.loadAuditTrail();
+                    this.snackBar.open('Report finalized.', 'Close', { duration: 3000 });
+                },
+                error: (err) => {
+                    this.snackBar.open(`Error finalizing report: ${err.message}`, 'Close', { duration: 5000 });
+                },
+            });
+    }
+
+    // ─── T42: Export ─────────────────────────────────────────
+    exportPdf(): void {
+        this.isExporting.set(true);
+        this.exportFormat.set('PDF');
+        this.exportService
+            .exportToPdf(this.caseId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: () => {
+                    this.isExporting.set(false);
+                    this.exportFormat.set('');
+                    this.loadAuditTrail();
+                    this.snackBar.open('PDF downloaded successfully.', 'Close', { duration: 3000 });
+                },
+                error: (err) => {
+                    this.isExporting.set(false);
+                    this.exportFormat.set('');
+                    this.snackBar.open(`PDF export failed: ${err.message}`, 'Close', { duration: 5000 });
+                },
+            });
+    }
+
+    exportWord(): void {
+        this.isExporting.set(true);
+        this.exportFormat.set('Word');
+        this.exportService
+            .exportToWord(this.caseId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: () => {
+                    this.isExporting.set(false);
+                    this.exportFormat.set('');
+                    this.loadAuditTrail();
+                    this.snackBar.open('Word document downloaded successfully.', 'Close', { duration: 3000 });
+                },
+                error: (err) => {
+                    this.isExporting.set(false);
+                    this.exportFormat.set('');
+                    this.snackBar.open(`Word export failed: ${err.message}`, 'Close', { duration: 5000 });
+                },
+            });
+    }
+
+    /** T43: Export audit trail as CSV */
+    exportAuditCsv(): void {
+        this.auditService
+            .exportCsv(this.caseId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (blob) => {
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `audit_trail_${this.caseId.substring(0, 8)}.csv`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                },
+                error: () => {
+                    this.snackBar.open('Error exporting audit trail.', 'Close', { duration: 3000 });
+                },
+            });
+    }
+
+    // ─── Navigation ──────────────────────────────────────────
+    returnToDashboard(): void {
+        this.router.navigate(['/dashboard']);
+    }
 }
