@@ -245,7 +245,7 @@ export class GateComponent {
 
   onCorrectDocuments(): void {
     // Logique pour scroller ou focus la zone d'upload
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
     this.snackBar.open('Veuillez uploader les documents manquants.', 'Fermer', { duration: 3000 });
   }
 

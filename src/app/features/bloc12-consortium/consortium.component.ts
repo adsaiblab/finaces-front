@@ -16,6 +16,7 @@ import { CaseService } from '../../core/services/case.service';
 import { ConsortiumScorecardOutput, ConsortiumMember, ConsortiumMemberCreate } from '../../core/models/consortium.model';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
 import { ConsortiumMemberDialogComponent } from './components/consortium-member-dialog/consortium-member-dialog.component';
+import { ConfirmDialogComponent } from '../../shared/components/molecules/confirm-dialog/confirm-dialog.component';
 import { ConsortiumMemberAccordionComponent } from './components/consortium-member-accordion/consortium-member-accordion.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
@@ -215,21 +216,28 @@ export class ConsortiumComponent {
     }
 
     removeMember(memberId: string): void {
-        if (confirm('Are you sure you want to remove this member?')) {
-            this.isLoading.set(true);
-            this.consortiumService.removeMember(this.caseId, memberId).pipe(
-                takeUntilDestroyed(this.destroyRef)
-            ).subscribe({
-                next: (res) => {
-                    this.currentConsortium.set(res);
-                    this.isLoading.set(false);
-                },
-                error: () => {
-                    this.isLoading.set(false);
-                    this.snackBar.open('Error removing member', 'Close', { duration: 3000 });
-                }
-            });
-        }
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: { message: 'Are you sure you want to remove this member?' }
+        });
+        dialogRef.afterClosed().pipe(
+            takeUntilDestroyed(this.destroyRef)
+        ).subscribe(confirmed => {
+            if (confirmed) {
+                this.isLoading.set(true);
+                this.consortiumService.removeMember(this.caseId, memberId).pipe(
+                    takeUntilDestroyed(this.destroyRef)
+                ).subscribe({
+                    next: (res) => {
+                        this.currentConsortium.set(res);
+                        this.isLoading.set(false);
+                    },
+                    error: () => {
+                        this.isLoading.set(false);
+                        this.snackBar.open('Error removing member', 'Close', { duration: 3000 });
+                    }
+                });
+            }
+        });
     }
 
     recalculateScore(): void {

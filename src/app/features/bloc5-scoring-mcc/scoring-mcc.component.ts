@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { ScoringMccService } from './services/scoring-mcc.service';
+import { environment } from '../../../environments/environment';
 import { ScoringMccSchema, ScoreOverridePayload } from '../../core/models/scoring.model';
 
 import {
@@ -86,7 +87,9 @@ export class ScoringMccComponent {
         this.isLoading.set(false);
       },
       error: () => {
-        console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Scoring');
+        if (!environment.production) {
+          console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Scoring');
+        }
         this.loadMockData();
       }
     });

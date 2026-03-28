@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ScoringMccService } from '../bloc5-scoring-mcc/services/scoring-mcc.service';
+import { environment } from '../../../environments/environment';
 import { IaService } from '../../core/services/ia.service';
 import { TensionCalculatorService } from './services/tension-calculator.service';
 
@@ -75,7 +76,9 @@ export class TensionComponent {
       // Dans une vraie application, on vérifierait si MCC et IA sont dispos.
       // Pour le prototype, si ça échoue, on mock.
       if (!data.mcc || !data.ia) {
-        console.warn('Data incomplete, falling back to mock Tension Data');
+        if (!environment.production) {
+          console.warn('Data incomplete, falling back to mock Tension Data');
+        }
         this.loadMockTension();
         return;
       }

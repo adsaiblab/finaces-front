@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import {
     ExpertReviewInputSchema,
@@ -16,6 +18,11 @@ export class ExpertService {
 
     constructor(private http: HttpClient) { }
 
+    private readonly handleError = (error: HttpErrorResponse): Observable<never> => {
+        if (!environment.production) console.error('[Expert] Error:', error);
+        return throwError(() => error);
+    };
+
     submitExpertReview(
         caseId: string,
         payload: ExpertReviewInputSchema
@@ -23,6 +30,8 @@ export class ExpertService {
         return this.http.post<ExpertReviewOutputSchema>(
             `${this.apiUrl}/${caseId}/experts/review`,
             payload
+        ).pipe(
+            catchError(this.handleError)
         );
     }
 
@@ -33,6 +42,8 @@ export class ExpertService {
         return this.http.patch<void>(
             `${this.apiUrl}/${caseId}/conclusion`,
             payload
+        ).pipe(
+            catchError(this.handleError)
         );
     }
 }

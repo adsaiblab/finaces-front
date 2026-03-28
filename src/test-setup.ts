@@ -1,112 +1,114 @@
-import 'zone.js';
-import 'zone.js/testing';
+// ═══════════════════════════════════════════════════════════
+// Global Test Mocks — Required for JSDOM/Vitest environment
+// ═══════════════════════════════════════════════════════════
+
+// F-S7-01: requestAnimationFrame / cancelAnimationFrame
+if (typeof globalThis.requestAnimationFrame === 'undefined') {
+    globalThis.requestAnimationFrame = (cb: FrameRequestCallback): number => {
+        return setTimeout(() => cb(Date.now()), 0) as unknown as number;
+    };
+    globalThis.cancelAnimationFrame = (id: number): void => {
+        clearTimeout(id);
+    };
+}
+
+// F-S7-01: ResizeObserver
+if (typeof globalThis.ResizeObserver === 'undefined') {
+    globalThis.ResizeObserver = class ResizeObserver {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+    } as any;
+}
+
+// F-S7-06: Canvas 2D Context mock (for Chart.js)
+if (typeof HTMLCanvasElement !== 'undefined') {
+    HTMLCanvasElement.prototype.getContext = ((origFn) => {
+        return function (this: HTMLCanvasElement, contextId: string, ...args: any[]) {
+            if (contextId === '2d') {
+                return {
+                    canvas: this,
+                    fillRect: () => {},
+                    clearRect: () => {},
+                    getImageData: () => ({ data: new Array(0) }),
+                    putImageData: () => {},
+                    createImageData: () => [],
+                    setTransform: () => {},
+                    drawImage: () => {},
+                    save: () => {},
+                    fillText: () => {},
+                    restore: () => {},
+                    beginPath: () => {},
+                    moveTo: () => {},
+                    lineTo: () => {},
+                    closePath: () => {},
+                    stroke: () => {},
+                    translate: () => {},
+                    scale: () => {},
+                    rotate: () => {},
+                    arc: () => {},
+                    fill: () => {},
+                    measureText: () => ({ width: 0 }),
+                    transform: () => {},
+                    rect: () => {},
+                    clip: () => {},
+                    createLinearGradient: () => ({ addColorStop: () => {} }),
+                    createRadialGradient: () => ({ addColorStop: () => {} }),
+                    createPattern: () => ({}),
+                    font: '',
+                    textAlign: '',
+                    textBaseline: '',
+                    fillStyle: '',
+                    strokeStyle: '',
+                    lineWidth: 1,
+                    lineCap: '',
+                    lineJoin: '',
+                    globalAlpha: 1,
+                    globalCompositeOperation: '',
+                    shadowBlur: 0,
+                    shadowColor: '',
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 0,
+                } as unknown as CanvasRenderingContext2D;
+            }
+            return origFn?.call(this, contextId, ...args) ?? null;
+        };
+    })(HTMLCanvasElement.prototype.getContext) as any;
+}
+
+// F-S7-01: localStorage mock (JSDOM may not persist)
+if (typeof globalThis.localStorage === 'undefined') {
+    const store: Record<string, string> = {};
+    globalThis.localStorage = {
+        getItem: (key: string) => store[key] ?? null,
+        setItem: (key: string, value: string) => { store[key] = value; },
+        removeItem: (key: string) => { delete store[key]; },
+        clear: () => { Object.keys(store).forEach(k => delete store[k]); },
+        get length() { return Object.keys(store).length; },
+        key: (i: number) => Object.keys(store)[i] ?? null,
+    } as Storage;
+}
+
+// F-S7-01: matchMedia mock
+if (typeof globalThis.matchMedia === 'undefined') {
+    globalThis.matchMedia = (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+    } as MediaQueryList);
+}
+
+// Angular 18+ standalone: use platform-browser testing (no zone.js, no platform-browser-dynamic)
 import { getTestBed } from '@angular/core/testing';
-import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
-} from '@angular/platform-browser-dynamic/testing';
-import { vi } from 'vitest';
+import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 
 // Initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting(),
+  BrowserTestingModule,
+  platformBrowserTesting(),
 );
-
-
-// ─── requestAnimationFrame / cancelAnimationFrame ─────────────────────────
-globalThis.requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => {
-  cb(performance.now());
-  return 1;
-});
-globalThis.cancelAnimationFrame = vi.fn();
-
-// ─── ResizeObserver ───────────────────────────────────────────────────────
-// Must be a class (not vi.fn()) for Angular CDK `new ResizeObserver(...)` calls
-class MockResizeObserver {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-globalThis.ResizeObserver = MockResizeObserver as any;
-
-// ─── window.matchMedia ────────────────────────────────────────────────────
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  configurable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
-
-// ─── IntersectionObserver ─────────────────────────────────────────────────
-class MockIntersectionObserver {
-  root = null;
-  rootMargin = '';
-  thresholds: ReadonlyArray<number> = [];
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-  takeRecords = vi.fn(() => []);
-}
-globalThis.IntersectionObserver = MockIntersectionObserver as any;
-
-// ─── Canvas 2D Context ────────────────────────────────────────────────────
-HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
-  fillRect: vi.fn(),
-  clearRect: vi.fn(),
-  getImageData: vi.fn(() => ({ data: new Array(4) })),
-  putImageData: vi.fn(),
-  createImageData: vi.fn(() => []),
-  setTransform: vi.fn(),
-  drawImage: vi.fn(),
-  save: vi.fn(),
-  fillText: vi.fn(),
-  restore: vi.fn(),
-  beginPath: vi.fn(),
-  moveTo: vi.fn(),
-  lineTo: vi.fn(),
-  closePath: vi.fn(),
-  stroke: vi.fn(),
-  translate: vi.fn(),
-  scale: vi.fn(),
-  rotate: vi.fn(),
-  arc: vi.fn(),
-  fill: vi.fn(),
-  measureText: vi.fn(() => ({ width: 0 })),
-  transform: vi.fn(),
-  rect: vi.fn(),
-  clip: vi.fn(),
-  strokeRect: vi.fn(),
-  strokeText: vi.fn(),
-  createLinearGradient: vi.fn(() => ({
-    addColorStop: vi.fn(),
-  })),
-  createRadialGradient: vi.fn(() => ({
-    addColorStop: vi.fn(),
-  })),
-})) as unknown as typeof HTMLCanvasElement.prototype.getContext;
-
-// ─── URL.createObjectURL / revokeObjectURL ─────────────────────────────────
-globalThis.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
-globalThis.URL.revokeObjectURL = vi.fn();
-
-// ─── localStorage / sessionStorage ────────────────────────────────────────
-const storageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { store = {}; },
-  };
-})();
-Object.defineProperty(globalThis, 'localStorage', { value: storageMock });
-Object.defineProperty(globalThis, 'sessionStorage', { value: storageMock });

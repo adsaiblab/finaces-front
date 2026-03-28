@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { forkJoin, catchError, of, delay } from 'rxjs';
 
 import { RatioCalculationService } from './services/ratio-calculation.service';
+import { environment } from '../../../environments/environment';
 import { CaseService } from '../../core/services/case.service';
 import { RatioSetSchema } from '../../core/models/ratio.model';
 
@@ -69,7 +70,9 @@ export class Bloc4RatiosComponent {
                 this.isLoading.set(false);
             },
             error: (err) => {
-                console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
+                if (!environment.production) {
+                    console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
+                }
                 this.loadMockData();
             }
         });

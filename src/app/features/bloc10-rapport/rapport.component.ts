@@ -22,10 +22,9 @@ import { RapportExportService } from './services/rapport-export.service';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
 import { MCCGradeReportOut, REPORT_SECTION_LABELS } from '../../core/models/report.model';
 import { AuditEvent } from '../../core/models/audit.model';
-import { RapportGridComponent, RapportMetricsComponent } from './components';
+import { RapportGridComponent } from './components';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component';
-import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 
 @Component({
     selector: 'app-rapport-final',
@@ -37,10 +36,8 @@ import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finace
         MatIconModule,
         MatTooltipModule,
         RapportGridComponent,
-        RapportMetricsComponent,
         FinacesRiskBadgeComponent,
         FinacesTensionBadgeComponent,
-        FinacesScoreGaugeComponent,
         MatSnackBarModule,
         DatePipe,
         DecimalPipe,

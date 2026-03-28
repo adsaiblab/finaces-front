@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { CaseService } from '../../core/services/case.service';
+import { environment } from '../../../environments/environment';
 import { FinancialStatementNormalizedSchema } from '../../core/models';
 
 // Import the barrel file
@@ -76,7 +77,9 @@ export class NormalizationComponent {
       },
       error: () => {
         // MOCK Enterprise-grade Prototype Fallback if API is not ready
-        console.warn('API returned error, falling back to mock data for prototyping.');
+        if (!environment.production) {
+          console.warn('API returned error, falling back to mock data for prototyping.');
+        }
         this.loadMockData();
       },
     });
