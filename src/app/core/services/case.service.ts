@@ -26,7 +26,7 @@ import {
 })
 export class CaseService {
     private apiUrl = `${environment.apiUrl}/cases`;
-    private analyticsUrl = `${environment.apiUrl}/analytics`;
+    private analyticsUrl = `${environment.apiUrl}/ia/analytics`;
     private dashboardUrl = `${environment.apiUrl}/dashboard`;
 
     private readonly http = inject(HttpClient);

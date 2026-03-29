@@ -52,7 +52,7 @@ describe('StressService', () => {
 
         service.runCustomStressTest('case-123', mockParams).subscribe();
 
-        const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/stress/simulate`);
+        const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/stress/run`);
         expect(req.request.method).toBe('POST');
         expect(req.request.body).toEqual(mockParams);
         req.flush({});

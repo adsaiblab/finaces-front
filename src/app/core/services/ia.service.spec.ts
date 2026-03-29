@@ -46,7 +46,7 @@ describe('IaService', () => {
 
         service.simulateWhatIf('case-123', mockScenario).subscribe();
 
-        const req = httpMock.expectOne(`${environment.apiUrl}/ia/predict/case-123/what-if`);
+        const req = httpMock.expectOne(`${environment.apiUrl}/ia/cases/case-123/simulate`);
         expect(req.request.method).toBe('POST');
         expect(req.request.body).toEqual(mockScenario);
         req.flush({});

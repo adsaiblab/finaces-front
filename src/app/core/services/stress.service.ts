@@ -24,7 +24,7 @@ export class StressService {
 
     // Run a custom contract stress simulation
     public runCustomStressTest(caseId: string, params: StressScenarioInputSchema): Observable<StressResultSchema> {
-        return this.http.post<StressResultSchema>(`${this.apiUrl}/${caseId}/stress/simulate`, params).pipe(
+        return this.http.post<StressResultSchema>(`${this.apiUrl}/${caseId}/stress/run`, params).pipe(
             catchError(err => {
                 if (!environment.production) console.error('[Stress Test] Simulation error:', err);
                 return throwError(() => new Error('Failed to run custom stress simulation.'));

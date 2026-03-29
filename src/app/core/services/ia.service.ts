@@ -22,7 +22,7 @@ export class IaService {
     }
 
     public simulateWhatIf(caseId: string, scenario: WhatIfInput): Observable<WhatIfResult> {
-        return this.http.post<WhatIfResult>(`${this.baseUrl}/ia/predict/${caseId}/what-if`, scenario).pipe(
+        return this.http.post<WhatIfResult>(`${this.baseUrl}/ia/cases/${caseId}/simulate`, scenario).pipe(
             catchError(err => {
                 if (!environment.production) console.error('[IA Model] Simulation error:', err);
                 return throwError(() => new Error('Failed to run What-If simulation. Please check input parameters.'));
