@@ -1,6 +1,6 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,6 +42,7 @@ export interface HubCase {
 })
 export class CasesListComponent {
     public router = inject(Router);
+    private readonly destroyRef = inject(DestroyRef);
 
     cases = signal<HubCase[]>([]);
     isLoading = signal<boolean>(true);
@@ -106,7 +107,7 @@ export class CasesListComponent {
         ];
 
         // Règle OtherGuidance #2: Mock par timing natif rxjs
-        of(MOCK_DATA).pipe(delay(800)).subscribe(data => {
+        of(MOCK_DATA).pipe(delay(800), takeUntilDestroyed(this.destroyRef)).subscribe(data => {
             this.cases.set(data);
             this.isLoading.set(false);
         });

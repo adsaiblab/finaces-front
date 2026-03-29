@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DecisionColumnComponent } from './decision-column.component';
 import { GateDecisionSchema } from '../../../../core/models/gate.model';
+import { GateVerdict } from '../../../../core/models/enums';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 describe('DecisionColumnComponent', () => {
@@ -56,7 +57,7 @@ describe('DecisionColumnComponent', () => {
             id: 'mock-dec-2',
             case_id: '123',
             is_passed: false,
-            verdict: 'BLOCKED',
+            verdict: GateVerdict.BLOCKING,
             reliability_score: 85,
             blocking_reasons: ['Bilan manquant'],
             reserve_flags: [],

@@ -1,8 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ScenarioResultsComponent } from './scenario-results.component';
+import { Component, input } from '@angular/core';
 import { describe, it, expect, beforeEach, beforeAll, vi, afterAll } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StressScenarioResult } from '../../../../core/models/stress.model';
+import { FinacesStressChartComponent, ScenarioFlowSchema } from '../../../../shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component';
+
+@Component({
+    selector: 'app-finaces-stress-chart',
+    standalone: true,
+    template: '<div class="mock-stress-chart"></div>'
+})
+class MockStressChartComponent {
+    monthlyFlows = input<ScenarioFlowSchema[]>([]);
+    stress60dResult = input<string | undefined>();
+    stress90dResult = input<string | undefined>();
+    criticalMonth = input<number | undefined>();
+    height = input<number>(250);
+}
 
 describe('ScenarioResultsComponent', () => {
     let component: ScenarioResultsComponent;
@@ -43,7 +58,12 @@ describe('ScenarioResultsComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ScenarioResultsComponent, NoopAnimationsModule]
-        }).compileComponents();
+        })
+        .overrideComponent(ScenarioResultsComponent, {
+            remove: { imports: [FinacesStressChartComponent] },
+            add: { imports: [MockStressChartComponent] }
+        })
+        .compileComponents();
 
         fixture = TestBed.createComponent(ScenarioResultsComponent);
         component = fixture.componentInstance;

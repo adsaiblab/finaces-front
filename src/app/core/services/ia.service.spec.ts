@@ -33,12 +33,12 @@ describe('IaService', () => {
     it('should call GET on /predict endpoint', () => {
         service.getPrediction('case-123').subscribe();
 
-        const req = httpMock.expectOne(`${environment.apiUrl}/ia/cases/case-123/predict`);
+        const req = httpMock.expectOne(`${environment.apiUrl}/ia/predict/case-123`);
         expect(req.request.method).toBe('GET');
         req.flush({});
     });
 
-    it('should call POST on /simulate endpoint with WhatIfScenario', () => {
+    it('should call POST on /what-if endpoint with WhatIfScenario', () => {
         const mockScenario: WhatIfScenarioInput = {
             scenario_name: 'Stress Test',
             parameter_overrides: { 'EBITDA Margin': 15.5 }
@@ -46,7 +46,7 @@ describe('IaService', () => {
 
         service.simulateWhatIf('case-123', mockScenario).subscribe();
 
-        const req = httpMock.expectOne(`${environment.apiUrl}/ia/cases/case-123/simulate`);
+        const req = httpMock.expectOne(`${environment.apiUrl}/ia/predict/case-123/what-if`);
         expect(req.request.method).toBe('POST');
         expect(req.request.body).toEqual(mockScenario);
         req.flush({});

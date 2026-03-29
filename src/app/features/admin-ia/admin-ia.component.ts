@@ -22,7 +22,6 @@ import {
     PerformanceMetricsComponent,
     FeatureImportanceComponent,
     MonitoringAlertsComponent,
-    ModelConfigDialogComponent,
     MatSnackBarModule,
   ],
   templateUrl: './admin-ia.component.html',

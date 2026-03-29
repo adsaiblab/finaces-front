@@ -1,5 +1,5 @@
-import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
-
+import { Component, Inject, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,6 +27,7 @@ export interface UploadDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentUploadDialogComponent {
+  private readonly destroyRef = inject(DestroyRef);
   uploadForm: FormGroup;
   fileName: string;
   currentYear = new Date().getFullYear();
@@ -47,7 +48,7 @@ export class DocumentUploadDialogComponent {
       notes: [''],
     });
 
-    this.uploadForm.get('reliability_level')?.valueChanges.subscribe((level) => {
+    this.uploadForm.get('reliability_level')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((level) => {
       const auditorControl = this.uploadForm.get('auditor_name');
       if (level === 'AUDITED') {
         auditorControl?.setValidators([Validators.required]);

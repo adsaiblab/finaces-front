@@ -1,8 +1,8 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, output, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, computed, DestroyRef } from '@angular/core';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-tab-balance-sheet-liabilities',
@@ -14,6 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class TabBalanceSheetLiabilitiesComponent {
     private fb = inject(FormBuilder);
+    private readonly destroyRef = inject(DestroyRef);
 
     public year = input<number>(0);
     public liabilitiesDataChange = output<{ total: number, data: any }>();
@@ -55,7 +56,7 @@ export class TabBalanceSheetLiabilitiesComponent {
     });
 
     ngOnInit(): void {
-        this.liabilitiesForm.valueChanges.subscribe(val => {
+        this.liabilitiesForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(val => {
             if (this.liabilitiesForm.valid) {
                 this.liabilitiesDataChange.emit({
                     total: this.totalLiabilities(),

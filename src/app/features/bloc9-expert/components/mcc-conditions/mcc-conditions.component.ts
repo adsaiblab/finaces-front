@@ -1,6 +1,6 @@
 import { NgClass, DatePipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, input, output, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MccCondition } from '../../../../core/models/expert.model';
@@ -19,6 +19,7 @@ export class MccConditionsComponent {
     conditionsChange = output<MccCondition[]>();
 
     private dialog = inject(MatDialog);
+    private readonly destroyRef = inject(DestroyRef);
 
     openAddDialog(): void {
         const dialogRef = this.dialog.open(AddConditionDialogComponent, {
@@ -26,7 +27,7 @@ export class MccConditionsComponent {
             disableClose: true
         });
 
-        dialogRef.afterClosed().subscribe((newCondition: MccCondition | undefined) => {
+        dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((newCondition: MccCondition | undefined) => {
             if (newCondition) {
                 this.conditionsChange.emit([...this.conditions(), newCondition]);
             }

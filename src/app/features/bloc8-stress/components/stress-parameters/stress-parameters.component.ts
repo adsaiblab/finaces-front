@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, output, inject } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, output, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +17,7 @@ import { StressParameters } from '../../../../core/models/stress.model';
 })
 export class StressParametersComponent {
   private fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   public paramsChange = output<Partial<StressParameters>>();
 
@@ -28,7 +29,7 @@ export class StressParametersComponent {
   });
 
   ngOnInit(): void {
-    this.paramsForm.valueChanges.subscribe((value) => {
+    this.paramsForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.paramsForm.valid) {
         this.paramsChange.emit(value);
       }

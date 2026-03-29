@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators, FormGroup, FormArray } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { CaseService } from '../../../core/services/case.service';
 import { CaseType, CaseStatus } from '../../../core/models/case.model';
 
@@ -41,6 +43,7 @@ export class CaseCreateComponent {
   private readonly caseService = inject(CaseService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Gestion du loading UX
   readonly isSubmitting = signal<boolean>(false);
@@ -87,7 +90,7 @@ export class CaseCreateComponent {
     this.isSubmitting.set(true);
 
     const payload = this.buildPayload();
-    this.caseService.saveCaseDraft(payload).subscribe({
+    this.caseService.saveCaseDraft(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.snackBar.open('Brouillon sauvegardé avec succès.', 'Fermer', {
@@ -121,10 +124,10 @@ export class CaseCreateComponent {
       panelClass: 'snack-success',
     });
 
-    setTimeout(() => {
+    of(null).pipe(delay(800), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.isSubmitting.set(false);
       this.router.navigate(['/cases', '00000000-0000-0000-0000-000000000000', 'gate']);
-    }, 800);
+    });
 
     /* == Futur câblage Backend (À DÉCOMMENTER) ==
         this.caseService.createCase(payload).subscribe({

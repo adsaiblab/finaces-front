@@ -6,8 +6,7 @@ import {
     EventEmitter,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    NgZone,
-    OnDestroy,
+    DestroyRef,
     effect,
     inject
 } from '@angular/core';
@@ -31,7 +30,7 @@ interface GaugeMetrics {
     styleUrls: ['./finaces-score-gauge.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FinacesScoreGaugeComponent implements OnDestroy {
+export class FinacesScoreGaugeComponent {
     readonly score = input.required<number>();
     readonly maxScore = input<number>(5);
     readonly rail = input<'MCC' | 'IA'>('MCC');
@@ -49,15 +48,20 @@ export class FinacesScoreGaugeComponent implements OnDestroy {
     displayScore: number = 0;
     displayScoreStr: string = '0.0';
     animationId: number | null = null;
-    private destroyed = false;
 
     private readonly startAngle = -135;
     private readonly totalArcAngle = 270;
 
     private readonly cdr = inject(ChangeDetectorRef);
-    private readonly ngZone = inject(NgZone);
+    private readonly destroyRef = inject(DestroyRef);
+    private destroyed = false;
 
     constructor() {
+        this.destroyRef.onDestroy(() => {
+            this.destroyed = true;
+            if (this.animationId !== null) cancelAnimationFrame(this.animationId);
+        });
+
         effect(() => {
             const currentSize = this.size();
             this.initializeMetrics(currentSize);
@@ -129,7 +133,7 @@ export class FinacesScoreGaugeComponent implements OnDestroy {
 
             this.displayScore = safeScore * easeProgress;
             this.displayScoreStr = this.displayScore.toFixed(1);
-            this.ngZone.run(() => { this.cdr.markForCheck(); });
+            this.cdr.markForCheck();
 
             if (progress < 1) {
                 this.animationId = requestAnimationFrame(animate);
@@ -139,9 +143,7 @@ export class FinacesScoreGaugeComponent implements OnDestroy {
             }
         };
 
-        this.ngZone.runOutsideAngular(() => {
-            this.animationId = requestAnimationFrame(animate);
-        });
+        this.animationId = requestAnimationFrame(animate);
     }
 
     private degToRad(deg: number): number {
@@ -167,8 +169,4 @@ export class FinacesScoreGaugeComponent implements OnDestroy {
         return `M ${x1} ${y1} A ${arcRadius} ${arcRadius} 0 ${largeArc} 1 ${x2} ${y2}`;
     }
 
-    ngOnDestroy(): void {
-        this.destroyed = true;
-        if (this.animationId !== null) cancelAnimationFrame(this.animationId);
-    }
 }

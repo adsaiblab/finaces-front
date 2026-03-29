@@ -98,7 +98,7 @@ describe('GateComponent', () => {
         // Attendre la fin du subscribe via une microtask
         await Promise.resolve();
 
-        expect(mockCaseService.patchCaseStatus).toHaveBeenCalledWith('1', 'FINANCIAL_INPUT');
+        expect(mockCaseService.patchCaseStatus).toHaveBeenCalledWith('1', { new_status: 'FINANCIAL_INPUT' });
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/cases/1/financials']);
         expect(mockSnackBar.open).toHaveBeenCalled();
     });

@@ -18,23 +18,22 @@ describe('DocumentsColumnComponent', () => {
 
         fixture = TestBed.createComponent(DocumentsColumnComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('devrait créer le composant', () => {
         expect(component).toBeTruthy();
     });
 
-    it('devrait mettre à jour le dataSource via l\'Input documents', () => {
-        const mockDocs: GateDocumentOut[] = [
-            { id: '1', case_id: 'c1', filename: 'test.pdf', original_filename: 'test.pdf', file_size: 1024, document_type: 'BILAN', fiscal_year: 2023, reliability_level: 'AUDITED', integrity_status: 'OK', upload_status: 'DONE', processing_status: 'DONE', red_flags: [], uploaded_at: '' }
-        ];
+    it('devrait mettre à jour le dataSource via l\'Input documents', async () => {
+        const mockDocs = [
+            { id: '1', case_id: 'c1', file_name: 'test.pdf', document_type: 'BILAN', reliability_level: 'HIGH', status: 'PRESENT', integrity_status: 'OK', red_flags: [], uploaded_at: '' }
+        ] as unknown as GateDocumentOut[];
         fixture.componentRef.setInput('documents', mockDocs);
-        fixture.detectChanges();
+        await fixture.whenStable();
 
         expect(component.dataSource.data.length).toBe(1);
-        expect(component.dataSource.data[0].filename).toBe('test.pdf');
+        expect(component.dataSource.data[0].file_name).toBe('test.pdf');
     });
 
     it('devrait rejeter un fichier avec une extension non valide', () => {

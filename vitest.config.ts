@@ -1,14 +1,20 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
+import angular from '@analogjs/vite-plugin-angular';
 
 export default defineConfig({
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['src/test-setup.ts'],
-    include: ['src/**/*.spec.ts'],
-    deps: {
-      inline: [/virtual:angular/],
+    plugins: [
+        angular({ jit: true, tsconfig: 'tsconfig.spec.json' }),
+    ],
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: ['src/test-setup.js'],
+        include: ['src/**/*.spec.ts'],
+        server: {
+            deps: {
+                inline: [/^@angular/, /^@angular\/material/],
+            },
+        },
     },
-  },
 });

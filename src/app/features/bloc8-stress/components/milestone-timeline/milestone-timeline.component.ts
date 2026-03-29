@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, output, inject } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, output, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,6 +25,7 @@ import { Milestone } from '../../../../core/models/stress.model';
 })
 export class MilestoneTimelineComponent {
   private fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   public milestonesChange = output<Milestone[]>();
 
@@ -40,7 +41,7 @@ export class MilestoneTimelineComponent {
     // Initialize with one default milestone
     this.addMilestone();
 
-    this.timelineForm.valueChanges.subscribe((val) => {
+    this.timelineForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
       if (this.timelineForm.valid) {
         this.milestonesChange.emit(val.milestones);
       }

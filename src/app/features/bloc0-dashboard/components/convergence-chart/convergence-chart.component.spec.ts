@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConvergenceChartComponent } from './convergence-chart.component';
 import { ConvergenceChartOut } from '../../../../core/models/dashboard.model';
 import { ThemeService } from '../../../../core/services/theme/theme.service';
+import { PLATFORM_ID } from '@angular/core';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 describe('ConvergenceChartComponent', () => {
@@ -31,7 +32,8 @@ describe('ConvergenceChartComponent', () => {
                 {
                     provide: ThemeService,
                     useValue: { isDarkMode: () => false, toggleTheme: vi.fn() }
-                }
+                },
+                { provide: PLATFORM_ID, useValue: 'browser' }
             ]
         }).compileComponents();
 

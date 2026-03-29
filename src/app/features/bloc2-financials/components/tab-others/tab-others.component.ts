@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, input, output, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class TabOthersComponent {
   private fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
   public othersDataChange = output<{ data: any }>();
@@ -35,7 +36,7 @@ export class TabOthersComponent {
   });
 
   ngOnInit(): void {
-    this.othersForm.valueChanges.subscribe((val) => {
+    this.othersForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
       if (this.othersForm.valid) {
         this.othersDataChange.emit({
           data: val,

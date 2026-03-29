@@ -1,8 +1,8 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, output, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, computed, DestroyRef } from '@angular/core';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-tab-cash-flow',
@@ -14,6 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class TabCashFlowComponent {
     private fb = inject(FormBuilder);
+    private readonly destroyRef = inject(DestroyRef);
 
     public year = input<number>(0);
     public cashFlowDataChange = output<{ netCashFlow: number, data: any }>();
@@ -39,7 +40,7 @@ export class TabCashFlowComponent {
     });
 
     ngOnInit(): void {
-        this.cashFlowForm.valueChanges.subscribe(val => {
+        this.cashFlowForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(val => {
             if (this.cashFlowForm.valid) {
                 this.cashFlowDataChange.emit({
                     netCashFlow: this.changeInCash(),
