@@ -67,7 +67,7 @@ export interface CoherenceAlert {
     data_challenge?: boolean;
 }
 
-export interface RatioSetSchema {
+export interface RatioSetGrouped {
     case_id: string;
     fiscal_year: number;
     liquidity: LiquidityGroup;

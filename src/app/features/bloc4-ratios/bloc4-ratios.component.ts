@@ -13,7 +13,7 @@ import { forkJoin, catchError, of, delay } from 'rxjs';
 import { RatioCalculationService } from './services/ratio-calculation.service';
 import { environment } from '../../../environments/environment';
 import { CaseService } from '../../core/services/case.service';
-import { RatioSetSchema } from '../../core/models/ratio.model';
+import { RatioSetGrouped } from '../../core/models/ratio.model';
 
 import {
     CoherenceAlertsComponent,
@@ -46,7 +46,7 @@ export class Bloc4RatiosComponent {
     private readonly destroyRef = inject(DestroyRef);
 
     // State Signals
-    public ratioSet = signal<RatioSetSchema | null>(null);
+    public ratioSet = signal<RatioSetGrouped | null>(null);
     public isLoading = signal<boolean>(true);
     public error = signal<string | null>(null);
 
@@ -134,7 +134,7 @@ export class Bloc4RatiosComponent {
             };
 
         of(mockResponse).pipe(delay(1200), takeUntilDestroyed(this.destroyRef)).subscribe(data => {
-            this.ratioSet.set(data as RatioSetSchema);
+            this.ratioSet.set(data as RatioSetGrouped);
             this.isLoading.set(false);
         });
     }

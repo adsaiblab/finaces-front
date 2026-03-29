@@ -18,7 +18,7 @@ import {
     FinancialStatementRawOut,
     FinancialStatementCreate,
     FinancialStatementNormalizedSchema,
-    RatioSetSchema
+    RatioSetGrouped
 } from '../models';
 
 @Injectable({
@@ -132,8 +132,8 @@ export class CaseService {
             .pipe(catchError(this.handleError));
     }
 
-    computeRatios(caseId: string): Observable<RatioSetSchema> {
-        return this.http.post<RatioSetSchema>(`${this.apiUrl}/${caseId}/ratios/compute`, {})
+    computeRatios(caseId: string): Observable<RatioSetGrouped> {
+        return this.http.post<RatioSetGrouped>(`${this.apiUrl}/${caseId}/ratios/compute`, {})
             .pipe(catchError(this.handleError));
     }
 }

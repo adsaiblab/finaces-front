@@ -111,10 +111,10 @@ export interface BidderOut {
     last_evaluation_date?: string;
 }
 
-export function isCaseStatus(value: any): value is CaseStatus {
+export function isCaseStatus(value: unknown): value is CaseStatus {
     return Object.values(CaseStatus).includes(value as CaseStatus);
 }
 
-export function isCaseType(value: any): value is CaseType {
+export function isCaseType(value: unknown): value is CaseType {
     return Object.values(CaseType).includes(value as CaseType);
 }
