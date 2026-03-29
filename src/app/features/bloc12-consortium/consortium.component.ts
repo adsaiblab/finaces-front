@@ -2,7 +2,8 @@ import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -42,7 +43,7 @@ import { environment } from '../../../environments/environment';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConsortiumComponent {
-    private route = inject(ActivatedRoute);
+    private readonly caseContext = inject(CaseContextService);
     private readonly router = inject(Router);
     private caseService = inject(CaseService);
     private consortiumService = inject(ConsortiumService);
@@ -108,7 +109,7 @@ export class ConsortiumComponent {
     });
 
     ngOnInit(): void {
-        this.caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+        this.caseId = this.caseContext.caseId();
         if (!this.caseId) {
             this.router.navigate(['/dashboard']);
             return;

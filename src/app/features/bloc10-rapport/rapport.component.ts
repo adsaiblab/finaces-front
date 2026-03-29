@@ -8,7 +8,8 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -47,7 +48,7 @@ import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/fina
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RapportComponent {
-    private route = inject(ActivatedRoute);
+    private readonly caseContext = inject(CaseContextService);
     private router = inject(Router);
     private caseService = inject(CaseService);
     private reportService = inject(ReportService);
@@ -81,8 +82,7 @@ export class RapportComponent {
 
     // ─── Lifecycle ───────────────────────────────────────────
     ngOnInit(): void {
-        this.caseId =
-            this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+        this.caseId = this.caseContext.caseId();
         if (!this.caseId) {
             this.router.navigate(['/dashboard']);
             return;

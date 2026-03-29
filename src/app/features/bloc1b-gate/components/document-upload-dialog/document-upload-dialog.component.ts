@@ -1,4 +1,4 @@
-import { Component, Inject, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -28,18 +28,16 @@ export interface UploadDialogData {
 })
 export class DocumentUploadDialogComponent {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly fb = inject(FormBuilder);
+  readonly dialogRef = inject(MatDialogRef<DocumentUploadDialogComponent>);
+  readonly data: UploadDialogData = inject(MAT_DIALOG_DATA);
+
   uploadForm: FormGroup;
-  fileName: string;
+  fileName = this.data.file.name;
   currentYear = new Date().getFullYear();
   years = [this.currentYear, this.currentYear - 1, this.currentYear - 2, this.currentYear - 3];
 
-  constructor(
-    private fb: FormBuilder,
-    public dialogRef: MatDialogRef<DocumentUploadDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UploadDialogData,
-  ) {
-    this.fileName = data.file.name;
-
+  constructor() {
     this.uploadForm = this.fb.group({
       document_type: ['', Validators.required],
       fiscal_year: [this.currentYear - 1, Validators.required],

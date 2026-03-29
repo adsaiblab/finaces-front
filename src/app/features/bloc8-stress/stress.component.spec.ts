@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StressComponent } from './stress.component';
-import { ActivatedRoute } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { StressService } from '../../core/services/stress.service';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -15,9 +15,8 @@ describe('StressComponent', () => {
         runCustomStressTest: vi.fn().mockReturnValue(of({}))
     };
 
-    const mockActivatedRoute = {
-        snapshot: { paramMap: { get: () => 'case-123' } },
-        parent: { snapshot: { paramMap: { get: () => 'case-123' } } }
+    const mockCaseContext = {
+        caseId: () => 'case-123'
     };
 
     beforeEach(async () => {
@@ -27,7 +26,7 @@ describe('StressComponent', () => {
             imports: [StressComponent, NoopAnimationsModule],
             providers: [
                 { provide: StressService, useValue: mockStressService },
-                { provide: ActivatedRoute, useValue: mockActivatedRoute }
+                { provide: CaseContextService, useValue: mockCaseContext }
             ]
         }).compileComponents();
 

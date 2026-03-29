@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy, viewChild, ElementRef, effect } from '@angular/core';
 
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,24 +19,27 @@ import { GateDocumentOut } from '../../../../core/models/gate.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentsColumnComponent {
-    @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+    readonly fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
-    @Input()
-    set documents(data: GateDocumentOut[]) {
-        this.dataSource.data = data || [];
-    }
+    readonly documents = input<GateDocumentOut[]>([]);
 
-    @Output() fileDropped = new EventEmitter<File>();
-    @Output() deleteDocument = new EventEmitter<string>();
-    @Output() downloadDocument = new EventEmitter<string>();
-    @Output() viewDetails = new EventEmitter<GateDocumentOut>();
+    readonly fileDropped = output<File>();
+    readonly deleteDocument = output<string>();
+    readonly downloadDocument = output<string>();
+    readonly viewDetails = output<GateDocumentOut>();
 
     displayedColumns: string[] = ['document_type', 'fiscal_year', 'file_size', 'reliability_level', 'integrity_status', 'actions'];
     dataSource = new MatTableDataSource<GateDocumentOut>([]);
     isDragOver = false;
 
+    constructor() {
+        effect(() => {
+            this.dataSource.data = this.documents() || [];
+        });
+    }
+
     triggerFileInput(): void {
-        this.fileInput.nativeElement.click();
+        this.fileInputRef()?.nativeElement.click();
     }
 
     onFileSelected(event: Event): void {

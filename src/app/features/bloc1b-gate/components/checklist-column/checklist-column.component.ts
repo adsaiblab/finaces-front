@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, effect } from '@angular/core';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,13 +25,13 @@ export interface YearProgress {
   styleUrl: './checklist-column.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChecklistColumnComponent implements OnChanges {
-  @Input() documents: GateDocumentOut[] = [];
-  @Input() fiscalYears: number[] = [
+export class ChecklistColumnComponent {
+  readonly documents = input<GateDocumentOut[]>([]);
+  readonly fiscalYears = input<number[]>([
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
     new Date().getFullYear() - 3,
-  ];
+  ]);
 
   yearlyProgress: YearProgress[] = [];
   totalProgressPercent = 0;
@@ -44,23 +44,26 @@ export class ChecklistColumnComponent implements OnChanges {
     { type: 'STATUTS', label: 'Statuts', required: false },
   ];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['documents'] || changes['fiscalYears']) {
-      this.calculateProgress();
-    }
+  constructor() {
+    effect(() => {
+      // Reading signals triggers reactivity
+      const docs = this.documents();
+      const years = this.fiscalYears();
+      this.calculateProgress(docs, years);
+    });
   }
 
-  private calculateProgress(): void {
+  private calculateProgress(documents: GateDocumentOut[], fiscalYears: number[]): void {
     let totalRequired = 0;
     let totalUploadedRequired = 0;
 
-    this.yearlyProgress = this.fiscalYears.map((year) => {
+    this.yearlyProgress = fiscalYears.map((year) => {
       let yearRequired = 0;
       let yearUploadedRequired = 0;
 
       const docsForYear = this.requiredTypes.map((rt) => {
         // Un document est considéré valide s'il est présent et n'est pas en statut d'intégrité KO
-        const isUploaded = this.documents.some(
+        const isUploaded = documents.some(
           (d) =>
             d.document_type === rt.type && d.status !== 'REJECTED',
         );

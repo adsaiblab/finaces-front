@@ -48,7 +48,7 @@ describe('FinacesPillarRowComponent', () => {
 
         // Méthode Angular 14+ stricte pour instancier un Input requis
         fixture.componentRef.setInput('pillar', mockPillar);
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('should create', () => {

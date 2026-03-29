@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -14,9 +14,8 @@ import {
     providedIn: 'root',
 })
 export class ExpertService {
+    private readonly http = inject(HttpClient);
     private apiUrl = `${environment.apiUrl}/cases`;
-
-    constructor(private http: HttpClient) { }
 
     private readonly handleError = (error: HttpErrorResponse): Observable<never> => {
         if (!environment.production) console.error('[Expert] Error:', error);

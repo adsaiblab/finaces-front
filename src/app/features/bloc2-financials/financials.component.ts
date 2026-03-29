@@ -5,7 +5,8 @@ import { delay } from 'rxjs/operators';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -42,7 +43,7 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinancialsComponent {
-  private route = inject(ActivatedRoute);
+  private readonly caseContext = inject(CaseContextService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -62,11 +63,7 @@ export class FinancialsComponent {
 
   constructor() {
     // Résolution robuste du caseId
-    const resolvedId =
-      this.route.parent?.snapshot.paramMap.get('id') ||
-      this.route.snapshot.paramMap.get('id') ||
-      '';
-    this.caseId.set(resolvedId);
+    this.caseId.set(this.caseContext.caseId());
   }
 
   public onYearChange(year: number): void {

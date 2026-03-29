@@ -4,7 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, of, delay } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { CaseService } from '../../core/services/case.service';
 import { ExpertService } from '../../core/services/expert.service';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
@@ -44,7 +45,7 @@ import { MatInputModule } from '@angular/material/input';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpertComponent {
-  private route = inject(ActivatedRoute);
+  private readonly caseContext = inject(CaseContextService);
   private router = inject(Router);
   private caseService = inject(CaseService);
   private expertService = inject(ExpertService);
@@ -81,7 +82,7 @@ export class ExpertComponent {
   });
 
   ngOnInit(): void {
-    this.caseId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
+    this.caseId = this.caseContext.caseId();
     if (!this.caseId) {
       this.router.navigate(['/dashboard']);
       return;

@@ -2,8 +2,7 @@ import { NgClass } from '@angular/common';
 import {
     Component,
     input,
-    Output,
-    EventEmitter,
+    output,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     DestroyRef,
@@ -39,7 +38,7 @@ export class FinacesScoreGaugeComponent {
     readonly animated = input<boolean>(true);
     readonly showLabel = input<boolean>(true);
 
-    @Output() rendered = new EventEmitter<void>();
+    readonly rendered = output<void>();
 
     metrics!: GaugeMetrics;
     arcPath: string = '';

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IaComponent } from './ia.component';
-import { ActivatedRoute } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { IaService } from '../../core/services/ia.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
@@ -50,9 +50,8 @@ describe('IaComponent', () => {
         }))
     };
 
-    const mockActivatedRoute = {
-        snapshot: { paramMap: { get: () => 'case-123' } },
-        parent: { snapshot: { paramMap: { get: () => 'case-123' } } }
+    const mockCaseContext = {
+        caseId: () => 'case-123'
     };
 
     beforeEach(async () => {
@@ -60,7 +59,7 @@ describe('IaComponent', () => {
             imports: [IaComponent, NoopAnimationsModule],
             providers: [
                 { provide: IaService, useValue: mockIaService },
-                { provide: ActivatedRoute, useValue: mockActivatedRoute },
+                { provide: CaseContextService, useValue: mockCaseContext },
                 { provide: MatSnackBar, useValue: { open: vi.fn() } }
             ]
         }).compileComponents();

@@ -2,7 +2,8 @@ import { AsyncPipe, NgClass, DOCUMENT } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,7 +39,7 @@ import { ConfirmDialogComponent } from '../../shared/components/molecules/confir
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GateComponent {
-  private route = inject(ActivatedRoute);
+  private readonly caseContext = inject(CaseContextService);
   private router = inject(Router);
   private caseService = inject(CaseService);
   private documentService = inject(DocumentService);
@@ -62,8 +63,7 @@ export class GateComponent {
 
   ngOnInit(): void {
     // L'ID '/cases/:id' se trouve dans les paramètres de la route parente (CaseWorkspace)
-    const id = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
-    this.caseId.set(id);
+    this.caseId.set(this.caseContext.caseId());
 
     if (!this.caseId()) {
       this.router.navigate(['/dashboard']);

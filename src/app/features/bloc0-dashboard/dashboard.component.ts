@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -21,7 +21,7 @@ import { ConvergenceChartComponent } from './components/convergence-chart/conver
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
+    AsyncPipe,
     MatButtonModule,
     MatIconModule,
     RouterLink,

@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -39,7 +40,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NormalizationComponent {
-  private route = inject(ActivatedRoute);
+  private readonly caseContext = inject(CaseContextService);
   private router = inject(Router);
   private caseService = inject(CaseService);
   private snackBar = inject(MatSnackBar);
@@ -56,11 +57,7 @@ export class NormalizationComponent {
 
   ngOnInit(): void {
     // Parent or current route fallback logic
-    const resolvedId =
-      this.route.parent?.snapshot.paramMap.get('id') ||
-      this.route.snapshot.paramMap.get('id') ||
-      '';
-    this.caseId.set(resolvedId);
+    this.caseId.set(this.caseContext.caseId());
     this.loadNormalizedData();
   }
 

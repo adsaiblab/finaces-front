@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { forkJoin, catchError, of, delay } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,7 +41,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TensionComponent {
-  private route = inject(ActivatedRoute);
+  private readonly caseContext = inject(CaseContextService);
   private router = inject(Router);
   private scoringService = inject(ScoringMccService);
   private iaService = inject(IaService);
@@ -56,11 +57,7 @@ export class TensionComponent {
   public error = signal<string | null>(null);
 
   ngOnInit(): void {
-    const resolvedId =
-      this.route.parent?.snapshot.paramMap.get('id') ||
-      this.route.snapshot.paramMap.get('id') ||
-      '';
-    this.caseId.set(resolvedId);
+    this.caseId.set(this.caseContext.caseId());
     this.loadTensionAnalysis();
   }
 

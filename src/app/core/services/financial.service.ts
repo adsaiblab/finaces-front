@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -13,9 +13,8 @@ import {
     providedIn: 'root',
 })
 export class FinancialService {
+    private readonly http = inject(HttpClient);
     private apiUrl = `${environment.apiUrl}/cases`;
-
-    constructor(private http: HttpClient) { }
 
     createFinancialStatement(
         caseId: string,

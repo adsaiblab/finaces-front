@@ -2,7 +2,8 @@ import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -35,7 +36,7 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Bloc4RatiosComponent {
-    private route = inject(ActivatedRoute);
+    private readonly caseContext = inject(CaseContextService);
     private router = inject(Router);
     private ratioService = inject(RatioCalculationService);
     private caseService = inject(CaseService); // Using existing CaseService for mock IA/Scoring endpoints
@@ -53,8 +54,7 @@ export class Bloc4RatiosComponent {
     public scoringInProgress = signal<boolean>(false);
 
     ngOnInit(): void {
-        const resolvedId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
-        this.caseId.set(resolvedId);
+        this.caseId.set(this.caseContext.caseId());
         this.loadRatios();
     }
 

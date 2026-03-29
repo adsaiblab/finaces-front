@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NormalizationComponent } from './normalization.component';
-import { ActivatedRoute } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { CaseService } from '../../core/services/case.service';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -20,9 +20,8 @@ describe('NormalizationComponent', () => {
         computeRatios: vi.fn().mockReturnValue(of({}))
     };
 
-    const mockActivatedRoute = {
-        snapshot: { paramMap: { get: () => 'case-123' } },
-        parent: { snapshot: { paramMap: { get: () => 'case-123' } } }
+    const mockCaseContext = {
+        caseId: () => 'case-123'
     };
 
     beforeEach(async () => {
@@ -30,7 +29,7 @@ describe('NormalizationComponent', () => {
             imports: [NormalizationComponent, NoopAnimationsModule],
             providers: [
                 { provide: CaseService, useValue: mockCaseService },
-                { provide: ActivatedRoute, useValue: mockActivatedRoute }
+                { provide: CaseContextService, useValue: mockCaseContext }
             ]
         }).compileComponents();
 

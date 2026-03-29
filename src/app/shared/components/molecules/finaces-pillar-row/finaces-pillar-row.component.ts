@@ -1,12 +1,11 @@
 import { NgClass, DecimalPipe } from '@angular/common';
 import {
     Component,
-    Input,
-    Output,
-    EventEmitter,
+    input,
+    output,
+    computed,
     ChangeDetectionStrategy,
-    OnChanges,
-    SimpleChanges
+    effect
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
@@ -69,13 +68,13 @@ interface PillarMetadata {
     styleUrls: ['./finaces-pillar-row.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FinacesPillarRowComponent implements  OnChanges {
-    @Input({ required: true }) pillar!: PillarDetailSchema;
-    @Input() isExpanded: boolean = false;   // Lecture seule — muté uniquement par le parent
-    @Input() readonly: boolean = false;
+export class FinacesPillarRowComponent {
+    readonly pillar = input.required<PillarDetailSchema>();
+    readonly isExpanded = input<boolean>(false);
+    readonly isReadonly = input<boolean>(false, { alias: 'readonly' });
 
-    @Output() toggleExpand = new EventEmitter<string>();
-    @Output() commentChange = new EventEmitter<string>();
+    readonly toggleExpand = output<string>();
+    readonly commentChange = output<string>();
 
     displayedColumns: string[] = ['indicator', 'value', 'score', 'weight', 'contribution'];
 
@@ -87,51 +86,53 @@ export class FinacesPillarRowComponent implements  OnChanges {
         QUALITE: { icon: 'star', colorClass: 'text-error', description: 'Qualité des données et cohérence' }
     };
 
-    metadata: PillarMetadata | null = null;
+    readonly metadata = computed<PillarMetadata | null>(() => {
+        const p = this.pillar();
+        return p ? this.pillarMetadataMap[p.pillarKey] || null : null;
+    });
+
     editingComment: string = '';
 
-    ngOnInit(): void {
-        this.initData();
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['pillar']) this.initData();
-    }
-
-    private initData(): void {
-        if (this.pillar) {
-            this.metadata = this.pillarMetadataMap[this.pillar.pillarKey] || null;
-            this.editingComment = this.pillar.comment || '';
-        }
+    constructor() {
+        effect(() => {
+            const p = this.pillar();
+            if (p) {
+                this.editingComment = p.comment || '';
+            }
+        });
     }
 
     // VIO-07 FIX: Ne plus muter @Input isExpanded.
     // Le composant émet l'événement et laisse le PARENT décider du nouvel état.
     onExpandToggle(): void {
-        if (this.pillar) {
-            this.toggleExpand.emit(this.pillar.pillarKey);
+        const p = this.pillar();
+        if (p) {
+            this.toggleExpand.emit(p.pillarKey);
         }
     }
 
     onCommentBlur(): void {
-        if (this.pillar && this.editingComment !== this.pillar.comment) {
+        const p = this.pillar();
+        if (p && this.editingComment !== p.comment) {
             this.commentChange.emit(this.editingComment);
         }
     }
 
     getProgressValue(): number {
-        if (!this.pillar?.maxScore) return 0;
-        return Math.min(100, Math.max(0, (this.pillar.score / this.pillar.maxScore) * 100));
+        const p = this.pillar();
+        if (!p?.maxScore) return 0;
+        return Math.min(100, Math.max(0, (p.score / p.maxScore) * 100));
     }
 
     getProgressColorClass(): string {
-        if (!this.pillar) return 'bg-warning';
+        const p = this.pillar();
+        if (!p) return 'bg-warning';
         const riskColorMap: Record<RiskClass, string> = {
             LOW: 'bg-success',
             MODERATE: 'bg-warning',
             HIGH: 'bg-mcc-high',
             CRITICAL: 'bg-error'
         };
-        return riskColorMap[this.pillar.riskClass] || 'bg-warning';
+        return riskColorMap[p.riskClass] || 'bg-warning';
     }
 }

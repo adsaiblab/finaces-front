@@ -16,23 +16,22 @@ describe('ChecklistColumnComponent', () => {
         fixture = TestBed.createComponent(ChecklistColumnComponent);
         component = fixture.componentInstance;
         fixture.componentRef.setInput('fiscalYears', [2023, 2022, 2021]);
-        fixture.detectChanges();
-        fixture.detectChanges();
+        await fixture.whenStable();
     });
 
     it('devrait créer le composant', () => {
         expect(component).toBeTruthy();
     });
 
-    it('devrait calculer 0% si aucun document nest uploadé', () => {
+    it('devrait calculer 0% si aucun document nest uploadé', async () => {
         fixture.componentRef.setInput('documents', []);
-        fixture.detectChanges();
+        await fixture.whenStable();
 
         expect(component.totalProgressPercent).toBe(0);
         expect(component.yearlyProgress[0].progressPercent).toBe(0);
     });
 
-    it('devrait calculer correctement la progression avec des documents valides', () => {
+    it('devrait calculer correctement la progression avec des documents valides', async () => {
         // Component compares against legacy DocumentDocType strings internally
         const mockDocs = [
             { document_type: 'BILAN', status: DocStatus.PRESENT },
@@ -43,7 +42,7 @@ describe('ChecklistColumnComponent', () => {
 
         fixture.componentRef.setInput('documents', mockDocs);
         fixture.componentRef.setInput('fiscalYears', [2023, 2022, 2021]);
-        fixture.detectChanges();
+        await fixture.whenStable();
 
         // Component matches by document_type across all years (no fiscal_year filter)
         // 4 required types present → all 3 years get 100%, total = 100%
@@ -51,13 +50,13 @@ describe('ChecklistColumnComponent', () => {
         expect(component.totalProgressPercent).toBe(100);
     });
 
-    it('devrait ignorer les documents en statut REJECTED dans la progression', () => {
+    it('devrait ignorer les documents en statut REJECTED dans la progression', async () => {
         const mockDocs = [
             { document_type: 'BILAN', status: DocStatus.REJECTED }
         ] as unknown as GateDocumentOut[];
 
         fixture.componentRef.setInput('documents', mockDocs);
-        fixture.detectChanges();
+        await fixture.whenStable();
 
         // REJECTED docs are excluded → 0 valid uploads
         expect(component.yearlyProgress[0].progressPercent).toBe(0);

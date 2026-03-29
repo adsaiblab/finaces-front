@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Bloc4RatiosComponent } from './bloc4-ratios.component';
-import { ActivatedRoute } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { RatioCalculationService } from './services/ratio-calculation.service';
 import { CaseService } from '../../core/services/case.service';
 import { of } from 'rxjs';
@@ -25,9 +25,8 @@ describe('Bloc4RatiosComponent', () => {
 
     const mockCaseService = {};
 
-    const mockActivatedRoute = {
-        snapshot: { paramMap: { get: () => 'case-123' } },
-        parent: { snapshot: { paramMap: { get: () => 'case-123' } } }
+    const mockCaseContext = {
+        caseId: () => 'case-123'
     };
 
     beforeEach(async () => {
@@ -36,7 +35,7 @@ describe('Bloc4RatiosComponent', () => {
             providers: [
                 { provide: RatioCalculationService, useValue: mockRatioService },
                 { provide: CaseService, useValue: mockCaseService },
-                { provide: ActivatedRoute, useValue: mockActivatedRoute }
+                { provide: CaseContextService, useValue: mockCaseContext }
             ]
         }).compileComponents();
 

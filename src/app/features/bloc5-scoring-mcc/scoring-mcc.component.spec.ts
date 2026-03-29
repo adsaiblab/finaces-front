@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ScoringMccComponent } from './scoring-mcc.component';
-import { ActivatedRoute } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { ScoringMccService } from './services/scoring-mcc.service';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -23,9 +23,8 @@ describe('ScoringMccComponent', () => {
         overrideScore: vi.fn().mockReturnValue(of({}))
     };
 
-    const mockActivatedRoute = {
-        snapshot: { paramMap: { get: () => 'case-123' } },
-        parent: { snapshot: { paramMap: { get: () => 'case-123' } } }
+    const mockCaseContext = {
+        caseId: () => 'case-123'
     };
 
     beforeEach(async () => {
@@ -33,7 +32,7 @@ describe('ScoringMccComponent', () => {
             imports: [ScoringMccComponent, NoopAnimationsModule],
             providers: [
                 { provide: ScoringMccService, useValue: mockScoringService },
-                { provide: ActivatedRoute, useValue: mockActivatedRoute }
+                { provide: CaseContextService, useValue: mockCaseContext }
             ]
         }).compileComponents();
 

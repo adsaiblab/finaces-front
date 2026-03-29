@@ -5,7 +5,8 @@ import { of, forkJoin } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { CaseContextService } from '../../core/services/case-context.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -39,7 +40,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IaComponent {
-  private route = inject(ActivatedRoute);
+  private readonly caseContext = inject(CaseContextService);
   private router = inject(Router);
   private iaService = inject(IaService);
   private snackBar = inject(MatSnackBar);
@@ -57,8 +58,7 @@ export class IaComponent {
   public simulationClass = signal<string | null>(null);
 
   ngOnInit(): void {
-    const resolvedId = this.route.parent?.snapshot.paramMap.get('id') || this.route.snapshot.paramMap.get('id') || '';
-    this.caseId.set(resolvedId);
+    this.caseId.set(this.caseContext.caseId());
     this.loadPrediction();
   }
 
