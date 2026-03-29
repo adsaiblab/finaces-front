@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
@@ -23,7 +23,7 @@ export class LoginComponent {
 
   readonly loginForm = this.fb.group({
     username: ['', Validators.required],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
   });
 
   /** Show field-level error only after user has touched the field */
@@ -42,12 +42,15 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.authService.login(username!, password!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.error.set('Identifiants invalides ou service indisponible.');
-        this.isLoading.set(false);
-      }
-    });
+    this.authService
+      .login(username!, password!)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigate(['/dashboard']),
+        error: () => {
+          this.error.set('Identifiants invalides ou service indisponible.');
+          this.isLoading.set(false);
+        },
+      });
   }
 }

@@ -1,57 +1,57 @@
 :host {
-    display: block;
-    height: 100%;
+  display: block;
+  height: 100%;
 }
 
 /* Custom Navigation Pills (Remplace le mat-tab-group natif) */
 .nav-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    background: transparent;
-    color: var(--color-content-secondary);
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--color-content-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 
-    mat-icon {
-        font-size: 1.25rem;
-        width: 1.25rem;
-        height: 1.25rem;
-        color: inherit;
-    }
+  mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: inherit;
+  }
 
-    &:hover {
-        background-color: var(--color-surface-hover);
-        color: var(--color-content-primary);
-    }
+  &:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-content-primary);
+  }
 
-    &.active {
-        /* Utilisation de color-mix pour une opacité élégante du fond */
-        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
-        color: var(--color-primary);
-        font-weight: 600;
-    }
+  &.active {
+    /* Utilisation de color-mix pour une opacité élégante du fond */
+    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
 }
 
 .animate-fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

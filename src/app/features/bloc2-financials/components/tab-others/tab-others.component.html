@@ -1,78 +1,126 @@
 <form [formGroup]="othersForm" class="flex flex-col pt-2 pb-8">
-
-    <div class="flex flex-col">
-
-        <!-- T08: Financial Metadata -->
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Currency</label>
-            <select formControlName="currency_original" class="finaces-data-pill">
-                <option value="MAD">MAD</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="XOF">XOF</option>
-                <option value="XAF">XAF</option>
-                <option value="TND">TND</option>
-                <option value="DZD">DZD</option>
-                <option value="EGP">EGP</option>
-                <option value="GBP">GBP</option>
-                <option value="ZAR">ZAR</option>
-            </select>
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Exchange Rate to USD</label>
-            <input type="number" formControlName="exchange_rate_to_usd" placeholder="1.0" step="0.01" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Accounting Standard</label>
-            <select formControlName="referentiel" class="finaces-data-pill">
-                <option value="PCM">PCM (Morocco)</option>
-                <option value="IFRS">IFRS</option>
-                <option value="OHADA">OHADA</option>
-                <option value="PCG">PCG (France)</option>
-                <option value="CGNC">CGNC</option>
-            </select>
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-sm font-bold text-[color:var(--color-content-primary)]">Consolidated Statement</label>
-            <div class="flex justify-end pr-8">
-                <mat-slide-toggle formControlName="is_consolidated" color="primary"></mat-slide-toggle>
-            </div>
-        </div>
-
-        <!-- Headcount -->
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Headcount (number)</label>
-            <input type="number" formControlName="headcount" placeholder="0" class="finaces-data-pill">
-        </div>
-
-        <!-- Backlog Value -->
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Backlog Value</label>
-            <input type="number" formControlName="backlogValue" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <!-- Distributed Dividends -->
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Distributed Dividends</label>
-            <input type="number" formControlName="distributedDividends" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <!-- Consolidated Accounts -->
-        <div class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-sm font-bold text-[color:var(--color-content-primary)]">Consolidated Accounts</label>
-            <div class="flex justify-end pr-8">
-                <mat-slide-toggle formControlName="consolidatedAccounts" color="primary"></mat-slide-toggle>
-            </div>
-        </div>
-
-        <!-- Notes / Source -->
-        <div class="flex flex-col mt-6 gap-3">
-            <label class="text-sm font-bold text-[color:var(--color-content-primary)] px-2">Notes / Source</label>
-            <textarea formControlName="notes" rows="4" class="w-full bg-[color:var(--color-surface-hover)] border border-[color:var(--color-border-default)] rounded-xl p-4 text-sm text-[color:var(--color-content-primary)] focus:border-[color:var(--color-primary)] outline-none transition-colors" placeholder="[SEED-API] Profil DETRESSE | Exercice {{ year() }}"></textarea>
-        </div>
-
+  <div class="flex flex-col">
+    <!-- T08: Financial Metadata -->
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Currency</label>
+      <select formControlName="currency_original" class="finaces-data-pill">
+        <option value="MAD">MAD</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="XOF">XOF</option>
+        <option value="XAF">XAF</option>
+        <option value="TND">TND</option>
+        <option value="DZD">DZD</option>
+        <option value="EGP">EGP</option>
+        <option value="GBP">GBP</option>
+        <option value="ZAR">ZAR</option>
+      </select>
     </div>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Exchange Rate to USD</label
+      >
+      <input
+        type="number"
+        formControlName="exchange_rate_to_usd"
+        placeholder="1.0"
+        step="0.01"
+        class="finaces-data-pill"
+      />
+    </div>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Accounting Standard</label
+      >
+      <select formControlName="referentiel" class="finaces-data-pill">
+        <option value="PCM">PCM (Morocco)</option>
+        <option value="IFRS">IFRS</option>
+        <option value="OHADA">OHADA</option>
+        <option value="PCG">PCG (France)</option>
+        <option value="CGNC">CGNC</option>
+      </select>
+    </div>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-sm font-bold text-[color:var(--color-content-primary)]"
+        >Consolidated Statement</label
+      >
+      <div class="flex justify-end pr-8">
+        <mat-slide-toggle formControlName="is_consolidated" color="primary"></mat-slide-toggle>
+      </div>
+    </div>
+
+    <!-- Headcount -->
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Headcount (number)</label
+      >
+      <input type="number" formControlName="headcount" placeholder="0" class="finaces-data-pill" />
+    </div>
+
+    <!-- Backlog Value -->
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Backlog Value</label>
+      <input
+        type="number"
+        formControlName="backlogValue"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+
+    <!-- Distributed Dividends -->
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Distributed Dividends</label
+      >
+      <input
+        type="number"
+        formControlName="distributedDividends"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+
+    <!-- Consolidated Accounts -->
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-sm font-bold text-[color:var(--color-content-primary)]"
+        >Consolidated Accounts</label
+      >
+      <div class="flex justify-end pr-8">
+        <mat-slide-toggle formControlName="consolidatedAccounts" color="primary"></mat-slide-toggle>
+      </div>
+    </div>
+
+    <!-- Notes / Source -->
+    <div class="flex flex-col mt-6 gap-3">
+      <label class="text-sm font-bold text-[color:var(--color-content-primary)] px-2"
+        >Notes / Source</label
+      >
+      <textarea
+        formControlName="notes"
+        rows="4"
+        class="w-full bg-[color:var(--color-surface-hover)] border border-[color:var(--color-border-default)] rounded-xl p-4 text-sm text-[color:var(--color-content-primary)] focus:border-[color:var(--color-primary)] outline-none transition-colors"
+        placeholder="[SEED-API] Profil DETRESSE | Exercice {{ year() }}"
+      ></textarea>
+    </div>
+  </div>
 </form>

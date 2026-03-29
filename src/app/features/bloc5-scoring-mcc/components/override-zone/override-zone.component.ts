@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
-import {  DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,40 +10,43 @@ import { MatInputModule } from '@angular/material/input';
 import { ScoreOverridePayload, ScoreOverride } from '../../../../core/models/scoring.model';
 
 @Component({
-    selector: 'app-override-zone',
-    standalone: true,
-    imports: [ReactiveFormsModule,
-        MatCardModule,
-        MatIconModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        DatePipe, DecimalPipe],
-    templateUrl: './override-zone.component.html',
-    styleUrls: ['./override-zone.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-override-zone',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    DatePipe,
+    DecimalPipe,
+  ],
+  templateUrl: './override-zone.component.html',
+  styleUrls: ['./override-zone.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OverrideZoneComponent {
-    private fb = inject(FormBuilder);
+  private fb = inject(FormBuilder);
 
-    public isOverridden = input<boolean>(false);
-    public overrideDetails = input<ScoreOverride | undefined>();
-    public originalScore = input<number>(0);
-    public isSubmitting = input<boolean>(false);
+  public isOverridden = input<boolean>(false);
+  public overrideDetails = input<ScoreOverride | undefined>();
+  public originalScore = input<number>(0);
+  public isSubmitting = input<boolean>(false);
 
-    public overrideSubmit = output<ScoreOverridePayload>();
+  public overrideSubmit = output<ScoreOverridePayload>();
 
-    public overrideForm: FormGroup = this.fb.group({
-        newScore: [null, [Validators.required, Validators.min(0), Validators.max(5)]],
-        reason: ['', [Validators.required, Validators.minLength(10)]]
-    });
+  public overrideForm: FormGroup = this.fb.group({
+    newScore: [null, [Validators.required, Validators.min(0), Validators.max(5)]],
+    reason: ['', [Validators.required, Validators.minLength(10)]],
+  });
 
-    public submitOverride(): void {
-        if (this.overrideForm.valid) {
-            this.overrideSubmit.emit({
-                new_score: this.overrideForm.value.newScore,
-                reason: this.overrideForm.value.reason
-            });
-        }
+  public submitOverride(): void {
+    if (this.overrideForm.valid) {
+      this.overrideSubmit.emit({
+        new_score: this.overrideForm.value.newScore,
+        reason: this.overrideForm.value.reason,
+      });
     }
+  }
 }

@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -9,7 +16,13 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-tab-others',
   standalone: true,
-  imports: [ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [
+    ReactiveFormsModule,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+  ],
   templateUrl: './tab-others.component.html',
   styleUrls: ['./tab-others.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

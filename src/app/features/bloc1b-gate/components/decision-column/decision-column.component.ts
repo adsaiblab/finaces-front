@@ -8,23 +8,23 @@ import { GateDecisionSchema } from '../../../../core/models/gate.model';
 import { GateVerdict } from '../../../../core/models/enums';
 
 @Component({
-    selector: 'app-decision-column',
-    standalone: true,
-    imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, NgClass, DatePipe],
-    templateUrl: './decision-column.component.html',
-    styleUrl: './decision-column.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-decision-column',
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, NgClass, DatePipe],
+  templateUrl: './decision-column.component.html',
+  styleUrl: './decision-column.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DecisionColumnComponent {
-    readonly decision = input<GateDecisionSchema | null>(null);
-    readonly isEvaluating = input<boolean>(false);
+  readonly decision = input<GateDecisionSchema | null>(null);
+  readonly isEvaluating = input<boolean>(false);
 
-    readonly evaluate = output<void>();
-    readonly sealGate = output<void>();
-    readonly goToFinancials = output<void>();
-    readonly correctDocuments = output<void>();
-    readonly goToDashboard = output<void>();
+  readonly evaluate = output<void>();
+  readonly sealGate = output<void>();
+  readonly goToFinancials = output<void>();
+  readonly correctDocuments = output<void>();
+  readonly goToDashboard = output<void>();
 
-    readonly isPassed = computed(() => this.decision()?.verdict === GateVerdict.OK);
-    readonly isBlocked = computed(() => this.decision()?.verdict === GateVerdict.BLOCKING);
+  readonly isPassed = computed(() => this.decision()?.verdict === GateVerdict.OK);
+  readonly isBlocked = computed(() => this.decision()?.verdict === GateVerdict.BLOCKING);
 }

@@ -1,117 +1,154 @@
 <div class="w-full min-h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-32">
-
-    @if (isLoading()) {
+  @if (isLoading()) {
     <div
-        class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10">
-        <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-        <p class="text-[color:var(--color-content-secondary)] font-medium">Computing financial ratios and coherence
-            checks...</p>
+      class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
+    >
+      <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+      <p class="text-[color:var(--color-content-secondary)] font-medium">
+        Computing financial ratios and coherence checks...
+      </p>
     </div>
-    }
+  }
 
-    <header
-        class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
-        <div>
-            <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
-                <mat-icon class="text-[color:var(--color-primary)]">calculate</mat-icon>
-                Financial Ratios
-            </h1>
-            <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-                Case #{{ caseId() }} — grouped analysis of 25+ indicators, Z-Score Altman, and coherence alerts.
-            </p>
-        </div>
+  <header
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6"
+  >
+    <div>
+      <h1
+        class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3"
+      >
+        <mat-icon class="text-[color:var(--color-primary)]">calculate</mat-icon>
+        Financial Ratios
+      </h1>
+      <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
+        Case #{{ caseId() }} — grouped analysis of 25+ indicators, Z-Score Altman, and coherence
+        alerts.
+      </p>
+    </div>
 
-        <button mat-flat-button color="primary" (click)="launchScoringAndPrediction()"
-            [disabled]="isLoading() || scoringInProgress() || !ratioSet()"
-            class="finaces-primary-btn px-6 h-12 shadow-md">
-            @if (scoringInProgress()) {
-            <span class="flex items-center">
-                <mat-spinner diameter="20" class="mr-2"></mat-spinner>
-                Processing...
-            </span>
-            } @else {
-            <span class="flex items-center">
-                <mat-icon class="mr-2">play_arrow</mat-icon>
-                Launch MCC Scoring & AI Prediction
-            </span>
-            }
-        </button>
-    </header>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="launchScoringAndPrediction()"
+      [disabled]="isLoading() || scoringInProgress() || !ratioSet()"
+      class="finaces-primary-btn px-6 h-12 shadow-md"
+    >
+      @if (scoringInProgress()) {
+        <span class="flex items-center">
+          <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+          Processing...
+        </span>
+      } @else {
+        <span class="flex items-center">
+          <mat-icon class="mr-2">play_arrow</mat-icon>
+          Launch MCC Scoring & AI Prediction
+        </span>
+      }
+    </button>
+  </header>
 
-    @if (error()) {
+  @if (error()) {
     <div
-        class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center">
-        <span>{{ error() }}</span>
-        <button mat-button (click)="error.set(null)">Close</button>
+      class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center"
+    >
+      <span>{{ error() }}</span>
+      <button mat-button (click)="error.set(null)">Close</button>
     </div>
-    }
+  }
 
-    @if (ratioSet(); as ratios) {
+  @if (ratioSet(); as ratios) {
     <main class="flex flex-col gap-8 w-full">
+      <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
+      </app-coherence-alerts>
 
-        <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
-        </app-coherence-alerts>
-
-        @if (ratios.z_score.z_score_zone === 'DISTRESS' || ratios.z_score.z_score_zone === 'GREY') {
+      @if (ratios.z_score.z_score_zone === 'DISTRESS' || ratios.z_score.z_score_zone === 'GREY') {
         <app-zscore-card [zscore]="ratios.z_score" [isAlertMode]="true"></app-zscore-card>
-        }
+      }
 
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-            <div class="xl:row-span-2">
-                <app-ratio-group-card groupName="Liquidity & Working Capital" groupIcon="water_drop"
-                    [ratios]="ratios.liquidity">
-                </app-ratio-group-card>
-            </div>
-
-            <app-ratio-group-card groupName="Solvency & Structure" groupIcon="shield" [ratios]="ratios.solvency">
-            </app-ratio-group-card>
-
-            <app-ratio-group-card groupName="Profitability" groupIcon="trending_up" [ratios]="ratios.profitability">
-            </app-ratio-group-card>
-
-            <app-ratio-group-card groupName="Cash Generation Capacity" groupIcon="bolt" [ratios]="ratios.capacity">
-            </app-ratio-group-card>
-
-            <app-zscore-card [zscore]="ratios.z_score" [isAlertMode]="false"></app-zscore-card>
-
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="xl:row-span-2">
+          <app-ratio-group-card
+            groupName="Liquidity & Working Capital"
+            groupIcon="water_drop"
+            [ratios]="ratios.liquidity"
+          >
+          </app-ratio-group-card>
         </div>
+
+        <app-ratio-group-card
+          groupName="Solvency & Structure"
+          groupIcon="shield"
+          [ratios]="ratios.solvency"
+        >
+        </app-ratio-group-card>
+
+        <app-ratio-group-card
+          groupName="Profitability"
+          groupIcon="trending_up"
+          [ratios]="ratios.profitability"
+        >
+        </app-ratio-group-card>
+
+        <app-ratio-group-card
+          groupName="Cash Generation Capacity"
+          groupIcon="bolt"
+          [ratios]="ratios.capacity"
+        >
+        </app-ratio-group-card>
+
+        <app-zscore-card [zscore]="ratios.z_score" [isAlertMode]="false"></app-zscore-card>
+      </div>
     </main>
 
     <div
-        class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
+      class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12"
+    >
+      <button
+        mat-button
+        (click)="navigateBack()"
+        class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        Back to Normalization
+      </button>
 
-        <button mat-button (click)="navigateBack()"
-            class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]">
-            <mat-icon>arrow_back</mat-icon>
-            Back to Normalization
-        </button>
+      <div class="flex items-center gap-6">
+        <span
+          class="text-sm font-medium text-[color:var(--color-content-secondary)] hidden md:block"
+        >
+          <mat-icon
+            class="inline align-middle text-[18px] mr-1"
+            [ngClass]="
+              ratios.coherence_alerts.length > 0
+                ? 'text-[color:var(--color-warning)]'
+                : 'text-[color:var(--color-success)]'
+            "
+          >
+            {{ ratios.coherence_alerts.length > 0 ? 'warning' : 'check_circle' }}
+          </mat-icon>
+          {{ ratios.coherence_alerts.length }} alert(s) detected.
+        </span>
 
-        <div class="flex items-center gap-6">
-            <span class="text-sm font-medium text-[color:var(--color-content-secondary)] hidden md:block">
-                <mat-icon class="inline align-middle text-[18px] mr-1"
-                    [ngClass]="ratios.coherence_alerts.length > 0 ? 'text-[color:var(--color-warning)]' : 'text-[color:var(--color-success)]'">
-                    {{ ratios.coherence_alerts.length > 0 ? 'warning' : 'check_circle' }}
-                </mat-icon>
-                {{ ratios.coherence_alerts.length }} alert(s) detected.
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="launchScoringAndPrediction()"
+          [disabled]="scoringInProgress()"
+          class="finaces-primary-btn px-8"
+        >
+          @if (scoringInProgress()) {
+            <span class="flex items-center">
+              <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+              Executing...
             </span>
-
-            <button mat-flat-button color="primary" (click)="launchScoringAndPrediction()"
-                [disabled]="scoringInProgress()" class="finaces-primary-btn px-8">
-                @if (scoringInProgress()) {
-                <span class="flex items-center">
-                    <mat-spinner diameter="20" class="mr-2"></mat-spinner>
-                    Executing...
-                </span>
-                } @else {
-                <span class="flex items-center">
-                    <span>Launch Scoring & AI</span>
-                    <mat-icon class="ml-2">navigate_next</mat-icon>
-                </span>
-                }
-            </button>
-        </div>
-
+          } @else {
+            <span class="flex items-center">
+              <span>Launch Scoring & AI</span>
+              <mat-icon class="ml-2">navigate_next</mat-icon>
+            </span>
+          }
+        </button>
+      </div>
     </div>
-    }
+  }
 </div>

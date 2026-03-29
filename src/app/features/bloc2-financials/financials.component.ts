@@ -78,7 +78,11 @@ export class FinancialsComponent {
     this.currentLiabilitiesTotal.set(event.total);
   }
 
-  public onPnlUpdate(event: { netIncome: number; ebitda: number; data: FinancialStatementRawOut }): void {
+  public onPnlUpdate(event: {
+    netIncome: number;
+    ebitda: number;
+    data: FinancialStatementRawOut;
+  }): void {
     // KPI Updates
   }
 
@@ -91,13 +95,15 @@ export class FinancialsComponent {
     this.snackBar.open('Normalisation en cours...', '', { duration: 2000 });
 
     // Prototype Enterprise-Grade (Simulation sans backend)
-    of(null).pipe(delay(1500), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.isSubmitting.set(false);
-      this.snackBar.open('Normalisation terminée avec succès', 'OK', {
-        duration: 3000,
-        panelClass: 'snack-success',
+    of(null)
+      .pipe(delay(1500), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.isSubmitting.set(false);
+        this.snackBar.open('Normalisation terminée avec succès', 'OK', {
+          duration: 3000,
+          panelClass: 'snack-success',
+        });
+        this.router.navigate(['/cases', this.caseId(), 'normalization']);
       });
-      this.router.navigate(['/cases', this.caseId(), 'normalization']);
-    });
   }
 }

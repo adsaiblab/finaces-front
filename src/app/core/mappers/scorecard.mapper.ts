@@ -41,9 +41,17 @@ export class ScorecardMapper {
     }
 
     function getPillar(name: string): PillarDetail {
-      return pillarMap.get(name) ?? {
-        id: '', name, score: 0, weight: 0, trend: null, signals: [], detail_text: '',
-      };
+      return (
+        pillarMap.get(name) ?? {
+          id: '',
+          name,
+          score: 0,
+          weight: 0,
+          trend: null,
+          signals: [],
+          detail_text: '',
+        }
+      );
     }
 
     const liq = getPillar('liquidity');
@@ -80,9 +88,19 @@ export class ScorecardMapper {
       created_at: back.created_at,
       computed_at: back.created_at,
       version: String(back.version),
-      overrides: back.is_overridden && back.override_rationale
-        ? [{ original_score: back.system_calculated_score, adjusted_score: back.system_calculated_score, override_type: 'MANUAL', justification: back.override_rationale, authorized_by: '', applied_at: back.created_at }]
-        : [],
+      overrides:
+        back.is_overridden && back.override_rationale
+          ? [
+              {
+                original_score: back.system_calculated_score,
+                adjusted_score: back.system_calculated_score,
+                override_type: 'MANUAL',
+                justification: back.override_rationale,
+                authorized_by: '',
+                applied_at: back.created_at,
+              },
+            ]
+          : [],
     };
   }
 }

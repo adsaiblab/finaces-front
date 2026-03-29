@@ -7,41 +7,43 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('NormalizationComponent', () => {
-    let component: NormalizationComponent;
-    let fixture: ComponentFixture<NormalizationComponent>;
+  let component: NormalizationComponent;
+  let fixture: ComponentFixture<NormalizationComponent>;
 
-    const mockCaseService = {
-        getNormalizedFinancials: vi.fn().mockReturnValue(of({
-            statement_id: 'mock',
-            fiscal_year: 2023,
-            adjustments: []
-        })),
-        normalizeFinancials: vi.fn().mockReturnValue(of({})),
-        computeRatios: vi.fn().mockReturnValue(of({}))
-    };
+  const mockCaseService = {
+    getNormalizedFinancials: vi.fn().mockReturnValue(
+      of({
+        statement_id: 'mock',
+        fiscal_year: 2023,
+        adjustments: [],
+      }),
+    ),
+    normalizeFinancials: vi.fn().mockReturnValue(of({})),
+    computeRatios: vi.fn().mockReturnValue(of({})),
+  };
 
-    const mockCaseContext = {
-        caseId: () => 'case-123'
-    };
+  const mockCaseContext = {
+    caseId: () => 'case-123',
+  };
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [NormalizationComponent, NoopAnimationsModule],
-            providers: [
-                { provide: CaseService, useValue: mockCaseService },
-                { provide: CaseContextService, useValue: mockCaseContext }
-            ]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NormalizationComponent, NoopAnimationsModule],
+      providers: [
+        { provide: CaseService, useValue: mockCaseService },
+        { provide: CaseContextService, useValue: mockCaseContext },
+      ],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(NormalizationComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    fixture = TestBed.createComponent(NormalizationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create and load data on init', () => {
-        expect(component).toBeTruthy();
-        expect(mockCaseService.getNormalizedFinancials).toHaveBeenCalledWith('case-123');
-        expect(component.isLoading()).toBe(false);
-        expect(component.normalizedData()?.fiscal_year).toBe(2023);
-    });
+  it('should create and load data on init', () => {
+    expect(component).toBeTruthy();
+    expect(mockCaseService.getNormalizedFinancials).toHaveBeenCalledWith('case-123');
+    expect(component.isLoading()).toBe(false);
+    expect(component.normalizedData()?.fiscal_year).toBe(2023);
+  });
 });

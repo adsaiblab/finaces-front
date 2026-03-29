@@ -1,19 +1,19 @@
 // Variables FinaCES strictes
 .finaces-what-if-card {
-    ::ng-deep .mat-mdc-slider {
-        --mdc-slider-handle-color: var(--color-primary);
-        --mdc-slider-focus-handle-color: var(--color-primary);
-        --mdc-slider-hover-handle-color: var(--color-primary);
-        --mdc-slider-active-track-color: var(--color-primary);
-        --mdc-slider-inactive-track-color: var(--color-border-strong);
-    }
+  ::ng-deep .mat-mdc-slider {
+    --mdc-slider-handle-color: var(--color-primary);
+    --mdc-slider-focus-handle-color: var(--color-primary);
+    --mdc-slider-hover-handle-color: var(--color-primary);
+    --mdc-slider-active-track-color: var(--color-primary);
+    --mdc-slider-inactive-track-color: var(--color-border-strong);
+  }
 }
 
 .finaces-primary-btn {
-    background-color: var(--color-primary);
-    color: var(--color-content-inverse);
+  background-color: var(--color-primary);
+  color: var(--color-content-inverse);
 
-    &:hover:not([disabled]) {
-        filter: brightness(1.1);
-    }
+  &:hover:not([disabled]) {
+    filter: brightness(1.1);
+  }
 }

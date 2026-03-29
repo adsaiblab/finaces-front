@@ -9,112 +9,112 @@ import { ExpertReviewOutputSchema } from './expert.model';
 export { CaseStatus, CaseType } from './enums';
 
 export enum DocumentStatus {
-    UPLOADED = 'UPLOADED',
-    ANALYZED = 'ANALYZED',
-    FLAGGED = 'FLAGGED',
-    APPROVED = 'APPROVED',
-    REJECTED = 'REJECTED',
+  UPLOADED = 'UPLOADED',
+  ANALYZED = 'ANALYZED',
+  FLAGGED = 'FLAGGED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export interface GroupementMember {
-    name: string;
-    role: 'LEADER' | 'MEMBER';
-    participation_percentage: number;
+  name: string;
+  role: 'LEADER' | 'MEMBER';
+  participation_percentage: number;
 }
 
 export interface CaseCreate {
-    // Etape 1: Info Marche
-    case_type: CaseType;
-    market_reference: string;
-    market_label: string;
-    contract_value: number;
-    contract_currency: string;
-    contract_duration_months: number;
-    country: string;
-    sector: string;
-    sensitive: boolean;
-    notes?: string;
+  // Etape 1: Info Marche
+  case_type: CaseType;
+  market_reference: string;
+  market_label: string;
+  contract_value: number;
+  contract_currency: string;
+  contract_duration_months: number;
+  country: string;
+  sector: string;
+  sensitive: boolean;
+  notes?: string;
 
-    // Etape 2: Soumissionnaire
-    bidder_id?: string | null;
-    bidder_name?: string;
-    legal_form?: string;
-    registration_number?: string;
-    email?: string;
-    phone?: string;
+  // Etape 2: Soumissionnaire
+  bidder_id?: string | null;
+  bidder_name?: string;
+  legal_form?: string;
+  registration_number?: string;
+  email?: string;
+  phone?: string;
 
-    // Optionnel si case_type === CONSORTIUM
-    members?: GroupementMember[];
+  // Optionnel si case_type === CONSORTIUM
+  members?: GroupementMember[];
 
-    // Meta gerees par le Stepper
-    status: CaseStatus.DRAFT | CaseStatus.PENDING_GATE;
-    case_manager_id?: string;
+  // Meta gerees par le Stepper
+  status: CaseStatus.DRAFT | CaseStatus.PENDING_GATE;
+  case_manager_id?: string;
 }
 
 export interface StatusTransition {
-    new_status: CaseStatus;
-    reason?: string;
+  new_status: CaseStatus;
+  reason?: string;
 }
 
 export interface EvaluationCaseOut {
-    id: string;
-    name: string;
-    bidder_name: string;
-    country: string;
-    sector: string;
-    contract_value: number;
-    contract_currency: string;
-    contract_months: number;
-    case_type: CaseType;
-    status: CaseStatus;
-    created_at: string;
-    updated_at: string;
-    created_by: string;
-    case_manager_id?: string;
-    mcc_score?: number;
-    ia_score?: number;
-    risk_class?: string;
-    notes?: string;
+  id: string;
+  name: string;
+  bidder_name: string;
+  country: string;
+  sector: string;
+  contract_value: number;
+  contract_currency: string;
+  contract_months: number;
+  case_type: CaseType;
+  status: CaseStatus;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  case_manager_id?: string;
+  mcc_score?: number;
+  ia_score?: number;
+  risk_class?: string;
+  notes?: string;
 }
 
 export interface EvaluationCaseDetailOut extends EvaluationCaseOut {
-    documents?: GateDocumentOut[];
-    financial_statements?: FinancialStatementRawOut[];
-    scorecard?: ScorecardOutputSchema;
-    consortium_data?: ConsortiumMember[];
-    expert_review?: ExpertReviewOutputSchema;
-    // Expert Review enriched fields
-    mcc_score_final?: number;
-    tension_label?: string;
-    override_applied?: boolean;
-    stress_test_results?: {
-        stress60d?: { status: 'SOLVENT' | 'LIMIT' | 'INSOLVENT'; minCash: number };
-        stress90d?: { status: 'SOLVENT' | 'LIMIT' | 'INSOLVENT'; minCash: number };
-    };
-    system_alerts?: string[];
+  documents?: GateDocumentOut[];
+  financial_statements?: FinancialStatementRawOut[];
+  scorecard?: ScorecardOutputSchema;
+  consortium_data?: ConsortiumMember[];
+  expert_review?: ExpertReviewOutputSchema;
+  // Expert Review enriched fields
+  mcc_score_final?: number;
+  tension_label?: string;
+  override_applied?: boolean;
+  stress_test_results?: {
+    stress60d?: { status: 'SOLVENT' | 'LIMIT' | 'INSOLVENT'; minCash: number };
+    stress90d?: { status: 'SOLVENT' | 'LIMIT' | 'INSOLVENT'; minCash: number };
+  };
+  system_alerts?: string[];
 }
 
 export interface CaseStatusResponse {
-    case_id: string;
-    current_status: CaseStatus;
-    can_transition_to: CaseStatus[];
-    last_transition_at: string;
-    reason: string;
+  case_id: string;
+  current_status: CaseStatus;
+  can_transition_to: CaseStatus[];
+  last_transition_at: string;
+  reason: string;
 }
 
 export interface BidderOut {
-    id: string;
-    name: string;
-    country: string;
-    sector: string;
-    active_cases: number;
-    last_evaluation_date?: string;
+  id: string;
+  name: string;
+  country: string;
+  sector: string;
+  active_cases: number;
+  last_evaluation_date?: string;
 }
 
 export function isCaseStatus(value: unknown): value is CaseStatus {
-    return Object.values(CaseStatus).includes(value as CaseStatus);
+  return Object.values(CaseStatus).includes(value as CaseStatus);
 }
 
 export function isCaseType(value: unknown): value is CaseType {
-    return Object.values(CaseType).includes(value as CaseType);
+  return Object.values(CaseType).includes(value as CaseType);
 }

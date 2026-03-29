@@ -1,67 +1,87 @@
 <div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28">
-
-    @if (isLoading()) {
+  @if (isLoading()) {
     <div
-        class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10">
-        <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-        <p class="text-[color:var(--color-content-secondary)] font-medium">Analyzing divergence between MCC and AI...
-        </p>
+      class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
+    >
+      <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+      <p class="text-[color:var(--color-content-secondary)] font-medium">
+        Analyzing divergence between MCC and AI...
+      </p>
     </div>
-    }
+  }
 
-    <header
-        class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
-        <div>
-            <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
-                <mat-icon class="text-[color:var(--color-primary)]">compare_arrows</mat-icon>
-                MCC vs AI Tension Analysis
-            </h1>
-            <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-                Case #{{ caseId() }} — Review discrepancies between the official MCC score and the AI challenger.
-            </p>
-        </div>
-    </header>
+  <header
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6"
+  >
+    <div>
+      <h1
+        class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3"
+      >
+        <mat-icon class="text-[color:var(--color-primary)]">compare_arrows</mat-icon>
+        MCC vs AI Tension Analysis
+      </h1>
+      <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
+        Case #{{ caseId() }} — Review discrepancies between the official MCC score and the AI
+        challenger.
+      </p>
+    </div>
+  </header>
 
-    @if (error()) {
+  @if (error()) {
     <div
-        class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center">
-        <span>{{ error() }}</span>
-        <button mat-button (click)="error.set(null)">Close</button>
+      class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center"
+    >
+      <span>{{ error() }}</span>
+      <button mat-button (click)="error.set(null)">Close</button>
     </div>
-    }
+  }
 
-    @if (tensionData(); as data) {
+  @if (tensionData(); as data) {
     <main class="flex flex-col gap-8 flex-1">
+      <app-tension-banner
+        [level]="data.level"
+        [direction]="data.direction"
+        [deltaScore]="data.delta_score"
+        [recommendation]="data.system_recommendation"
+      >
+      </app-tension-banner>
 
-        <app-tension-banner [level]="data.level" [direction]="data.direction" [deltaScore]="data.delta_score"
-            [recommendation]="data.system_recommendation">
-        </app-tension-banner>
+      <app-tension-comparison
+        [mccScore]="data.mcc_class === 'MODERATE' ? 3.0 : 3.5"
+        [mccClass]="data.mcc_class"
+        [iaScore]="data.mcc_class === 'MODERATE' ? 3.0 + data.delta_score : 4.0"
+        [iaClass]="data.ia_class"
+        [deltaScore]="data.delta_score"
+        [classDivergence]="data.class_divergence"
+      >
+      </app-tension-comparison>
 
-        <app-tension-comparison [mccScore]="data.mcc_class === 'MODERATE' ? 3.0 : 3.5" [mccClass]="data.mcc_class"
-            [iaScore]="data.mcc_class === 'MODERATE' ? (3.0 + data.delta_score) : 4.0" [iaClass]="data.ia_class"
-            [deltaScore]="data.delta_score" [classDivergence]="data.class_divergence">
-        </app-tension-comparison>
+      <app-pillar-tension-table [pillars]="data.pillars_comparison"></app-pillar-tension-table>
 
-        <app-pillar-tension-table [pillars]="data.pillars_comparison"></app-pillar-tension-table>
-
-        <app-analyst-decision [requiresJustification]="data.requires_justification"
-            (decisionSubmitted)="handleDecision($event)">
-        </app-analyst-decision>
-
+      <app-analyst-decision
+        [requiresJustification]="data.requires_justification"
+        (decisionSubmitted)="handleDecision($event)"
+      >
+      </app-analyst-decision>
     </main>
 
     <div
-        class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
+      class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12"
+    >
+      <button
+        mat-button
+        (click)="navigateBack()"
+        class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        Back to AI Model
+      </button>
 
-        <button mat-button (click)="navigateBack()"
-            class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]">
-            <mat-icon>arrow_back</mat-icon>
-            Back to AI Model
-        </button>
-
-        <div class="flex items-center gap-4">
-            <span class="text-sm font-medium text-[color:var(--color-content-secondary)]">Decision pending.</span>
-        </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-medium text-[color:var(--color-content-secondary)]"
+          >Decision pending.</span
+        >
+      </div>
     </div>
-    }
+  }
 </div>

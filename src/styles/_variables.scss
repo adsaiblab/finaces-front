@@ -2,194 +2,202 @@
 // TOKENS SÉMANTIQUES — LIGHT MODE ("Papier & Minéral")
 // ═══════════════════════════════════════════════════════════
 :root {
-    // ── TYPOGRAPHIE ──────────────────────────────────────────
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-    --font-size-display: 28px;
-    --font-size-h1: 22px;
-    --font-size-h2: 18px;
-    --font-size-body: 14px;
-    --font-size-small: 12px;
+  // ── TYPOGRAPHIE ──────────────────────────────────────────
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-size-display: 28px;
+  --font-size-h1: 22px;
+  --font-size-h2: 18px;
+  --font-size-body: 14px;
+  --font-size-small: 12px;
 
-    // ── SURFACES (Fonds) ──────────────────────────────────────
-    // Zéro blanc pur, zéro gris clinique
-    --bg-default: #F2EFE9;       // Fond parchemin chaud
-    --bg-card:    #FAF8F5;       // Cartes crème (démarcation douce)
-    --bg-sidebar: #2B323A;       // Sidebar "Bleu de Prusse" profond
+  // ── SURFACES (Fonds) ──────────────────────────────────────
+  // Zéro blanc pur, zéro gris clinique
+  --bg-default: #f2efe9; // Fond parchemin chaud
+  --bg-card: #faf8f5; // Cartes crème (démarcation douce)
+  --bg-sidebar: #2b323a; // Sidebar "Bleu de Prusse" profond
 
-    // ── CONTENTS (Textes) ────────────────────────────────────
-    // Zéro noir pur
-    --text-primary:   #1C2431;   // Encre marine
-    --text-secondary: #5C6773;   // Ardoise
-    --text-disabled:  #A1A8B3;
-    --text-inverse:   #F2EFE9;
+  // ── CONTENTS (Textes) ────────────────────────────────────
+  // Zéro noir pur
+  --text-primary: #1c2431; // Encre marine
+  --text-secondary: #5c6773; // Ardoise
+  --text-disabled: #a1a8b3;
+  --text-inverse: #f2efe9;
 
-    // ── BORDERS ──────────────────────────────────────────────
-    --border:       #E5E0D8;     // Bordure sable
-    --border-strong: #D4CEC4;
+  // ── BORDERS ──────────────────────────────────────────────
+  --border: #e5e0d8; // Bordure sable
+  --border-strong: #d4cec4;
 
-    // ── ÉTATS SIDEBAR ────────────────────────────────────────
-    --sidebar-text:      #9CA3AF;
-    --sidebar-active:    #E8DCC4;   // Accent laiton/sable
-    --sidebar-active-bg: #1F252C;   // Enfoncement net
+  // ── ÉTATS SIDEBAR ────────────────────────────────────────
+  --sidebar-text: #9ca3af;
+  --sidebar-active: #e8dcc4; // Accent laiton/sable
+  --sidebar-active-bg: #1f252c; // Enfoncement net
 
-    // ── COULEURS MÉTIER FINACES ───────────────────────────────
-    --primary:       #2C4B5E;
-    --primary-light: #4A7A9E;    // Variante claire du primary
+  // ── COULEURS MÉTIER FINACES ───────────────────────────────
+  --primary: #2c4b5e;
+  --primary-light: #4a7a9e; // Variante claire du primary
 
-    // ── COULEURS FONCTIONNELLES (Statuts UI) ─────────────────
-    --success: #2B8A5A;          // Vert forêt (pas vert acide)
-    --warning: #D18D2A;          // Ambre chaud
-    --error:   #BC3B3B;          // Rouge brique
-    --info:    #4A7A9E;          // Bleu ardoise
+  // ── COULEURS FONCTIONNELLES (Statuts UI) ─────────────────
+  --success: #2b8a5a; // Vert forêt (pas vert acide)
+  --warning: #d18d2a; // Ambre chaud
+  --error: #bc3b3b; // Rouge brique
+  --info: #4a7a9e; // Bleu ardoise
 
-    // ── MCC RAIL ─────────────────────────────────────────────
-    --mcc-low:      #2B8A5A;
-    --mcc-moderate: #D18D2A;
-    --mcc-high:     #D4602C;
-    --mcc-critical: #BC3B3B;
-    --mcc-surface:  #F5F0E8;     // Fond badge MCC (parchemin léger)
-    --mcc-border:   #D4B483;     // Bordure badge MCC (laiton doux)
+  // ── MCC RAIL ─────────────────────────────────────────────
+  --mcc-low: #2b8a5a;
+  --mcc-moderate: #d18d2a;
+  --mcc-high: #d4602c;
+  --mcc-critical: #bc3b3b;
+  --mcc-surface: #f5f0e8; // Fond badge MCC (parchemin léger)
+  --mcc-border: #d4b483; // Bordure badge MCC (laiton doux)
 
-    // ── IA RAIL ──────────────────────────────────────────────
-    --ia-low:      #4A7A9E;
-    --ia-moderate: #605B91;
-    --ia-high:     #7C5382;
-    --ia-critical: #934674;
+  // ── IA RAIL ──────────────────────────────────────────────
+  --ia-low: #4a7a9e;
+  --ia-moderate: #605b91;
+  --ia-high: #7c5382;
+  --ia-critical: #934674;
 
-    // ══════════════════════════════════════════════════════════
-    // ALIAS MANIFESTE — --color-* (convention obligatoire)
-    // Ces alias font le pont entre les tokens de base ci-dessus
-    // et la convention --color-* imposée par le Manifeste §3.
-    // Sans ces alias, AUCUN composant ne s'affiche.
-    // ══════════════════════════════════════════════════════════
-    --color-surface-default:   var(--bg-default);
-    --color-surface-card:      var(--bg-card);
-    --color-surface-sidebar:   var(--bg-sidebar);
-    --color-surface-hover:     color-mix(in srgb, var(--color-primary) 8%, transparent);
-    --color-surface-disabled:  color-mix(in srgb, var(--color-content-disabled) 8%, var(--color-surface-default));
+  // ══════════════════════════════════════════════════════════
+  // ALIAS MANIFESTE — --color-* (convention obligatoire)
+  // Ces alias font le pont entre les tokens de base ci-dessus
+  // et la convention --color-* imposée par le Manifeste §3.
+  // Sans ces alias, AUCUN composant ne s'affiche.
+  // ══════════════════════════════════════════════════════════
+  --color-surface-default: var(--bg-default);
+  --color-surface-card: var(--bg-card);
+  --color-surface-sidebar: var(--bg-sidebar);
+  --color-surface-hover: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  --color-surface-disabled: color-mix(
+    in srgb,
+    var(--color-content-disabled) 8%,
+    var(--color-surface-default)
+  );
 
-    --color-content-primary:   var(--text-primary);
-    --color-content-secondary: var(--text-secondary);
-    --color-content-disabled:  var(--text-disabled);
-    --color-content-inverse:   var(--text-inverse);
+  --color-content-primary: var(--text-primary);
+  --color-content-secondary: var(--text-secondary);
+  --color-content-disabled: var(--text-disabled);
+  --color-content-inverse: var(--text-inverse);
 
-    --color-border-default:    var(--border);
-    --color-border-strong:     var(--border-strong);
+  --color-border-default: var(--border);
+  --color-border-strong: var(--border-strong);
 
-    --color-primary:           var(--primary);
-    --color-primary-light:     var(--primary-light);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
 
-    --color-success:           var(--success);
-    --color-warning:           var(--warning);
-    --color-error:             var(--error);
-    --color-info:              var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
 
-    --color-mcc-low:           var(--mcc-low);
-    --color-mcc-moderate:      var(--mcc-moderate);
-    --color-mcc-high:          var(--mcc-high);
-    --color-mcc-critical:      var(--mcc-critical);
-    --color-mcc-surface:       var(--mcc-surface);
-    --color-mcc-border:        var(--mcc-border);
+  --color-mcc-low: var(--mcc-low);
+  --color-mcc-moderate: var(--mcc-moderate);
+  --color-mcc-high: var(--mcc-high);
+  --color-mcc-critical: var(--mcc-critical);
+  --color-mcc-surface: var(--mcc-surface);
+  --color-mcc-border: var(--mcc-border);
 
-    --color-ia-low:            var(--ia-low);
-    --color-ia-moderate:       var(--ia-moderate);
-    --color-ia-high:           var(--ia-high);
-    --color-ia-critical:       var(--ia-critical);
+  --color-ia-low: var(--ia-low);
+  --color-ia-moderate: var(--ia-moderate);
+  --color-ia-high: var(--ia-high);
+  --color-ia-critical: var(--ia-critical);
 
-    // ── SHADOWS ─────────────────────────────────────────────
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  // ── SHADOWS ─────────────────────────────────────────────
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
 // ═══════════════════════════════════════════════════════════
 // TOKENS SÉMANTIQUES — DARK MODE ("Abysse & Laiton")
 // ═══════════════════════════════════════════════════════════
-[data-theme="dark"] {
-    // ── SURFACES ─────────────────────────────────────────────
-    // Zéro noir pur
-    --bg-default: #14181D;       // Fond Abysse
-    --bg-card:    #1D2229;       // Cartes Encre
-    --bg-sidebar: #0E1115;       // Sidebar Ultra profonde
+[data-theme='dark'] {
+  // ── SURFACES ─────────────────────────────────────────────
+  // Zéro noir pur
+  --bg-default: #14181d; // Fond Abysse
+  --bg-card: #1d2229; // Cartes Encre
+  --bg-sidebar: #0e1115; // Sidebar Ultra profonde
 
-    // ── CONTENTS ─────────────────────────────────────────────
-    --text-primary:   #E8E4D9;   // Craie / Sable clair (pas blanc pur)
-    --text-secondary: #8B95A5;   // Gris bleuté
-    --text-disabled:  #4B5563;
-    --text-inverse:   #14181D;
+  // ── CONTENTS ─────────────────────────────────────────────
+  --text-primary: #e8e4d9; // Craie / Sable clair (pas blanc pur)
+  --text-secondary: #8b95a5; // Gris bleuté
+  --text-disabled: #4b5563;
+  --text-inverse: #14181d;
 
-    // ── BORDERS ──────────────────────────────────────────────
-    --border:        #2C3440;
-    --border-strong: #3D4756;
+  // ── BORDERS ──────────────────────────────────────────────
+  --border: #2c3440;
+  --border-strong: #3d4756;
 
-    // ── ÉTATS SIDEBAR ────────────────────────────────────────
-    --sidebar-text:      #8B95A5;
-    --sidebar-active:    #D4B483;   // Laiton éclatant
-    --sidebar-active-bg: #1D2229;
+  // ── ÉTATS SIDEBAR ────────────────────────────────────────
+  --sidebar-text: #8b95a5;
+  --sidebar-active: #d4b483; // Laiton éclatant
+  --sidebar-active-bg: #1d2229;
 
-    // ── COULEURS MÉTIER FINACES ───────────────────────────────
-    --primary:       #D4B483;
-    --primary-light: #E8D0A0;    // Laiton clair
+  // ── COULEURS MÉTIER FINACES ───────────────────────────────
+  --primary: #d4b483;
+  --primary-light: #e8d0a0; // Laiton clair
 
-    // ── COULEURS FONCTIONNELLES (Statuts UI) ─────────────────
-    --success: #3BAD72;          // Vert lumineux sur fond sombre
-    --warning: #E5A23A;          // Ambre lumineux
-    --error:   #E05252;          // Rouge lumineux
-    --info:    #6B9EC0;          // Bleu lumineux
+  // ── COULEURS FONCTIONNELLES (Statuts UI) ─────────────────
+  --success: #3bad72; // Vert lumineux sur fond sombre
+  --warning: #e5a23a; // Ambre lumineux
+  --error: #e05252; // Rouge lumineux
+  --info: #6b9ec0; // Bleu lumineux
 
-    // ── MCC RAIL ─────────────────────────────────────────────
-    --mcc-low:      #3BAD72;
-    --mcc-moderate: #E5A23A;
-    --mcc-high:     #E07040;
-    --mcc-critical: #E05252;
-    --mcc-surface:  #1D2229;     // Fond badge MCC dark (= bg-card)
-    --mcc-border:   #D4B483;     // Bordure badge MCC dark (laiton)
+  // ── MCC RAIL ─────────────────────────────────────────────
+  --mcc-low: #3bad72;
+  --mcc-moderate: #e5a23a;
+  --mcc-high: #e07040;
+  --mcc-critical: #e05252;
+  --mcc-surface: #1d2229; // Fond badge MCC dark (= bg-card)
+  --mcc-border: #d4b483; // Bordure badge MCC dark (laiton)
 
-    // ── IA RAIL ──────────────────────────────────────────────
-    --ia-low:      #6B9EC0;
-    --ia-moderate: #8078B8;
-    --ia-high:     #9F6DAA;
-    --ia-critical: #BB5A90;
+  // ── IA RAIL ──────────────────────────────────────────────
+  --ia-low: #6b9ec0;
+  --ia-moderate: #8078b8;
+  --ia-high: #9f6daa;
+  --ia-critical: #bb5a90;
 
-    // ══════════════════════════════════════════════════════════
-    // ALIAS MANIFESTE — --color-* (convention obligatoire)
-    // Hérite automatiquement des valeurs dark ci-dessus.
-    // ══════════════════════════════════════════════════════════
-    --color-surface-default:   var(--bg-default);
-    --color-surface-card:      var(--bg-card);
-    --color-surface-sidebar:   var(--bg-sidebar);
-    --color-surface-hover:     color-mix(in srgb, var(--color-primary) 12%, transparent);
-    --color-surface-disabled:  color-mix(in srgb, var(--color-content-disabled) 12%, var(--color-surface-default));
+  // ══════════════════════════════════════════════════════════
+  // ALIAS MANIFESTE — --color-* (convention obligatoire)
+  // Hérite automatiquement des valeurs dark ci-dessus.
+  // ══════════════════════════════════════════════════════════
+  --color-surface-default: var(--bg-default);
+  --color-surface-card: var(--bg-card);
+  --color-surface-sidebar: var(--bg-sidebar);
+  --color-surface-hover: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --color-surface-disabled: color-mix(
+    in srgb,
+    var(--color-content-disabled) 12%,
+    var(--color-surface-default)
+  );
 
-    --color-content-primary:   var(--text-primary);
-    --color-content-secondary: var(--text-secondary);
-    --color-content-disabled:  var(--text-disabled);
-    --color-content-inverse:   var(--text-inverse);
+  --color-content-primary: var(--text-primary);
+  --color-content-secondary: var(--text-secondary);
+  --color-content-disabled: var(--text-disabled);
+  --color-content-inverse: var(--text-inverse);
 
-    --color-border-default:    var(--border);
-    --color-border-strong:     var(--border-strong);
+  --color-border-default: var(--border);
+  --color-border-strong: var(--border-strong);
 
-    --color-primary:           var(--primary);
-    --color-primary-light:     var(--primary-light);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
 
-    --color-success:           var(--success);
-    --color-warning:           var(--warning);
-    --color-error:             var(--error);
-    --color-info:              var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
 
-    --color-mcc-low:           var(--mcc-low);
-    --color-mcc-moderate:      var(--mcc-moderate);
-    --color-mcc-high:          var(--mcc-high);
-    --color-mcc-critical:      var(--mcc-critical);
-    --color-mcc-surface:       var(--mcc-surface);
-    --color-mcc-border:        var(--mcc-border);
+  --color-mcc-low: var(--mcc-low);
+  --color-mcc-moderate: var(--mcc-moderate);
+  --color-mcc-high: var(--mcc-high);
+  --color-mcc-critical: var(--mcc-critical);
+  --color-mcc-surface: var(--mcc-surface);
+  --color-mcc-border: var(--mcc-border);
 
-    --color-ia-low:            var(--ia-low);
-    --color-ia-moderate:       var(--ia-moderate);
-    --color-ia-high:           var(--ia-high);
-    --color-ia-critical:       var(--ia-critical);
+  --color-ia-low: var(--ia-low);
+  --color-ia-moderate: var(--ia-moderate);
+  --color-ia-high: var(--ia-high);
+  --color-ia-critical: var(--ia-critical);
 
-    // ── SHADOWS ─────────────────────────────────────────────
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  // ── SHADOWS ─────────────────────────────────────────────
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
 }

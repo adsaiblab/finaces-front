@@ -1,66 +1,81 @@
 <mat-card
-    class="!bg-[color:var(--color-surface-card)] !border !border-[color:var(--color-border-default)] !shadow-sm !rounded-xl h-full flex flex-col">
+  class="!bg-[color:var(--color-surface-card)] !border !border-[color:var(--color-border-default)] !shadow-sm !rounded-xl h-full flex flex-col"
+>
+  <mat-card-header
+    class="!pb-3 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2"
+  >
+    <mat-icon class="text-[color:var(--color-primary)]">lightbulb</mat-icon>
+    <mat-card-title class="!text-lg !font-semibold !text-[color:var(--color-content-primary)] mt-1">
+      System Recommendations & Alerts
+    </mat-card-title>
+  </mat-card-header>
 
-    <mat-card-header
-        class="!pb-3 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2">
-        <mat-icon class="text-[color:var(--color-primary)]">lightbulb</mat-icon>
-        <mat-card-title class="!text-lg !font-semibold !text-[color:var(--color-content-primary)] mt-1">
-            System Recommendations & Alerts
-        </mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content class="!p-6 flex flex-col gap-6">
-
-        @if (crossAnalysisAlerts().length > 0) {
-        <div>
-            <h4
-                class="text-xs font-bold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2">
-                <mat-icon class="text-[16px] w-[16px] h-[16px]">compare_arrows</mat-icon>
-                Cross-Analysis Alerts
-            </h4>
-            <div class="flex flex-col gap-2">
-                @for (alert of crossAnalysisAlerts(); track alert) {
-                <div
-                    class="flex items-start gap-3 p-3 rounded bg-[color:var(--color-surface-default)] border border-[color:var(--color-border-default)]">
-                    <mat-icon
-                        class="text-[color:var(--color-warning)] text-[20px] w-[20px] h-[20px] mt-0.5">policy</mat-icon>
-                    <span class="text-sm text-[color:var(--color-content-primary)] leading-relaxed">{{ alert }}</span>
-                </div>
-                }
+  <mat-card-content class="!p-6 flex flex-col gap-6">
+    @if (crossAnalysisAlerts().length > 0) {
+      <div>
+        <h4
+          class="text-xs font-bold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2"
+        >
+          <mat-icon class="text-[16px] w-[16px] h-[16px]">compare_arrows</mat-icon>
+          Cross-Analysis Alerts
+        </h4>
+        <div class="flex flex-col gap-2">
+          @for (alert of crossAnalysisAlerts(); track alert) {
+            <div
+              class="flex items-start gap-3 p-3 rounded bg-[color:var(--color-surface-default)] border border-[color:var(--color-border-default)]"
+            >
+              <mat-icon
+                class="text-[color:var(--color-warning)] text-[20px] w-[20px] h-[20px] mt-0.5"
+                >policy</mat-icon
+              >
+              <span class="text-sm text-[color:var(--color-content-primary)] leading-relaxed">{{
+                alert
+              }}</span>
             </div>
+          }
         </div>
+      </div>
+    }
+
+    <div>
+      <h4
+        class="text-xs font-bold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2"
+      >
+        <mat-icon class="text-[16px] w-[16px] h-[16px]">psychology</mat-icon>
+        Smart Recommendations
+      </h4>
+      <div class="flex flex-col gap-3">
+        @for (rec of recommendations(); track rec.id) {
+          <div
+            class="flex items-start gap-3 p-4 rounded-lg border border-opacity-30"
+            [ngClass]="getRecommendationBgClass(rec.type)"
+          >
+            <mat-icon
+              [class]="getRecommendationColorClass(rec.type) + ' text-[24px] w-[24px] h-[24px]'"
+            >
+              {{ getRecommendationIcon(rec.type) }}
+            </mat-icon>
+            <div class="flex-1">
+              <span
+                class="block text-xs font-bold uppercase tracking-wider mb-1"
+                [class]="getRecommendationColorClass(rec.type)"
+              >
+                {{ rec.type }}
+              </span>
+              <p
+                class="text-sm text-[color:var(--color-content-primary)] m-0 leading-relaxed font-medium"
+              >
+                {{ rec.message }}
+              </p>
+            </div>
+          </div>
         }
-
-        <div>
-            <h4
-                class="text-xs font-bold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2">
-                <mat-icon class="text-[16px] w-[16px] h-[16px]">psychology</mat-icon>
-                Smart Recommendations
-            </h4>
-            <div class="flex flex-col gap-3">
-                @for (rec of recommendations(); track rec.id) {
-                <div class="flex items-start gap-3 p-4 rounded-lg border border-opacity-30"
-                    [ngClass]="getRecommendationBgClass(rec.type)">
-                    <mat-icon [class]="getRecommendationColorClass(rec.type) + ' text-[24px] w-[24px] h-[24px]'">
-                        {{ getRecommendationIcon(rec.type) }}
-                    </mat-icon>
-                    <div class="flex-1">
-                        <span class="block text-xs font-bold uppercase tracking-wider mb-1"
-                            [class]="getRecommendationColorClass(rec.type)">
-                            {{ rec.type }}
-                        </span>
-                        <p class="text-sm text-[color:var(--color-content-primary)] m-0 leading-relaxed font-medium">
-                            {{ rec.message }}
-                        </p>
-                    </div>
-                </div>
-                }
-                @if (recommendations().length === 0) {
-                <p class="text-sm text-[color:var(--color-content-secondary)] italic">No specific recommendations
-                    generated for this profile.</p>
-                }
-            </div>
-        </div>
-
-    </mat-card-content>
+        @if (recommendations().length === 0) {
+          <p class="text-sm text-[color:var(--color-content-secondary)] italic">
+            No specific recommendations generated for this profile.
+          </p>
+        }
+      </div>
+    </div>
+  </mat-card-content>
 </mat-card>

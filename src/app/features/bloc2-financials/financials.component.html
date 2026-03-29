@@ -1,74 +1,96 @@
 <div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in">
+  <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
+        Financial Statements
+      </h1>
+      <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
+        Dossier #{{ caseId() }} — Select a fiscal year to enter data.
+      </p>
+    </div>
 
-    <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
-                Financial Statements
-            </h1>
-            <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-                Dossier #{{ caseId() }} — Select a fiscal year to enter data.
-            </p>
+    <div class="flex items-center gap-4">
+      <app-exercise-selector
+        [years]="availableYears()"
+        [selectedYear]="currentExercise()"
+        (yearChange)="onYearChange($event)"
+      />
+
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="isSubmitting()"
+        (click)="triggerNormalization()"
+        class="finaces-primary-btn"
+      >
+        <mat-icon>auto_awesome</mat-icon>
+        Run Normalization
+      </button>
+    </div>
+  </header>
+
+  <main
+    class="flex-1 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl shadow-sm flex flex-col overflow-hidden"
+  >
+    <mat-tab-group animationDuration="0ms" class="finaces-horizontal-tabs h-full flex flex-col">
+      <mat-tab label="Balance Sheet">
+        <div class="p-6 h-full overflow-y-auto">
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <div class="flex flex-col gap-4">
+              <h2
+                class="text-lg font-bold text-[color:var(--color-content-primary)] border-b border-[color:var(--color-border-default)] pb-2"
+              >
+                Assets
+              </h2>
+              <app-tab-balance-sheet-assets
+                [year]="currentExercise()"
+                (assetsDataChange)="onAssetsUpdate($event)"
+              />
+            </div>
+            <div class="flex flex-col gap-4">
+              <h2
+                class="text-lg font-bold text-[color:var(--color-content-primary)] border-b border-[color:var(--color-border-default)] pb-2"
+              >
+                Liabilities & Equity
+              </h2>
+              <app-tab-balance-sheet-liabilities
+                [year]="currentExercise()"
+                (liabilitiesDataChange)="onLiabilitiesUpdate($event)"
+              />
+            </div>
+          </div>
+          <div class="mt-8">
+            <app-balance-check
+              [totalAssets]="currentAssetsTotal()"
+              [totalLiabilities]="currentLiabilitiesTotal()"
+            />
+          </div>
         </div>
+      </mat-tab>
 
-        <div class="flex items-center gap-4">
-            <app-exercise-selector [years]="availableYears()" [selectedYear]="currentExercise()"
-                (yearChange)="onYearChange($event)" />
-
-            <button mat-flat-button color="primary" [disabled]="isSubmitting()" (click)="triggerNormalization()"
-                class="finaces-primary-btn">
-                <mat-icon>auto_awesome</mat-icon>
-                Run Normalization
-            </button>
+      <mat-tab label="Income Statement">
+        <div class="p-6 h-full overflow-y-auto">
+          <app-tab-income-statement
+            [year]="currentExercise()"
+            (pnlDataChange)="onPnlUpdate($event)"
+          />
         </div>
-    </header>
+      </mat-tab>
 
-    <main
-        class="flex-1 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl shadow-sm flex flex-col overflow-hidden">
-        <mat-tab-group animationDuration="0ms" class="finaces-horizontal-tabs h-full flex flex-col">
+      <mat-tab label="Cash Flow">
+        <div class="p-6 h-full overflow-y-auto">
+          <app-tab-cash-flow
+            [year]="currentExercise()"
+            (cashFlowDataChange)="onCashFlowUpdate($event)"
+          />
+        </div>
+      </mat-tab>
 
-            <mat-tab label="Balance Sheet">
-                <div class="p-6 h-full overflow-y-auto">
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                        <div class="flex flex-col gap-4">
-                            <h2
-                                class="text-lg font-bold text-[color:var(--color-content-primary)] border-b border-[color:var(--color-border-default)] pb-2">
-                                Assets</h2>
-                            <app-tab-balance-sheet-assets [year]="currentExercise()"
-                                (assetsDataChange)="onAssetsUpdate($event)" />
-                        </div>
-                        <div class="flex flex-col gap-4">
-                            <h2
-                                class="text-lg font-bold text-[color:var(--color-content-primary)] border-b border-[color:var(--color-border-default)] pb-2">
-                                Liabilities & Equity</h2>
-                            <app-tab-balance-sheet-liabilities [year]="currentExercise()"
-                                (liabilitiesDataChange)="onLiabilitiesUpdate($event)" />
-                        </div>
-                    </div>
-                    <div class="mt-8">
-                        <app-balance-check [totalAssets]="currentAssetsTotal()"
-                            [totalLiabilities]="currentLiabilitiesTotal()" />
-                    </div>
-                </div>
-            </mat-tab>
-
-            <mat-tab label="Income Statement">
-                <div class="p-6 h-full overflow-y-auto">
-                    <app-tab-income-statement [year]="currentExercise()" (pnlDataChange)="onPnlUpdate($event)" />
-                </div>
-            </mat-tab>
-
-            <mat-tab label="Cash Flow">
-                <div class="p-6 h-full overflow-y-auto">
-                    <app-tab-cash-flow [year]="currentExercise()" (cashFlowDataChange)="onCashFlowUpdate($event)" />
-                </div>
-            </mat-tab>
-
-            <mat-tab label="Others">
-                <div class="animate-fade-in p-6">
-                    <app-tab-others [year]="currentExercise()"></app-tab-others>
-                </div>
-            </mat-tab>
-
-        </mat-tab-group>
-    </main>
+      <mat-tab label="Others">
+        <div class="animate-fade-in p-6">
+          <app-tab-others [year]="currentExercise()"></app-tab-others>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </main>
 </div>

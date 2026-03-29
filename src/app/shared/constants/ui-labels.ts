@@ -3,9 +3,9 @@ export const UI_LABELS = {
   dashboard: {
     title: 'FinaCES — Dashboard',
     subtitle: 'Global overview of evaluation activity and AI convergence.',
-    newCase: 'New Case'
+    newCase: 'New Case',
   },
   ai: {
-    assistant: 'Strategic Assistant'
-  }
+    assistant: 'Strategic Assistant',
+  },
 } as const;

@@ -13,7 +13,7 @@ import {
   ExpertReviewInputSchema,
   ConclusionUpdate,
   MccCondition,
-  OverrideRecommendation
+  OverrideRecommendation,
 } from '../../core/models/expert.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { DecisionRecapComponent } from './components/decision-recap/decision-recap.component';
@@ -92,18 +92,19 @@ export class ExpertComponent {
 
   private loadCaseData(): void {
     this.isLoading.set(true);
-    this.caseService.getCaseDetail(this.caseId).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (data: EvaluationCaseDetailOut) => {
-        this.currentCase.set(data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.snackBar.open('Error loading case data', 'Close', { duration: 3000 });
-      },
-    });
+    this.caseService
+      .getCaseDetail(this.caseId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: EvaluationCaseDetailOut) => {
+          this.currentCase.set(data);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.isLoading.set(false);
+          this.snackBar.open('Error loading case data', 'Close', { duration: 3000 });
+        },
+      });
   }
 
   submitReview(): void {
@@ -122,8 +123,16 @@ export class ExpertComponent {
       capacity_comment: formVal.capacity_comment || '',
       quality_comment: formVal.quality_comment || '',
       dynamic_analysis_comment: formVal.dynamic_analysis_comment || '',
-      mitigating_factors: formVal.mitigating_factors ? (Array.isArray(formVal.mitigating_factors) ? formVal.mitigating_factors : [formVal.mitigating_factors]) : undefined,
-      risk_factors: formVal.risk_factors ? (Array.isArray(formVal.risk_factors) ? formVal.risk_factors : [formVal.risk_factors]) : undefined,
+      mitigating_factors: formVal.mitigating_factors
+        ? Array.isArray(formVal.mitigating_factors)
+          ? formVal.mitigating_factors
+          : [formVal.mitigating_factors]
+        : undefined,
+      risk_factors: formVal.risk_factors
+        ? Array.isArray(formVal.risk_factors)
+          ? formVal.risk_factors
+          : [formVal.risk_factors]
+        : undefined,
       override_recommendation:
         formVal.override_recommendation === OverrideRecommendation.NONE
           ? undefined
@@ -163,13 +172,15 @@ export class ExpertComponent {
           const msg = environment.features.mockData
             ? 'Review mock-submitted successfully'
             : 'Review submitted successfully';
-          
-          this.expertService.submitConclusion(this.caseId, conclusionPayload).pipe(
-            takeUntilDestroyed(this.destroyRef)
-          ).subscribe({
-            next: () => this.snackBar.open(msg, 'Close', { duration: 3000 }),
-            error: () => this.snackBar.open('Erreur lors de la conclusion', 'Close', { duration: 3000 })
-          });
+
+          this.expertService
+            .submitConclusion(this.caseId, conclusionPayload)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: () => this.snackBar.open(msg, 'Close', { duration: 3000 }),
+              error: () =>
+                this.snackBar.open('Erreur lors de la conclusion', 'Close', { duration: 3000 }),
+            });
         },
       });
   }

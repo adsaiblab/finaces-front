@@ -1,19 +1,19 @@
 .finaces-tabs {
-    ::ng-deep .mat-mdc-tab-header {
-        background-color: var(--color-surface-card);
-        border-bottom: 1px solid var(--color-border-default);
-    }
+  ::ng-deep .mat-mdc-tab-header {
+    background-color: var(--color-surface-card);
+    border-bottom: 1px solid var(--color-border-default);
+  }
 
-    ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
-        color: var(--color-content-secondary);
-        transition: color 0.2s ease;
-    }
+  ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+    color: var(--color-content-secondary);
+    transition: color 0.2s ease;
+  }
 
-    ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-        color: var(--color-primary);
-    }
+  ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    color: var(--color-primary);
+  }
 
-    ::ng-deep .mat-mdc-tab-body-wrapper {
-        flex: 1;
-    }
+  ::ng-deep .mat-mdc-tab-body-wrapper {
+    flex: 1;
+  }
 }

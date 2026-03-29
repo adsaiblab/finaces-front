@@ -6,46 +6,46 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 describe('DocumentUploadDialogComponent', () => {
-    let component: DocumentUploadDialogComponent;
-    let fixture: ComponentFixture<DocumentUploadDialogComponent>;
-    let mockDialogRef: any;
+  let component: DocumentUploadDialogComponent;
+  let fixture: ComponentFixture<DocumentUploadDialogComponent>;
+  let mockDialogRef: any;
 
-    beforeEach(async () => {
-        mockDialogRef = { close: vi.fn() };
-        const mockData = { file: new File([''], 'test.pdf') };
+  beforeEach(async () => {
+    mockDialogRef = { close: vi.fn() };
+    const mockData = { file: new File([''], 'test.pdf') };
 
-        await TestBed.configureTestingModule({
-            imports: [DocumentUploadDialogComponent, ReactiveFormsModule, NoopAnimationsModule],
-            providers: [
-                FormBuilder,
-                { provide: MatDialogRef, useValue: mockDialogRef },
-                { provide: MAT_DIALOG_DATA, useValue: mockData }
-            ]
-        }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [DocumentUploadDialogComponent, ReactiveFormsModule, NoopAnimationsModule],
+      providers: [
+        FormBuilder,
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MAT_DIALOG_DATA, useValue: mockData },
+      ],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(DocumentUploadDialogComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    fixture = TestBed.createComponent(DocumentUploadDialogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('devrait créer le composant', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('devrait fermer avec la data lors du submit si valide', () => {
+    component.uploadForm.patchValue({
+      document_type: 'BILAN',
+      fiscal_year: 2023,
+      reliability_level: 'UNAUDITED',
     });
+    component.onSubmit();
+    expect(mockDialogRef.close).toHaveBeenCalled();
+  });
 
-    it('devrait créer le composant', () => {
-        expect(component).toBeTruthy();
-    });
-
-    it('devrait fermer avec la data lors du submit si valide', () => {
-        component.uploadForm.patchValue({
-            document_type: 'BILAN',
-            fiscal_year: 2023,
-            reliability_level: 'UNAUDITED'
-        });
-        component.onSubmit();
-        expect(mockDialogRef.close).toHaveBeenCalled();
-    });
-
-    it('devrait rendre auditeur requis si fiabilité est AUDITED', () => {
-        component.uploadForm.patchValue({ reliability_level: 'AUDITED' });
-        fixture.detectChanges();
-        const auditorControl = component.uploadForm.get('auditor_name');
-        expect(auditorControl?.hasError('required')).toBeTruthy();
-    });
+  it('devrait rendre auditeur requis si fiabilité est AUDITED', () => {
+    component.uploadForm.patchValue({ reliability_level: 'AUDITED' });
+    fixture.detectChanges();
+    const auditorControl = component.uploadForm.get('auditor_name');
+    expect(auditorControl?.hasError('required')).toBeTruthy();
+  });
 });

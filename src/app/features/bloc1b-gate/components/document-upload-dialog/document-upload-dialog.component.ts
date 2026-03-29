@@ -46,15 +46,18 @@ export class DocumentUploadDialogComponent {
       notes: [''],
     });
 
-    this.uploadForm.get('reliability_level')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((level) => {
-      const auditorControl = this.uploadForm.get('auditor_name');
-      if (level === 'AUDITED') {
-        auditorControl?.setValidators([Validators.required]);
-      } else {
-        auditorControl?.clearValidators();
-      }
-      auditorControl?.updateValueAndValidity();
-    });
+    this.uploadForm
+      .get('reliability_level')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((level) => {
+        const auditorControl = this.uploadForm.get('auditor_name');
+        if (level === 'AUDITED') {
+          auditorControl?.setValidators([Validators.required]);
+        } else {
+          auditorControl?.clearValidators();
+        }
+        auditorControl?.updateValueAndValidity();
+      });
   }
 
   onSubmit(): void {

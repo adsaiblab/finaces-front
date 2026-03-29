@@ -1,20 +1,20 @@
 // Respect pur des variables CSS.
 .finaces-override-card {
-    ::ng-deep .mdc-text-field--outlined {
-        --mdc-outlined-text-field-container-color: var(--color-surface-card);
-        --mdc-outlined-text-field-outline-color: var(--color-border-default);
-        --mdc-outlined-text-field-focus-outline-color: var(--color-warning);
-        --mdc-outlined-text-field-hover-outline-color: var(--color-border-strong);
-        --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
-        --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
-    }
+  ::ng-deep .mdc-text-field--outlined {
+    --mdc-outlined-text-field-container-color: var(--color-surface-card);
+    --mdc-outlined-text-field-outline-color: var(--color-border-default);
+    --mdc-outlined-text-field-focus-outline-color: var(--color-warning);
+    --mdc-outlined-text-field-hover-outline-color: var(--color-border-strong);
+    --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
+    --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
+  }
 }
 
 .finaces-warn-btn {
-    background-color: var(--color-warning);
-    color: var(--color-content-inverse); // white text on warning
+  background-color: var(--color-warning);
+  color: var(--color-content-inverse); // white text on warning
 
-    &:hover:not([disabled]) {
-        filter: brightness(0.9);
-    }
+  &:hover:not([disabled]) {
+    filter: brightness(0.9);
+  }
 }

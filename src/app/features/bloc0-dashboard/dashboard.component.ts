@@ -7,7 +7,11 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { CaseService } from '../../core/services/case.service';
-import { DashboardStatsOut, ConvergenceChartOut, TensionAlertOut } from '../../core/models/dashboard.model';
+import {
+  DashboardStatsOut,
+  ConvergenceChartOut,
+  TensionAlertOut,
+} from '../../core/models/dashboard.model';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
 import { FinacesSkeletonLoaderComponent } from '../../shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component';
 import { UI_LABELS } from '../../shared/constants/ui-labels';
@@ -29,18 +33,26 @@ import { ConvergenceChartComponent } from './components/convergence-chart/conver
     RecentCasesTableComponent,
     ActiveTensionsCardComponent,
     ConvergenceChartComponent,
-    FinacesSkeletonLoaderComponent
+    FinacesSkeletonLoaderComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   private readonly caseService = inject(CaseService);
   public UI_LABELS = UI_LABELS;
 
-  readonly stats$: Observable<DashboardStatsOut | null> = this.caseService.getDashboardStats().pipe(catchError(() => of(null)));
-  readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService.getRecentCases(5).pipe(catchError(() => of([])));
-  readonly tensions$: Observable<TensionAlertOut[]> = this.caseService.getActiveTensionCases().pipe(catchError(() => of([])));
-  readonly chartData$: Observable<ConvergenceChartOut | null> = this.caseService.getConvergenceChart(30).pipe(catchError(() => of(null)));
+  readonly stats$: Observable<DashboardStatsOut | null> = this.caseService
+    .getDashboardStats()
+    .pipe(catchError(() => of(null)));
+  readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService
+    .getRecentCases(5)
+    .pipe(catchError(() => of([])));
+  readonly tensions$: Observable<TensionAlertOut[]> = this.caseService
+    .getActiveTensionCases()
+    .pipe(catchError(() => of([])));
+  readonly chartData$: Observable<ConvergenceChartOut | null> = this.caseService
+    .getConvergenceChart(30)
+    .pipe(catchError(() => of(null)));
 }

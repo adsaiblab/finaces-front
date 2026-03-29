@@ -1,33 +1,39 @@
 @if (!isDismissed()) {
-<div class="ia-disclaimer" [ngClass]="['ia-' + variant(), pilotMode() ? 'is-pilot' : '']">
-
+  <div class="ia-disclaimer" [ngClass]="['ia-' + variant(), pilotMode() ? 'is-pilot' : '']">
     <div class="disclaimer-content">
-        <mat-icon class="disclaimer-icon">
-            {{ pilotMode() ? 'science' : 'privacy_tip' }}
-        </mat-icon>
+      <mat-icon class="disclaimer-icon">
+        {{ pilotMode() ? 'science' : 'privacy_tip' }}
+      </mat-icon>
 
-        <div class="disclaimer-text-section">
-            @if (variant() === 'banner') {
-            <h4 class="disclaimer-title uppercase tracking-wider font-bold text-sm mb-1"
-                style="color: var(--ia-color); margin: 0 0 4px 0;">
-                {{ pilotMode() ? 'Experimental AI Model' : 'Mandatory Advisory Notice' }}
-            </h4>
-            }
-
-            <p class="disclaimer-main">
-                @if (variant() === 'chip') {
-                {{ pilotMode() ? 'AI Pilot' : 'AI Advisory Only' }}
-                } @else {
-                {{ pilotMode() ? pilotModeText : disclaimerText }}
-                }
-            </p>
-        </div>
-
-        @if (dismissible()) {
-        <button mat-icon-button class="dismiss-button" (click)="onDismiss()" aria-label="Dismiss disclaimer">
-            <mat-icon>close</mat-icon>
-        </button>
+      <div class="disclaimer-text-section">
+        @if (variant() === 'banner') {
+          <h4
+            class="disclaimer-title uppercase tracking-wider font-bold text-sm mb-1"
+            style="color: var(--ia-color); margin: 0 0 4px 0"
+          >
+            {{ pilotMode() ? 'Experimental AI Model' : 'Mandatory Advisory Notice' }}
+          </h4>
         }
+
+        <p class="disclaimer-main">
+          @if (variant() === 'chip') {
+            {{ pilotMode() ? 'AI Pilot' : 'AI Advisory Only' }}
+          } @else {
+            {{ pilotMode() ? pilotModeText : disclaimerText }}
+          }
+        </p>
+      </div>
+
+      @if (dismissible()) {
+        <button
+          mat-icon-button
+          class="dismiss-button"
+          (click)="onDismiss()"
+          aria-label="Dismiss disclaimer"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </div>
-</div>
+  </div>
 }

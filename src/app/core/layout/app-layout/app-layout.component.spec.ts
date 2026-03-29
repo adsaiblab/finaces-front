@@ -14,10 +14,10 @@ describe('AppLayoutComponent', () => {
         matches: false,
         media: query,
         onchange: null,
-        addListener: () => { }, // Deprecated
-        removeListener: () => { }, // Deprecated
-        addEventListener: () => { },
-        removeEventListener: () => { },
+        addListener: () => {}, // Deprecated
+        removeListener: () => {}, // Deprecated
+        addEventListener: () => {},
+        removeEventListener: () => {},
         dispatchEvent: () => false,
       }),
     });
@@ -25,9 +25,8 @@ describe('AppLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppLayoutComponent, RouterModule.forRoot([])]
-    })
-      .compileComponents();
+      imports: [AppLayoutComponent, RouterModule.forRoot([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AppLayoutComponent);
     component = fixture.componentInstance;

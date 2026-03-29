@@ -1,59 +1,75 @@
 <mat-card
-    class="!bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl h-full flex flex-col">
-    <mat-card-header
-        class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <mat-icon class="text-[color:var(--color-primary)]">timeline</mat-icon>
-            <mat-card-title class="!text-base !font-semibold !text-[color:var(--color-content-primary)] mt-1">
-                Contract Milestones
-            </mat-card-title>
-        </div>
-        <button mat-stroked-button color="primary" (click)="addMilestone()" class="!h-8">
-            <mat-icon>add</mat-icon> Add
-        </button>
-    </mat-card-header>
+  class="!bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl h-full flex flex-col"
+>
+  <mat-card-header
+    class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center justify-between"
+  >
+    <div class="flex items-center gap-2">
+      <mat-icon class="text-[color:var(--color-primary)]">timeline</mat-icon>
+      <mat-card-title
+        class="!text-base !font-semibold !text-[color:var(--color-content-primary)] mt-1"
+      >
+        Contract Milestones
+      </mat-card-title>
+    </div>
+    <button mat-stroked-button color="primary" (click)="addMilestone()" class="!h-8">
+      <mat-icon>add</mat-icon> Add
+    </button>
+  </mat-card-header>
 
-    <mat-card-content class="!p-6 flex-1 overflow-y-auto">
-        <form [formGroup]="timelineForm">
-            <div formArrayName="milestones" class="flex flex-col gap-4 relative">
+  <mat-card-content class="!p-6 flex-1 overflow-y-auto">
+    <form [formGroup]="timelineForm">
+      <div formArrayName="milestones" class="flex flex-col gap-4 relative">
+        <div
+          class="absolute left-4 top-4 bottom-4 w-px bg-[color:var(--color-border-strong)] z-0 hidden sm:block"
+        ></div>
 
-                <div
-                    class="absolute left-4 top-4 bottom-4 w-px bg-[color:var(--color-border-strong)] z-0 hidden sm:block">
-                </div>
-
-                @for (ms of milestonesArray.controls; track ms; let i = $index) {
-                <div [formGroupName]="i"
-                    class="flex flex-col sm:flex-row items-start sm:items-center gap-3 relative z-10 bg-[color:var(--color-surface-card)] p-3 rounded border border-[color:var(--color-border-default)]">
-
-                    <div
-                        class="w-8 h-8 rounded-full bg-[color:var(--color-surface-default)] border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] font-bold flex items-center justify-center text-xs hidden sm:flex shrink-0">
-                        M{{ ms.get('month')?.value || '-' }}
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 w-full">
-                        <mat-form-field appearance="outline" class="w-full finaces-dense-field">
-                            <mat-label>Month (1-12)</mat-label>
-                            <input matInput type="number" formControlName="month" min="1" max="12">
-                        </mat-form-field>
-
-                        <mat-form-field appearance="outline" class="w-full finaces-dense-field">
-                            <mat-label>Amount</mat-label>
-                            <input matInput type="number" formControlName="amount" min="0">
-                        </mat-form-field>
-
-                        <mat-form-field appearance="outline" class="w-full finaces-dense-field">
-                            <mat-label>Description</mat-label>
-                            <input matInput type="text" formControlName="description" placeholder="e.g. Down payment">
-                        </mat-form-field>
-                    </div>
-
-                    <button mat-icon-button color="warn" (click)="removeMilestone(i)"
-                        [disabled]="milestonesArray.length === 1" class="shrink-0" aria-label="Remove milestone">
-                        <mat-icon>delete_outline</mat-icon>
-                    </button>
-                </div>
-                }
+        @for (ms of milestonesArray.controls; track ms; let i = $index) {
+          <div
+            [formGroupName]="i"
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-3 relative z-10 bg-[color:var(--color-surface-card)] p-3 rounded border border-[color:var(--color-border-default)]"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-[color:var(--color-surface-default)] border-2 border-[color:var(--color-primary)] text-[color:var(--color-primary)] font-bold flex items-center justify-center text-xs hidden sm:flex shrink-0"
+            >
+              M{{ ms.get('month')?.value || '-' }}
             </div>
-        </form>
-    </mat-card-content>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 w-full">
+              <mat-form-field appearance="outline" class="w-full finaces-dense-field">
+                <mat-label>Month (1-12)</mat-label>
+                <input matInput type="number" formControlName="month" min="1" max="12" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full finaces-dense-field">
+                <mat-label>Amount</mat-label>
+                <input matInput type="number" formControlName="amount" min="0" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full finaces-dense-field">
+                <mat-label>Description</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="description"
+                  placeholder="e.g. Down payment"
+                />
+              </mat-form-field>
+            </div>
+
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="removeMilestone(i)"
+              [disabled]="milestonesArray.length === 1"
+              class="shrink-0"
+              aria-label="Remove milestone"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </form>
+  </mat-card-content>
 </mat-card>

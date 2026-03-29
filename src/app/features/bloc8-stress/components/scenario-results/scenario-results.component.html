@@ -1,69 +1,96 @@
 <mat-card
-    class="!bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl h-full flex flex-col overflow-hidden">
-    <mat-card-header
-        class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2">
-        <mat-icon class="text-[color:var(--color-primary)]">analytics</mat-icon>
-        <mat-card-title class="!text-base !font-semibold !text-[color:var(--color-content-primary)] mt-1">
-            Stress Test Scenarios
-        </mat-card-title>
-    </mat-card-header>
+  class="!bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl h-full flex flex-col overflow-hidden"
+>
+  <mat-card-header
+    class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2"
+  >
+    <mat-icon class="text-[color:var(--color-primary)]">analytics</mat-icon>
+    <mat-card-title
+      class="!text-base !font-semibold !text-[color:var(--color-content-primary)] mt-1"
+    >
+      Stress Test Scenarios
+    </mat-card-title>
+  </mat-card-header>
 
-    <mat-card-content class="!p-0 flex-1 flex flex-col">
-        @if (scenarios().length > 0) {
-        <mat-tab-group (selectedIndexChange)="selectedIndex.set($event)" class="finaces-tabs flex-1">
-            @for (scenario of scenarios(); track scenario.scenario_name) {
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <span class="font-semibold uppercase tracking-wider text-xs">{{ scenario.scenario_name }}</span>
-                </ng-template>
+  <mat-card-content class="!p-0 flex-1 flex flex-col">
+    @if (scenarios().length > 0) {
+      <mat-tab-group (selectedIndexChange)="selectedIndex.set($event)" class="finaces-tabs flex-1">
+        @for (scenario of scenarios(); track scenario.scenario_name) {
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <span class="font-semibold uppercase tracking-wider text-xs">{{
+                scenario.scenario_name
+              }}</span>
+            </ng-template>
 
-                <div class="p-6 flex flex-col gap-6">
-
-                    <div
-                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg shadow-sm">
-                        <div>
-                            <h4 class="text-sm font-bold text-[color:var(--color-content-primary)] m-0 mb-1">{{
-                                scenario.scenario_name }}</h4>
-                            <p class="text-xs text-[color:var(--color-content-secondary)] m-0 leading-relaxed">{{
-                                scenario.description }}</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="text-right hidden sm:block">
-                                <div
-                                    class="text-[10px] text-[color:var(--color-content-secondary)] uppercase tracking-wider font-bold">
-                                    Min Cash Balance</div>
-                                <div class="font-mono font-bold text-sm"
-                                    [ngClass]="scenario.min_cash_balance < 0 ? 'text-[color:var(--color-error)]' : 'text-[color:var(--color-content-primary)]'">
-                                    {{ scenario.min_cash_balance | number:'1.0-0' }} MAD
-                                </div>
-                            </div>
-                            <div class="px-3 py-1.5 rounded flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider border border-current border-opacity-20"
-                                [ngClass]="getStatusClass(scenario.status)">
-                                <mat-icon class="text-[16px] w-[16px] h-[16px]">{{ getStatusIcon(scenario.status)
-                                    }}</mat-icon>
-                                {{ scenario.status }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="bg-[color:var(--color-surface-card)] p-4 rounded-lg border border-[color:var(--color-border-default)]">
-                        <app-finaces-stress-chart [monthlyFlows]="chartFlows()" [height]="320">
-                        </app-finaces-stress-chart>
-                    </div>
-
+            <div class="p-6 flex flex-col gap-6">
+              <div
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg shadow-sm"
+              >
+                <div>
+                  <h4 class="text-sm font-bold text-[color:var(--color-content-primary)] m-0 mb-1">
+                    {{ scenario.scenario_name }}
+                  </h4>
+                  <p
+                    class="text-xs text-[color:var(--color-content-secondary)] m-0 leading-relaxed"
+                  >
+                    {{ scenario.description }}
+                  </p>
                 </div>
-            </mat-tab>
-            }
-        </mat-tab-group>
-        } @else {
-        <div
-            class="p-8 text-center text-[color:var(--color-content-secondary)] flex flex-col items-center justify-center h-full min-h-[300px]">
-            <mat-icon class="text-5xl mb-3 opacity-30">show_chart</mat-icon>
-            <h4 class="text-sm font-semibold uppercase tracking-wider text-[color:var(--color-content-primary)]">No
-                Results Yet</h4>
-            <p class="text-sm mt-1">Configure parameters and run the simulation to view stress test projections.</p>
-        </div>
+                <div class="flex items-center gap-4">
+                  <div class="text-right hidden sm:block">
+                    <div
+                      class="text-[10px] text-[color:var(--color-content-secondary)] uppercase tracking-wider font-bold"
+                    >
+                      Min Cash Balance
+                    </div>
+                    <div
+                      class="font-mono font-bold text-sm"
+                      [ngClass]="
+                        scenario.min_cash_balance < 0
+                          ? 'text-[color:var(--color-error)]'
+                          : 'text-[color:var(--color-content-primary)]'
+                      "
+                    >
+                      {{ scenario.min_cash_balance | number: '1.0-0' }} MAD
+                    </div>
+                  </div>
+                  <div
+                    class="px-3 py-1.5 rounded flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider border border-current border-opacity-20"
+                    [ngClass]="getStatusClass(scenario.status)"
+                  >
+                    <mat-icon class="text-[16px] w-[16px] h-[16px]">{{
+                      getStatusIcon(scenario.status)
+                    }}</mat-icon>
+                    {{ scenario.status }}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-[color:var(--color-surface-card)] p-4 rounded-lg border border-[color:var(--color-border-default)]"
+              >
+                <app-finaces-stress-chart [monthlyFlows]="chartFlows()" [height]="320">
+                </app-finaces-stress-chart>
+              </div>
+            </div>
+          </mat-tab>
         }
-    </mat-card-content>
+      </mat-tab-group>
+    } @else {
+      <div
+        class="p-8 text-center text-[color:var(--color-content-secondary)] flex flex-col items-center justify-center h-full min-h-[300px]"
+      >
+        <mat-icon class="text-5xl mb-3 opacity-30">show_chart</mat-icon>
+        <h4
+          class="text-sm font-semibold uppercase tracking-wider text-[color:var(--color-content-primary)]"
+        >
+          No Results Yet
+        </h4>
+        <p class="text-sm mt-1">
+          Configure parameters and run the simulation to view stress test projections.
+        </p>
+      </div>
+    }
+  </mat-card-content>
 </mat-card>

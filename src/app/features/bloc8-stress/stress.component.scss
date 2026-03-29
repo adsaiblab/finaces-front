@@ -1,13 +1,13 @@
 :host {
-    display: block;
-    height: 100%;
+  display: block;
+  height: 100%;
 }
 
 .finaces-primary-btn {
-    background-color: var(--color-primary);
-    color: var(--color-content-inverse);
+  background-color: var(--color-primary);
+  color: var(--color-content-inverse);
 
-    &:hover:not([disabled]) {
-        filter: brightness(1.1);
-    }
+  &:hover:not([disabled]) {
+    filter: brightness(1.1);
+  }
 }

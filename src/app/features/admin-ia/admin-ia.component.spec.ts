@@ -6,36 +6,34 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 // Mock du service pour isoler le test du composant parent
 class MockAdminIaService {
-    getDashboardData() {
-        return of({
-            models: [],
-            active_model_config: {},
-            global_metrics: {},
-            feature_importance: [],
-            alerts: []
-        });
-    }
+  getDashboardData() {
+    return of({
+      models: [],
+      active_model_config: {},
+      global_metrics: {},
+      feature_importance: [],
+      alerts: [],
+    });
+  }
 }
 
 describe('AdminIaComponent', () => {
-    let component: AdminIaComponent;
-    let fixture: ComponentFixture<AdminIaComponent>;
+  let component: AdminIaComponent;
+  let fixture: ComponentFixture<AdminIaComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [AdminIaComponent, NoopAnimationsModule],
-            providers: [
-                { provide: AdminIaService, useClass: MockAdminIaService }
-            ]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AdminIaComponent, NoopAnimationsModule],
+      providers: [{ provide: AdminIaService, useClass: MockAdminIaService }],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(AdminIaComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-        await fixture.whenStable();
-    });
+    fixture = TestBed.createComponent(AdminIaComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

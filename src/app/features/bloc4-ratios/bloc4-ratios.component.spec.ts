@@ -8,45 +8,55 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('Bloc4RatiosComponent', () => {
-    let component: Bloc4RatiosComponent;
-    let fixture: ComponentFixture<Bloc4RatiosComponent>;
+  let component: Bloc4RatiosComponent;
+  let fixture: ComponentFixture<Bloc4RatiosComponent>;
 
-    const mockRatioService = {
-        computeRatios: vi.fn().mockReturnValue(of({
-            case_id: 'case-123',
-            coherence_alerts: [],
-            z_score: {
-                z_score_zone: 'SAFE',
-                z_score_altman: { current: 3.5, trend: [], benchmark_min: 0, benchmark_max: 0, status: 'GREEN', unit: 'ratio', variation_pct: 0 },
-                formula_breakdown: { x1: 1, x2: 1, x3: 1, x4: 1 }
-            }
-        }))
-    };
+  const mockRatioService = {
+    computeRatios: vi.fn().mockReturnValue(
+      of({
+        case_id: 'case-123',
+        coherence_alerts: [],
+        z_score: {
+          z_score_zone: 'SAFE',
+          z_score_altman: {
+            current: 3.5,
+            trend: [],
+            benchmark_min: 0,
+            benchmark_max: 0,
+            status: 'GREEN',
+            unit: 'ratio',
+            variation_pct: 0,
+          },
+          formula_breakdown: { x1: 1, x2: 1, x3: 1, x4: 1 },
+        },
+      }),
+    ),
+  };
 
-    const mockCaseService = {};
+  const mockCaseService = {};
 
-    const mockCaseContext = {
-        caseId: () => 'case-123'
-    };
+  const mockCaseContext = {
+    caseId: () => 'case-123',
+  };
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [Bloc4RatiosComponent, NoopAnimationsModule],
-            providers: [
-                { provide: RatioCalculationService, useValue: mockRatioService },
-                { provide: CaseService, useValue: mockCaseService },
-                { provide: CaseContextService, useValue: mockCaseContext }
-            ]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Bloc4RatiosComponent, NoopAnimationsModule],
+      providers: [
+        { provide: RatioCalculationService, useValue: mockRatioService },
+        { provide: CaseService, useValue: mockCaseService },
+        { provide: CaseContextService, useValue: mockCaseContext },
+      ],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(Bloc4RatiosComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    fixture = TestBed.createComponent(Bloc4RatiosComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create and load ratios on init', () => {
-        expect(component).toBeTruthy();
-        expect(mockRatioService.computeRatios).toHaveBeenCalledWith('case-123');
-        expect(component.isLoading()).toBe(false);
-    });
+  it('should create and load ratios on init', () => {
+    expect(component).toBeTruthy();
+    expect(mockRatioService.computeRatios).toHaveBeenCalledWith('case-123');
+    expect(component.isLoading()).toBe(false);
+  });
 });

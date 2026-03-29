@@ -1,109 +1,136 @@
 <mat-card
-    class="finaces-override-card !bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl overflow-hidden">
+  class="finaces-override-card !bg-[color:var(--color-surface-default)] !border !border-[color:var(--color-border-strong)] !shadow-none !rounded-xl overflow-hidden"
+>
+  <mat-card-header
+    class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2"
+  >
+    <mat-icon class="text-[color:var(--color-warning)]">admin_panel_settings</mat-icon>
+    <mat-card-title class="!text-lg !font-semibold !text-[color:var(--color-content-primary)] mt-1">
+      Manual Override Zone
+    </mat-card-title>
+  </mat-card-header>
 
-    <mat-card-header
-        class="!pb-4 border-b border-[color:var(--color-border-default)] !pt-4 px-6 flex items-center gap-2">
-        <mat-icon class="text-[color:var(--color-warning)]">admin_panel_settings</mat-icon>
-        <mat-card-title class="!text-lg !font-semibold !text-[color:var(--color-content-primary)] mt-1">
-            Manual Override Zone
-        </mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content class="!p-6">
-
-        @if (isOverridden() && overrideDetails()) {
-        <div
-            class="bg-[color:var(--color-warning)] bg-opacity-10 border border-[color:var(--color-warning)] border-opacity-30 rounded-lg p-5">
-            <div class="flex items-center gap-2 mb-4">
-                <mat-icon class="text-[color:var(--color-warning)]">gavel</mat-icon>
-                <h3 class="text-base font-bold text-[color:var(--color-content-primary)] m-0">Score Manually Overridden
-                </h3>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                <div>
-                    <span
-                        class="block text-xs uppercase tracking-wider text-[color:var(--color-content-secondary)]">Original
-                        Score</span>
-                    <span class="font-medium text-[color:var(--color-content-primary)] line-through">{{
-                        overrideDetails()!.original_score | number:'1.2-2' }}</span>
-                </div>
-                <div>
-                    <span class="block text-xs uppercase tracking-wider text-[color:var(--color-content-secondary)]">New
-                        Score</span>
-                    <span class="font-bold text-lg text-[color:var(--color-warning)]">{{ overrideDetails()!.new_score |
-                        number:'1.2-2' }}</span>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <span
-                    class="block text-xs uppercase tracking-wider text-[color:var(--color-content-secondary)] mb-1">Justification</span>
-                <p
-                    class="text-sm text-[color:var(--color-content-primary)] bg-[color:var(--color-surface-card)] p-3 rounded border border-[color:var(--color-border-default)] m-0">
-                    "{{ overrideDetails()!.reason }}"
-                </p>
-            </div>
-
-            <div
-                class="flex justify-between items-center text-xs text-[color:var(--color-content-secondary)] border-t border-[color:var(--color-border-default)] border-opacity-50 pt-3">
-                <span>Authorized by: <strong>{{ overrideDetails()!.author }}</strong></span>
-                <span>Applied on: {{ overrideDetails()!.timestamp | date:'medium' }}</span>
-            </div>
+  <mat-card-content class="!p-6">
+    @if (isOverridden() && overrideDetails()) {
+      <div
+        class="bg-[color:var(--color-warning)] bg-opacity-10 border border-[color:var(--color-warning)] border-opacity-30 rounded-lg p-5"
+      >
+        <div class="flex items-center gap-2 mb-4">
+          <mat-icon class="text-[color:var(--color-warning)]">gavel</mat-icon>
+          <h3 class="text-base font-bold text-[color:var(--color-content-primary)] m-0">
+            Score Manually Overridden
+          </h3>
         </div>
-        } @else {
-        <p class="text-sm text-[color:var(--color-content-secondary)] mb-6">
-            As a senior analyst, you can override the calculated MCC score if qualitative factors significantly alter
-            the risk profile.
-            <strong class="text-[color:var(--color-error)]">This action is tracked and requires justification.</strong>
-        </p>
 
-        <form [formGroup]="overrideForm" (ngSubmit)="submitOverride()" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <div>
+            <span
+              class="block text-xs uppercase tracking-wider text-[color:var(--color-content-secondary)]"
+              >Original Score</span
+            >
+            <span class="font-medium text-[color:var(--color-content-primary)] line-through">{{
+              overrideDetails()!.original_score | number: '1.2-2'
+            }}</span>
+          </div>
+          <div>
+            <span
+              class="block text-xs uppercase tracking-wider text-[color:var(--color-content-secondary)]"
+              >New Score</span
+            >
+            <span class="font-bold text-lg text-[color:var(--color-warning)]">{{
+              overrideDetails()!.new_score | number: '1.2-2'
+            }}</span>
+          </div>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div
-                    class="p-3 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded flex flex-col justify-center">
-                    <span class="text-xs text-[color:var(--color-content-secondary)] uppercase tracking-wider">Current
-                        System Score</span>
-                    <span class="text-xl font-bold text-[color:var(--color-content-primary)]">{{ originalScore() |
-                        number:'1.2-2' }} / 5</span>
-                </div>
+        <div class="mb-4">
+          <span
+            class="block text-xs uppercase tracking-wider text-[color:var(--color-content-secondary)] mb-1"
+            >Justification</span
+          >
+          <p
+            class="text-sm text-[color:var(--color-content-primary)] bg-[color:var(--color-surface-card)] p-3 rounded border border-[color:var(--color-border-default)] m-0"
+          >
+            "{{ overrideDetails()!.reason }}"
+          </p>
+        </div>
 
-                <mat-form-field appearance="outline" class="w-full">
-                    <mat-label>New Override Score (0 - 5)</mat-label>
-                    <input matInput type="number" formControlName="newScore" step="0.1" min="0" max="5">
-                    <mat-icon matSuffix class="text-[color:var(--color-warning)]">edit</mat-icon>
-                    @if (overrideForm.get('newScore')?.hasError('required')) {
-                    <mat-error>Required.</mat-error>
-                    }
-                    @if (overrideForm.get('newScore')?.hasError('min') || overrideForm.get('newScore')?.hasError('max')) {
-                    <mat-error>Must
-                        be between 0 and 5.</mat-error>
-                    }
-                </mat-form-field>
-            </div>
+        <div
+          class="flex justify-between items-center text-xs text-[color:var(--color-content-secondary)] border-t border-[color:var(--color-border-default)] border-opacity-50 pt-3"
+        >
+          <span
+            >Authorized by: <strong>{{ overrideDetails()!.author }}</strong></span
+          >
+          <span>Applied on: {{ overrideDetails()!.timestamp | date: 'medium' }}</span>
+        </div>
+      </div>
+    } @else {
+      <p class="text-sm text-[color:var(--color-content-secondary)] mb-6">
+        As a senior analyst, you can override the calculated MCC score if qualitative factors
+        significantly alter the risk profile.
+        <strong class="text-[color:var(--color-error)]"
+          >This action is tracked and requires justification.</strong
+        >
+      </p>
 
-            <mat-form-field appearance="outline" class="w-full">
-                <mat-label>Detailed Justification for Override</mat-label>
-                <textarea matInput formControlName="reason" rows="3"
-                    placeholder="Explain the qualitative factors..."></textarea>
-                @if (overrideForm.get('reason')?.hasError('required')) {
-                <mat-error>Justification is
-                    mandatory.</mat-error>
-                }
-                @if (overrideForm.get('reason')?.hasError('minlength')) {
-                <mat-error>Please provide a more detailed
-                    reason.</mat-error>
-                }
-            </mat-form-field>
+      <form [formGroup]="overrideForm" (ngSubmit)="submitOverride()" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            class="p-3 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded flex flex-col justify-center"
+          >
+            <span
+              class="text-xs text-[color:var(--color-content-secondary)] uppercase tracking-wider"
+              >Current System Score</span
+            >
+            <span class="text-xl font-bold text-[color:var(--color-content-primary)]"
+              >{{ originalScore() | number: '1.2-2' }} / 5</span
+            >
+          </div>
 
-            <div class="flex justify-end mt-2">
-                <button mat-flat-button color="warn" type="submit" [disabled]="overrideForm.invalid || isSubmitting()"
-                    class="finaces-warn-btn">
-                    <mat-icon>gavel</mat-icon> Apply Override
-                </button>
-            </div>
-        </form>
-        }
-    </mat-card-content>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>New Override Score (0 - 5)</mat-label>
+            <input matInput type="number" formControlName="newScore" step="0.1" min="0" max="5" />
+            <mat-icon matSuffix class="text-[color:var(--color-warning)]">edit</mat-icon>
+            @if (overrideForm.get('newScore')?.hasError('required')) {
+              <mat-error>Required.</mat-error>
+            }
+            @if (
+              overrideForm.get('newScore')?.hasError('min') ||
+              overrideForm.get('newScore')?.hasError('max')
+            ) {
+              <mat-error>Must be between 0 and 5.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Detailed Justification for Override</mat-label>
+          <textarea
+            matInput
+            formControlName="reason"
+            rows="3"
+            placeholder="Explain the qualitative factors..."
+          ></textarea>
+          @if (overrideForm.get('reason')?.hasError('required')) {
+            <mat-error>Justification is mandatory.</mat-error>
+          }
+          @if (overrideForm.get('reason')?.hasError('minlength')) {
+            <mat-error>Please provide a more detailed reason.</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="flex justify-end mt-2">
+          <button
+            mat-flat-button
+            color="warn"
+            type="submit"
+            [disabled]="overrideForm.invalid || isSubmitting()"
+            class="finaces-warn-btn"
+          >
+            <mat-icon>gavel</mat-icon> Apply Override
+          </button>
+        </div>
+      </form>
+    }
+  </mat-card-content>
 </mat-card>

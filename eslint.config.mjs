@@ -1,0 +1,58 @@
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import angularEslint from '@angular-eslint/eslint-plugin';
+import angularTemplateEslint from '@angular-eslint/eslint-plugin-template';
+import angularTemplateParser from '@angular-eslint/template-parser';
+
+export default [
+  // ── TypeScript files ──────────────────────────────────────
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+      '@angular-eslint': angularEslint,
+    },
+    rules: {
+      // Angular
+      '@angular-eslint/component-class-suffix': 'error',
+      '@angular-eslint/directive-class-suffix': 'error',
+      '@angular-eslint/no-empty-lifecycle-method': 'warn',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
+
+      // TypeScript
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+
+      // General
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+    },
+  },
+
+  // ── Angular HTML templates ────────────────────────────────
+  {
+    files: ['**/*.html'],
+    languageOptions: {
+      parser: angularTemplateParser,
+    },
+    plugins: {
+      '@angular-eslint/template': angularTemplateEslint,
+    },
+    rules: {
+      '@angular-eslint/template/no-negated-async': 'error',
+      '@angular-eslint/template/eqeqeq': ['error', { allowNullOrUndefined: true }],
+    },
+  },
+
+  // ── Ignore patterns ───────────────────────────────────────
+  {
+    ignores: ['dist/', 'node_modules/', '.angular/', 'src/test-setup.js'],
+  },
+];

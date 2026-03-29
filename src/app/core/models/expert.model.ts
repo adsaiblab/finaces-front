@@ -21,7 +21,10 @@ export interface ExpertReviewOut extends ExpertReviewCreate {
 }
 
 // Legacy aliases for backward compatibility
-export type ExpertReviewInputSchema = Omit<ExpertReviewCreate, 'analyst_id' | 'mitigating_factors' | 'risk_factors' | 'override_recommendation'> & {
+export type ExpertReviewInputSchema = Omit<
+  ExpertReviewCreate,
+  'analyst_id' | 'mitigating_factors' | 'risk_factors' | 'override_recommendation'
+> & {
   mitigating_factors?: string[];
   risk_factors?: string[];
   override_recommendation?: OverrideRecommendation;

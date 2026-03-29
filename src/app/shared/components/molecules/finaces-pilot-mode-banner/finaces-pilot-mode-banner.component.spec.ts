@@ -3,24 +3,24 @@ import { FinacesPilotModeBannerComponent } from './finaces-pilot-mode-banner.com
 import { provideRouter } from '@angular/router';
 
 describe('FinacesPilotModeBannerComponent', () => {
-    let component: FinacesPilotModeBannerComponent;
-    let fixture: ComponentFixture<FinacesPilotModeBannerComponent>;
+  let component: FinacesPilotModeBannerComponent;
+  let fixture: ComponentFixture<FinacesPilotModeBannerComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [FinacesPilotModeBannerComponent],
-            providers: [provideRouter([])]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FinacesPilotModeBannerComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(FinacesPilotModeBannerComponent);
-        component = fixture.componentInstance;
+    fixture = TestBed.createComponent(FinacesPilotModeBannerComponent);
+    component = fixture.componentInstance;
 
-        fixture.componentRef.setInput('isActive', true);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    });
+    fixture.componentRef.setInput('isActive', true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

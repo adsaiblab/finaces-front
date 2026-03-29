@@ -12,10 +12,10 @@ describe('ThemeService', () => {
         matches: false,
         media: query,
         onchange: null,
-        addListener: () => { },
-        removeListener: () => { },
-        addEventListener: () => { },
-        removeEventListener: () => { },
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
         dispatchEvent: () => false,
       }),
     });
@@ -60,38 +60,38 @@ describe('ThemeService', () => {
 
   describe('toggleTheme', () => {
     it('should toggle isDarkMode from false to true', () => {
-        // Ensure we start light
-        if (service.isDarkMode()) {
-            service.toggleTheme();
-        }
-        expect(service.isDarkMode()).toBe(false);
+      // Ensure we start light
+      if (service.isDarkMode()) {
         service.toggleTheme();
-        expect(service.isDarkMode()).toBe(true);
+      }
+      expect(service.isDarkMode()).toBe(false);
+      service.toggleTheme();
+      expect(service.isDarkMode()).toBe(true);
     });
 
     it('should toggle isDarkMode from true to false', () => {
-        // Ensure we start dark
-        if (!service.isDarkMode()) {
-            service.toggleTheme();
-        }
-        expect(service.isDarkMode()).toBe(true);
+      // Ensure we start dark
+      if (!service.isDarkMode()) {
         service.toggleTheme();
-        expect(service.isDarkMode()).toBe(false);
+      }
+      expect(service.isDarkMode()).toBe(true);
+      service.toggleTheme();
+      expect(service.isDarkMode()).toBe(false);
     });
 
     it('should set data-theme attribute on document', () => {
-        TestBed.flushEffects();
-        const theme = document.documentElement.getAttribute('data-theme');
-        expect(theme).toBeTruthy();
-        expect(['light', 'dark']).toContain(theme);
+      TestBed.flushEffects();
+      const theme = document.documentElement.getAttribute('data-theme');
+      expect(theme).toBeTruthy();
+      expect(['light', 'dark']).toContain(theme);
     });
 
     it('should persist theme preference to localStorage', () => {
-        service.toggleTheme();
-        TestBed.flushEffects();
-        const saved = localStorage.getItem('finaces-theme');
-        expect(saved).toBeTruthy();
-        expect(['light', 'dark']).toContain(saved);
+      service.toggleTheme();
+      TestBed.flushEffects();
+      const saved = localStorage.getItem('finaces-theme');
+      expect(saved).toBeTruthy();
+      expect(['light', 'dark']).toContain(saved);
     });
   });
 });

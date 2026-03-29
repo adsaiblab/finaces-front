@@ -1,19 +1,46 @@
 <div class="finaces-gauge" [style.width.px]="metrics.size" [style.height.px]="metrics.size">
-    <svg [attr.viewBox]="'0 0 ' + metrics.size + ' ' + metrics.size" [attr.width]="metrics.size"
-        [attr.height]="metrics.size" class="gauge-svg" [ngClass]="arcColorClass">
-        <path [attr.d]="arcPath" [style.stroke]="backgroundColor" stroke-width="8" fill="none" stroke-linecap="round" />
+  <svg
+    [attr.viewBox]="'0 0 ' + metrics.size + ' ' + metrics.size"
+    [attr.width]="metrics.size"
+    [attr.height]="metrics.size"
+    class="gauge-svg"
+    [ngClass]="arcColorClass"
+  >
+    <path
+      [attr.d]="arcPath"
+      [style.stroke]="backgroundColor"
+      stroke-width="8"
+      fill="none"
+      stroke-linecap="round"
+    />
 
-        @if (getProgressPath()) {
-        <path [attr.d]="getProgressPath()" stroke-width="8" fill="none" stroke-linecap="round" class="progress-arc" />
-        }
+    @if (getProgressPath()) {
+      <path
+        [attr.d]="getProgressPath()"
+        stroke-width="8"
+        fill="none"
+        stroke-linecap="round"
+        class="progress-arc"
+      />
+    }
 
-        @if (showLabel()) {
-        <text [attr.x]="metrics.cx" [attr.y]="metrics.cy - 2" text-anchor="middle" class="gauge-score-value">
-            {{ displayScoreStr }}
-        </text>
-        <text [attr.x]="metrics.cx" [attr.y]="metrics.cy + 16" text-anchor="middle" class="gauge-max-label">
-            / {{ maxScore() }}
-        </text>
-        }
-    </svg>
+    @if (showLabel()) {
+      <text
+        [attr.x]="metrics.cx"
+        [attr.y]="metrics.cy - 2"
+        text-anchor="middle"
+        class="gauge-score-value"
+      >
+        {{ displayScoreStr }}
+      </text>
+      <text
+        [attr.x]="metrics.cx"
+        [attr.y]="metrics.cy + 16"
+        text-anchor="middle"
+        class="gauge-max-label"
+      >
+        / {{ maxScore() }}
+      </text>
+    }
+  </svg>
 </div>

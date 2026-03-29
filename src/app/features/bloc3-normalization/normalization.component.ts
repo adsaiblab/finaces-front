@@ -65,57 +65,57 @@ export class NormalizationComponent {
     this.isLoading.set(true);
 
     // API Call handling
-    this.caseService.getNormalizedFinancials(this.caseId()).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (data) => {
-        this.normalizedData.set(data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        // MOCK Enterprise-grade Prototype Fallback if API is not ready
-        if (!environment.production) {
-          console.warn('API returned error, falling back to mock data for prototyping.');
-        }
-        this.loadMockData();
-      },
-    });
+    this.caseService
+      .getNormalizedFinancials(this.caseId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.normalizedData.set(data);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          // MOCK Enterprise-grade Prototype Fallback if API is not ready
+          if (!environment.production) {
+            console.warn('API returned error, falling back to mock data for prototyping.');
+          }
+          this.loadMockData();
+        },
+      });
   }
 
   private loadMockData(): void {
-    of(null).pipe(
-      delay(800),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => {
-      this.normalizedData.set({
-        statement_id: 'mock-123',
-        fiscal_year: 2023,
-        normalized_revenue: 8500000,
-        normalized_ebitda: 4000000,
-        normalized_net_income: 2850000,
-        normalized_working_capital: 1500000,
-        normalized_cash_flow: 500000,
-        adjustments: [
-          {
-            line_item: 'EBITDA',
-            original_value: 3500000,
-            adjusted_value: 4000000,
-            reason: 'Added back depreciation and amortization',
-            confidence: 98,
-          },
-          {
-            line_item: 'Short Term Debt',
-            original_value: 1100000,
-            adjusted_value: 950000,
-            reason: 'Reclassified portion to Long Term Debt',
-            confidence: 85,
-          },
-        ],
-        confidence_score: 92,
-        normalization_date: new Date().toISOString(),
-      } as any);
-      this.isLoading.set(false);
-    });
+    of(null)
+      .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.normalizedData.set({
+          statement_id: 'mock-123',
+          fiscal_year: 2023,
+          normalized_revenue: 8500000,
+          normalized_ebitda: 4000000,
+          normalized_net_income: 2850000,
+          normalized_working_capital: 1500000,
+          normalized_cash_flow: 500000,
+          adjustments: [
+            {
+              line_item: 'EBITDA',
+              original_value: 3500000,
+              adjusted_value: 4000000,
+              reason: 'Added back depreciation and amortization',
+              confidence: 98,
+            },
+            {
+              line_item: 'Short Term Debt',
+              original_value: 1100000,
+              adjusted_value: 950000,
+              reason: 'Reclassified portion to Long Term Debt',
+              confidence: 85,
+            },
+          ],
+          confidence_score: 92,
+          normalization_date: new Date().toISOString(),
+        } as any);
+        this.isLoading.set(false);
+      });
   }
 
   public navigateBackToFinancials(): void {
@@ -124,51 +124,57 @@ export class NormalizationComponent {
 
   public recalculate(): void {
     this.isRecalculating.set(true);
-    this.caseService.normalizeFinancials(this.caseId()).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.snackBar.open('Normalization recalculated successfully.', 'OK', {
-          duration: 3000,
-          panelClass: 'snack-success',
-        });
-        this.loadNormalizedData();
-        this.isRecalculating.set(false);
-      },
-      error: () => {
-        // Fallback simulate success
-        of(null).pipe(delay(1000), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-          this.snackBar.open('Normalization recalculated (Mock).', 'OK', { duration: 3000 });
+    this.caseService
+      .normalizeFinancials(this.caseId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Normalization recalculated successfully.', 'OK', {
+            duration: 3000,
+            panelClass: 'snack-success',
+          });
+          this.loadNormalizedData();
           this.isRecalculating.set(false);
-        });
-      },
-    });
+        },
+        error: () => {
+          // Fallback simulate success
+          of(null)
+            .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+              this.snackBar.open('Normalization recalculated (Mock).', 'OK', { duration: 3000 });
+              this.isRecalculating.set(false);
+            });
+        },
+      });
   }
 
   public computeRatios(): void {
     this.isComputingRatios.set(true);
-    this.caseService.computeRatios(this.caseId()).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.isComputingRatios.set(false);
-        this.snackBar.open('Ratios computed successfully. Ready for evaluation.', 'OK', {
-          duration: 4000,
-          panelClass: 'snack-success',
-        });
-        this.router.navigate(['/cases', this.caseId(), 'ratios']);
-      },
-      error: () => {
-        // Fallback simulate success
-        of(null).pipe(delay(1500), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    this.caseService
+      .computeRatios(this.caseId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
           this.isComputingRatios.set(false);
-          this.snackBar.open('Ratios computed (Mock). Proceeding to next step.', 'OK', {
+          this.snackBar.open('Ratios computed successfully. Ready for evaluation.', 'OK', {
             duration: 4000,
+            panelClass: 'snack-success',
           });
           this.router.navigate(['/cases', this.caseId(), 'ratios']);
-        });
-      },
-    });
+        },
+        error: () => {
+          // Fallback simulate success
+          of(null)
+            .pipe(delay(1500), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+              this.isComputingRatios.set(false);
+              this.snackBar.open('Ratios computed (Mock). Proceeding to next step.', 'OK', {
+                duration: 4000,
+              });
+              this.router.navigate(['/cases', this.caseId(), 'ratios']);
+            });
+        },
+      });
   }
 
   public scrollToAdjustments(): void {

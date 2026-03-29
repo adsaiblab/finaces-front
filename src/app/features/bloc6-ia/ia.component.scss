@@ -1,17 +1,17 @@
 :host {
-    display: block;
-    height: 100%;
+  display: block;
+  height: 100%;
 }
 
 .finaces-primary-btn {
-    background-color: var(--color-primary);
-    color: var(--color-content-inverse);
-    font-weight: 500;
-    transition: all 0.2s ease;
+  background-color: var(--color-primary);
+  color: var(--color-content-inverse);
+  font-weight: 500;
+  transition: all 0.2s ease;
 
-    &:hover:not([disabled]) {
-        filter: brightness(1.1);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md);
-    }
+  &:hover:not([disabled]) {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
 }

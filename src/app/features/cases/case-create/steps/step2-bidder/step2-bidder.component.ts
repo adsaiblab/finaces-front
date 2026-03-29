@@ -12,42 +12,72 @@ import { BidderService } from '../../../../../core/services/bidder.service';
 import { BidderSearchOut } from '../../../../../core/models/bidder.model';
 
 @Component({
-    selector: 'app-step2-bidder',
-    standalone: true,
-    imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatIconModule, MatButtonModule, AsyncPipe],
-    templateUrl: './step2-bidder.component.html',
-    styleUrls: ['./step2-bidder.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-step2-bidder',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatButtonModule,
+    AsyncPipe,
+  ],
+  templateUrl: './step2-bidder.component.html',
+  styleUrls: ['./step2-bidder.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step2BidderComponent {
-    readonly formGroup = input<FormGroup>(new FormGroup({}));
-    private readonly bidderService = inject(BidderService);
-    filteredBidders$!: Observable<BidderSearchOut[]>;
+  readonly formGroup = input<FormGroup>(new FormGroup({}));
+  private readonly bidderService = inject(BidderService);
+  filteredBidders$!: Observable<BidderSearchOut[]>;
 
-    ngOnInit(): void {
-        const nameControl = this.formGroup().get('bidder_name');
-        if (nameControl) {
-            this.filteredBidders$ = nameControl.valueChanges.pipe(
-                startWith(''), debounceTime(300), distinctUntilChanged(),
-                switchMap(val => (typeof val === 'string' && val.length > 2) ? this.bidderService.searchBidders(val) : of([]))
-            );
-        }
+  ngOnInit(): void {
+    const nameControl = this.formGroup().get('bidder_name');
+    if (nameControl) {
+      this.filteredBidders$ = nameControl.valueChanges.pipe(
+        startWith(''),
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((val) =>
+          typeof val === 'string' && val.length > 2
+            ? this.bidderService.searchBidders(val)
+            : of([]),
+        ),
+      );
     }
+  }
 
-    onBidderSelected(bidder: BidderSearchOut): void {
-        this.formGroup().patchValue({ bidder_id: bidder.id, bidder_name: bidder.name, legal_form: bidder.legal_form || '', email: bidder.email || '', country: bidder.country || '' });
-        this.toggleFields(false);
-    }
+  onBidderSelected(bidder: BidderSearchOut): void {
+    this.formGroup().patchValue({
+      bidder_id: bidder.id,
+      bidder_name: bidder.name,
+      legal_form: bidder.legal_form || '',
+      email: bidder.email || '',
+      country: bidder.country || '',
+    });
+    this.toggleFields(false);
+  }
 
-    resetBidder(): void {
-        this.formGroup().patchValue({ bidder_id: null, bidder_name: '', legal_form: '', registration_number: '', email: '', phone: '', country: '' });
-        this.toggleFields(true);
-    }
+  resetBidder(): void {
+    this.formGroup().patchValue({
+      bidder_id: null,
+      bidder_name: '',
+      legal_form: '',
+      registration_number: '',
+      email: '',
+      phone: '',
+      country: '',
+    });
+    this.toggleFields(true);
+  }
 
-    private toggleFields(enable: boolean): void {
-        ['legal_form', 'registration_number', 'email', 'phone', 'country'].forEach(ctrl => {
-            const control = this.formGroup().get(ctrl);
-            if (control) { enable ? control.enable() : control.disable(); }
-        });
-    }
+  private toggleFields(enable: boolean): void {
+    ['legal_form', 'registration_number', 'email', 'phone', 'country'].forEach((ctrl) => {
+      const control = this.formGroup().get(ctrl);
+      if (control) {
+        enable ? control.enable() : control.disable();
+      }
+    });
+  }
 }

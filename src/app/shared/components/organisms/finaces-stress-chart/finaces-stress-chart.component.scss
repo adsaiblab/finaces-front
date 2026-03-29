@@ -1,90 +1,90 @@
 .finaces-stress-container {
-    width: 100%;
-    background-color: var(--color-surface-card);
-    border-radius: 8px;
-    border: 1px solid var(--color-border-default);
-    padding: 16px;
-    box-shadow: var(--shadow-sm);
+  width: 100%;
+  background-color: var(--color-surface-card);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
 
-    .stress-header {
-        display: flex;
-        justify-content: space-between;
+  .stress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .stress-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-content-primary);
+    }
+
+    .stress-metadata {
+      display: flex;
+      gap: 12px;
+
+      .stress-result {
+        display: inline-flex;
         align-items: center;
-        margin-bottom: 20px;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid transparent;
 
-        .stress-title {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--color-content-primary);
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
         }
 
-        .stress-metadata {
-            display: flex;
-            gap: 12px;
-
-            .stress-result {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 4px 10px;
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: 600;
-                border: 1px solid transparent;
-
-                mat-icon {
-                    font-size: 16px;
-                    width: 16px;
-                    height: 16px;
-                }
-
-                &.status-resilient {
-                    background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
-                    color: var(--color-success);
-                    border-color: color-mix(in srgb, var(--color-success) 20%, transparent);
-                }
-
-                &.status-marginal {
-                    background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
-                    color: var(--color-warning);
-                    border-color: color-mix(in srgb, var(--color-warning) 20%, transparent);
-                }
-
-                &.status-breach {
-                    background-color: color-mix(in srgb, var(--color-error) 10%, transparent);
-                    color: var(--color-error);
-                    border-color: color-mix(in srgb, var(--color-error) 20%, transparent);
-                }
-            }
+        &.status-resilient {
+          background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+          color: var(--color-success);
+          border-color: color-mix(in srgb, var(--color-success) 20%, transparent);
         }
+
+        &.status-marginal {
+          background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
+          color: var(--color-warning);
+          border-color: color-mix(in srgb, var(--color-warning) 20%, transparent);
+        }
+
+        &.status-breach {
+          background-color: color-mix(in srgb, var(--color-error) 10%, transparent);
+          color: var(--color-error);
+          border-color: color-mix(in srgb, var(--color-error) 20%, transparent);
+        }
+      }
     }
+  }
 
-    .chart-wrapper {
-        position: relative;
-        width: 100%;
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
 
-        .stress-canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
+    .stress-canvas {
+      width: 100% !important;
+      height: 100% !important;
     }
+  }
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-    .finaces-stress-container {
-        padding: 12px;
+  .finaces-stress-container {
+    padding: 12px;
 
-        .stress-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
+    .stress-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
 
-            .stress-metadata {
-                width: 100%;
-                justify-content: flex-start;
-            }
-        }
+      .stress-metadata {
+        width: 100%;
+        justify-content: flex-start;
+      }
     }
+  }
 }

@@ -1,5 +1,4 @@
 <div class="login-page">
-
   <!-- ── Branding panel (left) ─────────────────────────────── -->
   <aside class="brand-panel">
     <div class="brand-inner">
@@ -8,7 +7,7 @@
         <span class="brand-name">FinaCES</span>
       </div>
       <div class="brand-tagline">
-        <h1>Évaluation financière<br><span class="accent">structurée.</span></h1>
+        <h1>Évaluation financière<br /><span class="accent">structurée.</span></h1>
         <p>Plateforme d'analyse MCC — pilotage des dossiers de financement complexe.</p>
       </div>
       <div class="brand-footnote">
@@ -25,21 +24,26 @@
   <!-- ── Form panel (right) ────────────────────────────────── -->
   <main class="form-panel">
     <div class="form-inner">
-
       <header class="form-header">
         <h2>Connexion</h2>
         <p class="form-subtitle">Entrez vos identifiants pour accéder à votre espace de travail.</p>
       </header>
 
       <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-
         <div class="field-group">
           <label class="field-label" for="username">Identifiant</label>
           <div class="field-wrapper" [class.has-error]="showFieldError('username')">
             <span class="field-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
             </span>
             <input
@@ -60,9 +64,16 @@
           <label class="field-label" for="password">Mot de passe</label>
           <div class="field-wrapper" [class.has-error]="showFieldError('password')">
             <span class="field-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
             </span>
             <input
@@ -73,16 +84,37 @@
               formControlName="password"
               autocomplete="current-password"
             />
-            <button type="button" class="toggle-visibility" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Masquer' : 'Afficher'">
+            <button
+              type="button"
+              class="toggle-visibility"
+              (click)="showPassword = !showPassword"
+              [attr.aria-label]="showPassword ? 'Masquer' : 'Afficher'"
+            >
               @if (showPassword) {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                  />
+                  <line x1="1" y1="1" x2="23" y2="23" />
                 </svg>
               } @else {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
                 </svg>
               }
             </button>
@@ -94,21 +126,23 @@
 
         @if (error()) {
           <div class="alert-error" role="alert">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             {{ error() }}
           </div>
         }
 
-        <button
-          id="login-submit"
-          class="btn-primary"
-          type="submit"
-          [disabled]="isLoading()"
-        >
+        <button id="login-submit" class="btn-primary" type="submit" [disabled]="isLoading()">
           @if (isLoading()) {
             <span class="spinner" aria-hidden="true"></span>
             Connexion en cours…
@@ -116,14 +150,11 @@
             Accéder à l'espace
           }
         </button>
-
       </form>
 
       <footer class="form-footer">
         <p>FinaCES v2 — Plateforme MCC <span class="separator">·</span> Accès confidentiel</p>
       </footer>
-
     </div>
   </main>
-
 </div>

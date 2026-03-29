@@ -1,8 +1,8 @@
 // Respect pur des variables CSS. MDC Card overrides via !important car Angular Material résiste souvent.
 .finaces-pillar-card {
-    box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm);
 
-    &:hover {
-        box-shadow: var(--shadow-md);
-    }
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
 }

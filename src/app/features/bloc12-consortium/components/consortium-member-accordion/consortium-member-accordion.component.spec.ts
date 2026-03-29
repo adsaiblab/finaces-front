@@ -3,28 +3,34 @@ import { ConsortiumMemberAccordionComponent } from './consortium-member-accordio
 import { ComponentRef } from '@angular/core';
 
 describe('ConsortiumMemberAccordionComponent', () => {
-    let component: ConsortiumMemberAccordionComponent;
-    let fixture: ComponentFixture<ConsortiumMemberAccordionComponent>;
-    let componentRef: ComponentRef<ConsortiumMemberAccordionComponent>;
+  let component: ConsortiumMemberAccordionComponent;
+  let fixture: ComponentFixture<ConsortiumMemberAccordionComponent>;
+  let componentRef: ComponentRef<ConsortiumMemberAccordionComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [ConsortiumMemberAccordionComponent]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ConsortiumMemberAccordionComponent],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(ConsortiumMemberAccordionComponent);
-        component = fixture.componentInstance;
-        componentRef = fixture.componentRef;
-        
-        // Initialize inputs using componentRef.setInput() as per Ng17+ Best Practices
-        componentRef.setInput('member', { member_id: 'test-1', member_name: 'Test', role: 'MEMBER', participation_pct: 10, score: 3 });
-        componentRef.setInput('isBlocking', false);
-        componentRef.setInput('isWeakLink', false);
-        
-        fixture.detectChanges();
+    fixture = TestBed.createComponent(ConsortiumMemberAccordionComponent);
+    component = fixture.componentInstance;
+    componentRef = fixture.componentRef;
+
+    // Initialize inputs using componentRef.setInput() as per Ng17+ Best Practices
+    componentRef.setInput('member', {
+      member_id: 'test-1',
+      member_name: 'Test',
+      role: 'MEMBER',
+      participation_pct: 10,
+      score: 3,
     });
+    componentRef.setInput('isBlocking', false);
+    componentRef.setInput('isWeakLink', false);
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

@@ -7,15 +7,19 @@ import { FinacesTensionBadgeComponent } from '../../../../shared/components/atom
 import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 
 @Component({
-    selector: 'app-decision-recap',
-    standalone: true,
-    imports: [FinacesScoreGaugeComponent,
-        FinacesTensionBadgeComponent,
-        FinacesRiskBadgeComponent, NgClass, DecimalPipe],
-    templateUrl: './decision-recap.component.html',
-    styleUrls: ['./decision-recap.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-decision-recap',
+  standalone: true,
+  imports: [
+    FinacesScoreGaugeComponent,
+    FinacesTensionBadgeComponent,
+    FinacesRiskBadgeComponent,
+    NgClass,
+    DecimalPipe,
+  ],
+  templateUrl: './decision-recap.component.html',
+  styleUrls: ['./decision-recap.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DecisionRecapComponent {
-    caseData = input<EvaluationCaseDetailOut>(null as unknown as EvaluationCaseDetailOut);
+  caseData = input<EvaluationCaseDetailOut>(null as unknown as EvaluationCaseDetailOut);
 }

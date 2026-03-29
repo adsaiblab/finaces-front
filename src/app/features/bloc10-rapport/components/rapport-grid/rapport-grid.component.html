@@ -1,10 +1,13 @@
 <section
-    class="bg-surface-card rounded-xl shadow-sm border border-border-default overflow-hidden mb-6 print:break-inside-avoid print:shadow-none print:border-gray-300">
-    <div class="bg-surface-default border-b border-border-default px-6 py-4 flex items-center gap-3 print:bg-gray-100">
-        <span class="material-icons text-primary-default print:text-gray-800">{{ icon() }}</span>
-        <h3 class="text-lg font-bold text-content-primary print:text-black">{{ title() }}</h3>
-    </div>
-    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ng-content></ng-content>
-    </div>
+  class="bg-surface-card rounded-xl shadow-sm border border-border-default overflow-hidden mb-6 print:break-inside-avoid print:shadow-none print:border-gray-300"
+>
+  <div
+    class="bg-surface-default border-b border-border-default px-6 py-4 flex items-center gap-3 print:bg-gray-100"
+  >
+    <span class="material-icons text-primary-default print:text-gray-800">{{ icon() }}</span>
+    <h3 class="text-lg font-bold text-content-primary print:text-black">{{ title() }}</h3>
+  </div>
+  <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <ng-content></ng-content>
+  </div>
 </section>

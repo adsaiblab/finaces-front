@@ -1,17 +1,21 @@
 @if (isActive()) {
-<div
-    class="w-full bg-info-dark text-inverse px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md z-40 relative">
+  <div
+    class="w-full bg-info-dark text-inverse px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md z-40 relative"
+  >
     <div class="flex items-center gap-3">
-        <span class="material-icons text-info-lighter animate-pulse">science</span>
-        <div>
-            <h4 class="font-bold text-sm tracking-wide">AI PILOT MODE ACTIVE</h4>
-            <p class="text-xs text-info-lighter">The AI models are currently running in shadow mode. Predictions are for
-                observation only.</p>
-        </div>
+      <span class="material-icons text-info-lighter animate-pulse">science</span>
+      <div>
+        <h4 class="font-bold text-sm tracking-wide">AI PILOT MODE ACTIVE</h4>
+        <p class="text-xs text-info-lighter">
+          The AI models are currently running in shadow mode. Predictions are for observation only.
+        </p>
+      </div>
     </div>
-    <a routerLink="/admin/ia/pilot-info"
-        class="text-xs font-bold text-inverse underline hover:text-info-lighter transition-colors whitespace-nowrap">
-        View Pilot Parameters
+    <a
+      routerLink="/admin/ia/pilot-info"
+      class="text-xs font-bold text-inverse underline hover:text-info-lighter transition-colors whitespace-nowrap"
+    >
+      View Pilot Parameters
     </a>
-</div>
+  </div>
 }

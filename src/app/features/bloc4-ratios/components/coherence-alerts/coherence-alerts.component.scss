@@ -1,9 +1,9 @@
 ::ng-deep .finaces-accordion {
-    .mat-expansion-panel-header {
-        padding: 0 16px;
+  .mat-expansion-panel-header {
+    padding: 0 16px;
 
-        &.mat-expanded {
-            border-bottom: 1px solid var(--color-border-default);
-        }
+    &.mat-expanded {
+      border-bottom: 1px solid var(--color-border-default);
     }
+  }
 }

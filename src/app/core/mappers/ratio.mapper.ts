@@ -15,10 +15,7 @@ import {
  * This mapper enriches flat ratios into display-ready grouped structures.
  */
 
-function toRatioValue(
-  current: number,
-  unit: RatioValue['unit'] = 'ratio',
-): RatioValue {
+function toRatioValue(current: number, unit: RatioValue['unit'] = 'ratio'): RatioValue {
   return {
     current,
     trend: [],

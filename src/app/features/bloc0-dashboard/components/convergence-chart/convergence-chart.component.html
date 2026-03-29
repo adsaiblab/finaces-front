@@ -1,44 +1,64 @@
 <div class="chart-container">
-    <div class="chart-header">
-        <h2>MCC/AI Convergence</h2>
-        <p>Score evolution over the last 30 days</p>
-    </div>
+  <div class="chart-header">
+    <h2>MCC/AI Convergence</h2>
+    <p>Score evolution over the last 30 days</p>
+  </div>
 
-    @if (chartData()) {
+  @if (chartData()) {
     <div class="canvas-wrapper">
-        <canvas #chartCanvas></canvas>
+      <canvas #chartCanvas></canvas>
     </div>
 
     <div class="custom-legend">
-        <div class="flex items-center gap-2">
-            <div style="width: 1.5rem; height: 0.25rem; background-color: var(--color-success); border-radius: 9999px;">
-            </div>
-            <span>MCC Score (Décision)</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <div style="width: 1.5rem; height: 0; border-top: 2px dashed var(--color-info);"></div>
-            <span>IA Challenge</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <div style="width: 0.75rem; height: 0.75rem; border-radius: 9999px; background-color: var(--color-error);">
-            </div>
-            <span>Divergence Alert</span>
-        </div>
+      <div class="flex items-center gap-2">
+        <div
+          style="
+            width: 1.5rem;
+            height: 0.25rem;
+            background-color: var(--color-success);
+            border-radius: 9999px;
+          "
+        ></div>
+        <span>MCC Score (Décision)</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div style="width: 1.5rem; height: 0; border-top: 2px dashed var(--color-info)"></div>
+        <span>IA Challenge</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div
+          style="
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 9999px;
+            background-color: var(--color-error);
+          "
+        ></div>
+        <span>Divergence Alert</span>
+      </div>
     </div>
 
     <div class="stats-row">
-        <span class="stat-item">Correlation: <span class="val-corr">{{ chartData()?.correlation | number:'1.2-2'
-                }}</span></span>
-        <span class="stat-item">Divergences detected: <span class="val-div">{{ chartData()?.divergence_flags?.length ||
-                0 }}</span></span>
-        <span class="stat-item">Global convergence: <span class="val-conv">{{ chartData()?.convergence_percentage
-                }}%</span></span>
+      <span class="stat-item"
+        >Correlation:
+        <span class="val-corr">{{ chartData()?.correlation | number: '1.2-2' }}</span></span
+      >
+      <span class="stat-item"
+        >Divergences detected:
+        <span class="val-div">{{ chartData()?.divergence_flags?.length || 0 }}</span></span
+      >
+      <span class="stat-item"
+        >Global convergence:
+        <span class="val-conv">{{ chartData()?.convergence_percentage }}%</span></span
+      >
     </div>
-    } @else {
+  } @else {
     <div class="empty-state">
-        <mat-icon>insights</mat-icon>
-        <p class="empty-title">No data.</p>
-        <p style="font-size: 0.75rem; margin-top: 0.25rem;">Start evaluations to see convergence data.</p>
+      <mat-icon>insights</mat-icon>
+      <p class="empty-title">No data.</p>
+      <p style="font-size: 0.75rem; margin-top: 0.25rem">
+        Start evaluations to see convergence data.
+      </p>
     </div>
-    }
+  }
 </div>

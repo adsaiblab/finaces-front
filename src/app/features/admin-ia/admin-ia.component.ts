@@ -44,18 +44,19 @@ export class AdminIaComponent {
   private loadDashboard(): void {
     this.isLoading.set(true);
     // [UI SIMULATION] - The service implements Rule 16 (Mock-First Development)
-    this.iaService.getDashboardData().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (data) => {
-        this.dashboardData.set(data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.snackBar.open('Error connecting to ML Ops backend.', 'Close', { duration: 3000 });
-      },
-    });
+    this.iaService
+      .getDashboardData()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.dashboardData.set(data);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.isLoading.set(false);
+          this.snackBar.open('Error connecting to ML Ops backend.', 'Close', { duration: 3000 });
+        },
+      });
   }
 
   openModelConfig(model: IaModelInfo): void {

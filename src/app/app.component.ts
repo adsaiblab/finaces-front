@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush // Ajout obligatoire
+  changeDetection: ChangeDetectionStrategy.OnPush, // Ajout obligatoire
 })
 export class AppComponent {
   title = 'FinaCES';

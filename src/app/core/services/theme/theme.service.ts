@@ -2,12 +2,12 @@ import { Injectable, signal, effect, inject } from '@angular/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
   private readonly _isDark = signal<boolean>(false);
   readonly isDarkMode = this._isDark.asReadonly();
-  
+
   private overlayContainer = inject(OverlayContainer);
 
   private readonly themeEffect = effect(() => {
@@ -19,7 +19,7 @@ export class ThemeService {
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
     }
-    
+
     overlayClassList.toggle('dark', isDark);
     localStorage.setItem('finaces-theme', isDark ? 'dark' : 'light');
   });
@@ -39,6 +39,6 @@ export class ThemeService {
   }
 
   toggleTheme(): void {
-    this._isDark.update(v => !v);
+    this._isDark.update((v) => !v);
   }
 }

@@ -27,16 +27,20 @@ import { ConfirmDialogComponent } from '../../shared/components/molecules/confir
 @Component({
   selector: 'app-gate',
   standalone: true,
-  imports: [MatDialogModule,
+  imports: [
+    MatDialogModule,
     MatSnackBarModule,
     MatIconModule,
     MatButtonModule,
     ChecklistColumnComponent,
     DocumentsColumnComponent,
-    DecisionColumnComponent, AsyncPipe, NgClass],
+    DecisionColumnComponent,
+    AsyncPipe,
+    NgClass,
+  ],
   templateUrl: './gate.component.html',
   styleUrl: './gate.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GateComponent {
   private readonly caseContext = inject(CaseContextService);
@@ -72,39 +76,43 @@ export class GateComponent {
 
     // 1. Fetch Case Details
     const mockCase = {
-        id: this.caseId(),
-        name: 'Dossier de Simulation',
-        bidder_name: 'Entreprise Fictive SA',
-        country: 'France',
-        sector: 'BTP',
-        contract_value: 1500000,
-        contract_currency: 'EUR',
-        contract_months: 24,
-        case_type: 'SINGLE' as any,
-        status: 'PENDING_GATE' as any,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        created_by: 'admin'
+      id: this.caseId(),
+      name: 'Dossier de Simulation',
+      bidder_name: 'Entreprise Fictive SA',
+      country: 'France',
+      sector: 'BTP',
+      contract_value: 1500000,
+      contract_currency: 'EUR',
+      contract_months: 24,
+      case_type: 'SINGLE' as any,
+      status: 'PENDING_GATE' as any,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      created_by: 'admin',
     } as EvaluationCaseDetailOut;
 
-    const caseReq$ = environment.features.mockData ? of(mockCase).pipe(delay(400)) : this.caseService.getCaseDetail(this.caseId());
+    const caseReq$ = environment.features.mockData
+      ? of(mockCase).pipe(delay(400))
+      : this.caseService.getCaseDetail(this.caseId());
 
     this.case$ = caseReq$.pipe(
       catchError((err) => {
         this.snackBar.open('Case not strictly found on server.', 'Close', { duration: 3000 });
         throw err;
       }),
-      shareReplay(1)
+      shareReplay(1),
     );
 
     // 2. Setup Document Polling (Toutes les 2s + rafraîchissement manuel)
     this.documents$ = this.manualRefresh$.pipe(
       switchMap(() => timer(0, 2000)),
-      switchMap(() => this.documentService.getGateDocuments(this.caseId()).pipe(
-        catchError(() => of([])) // Sécurité si erreur réseau
-      )),
+      switchMap(() =>
+        this.documentService.getGateDocuments(this.caseId()).pipe(
+          catchError(() => of([])), // Sécurité si erreur réseau
+        ),
+      ),
       takeUntilDestroyed(this.destroyRef),
-      shareReplay(1)
+      shareReplay(1),
     );
   }
 
@@ -114,65 +122,81 @@ export class GateComponent {
     const dialogRef = this.dialog.open(DocumentUploadDialogComponent, {
       width: '500px',
       disableClose: true,
-      data: { file }
+      data: { file },
     });
 
-    dialogRef.afterClosed().pipe(
-      filter(result => !!result),
-      switchMap(result => {
-        const formData = new FormData();
-        formData.append('file', result.file);
-        Object.keys(result.metadata).forEach(key => {
-          if (result.metadata[key]) {
-            formData.append(key, result.metadata[key]);
-          }
-        });
-        return this.documentService.uploadGateDocument(this.caseId(), formData);
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.snackBar.open('Document uploadé avec succès', 'Fermer', { duration: 3000, panelClass: 'snack-success' });
-        this.manualRefresh$.next(); // Force refresh
-      },
-      error: () => {
-        this.snackBar.open('Erreur lors de l\'upload', 'Fermer', { duration: 3000, panelClass: 'snack-error' });
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((result) => !!result),
+        switchMap((result) => {
+          const formData = new FormData();
+          formData.append('file', result.file);
+          Object.keys(result.metadata).forEach((key) => {
+            if (result.metadata[key]) {
+              formData.append(key, result.metadata[key]);
+            }
+          });
+          return this.documentService.uploadGateDocument(this.caseId(), formData);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Document uploadé avec succès', 'Fermer', {
+            duration: 3000,
+            panelClass: 'snack-success',
+          });
+          this.manualRefresh$.next(); // Force refresh
+        },
+        error: () => {
+          this.snackBar.open("Erreur lors de l'upload", 'Fermer', {
+            duration: 3000,
+            panelClass: 'snack-error',
+          });
+        },
+      });
   }
 
   onDeleteDocument(docId: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { message: 'Voulez-vous vraiment supprimer ce document ?' }
+      data: { message: 'Voulez-vous vraiment supprimer ce document ?' },
     });
-    dialogRef.afterClosed().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(confirmed => {
-      if (confirmed) {
-        this.documentService.deleteDocument(this.caseId(), docId).pipe(
-          takeUntilDestroyed(this.destroyRef)
-        ).subscribe({
-          next: () => {
-            this.snackBar.open('Document supprimé', 'Fermer', { duration: 3000 });
-            this.manualRefresh$.next();
-          },
-          error: () => this.snackBar.open('Erreur de suppression', 'Fermer', { duration: 3000, panelClass: 'snack-error' })
-        });
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.documentService
+            .deleteDocument(this.caseId(), docId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: () => {
+                this.snackBar.open('Document supprimé', 'Fermer', { duration: 3000 });
+                this.manualRefresh$.next();
+              },
+              error: () =>
+                this.snackBar.open('Erreur de suppression', 'Fermer', {
+                  duration: 3000,
+                  panelClass: 'snack-error',
+                }),
+            });
+        }
+      });
   }
 
   onDownloadDocument(docId: string): void {
-    this.documentService.downloadDocument(this.caseId(), docId).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe((blob: Blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = this.document.createElement('a');
-      a.href = url;
-      a.download = `document-${docId}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+    this.documentService
+      .downloadDocument(this.caseId(), docId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = this.document.createElement('a');
+        a.href = url;
+        a.download = `document-${docId}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
   }
 
   onViewDetails(doc: GateDocumentOut): void {
@@ -198,45 +222,57 @@ export class GateComponent {
           reserve_flags: [],
           missing_docs: [],
           documents_received: {
-            'BILAN': [2023, 2022, 2021],
-            'CPC': [2023, 2022, 2021],
-            'TFT': [2023, 2022, 2021],
-            'ATTESTATION_FISCALE': [2023, 2022, 2021],
-            'STATUTS': []
+            BILAN: [2023, 2022, 2021],
+            CPC: [2023, 2022, 2021],
+            TFT: [2023, 2022, 2021],
+            ATTESTATION_FISCALE: [2023, 2022, 2021],
+            STATUTS: [],
           },
           audit_log: [],
           evaluated_at: new Date().toISOString(),
-          evaluated_by: 'mock-engine'
+          evaluated_by: 'mock-engine',
         } as GateDecisionSchema).pipe(delay(1500))
       : this.caseService.evaluateGate(this.caseId());
 
-    evaluate$.pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isEvaluatingSubject.next(false);
-        this.snackBar.open('Evaluation failed: backend error.', 'Close', { duration: 4000, panelClass: 'snack-error' });
-        throw err;
-      })
-    ).subscribe({
-      next: (decision) => {
-        this.decisionSubject.next(decision);
-        this.isEvaluatingSubject.next(false);
-      }
-    });
+    evaluate$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isEvaluatingSubject.next(false);
+          this.snackBar.open('Evaluation failed: backend error.', 'Close', {
+            duration: 4000,
+            panelClass: 'snack-error',
+          });
+          throw err;
+        }),
+      )
+      .subscribe({
+        next: (decision) => {
+          this.decisionSubject.next(decision);
+          this.isEvaluatingSubject.next(false);
+        },
+      });
   }
 
   onSealGate(): void {
-    this.caseService.patchCaseStatus(this.caseId(), { new_status: CaseStatus.FINANCIAL_INPUT }).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.snackBar.open('Gate scellé. Financials déverrouillés.', 'Fermer', { duration: 3000, panelClass: 'snack-success' });
-        this.router.navigate([`/cases/${this.caseId()}/financials`]);
-      },
-      error: () => {
-        this.snackBar.open('Erreur lors du scellement du Gate', 'Fermer', { duration: 3000, panelClass: 'snack-error' });
-      }
-    });
+    this.caseService
+      .patchCaseStatus(this.caseId(), { new_status: CaseStatus.FINANCIAL_INPUT })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Gate scellé. Financials déverrouillés.', 'Fermer', {
+            duration: 3000,
+            panelClass: 'snack-success',
+          });
+          this.router.navigate([`/cases/${this.caseId()}/financials`]);
+        },
+        error: () => {
+          this.snackBar.open('Erreur lors du scellement du Gate', 'Fermer', {
+            duration: 3000,
+            panelClass: 'snack-error',
+          });
+        },
+      });
   }
 
   onGoToFinancials(): void {

@@ -5,69 +5,71 @@ import { GateVerdict } from '../../../../core/models/enums';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 describe('DecisionColumnComponent', () => {
-    let component: DecisionColumnComponent;
-    let fixture: ComponentFixture<DecisionColumnComponent>;
+  let component: DecisionColumnComponent;
+  let fixture: ComponentFixture<DecisionColumnComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [DecisionColumnComponent]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DecisionColumnComponent],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(DecisionColumnComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    fixture = TestBed.createComponent(DecisionColumnComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('devrait créer le composant', () => {
-        expect(component).toBeTruthy();
-    });
+  it('devrait créer le composant', () => {
+    expect(component).toBeTruthy();
+  });
 
-    it('devrait afficher EN ATTENTE si pas de décision et non en cours dévaluation', () => {
-        fixture.componentRef.setInput('decision', null);
-        fixture.componentRef.setInput('isEvaluating', false);
-        fixture.detectChanges();
+  it('devrait afficher EN ATTENTE si pas de décision et non en cours dévaluation', () => {
+    fixture.componentRef.setInput('decision', null);
+    fixture.componentRef.setInput('isEvaluating', false);
+    fixture.detectChanges();
 
-        const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector('.state-title')?.textContent).toContain('PENDING');
-    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.state-title')?.textContent).toContain('PENDING');
+  });
 
-    it('devrait afficher le spinner si en cours dévaluation', () => {
-        fixture.componentRef.setInput('isEvaluating', true);
-        fixture.detectChanges();
+  it('devrait afficher le spinner si en cours dévaluation', () => {
+    fixture.componentRef.setInput('isEvaluating', true);
+    fixture.detectChanges();
 
-        const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector('mat-spinner')).toBeTruthy();
-        expect(compiled.querySelector('.state-title')?.textContent).toContain('Analysis in progress...');
-    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('mat-spinner')).toBeTruthy();
+    expect(compiled.querySelector('.state-title')?.textContent).toContain(
+      'Analysis in progress...',
+    );
+  });
 
-    it('devrait émettre evaluate au clic sur le bouton', () => {
-        const emitSpy = vi.spyOn(component.evaluate, 'emit');
-        fixture.componentRef.setInput('decision', null);
-        fixture.componentRef.setInput('isEvaluating', false);
-        fixture.detectChanges();
+  it('devrait émettre evaluate au clic sur le bouton', () => {
+    const emitSpy = vi.spyOn(component.evaluate, 'emit');
+    fixture.componentRef.setInput('decision', null);
+    fixture.componentRef.setInput('isEvaluating', false);
+    fixture.detectChanges();
 
-        const button = fixture.nativeElement.querySelector('.action-btn') as HTMLButtonElement;
-        button.click();
-        expect(emitSpy).toHaveBeenCalled();
-    });
+    const button = fixture.nativeElement.querySelector('.action-btn') as HTMLButtonElement;
+    button.click();
+    expect(emitSpy).toHaveBeenCalled();
+  });
 
-    it('devrait afficher les flags si présents', () => {
-        // CORRECTION APPLIQUÉE ICI : Ajout de audit_log: [] dans le mock
-        const mockDecision: Partial<GateDecisionSchema> = {
-            id: 'mock-dec-2',
-            case_id: '123',
-            is_passed: false,
-            verdict: GateVerdict.BLOCKING,
-            reliability_score: 85,
-            blocking_reasons: ['Bilan manquant'],
-            reserve_flags: [],
-            audit_log: []
-        };
-        fixture.componentRef.setInput('decision', mockDecision as GateDecisionSchema);
-        fixture.detectChanges();
+  it('devrait afficher les flags si présents', () => {
+    // CORRECTION APPLIQUÉE ICI : Ajout de audit_log: [] dans le mock
+    const mockDecision: Partial<GateDecisionSchema> = {
+      id: 'mock-dec-2',
+      case_id: '123',
+      is_passed: false,
+      verdict: GateVerdict.BLOCKING,
+      reliability_score: 85,
+      blocking_reasons: ['Bilan manquant'],
+      reserve_flags: [],
+      audit_log: [],
+    };
+    fixture.componentRef.setInput('decision', mockDecision as GateDecisionSchema);
+    fixture.detectChanges();
 
-        const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector('.flags-banner')).toBeTruthy();
-        expect(compiled.querySelector('.flag-item.blocking')?.textContent).toContain('Bilan manquant');
-    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.flags-banner')).toBeTruthy();
+    expect(compiled.querySelector('.flag-item.blocking')?.textContent).toContain('Bilan manquant');
+  });
 });

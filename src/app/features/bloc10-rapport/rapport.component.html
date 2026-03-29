@@ -4,48 +4,76 @@
 
 @if (!isLoading()) {
   <div class="w-full h-full p-6 bg-surface-background print:bg-surface-card print:p-0">
-
     <!-- ─── Header Bar ──────────────────────────────────────── -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 print:hidden gap-4">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 print:hidden gap-4"
+    >
       <div>
         <h1 class="text-2xl font-bold text-content-primary">Official FinaCES Report</h1>
         <p class="text-sm text-content-secondary mt-1">
           @if (hasReport()) {
-            Report {{ report()?.status }} — {{ report()?.sections_complete }}/{{ report()?.sections_total }} sections
+            Report {{ report()?.status }} — {{ report()?.sections_complete }}/{{
+              report()?.sections_total
+            }}
+            sections
           } @else {
             No report generated yet. Click "Generate Report" to start.
           }
         </p>
       </div>
       <div class="flex gap-3 flex-wrap">
-        <button mat-stroked-button (click)="returnToDashboard()" [disabled]="isExporting() || isBuilding()">
+        <button
+          mat-stroked-button
+          (click)="returnToDashboard()"
+          [disabled]="isExporting() || isBuilding()"
+        >
           <span class="material-icons mr-1 text-sm">arrow_back</span> Dashboard
         </button>
 
         <!-- T41: Generate Report button -->
         @if (!hasReport() || !isReportFinal()) {
-          <button mat-flat-button color="warn" (click)="buildReport()" [disabled]="isBuilding() || isExporting()">
+          <button
+            mat-flat-button
+            color="warn"
+            (click)="buildReport()"
+            [disabled]="isBuilding() || isExporting()"
+          >
             <span class="material-icons mr-1 text-sm">auto_awesome</span>
-            {{ isBuilding() ? 'Generating...' : (hasReport() ? 'Rebuild Report' : 'Generate Report') }}
+            {{
+              isBuilding() ? 'Generating...' : hasReport() ? 'Rebuild Report' : 'Generate Report'
+            }}
           </button>
         }
 
         <!-- T41: Finalize button (only if report exists and is DRAFT) -->
         @if (hasReport() && !isReportFinal()) {
-          <button mat-stroked-button color="primary" (click)="finalizeReport()" [disabled]="isBuilding() || isExporting()">
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="finalizeReport()"
+            [disabled]="isBuilding() || isExporting()"
+          >
             <span class="material-icons mr-1 text-sm">lock</span> Finalize
           </button>
         }
 
         <!-- T42: Export buttons (only if report exists) -->
         @if (hasReport()) {
-          <button mat-flat-button color="accent" (click)="exportWord()"
-            [disabled]="isExporting() || isBuilding()">
+          <button
+            mat-flat-button
+            color="accent"
+            (click)="exportWord()"
+            [disabled]="isExporting() || isBuilding()"
+          >
             <span class="material-icons mr-1 text-sm">description</span>
             {{ exportFormat() === 'Word' ? 'Exporting...' : 'Export Word' }}
           </button>
-          <button mat-flat-button color="primary" (click)="exportPdf()"
-            [disabled]="isExporting() || isBuilding()">
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="exportPdf()"
+            [disabled]="isExporting() || isBuilding()"
+          >
             <span class="material-icons mr-1 text-sm">picture_as_pdf</span>
             {{ exportFormat() === 'PDF' ? 'Exporting...' : 'Download PDF' }}
           </button>
@@ -68,8 +96,10 @@
           <span class="text-sm font-bold text-content-primary">{{ reportProgress() }}%</span>
         </div>
         <div class="w-full bg-surface-hover rounded-full h-2">
-          <div class="bg-primary-default h-2 rounded-full transition-all duration-500"
-            [style.width.%]="reportProgress()"></div>
+          <div
+            class="bg-primary-default h-2 rounded-full transition-all duration-500"
+            [style.width.%]="reportProgress()"
+          ></div>
         </div>
         @if (isReportFinal()) {
           <div class="mt-2 flex items-center gap-2 text-success-dark">
@@ -84,7 +114,6 @@
     <!-- REPORT SECTIONS                                         -->
     <!-- ═══════════════════════════════════════════════════════ -->
     <div class="space-y-6 print:space-y-4 text-sm">
-
       <!-- Print header -->
       <div class="hidden print:block mb-8 border-b-2 border-gray-800 pb-4">
         <h1 class="text-3xl font-extrabold text-content-primary uppercase tracking-wider">
@@ -105,29 +134,46 @@
       <!-- Section 1: General Information -->
       <app-rapport-grid title="1. General Information" icon="business">
         @if (report()?.section_01_info) {
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_01_info"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_01_info"
+          ></div>
         } @else {
           <div class="space-y-4">
             <div>
-              <span class="block text-xs text-content-secondary uppercase tracking-wider">Bidder Name</span>
-              <span class="block text-base font-bold text-content-primary">{{ currentCase()?.bidder_name || 'N/A' }}</span>
+              <span class="block text-xs text-content-secondary uppercase tracking-wider"
+                >Bidder Name</span
+              >
+              <span class="block text-base font-bold text-content-primary">{{
+                currentCase()?.bidder_name || 'N/A'
+              }}</span>
             </div>
             <div>
-              <span class="block text-xs text-content-secondary uppercase tracking-wider">Sector</span>
-              <span class="block text-base font-medium text-content-primary">{{ currentCase()?.sector || 'N/A' }}</span>
+              <span class="block text-xs text-content-secondary uppercase tracking-wider"
+                >Sector</span
+              >
+              <span class="block text-base font-medium text-content-primary">{{
+                currentCase()?.sector || 'N/A'
+              }}</span>
             </div>
           </div>
           <div class="space-y-4">
             <div>
-              <span class="block text-xs text-content-secondary uppercase tracking-wider">Contract Value</span>
+              <span class="block text-xs text-content-secondary uppercase tracking-wider"
+                >Contract Value</span
+              >
               <span class="block text-base font-bold text-content-primary">
-                {{ currentCase()?.contract_value | number: '1.0-0' }} {{ currentCase()?.contract_currency }}
+                {{ currentCase()?.contract_value | number: '1.0-0' }}
+                {{ currentCase()?.contract_currency }}
               </span>
             </div>
             <div>
-              <span class="block text-xs text-content-secondary uppercase tracking-wider">Case Type</span>
-              <span class="block text-base font-medium text-content-primary">{{ currentCase()?.case_type }}</span>
+              <span class="block text-xs text-content-secondary uppercase tracking-wider"
+                >Case Type</span
+              >
+              <span class="block text-base font-medium text-content-primary">{{
+                currentCase()?.case_type
+              }}</span>
             </div>
           </div>
         }
@@ -136,14 +182,19 @@
       <!-- Section 2: Scope -->
       <app-rapport-grid title="2. Purpose & Scope" icon="fact_check">
         @if (report()?.section_02_objective) {
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_02_objective"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_02_objective"
+          ></div>
         } @else {
           <div class="col-span-1 md:col-span-2">
-            <div class="flex items-center gap-3 bg-success-lighter border border-success-default p-3 rounded">
+            <div
+              class="flex items-center gap-3 bg-success-lighter border border-success-default p-3 rounded"
+            >
               <span class="material-icons text-success-dark">verified</span>
               <p class="text-success-dark font-medium">
-                All mandatory documents (Audited Financials, Tax Clearance) have been successfully submitted and verified.
+                All mandatory documents (Audited Financials, Tax Clearance) have been successfully
+                submitted and verified.
               </p>
             </div>
           </div>
@@ -153,8 +204,10 @@
       <!-- Section 3: Scope of Analysis (gate) -->
       @if (report()?.section_03_scope) {
         <app-rapport-grid title="3. Scope of Analysis" icon="search">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_03_scope"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_03_scope"
+          ></div>
         </app-rapport-grid>
       }
 
@@ -166,24 +219,30 @@
       <!-- Section 4: Executive Summary -->
       @if (report()?.section_04_executive_summary) {
         <app-rapport-grid title="4. Executive Summary" icon="summarize">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed bg-primary-lighter border border-primary-default p-4 rounded-lg"
-            [innerHTML]="report()!.section_04_executive_summary"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed bg-primary-lighter border border-primary-default p-4 rounded-lg"
+            [innerHTML]="report()!.section_04_executive_summary"
+          ></div>
         </app-rapport-grid>
       }
 
       <!-- Section 5: Bidder Profile -->
       @if (report()?.section_05_profile) {
         <app-rapport-grid title="5. Bidder Profile" icon="person">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_05_profile"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_05_profile"
+          ></div>
         </app-rapport-grid>
       }
 
       <!-- Section 6: Financial Analysis -->
       <app-rapport-grid title="6. Financial Analysis" icon="account_balance">
         @if (report()?.section_06_analysis) {
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_06_analysis"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_06_analysis"
+          ></div>
         } @else {
           <div class="col-span-1 md:col-span-2 text-center py-4 text-content-tertiary italic">
             Financial analysis section will be populated when the report is generated.
@@ -199,35 +258,48 @@
       <!-- Section 7: Contract Capacity -->
       @if (report()?.section_07_capacity) {
         <app-rapport-grid title="7. Contract Capacity" icon="engineering">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_07_capacity"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_07_capacity"
+          ></div>
         </app-rapport-grid>
       }
 
       <!-- Section 8: Red Flags -->
       @if (report()?.section_08_red_flags) {
         <app-rapport-grid title="8. Red Flags & Blocking Issues" icon="flag">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_08_red_flags"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_08_red_flags"
+          ></div>
         </app-rapport-grid>
       }
 
       <!-- Section 9: Mitigating Factors -->
       @if (report()?.section_09_mitigants) {
         <app-rapport-grid title="9. Mitigating Factors" icon="balance">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_09_mitigants"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_09_mitigants"
+          ></div>
         </app-rapport-grid>
       }
 
       <!-- Section 10: MCC Scoring -->
       <app-rapport-grid title="10. MCC Final Score (Authoritative)" icon="gavel">
         @if (report()?.section_10_scoring) {
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_10_scoring"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_10_scoring"
+          ></div>
         } @else {
-          <div class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default border-border-default print:bg-surface-hover h-full">
-            <span class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black">Final Score</span>
+          <div
+            class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default border-border-default print:bg-surface-hover h-full"
+          >
+            <span
+              class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black"
+              >Final Score</span
+            >
             <span class="text-4xl font-extrabold text-primary-dark">
               {{ currentCase()?.mcc_score || '—' }}
             </span>
@@ -235,7 +307,9 @@
           <div class="flex flex-col gap-4 justify-center">
             <div class="flex items-center justify-between border-b border-border-default pb-2">
               <span class="text-sm font-medium text-content-secondary">Calculated Risk Class</span>
-              <finaces-risk-badge [riskClass]="$any(currentCase()?.risk_class) || 'MODERATE'"></finaces-risk-badge>
+              <finaces-risk-badge
+                [riskClass]="$any(currentCase()?.risk_class) || 'MODERATE'"
+              ></finaces-risk-badge>
             </div>
           </div>
         }
@@ -246,7 +320,9 @@
         <div class="flex items-start gap-3 mb-4">
           <span class="material-icons text-content-tertiary">smart_toy</span>
           <div>
-            <h3 class="text-lg font-bold text-content-secondary">AI Scoring (Non-Decision Authority)</h3>
+            <h3 class="text-lg font-bold text-content-secondary">
+              AI Scoring (Non-Decision Authority)
+            </h3>
             <p class="text-xs text-content-tertiary mt-1 max-w-2xl italic">
               Disclaimer: AI scoring is a decision-support tool. It does not replace the MCC score,
               which remains the sole authority for final approval.
@@ -256,7 +332,9 @@
         <div class="flex gap-6 items-center">
           <div class="bg-surface-default px-6 py-3 rounded shadow-sm border border-border-default">
             <span class="text-xs text-content-tertiary block">AI Global Score</span>
-            <span class="text-2xl font-bold text-content-secondary">{{ currentCase()?.ia_score || '—' }}</span>
+            <span class="text-2xl font-bold text-content-secondary">{{
+              currentCase()?.ia_score || '—'
+            }}</span>
           </div>
         </div>
       </section>
@@ -264,7 +342,9 @@
       <!-- Tension Detection -->
       <app-rapport-grid title="Tension Detection" icon="warning">
         <div class="col-span-1 md:col-span-2 flex items-center gap-6">
-          <finaces-tension-badge [level]="$any(currentCase()?.tension_label || 'NONE')"></finaces-tension-badge>
+          <finaces-tension-badge
+            [level]="$any(currentCase()?.tension_label || 'NONE')"
+          ></finaces-tension-badge>
           <p class="text-sm text-content-secondary">
             System coherence check between MCC scoring and AI prediction.
           </p>
@@ -279,8 +359,10 @@
       <!-- Section 11: Risk Assessment -->
       @if (report()?.section_11_assessment) {
         <app-rapport-grid title="11. Risk Assessment" icon="assessment">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_11_assessment"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_11_assessment"
+          ></div>
         </app-rapport-grid>
       }
 
@@ -291,9 +373,16 @@
             @if (currentCase()?.stress_test_results?.stress60d) {
               <div class="flex justify-between items-center border-b border-border-default pb-2">
                 <span class="font-medium text-content-secondary">60-Day Payment Delay</span>
-                <span class="font-bold"
-                  [class]="currentCase()!.stress_test_results!.stress60d!.status === 'SOLVENT' ? 'text-success-default' :
-                           currentCase()!.stress_test_results!.stress60d!.status === 'LIMIT' ? 'text-warning-default' : 'text-error-default'">
+                <span
+                  class="font-bold"
+                  [class]="
+                    currentCase()!.stress_test_results!.stress60d!.status === 'SOLVENT'
+                      ? 'text-success-default'
+                      : currentCase()!.stress_test_results!.stress60d!.status === 'LIMIT'
+                        ? 'text-warning-default'
+                        : 'text-error-default'
+                  "
+                >
                   {{ currentCase()!.stress_test_results!.stress60d!.status }}
                 </span>
               </div>
@@ -301,9 +390,16 @@
             @if (currentCase()?.stress_test_results?.stress90d) {
               <div class="flex justify-between items-center pb-2">
                 <span class="font-medium text-content-secondary">90-Day Critical Delay</span>
-                <span class="font-bold"
-                  [class]="currentCase()!.stress_test_results!.stress90d!.status === 'SOLVENT' ? 'text-success-default' :
-                           currentCase()!.stress_test_results!.stress90d!.status === 'LIMIT' ? 'text-warning-default' : 'text-error-default'">
+                <span
+                  class="font-bold"
+                  [class]="
+                    currentCase()!.stress_test_results!.stress90d!.status === 'SOLVENT'
+                      ? 'text-success-default'
+                      : currentCase()!.stress_test_results!.stress90d!.status === 'LIMIT'
+                        ? 'text-warning-default'
+                        : 'text-error-default'
+                  "
+                >
                   {{ currentCase()!.stress_test_results!.stress90d!.status }}
                 </span>
               </div>
@@ -324,16 +420,20 @@
       <!-- Section 12: Recommendation -->
       @if (report()?.section_12_recommendation) {
         <app-rapport-grid title="12. Recommendation" icon="recommend">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_12_recommendation"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_12_recommendation"
+          ></div>
         </app-rapport-grid>
       }
 
       <!-- Section 13: Limitations -->
       @if (report()?.section_13_limitations) {
         <app-rapport-grid title="13. Analysis Limitations" icon="info">
-          <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-            [innerHTML]="report()!.section_13_limitations"></div>
+          <div
+            class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
+            [innerHTML]="report()!.section_13_limitations"
+          ></div>
         </app-rapport-grid>
       }
 
@@ -341,15 +441,23 @@
       <app-rapport-grid title="14. Final Conclusion" icon="gavel">
         @if (report()?.section_14_conclusion) {
           <div class="col-span-1 md:col-span-2">
-            <div class="flex items-center gap-3 mb-4 p-4 bg-primary-lighter border border-primary-default rounded-lg">
+            <div
+              class="flex items-center gap-3 mb-4 p-4 bg-primary-lighter border border-primary-default rounded-lg"
+            >
               <span class="material-icons text-primary-dark text-3xl">verified_user</span>
               <div>
-                <span class="block text-xs uppercase tracking-widest text-primary-dark font-bold">Final Recommendation</span>
-                <span class="block text-xl font-extrabold text-primary-dark">{{ report()?.recommendation || '—' }}</span>
+                <span class="block text-xs uppercase tracking-widest text-primary-dark font-bold"
+                  >Final Recommendation</span
+                >
+                <span class="block text-xl font-extrabold text-primary-dark">{{
+                  report()?.recommendation || '—'
+                }}</span>
               </div>
             </div>
-            <div class="text-sm text-content-primary leading-relaxed whitespace-pre-wrap p-4 bg-surface-default border border-border-default rounded"
-              [innerHTML]="report()!.section_14_conclusion"></div>
+            <div
+              class="text-sm text-content-primary leading-relaxed whitespace-pre-wrap p-4 bg-surface-default border border-border-default rounded"
+              [innerHTML]="report()!.section_14_conclusion"
+            ></div>
           </div>
         } @else {
           <div class="col-span-1 md:col-span-2 text-center py-8 text-content-tertiary italic">
@@ -357,8 +465,8 @@
           </div>
         }
       </app-rapport-grid>
-
-    </div><!-- /space-y-6 -->
+    </div>
+    <!-- /space-y-6 -->
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- T43: AUDIT TRAIL SECTION                                -->
@@ -376,20 +484,28 @@
         <div class="border border-border-default rounded-lg overflow-hidden">
           <div class="max-h-80 overflow-y-auto">
             @for (event of auditTrail(); track event.id) {
-              <div class="flex items-start gap-3 px-4 py-3 border-b border-border-default last:border-b-0 hover:bg-surface-hover transition-colors">
-                <span class="text-lg mt-0.5" [title]="event.event_type">{{ event.icon || '📝' }}</span>
+              <div
+                class="flex items-start gap-3 px-4 py-3 border-b border-border-default last:border-b-0 hover:bg-surface-hover transition-colors"
+              >
+                <span class="text-lg mt-0.5" [title]="event.event_type">{{
+                  event.icon || '📝'
+                }}</span>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2">
-                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded"
+                    <span
+                      class="text-xs font-mono font-bold px-1.5 py-0.5 rounded"
                       [style.background-color]="(event.color || '#95A5A6') + '22'"
-                      [style.color]="event.color || '#95A5A6'">
+                      [style.color]="event.color || '#95A5A6'"
+                    >
                       {{ event.event_type }}
                     </span>
                     @if (event.section) {
                       <span class="text-xs text-content-tertiary">{{ event.section }}</span>
                     }
                   </div>
-                  <p class="text-sm text-content-secondary mt-0.5 truncate">{{ event.description }}</p>
+                  <p class="text-sm text-content-secondary mt-0.5 truncate">
+                    {{ event.description }}
+                  </p>
                 </div>
                 <span class="text-xs text-content-tertiary whitespace-nowrap">
                   {{ event.created_at | date: 'short' }}
@@ -400,7 +516,6 @@
         </div>
       </div>
     }
-
   </div>
 }
 

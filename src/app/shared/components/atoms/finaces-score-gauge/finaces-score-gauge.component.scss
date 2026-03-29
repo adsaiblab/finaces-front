@@ -1,39 +1,39 @@
 .finaces-gauge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-    .gauge-svg {
-        &.gauge-success .progress-arc {
-            stroke: var(--color-success);
-        }
-
-        &.gauge-warning .progress-arc {
-            stroke: var(--color-warning);
-        }
-
-        &.gauge-orange .progress-arc {
-            stroke: var(--color-mcc-high);
-        }
-
-        &.gauge-error .progress-arc {
-            stroke: var(--color-error);
-        }
-
-        &.gauge-ia .progress-arc {
-            stroke: var(--color-primary);
-        }
-
-        .gauge-score-value {
-            font-size: 26px;
-            font-weight: 700;
-            fill: var(--color-content-primary);
-        }
-
-        .gauge-max-label {
-            font-size: 12px;
-            font-weight: 500;
-            fill: var(--color-content-secondary);
-        }
+  .gauge-svg {
+    &.gauge-success .progress-arc {
+      stroke: var(--color-success);
     }
+
+    &.gauge-warning .progress-arc {
+      stroke: var(--color-warning);
+    }
+
+    &.gauge-orange .progress-arc {
+      stroke: var(--color-mcc-high);
+    }
+
+    &.gauge-error .progress-arc {
+      stroke: var(--color-error);
+    }
+
+    &.gauge-ia .progress-arc {
+      stroke: var(--color-primary);
+    }
+
+    .gauge-score-value {
+      font-size: 26px;
+      font-weight: 700;
+      fill: var(--color-content-primary);
+    }
+
+    .gauge-max-label {
+      font-size: 12px;
+      font-weight: 500;
+      fill: var(--color-content-secondary);
+    }
+  }
 }

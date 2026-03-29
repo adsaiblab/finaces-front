@@ -13,9 +13,15 @@
 
 // On génère le squelette (padding, shadow, layout) de Material MDC
 // avec la syntaxe moderne Angular 18+ (mat.define-theme)
-$finaces-dummy-theme: mat.define-theme((color: (theme-type: light,
-                primary: mat.$azure-palette,
-                tertiary: mat.$cyan-palette )));
+$finaces-dummy-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$cyan-palette,
+    ),
+  )
+);
 
 @include mat.core-theme($finaces-dummy-theme);
 @include mat.form-field-theme($finaces-dummy-theme);
@@ -37,33 +43,33 @@ $finaces-dummy-theme: mat.define-theme((color: (theme-type: light,
 // ─ BLOC 4 : MAPPING MDC -> FINACES MANIFESTE (Zéro HEX/RGB) ───────────
 // C'est ici que l'on connecte la machinerie Material à nos tokens dynamiques.
 :root {
-    --mdc-theme-primary: var(--color-primary);
-    --mdc-theme-on-primary: var(--color-content-inverse);
-    --mdc-theme-secondary: var(--color-primary-light);
-    --mdc-theme-on-secondary: var(--color-content-inverse);
-    --mdc-theme-surface: var(--color-surface-card);
-    --mdc-theme-on-surface: var(--color-content-primary);
-    --mdc-theme-background: var(--color-surface-default);
-    --mdc-theme-error: var(--color-error);
-    --mdc-theme-on-error: var(--color-content-inverse);
-    --mdc-theme-text-primary-on-background: var(--color-content-primary);
-    --mdc-theme-text-secondary-on-background: var(--color-content-secondary);
-    --mdc-theme-text-hint-on-background: var(--color-content-disabled);
-    --mdc-theme-text-disabled-on-background: var(--color-content-disabled);
-    --mdc-theme-text-icon-on-background: var(--color-content-secondary);
-    --mat-select-panel-background-color: var(--color-surface-card);
+  --mdc-theme-primary: var(--color-primary);
+  --mdc-theme-on-primary: var(--color-content-inverse);
+  --mdc-theme-secondary: var(--color-primary-light);
+  --mdc-theme-on-secondary: var(--color-content-inverse);
+  --mdc-theme-surface: var(--color-surface-card);
+  --mdc-theme-on-surface: var(--color-content-primary);
+  --mdc-theme-background: var(--color-surface-default);
+  --mdc-theme-error: var(--color-error);
+  --mdc-theme-on-error: var(--color-content-inverse);
+  --mdc-theme-text-primary-on-background: var(--color-content-primary);
+  --mdc-theme-text-secondary-on-background: var(--color-content-secondary);
+  --mdc-theme-text-hint-on-background: var(--color-content-disabled);
+  --mdc-theme-text-disabled-on-background: var(--color-content-disabled);
+  --mdc-theme-text-icon-on-background: var(--color-content-secondary);
+  --mat-select-panel-background-color: var(--color-surface-card);
 }
 
 // ─ BLOC 5 BIS : FIX ULTIME MATERIAL 3 TEXT COLORS (SaaS Compliance) ──
 html,
 body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: var(--font-sans);
-    background-color: var(--color-surface-default);
-    color: var(--color-content-primary);
-    -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-default);
+  color: var(--color-content-primary);
+  -webkit-font-smoothing: antialiased;
 }
 
 // Surcharge absolue des noeuds DOM internes M3 pour écraser le --mat-sys-color
@@ -74,216 +80,214 @@ body {
 .mdc-text-field__input,
 // Cible le texte des inputs
 .mat-mdc-input-element {
-    color: var(--color-content-primary) !important;
+  color: var(--color-content-primary) !important;
 }
 
 // Surcharge des placeholders M3 (ex: "ex: MCC-2024-001")
 .mdc-text-field__input::placeholder,
 .mat-mdc-select-placeholder {
-    color: var(--color-content-secondary) !important;
-    opacity: 1; // Material 3 réduit souvent l'opacité par défaut
+  color: var(--color-content-secondary) !important;
+  opacity: 1; // Material 3 réduit souvent l'opacité par défaut
 }
 
 // Surcharge des flèches des menus déroulants
 .mat-mdc-select-arrow {
-    color: var(--color-content-secondary) !important;
+  color: var(--color-content-secondary) !important;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 // ─ Scrollbar discrète (thémée) ────────────────────────────────
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--color-border-strong);
-    border-radius: 4px;
+  background: var(--color-border-strong);
+  border-radius: 4px;
 }
 
 // ─ BLOC 6 : SURCHARGES MATERIAL SPÉCIFIQUES & CDK OVERLAY ─────
 
 /* 1. Surcharge form-field (Bordures transparentes et hover) */
 .mat-mdc-form-field {
-    --mdc-outlined-text-field-outline-color: var(--color-border-default);
-    --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
-    --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
+  --mdc-outlined-text-field-outline-color: var(--color-border-default);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
 
-    --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
-    --mdc-outlined-text-field-hover-label-text-color: var(--color-content-primary);
-    --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
+  --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
+  --mdc-outlined-text-field-hover-label-text-color: var(--color-content-primary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
 
-    --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
-    --mdc-outlined-text-field-caret-color: var(--color-primary);
+  --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
+  --mdc-outlined-text-field-caret-color: var(--color-primary);
 
-    /* Correction pour les Selects */
-    .mat-mdc-select-value-text {
-        color: var(--color-content-primary) !important;
-    }
+  /* Correction pour les Selects */
+  .mat-mdc-select-value-text {
+    color: var(--color-content-primary) !important;
+  }
 }
 
 /* 2. Stepper */
 .mat-mdc-stepper {
-    --mat-stepper-header-icon-background-color: var(--color-surface-default);
-    --mat-stepper-header-icon-foreground-color: var(--color-content-secondary);
-    --mat-stepper-header-selected-state-icon-background-color: var(--color-primary);
-    --mat-stepper-header-selected-state-icon-foreground-color: var(--color-content-inverse);
-    --mat-stepper-header-edit-state-icon-background-color: var(--color-primary);
-    --mat-stepper-header-edit-state-icon-foreground-color: var(--color-content-inverse);
-    --mat-stepper-header-label-text-color: var(--color-content-secondary);
-    --mat-stepper-header-selected-state-label-text-color: var(--color-content-primary);
-    background-color: var(--color-surface-card);
+  --mat-stepper-header-icon-background-color: var(--color-surface-default);
+  --mat-stepper-header-icon-foreground-color: var(--color-content-secondary);
+  --mat-stepper-header-selected-state-icon-background-color: var(--color-primary);
+  --mat-stepper-header-selected-state-icon-foreground-color: var(--color-content-inverse);
+  --mat-stepper-header-edit-state-icon-background-color: var(--color-primary);
+  --mat-stepper-header-edit-state-icon-foreground-color: var(--color-content-inverse);
+  --mat-stepper-header-label-text-color: var(--color-content-secondary);
+  --mat-stepper-header-selected-state-label-text-color: var(--color-content-primary);
+  background-color: var(--color-surface-card);
 }
 
 /* 3. Checkboxes */
 .mat-mdc-checkbox {
-    --mdc-checkbox-unselected-icon-color: var(--color-content-secondary);
-    --mdc-checkbox-unselected-hover-icon-color: var(--color-content-primary);
-    --mdc-checkbox-selected-icon-color: var(--color-primary);
-    --mdc-checkbox-selected-hover-icon-color: var(--color-primary);
-    --mdc-checkbox-selected-focus-icon-color: var(--color-primary);
-    --mdc-checkbox-selected-checkmark-color: var(--color-content-inverse);
+  --mdc-checkbox-unselected-icon-color: var(--color-content-secondary);
+  --mdc-checkbox-unselected-hover-icon-color: var(--color-content-primary);
+  --mdc-checkbox-selected-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-hover-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-focus-icon-color: var(--color-primary);
+  --mdc-checkbox-selected-checkmark-color: var(--color-content-inverse);
 }
 
 /* 4. CDK Overlay Container (Menus, Dropdowns, Dialogs, Tooltips...) */
 // Injecté à la racine body, hors du data-theme="dark" natif → Theming explicite
 .cdk-overlay-container {
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel,
+  .mat-mdc-menu-panel {
+    background-color: var(--color-surface-card) !important;
+    color: var(--color-content-primary);
 
-    .mat-mdc-select-panel,
-    .mat-mdc-autocomplete-panel,
-    .mat-mdc-menu-panel {
-        background-color: var(--color-surface-card) !important;
-        color: var(--color-content-primary);
+    .mat-mdc-option {
+      background-color: transparent;
 
-        .mat-mdc-option {
-            background-color: transparent;
+      // Correction icône de validation
+      .mat-pseudo-checkbox-checked::after {
+        color: var(--color-primary) !important;
+      }
 
-            // Correction icône de validation
-            .mat-pseudo-checkbox-checked::after {
-                color: var(--color-primary) !important;
-            }
+      &:hover,
+      &.mat-mdc-option-active {
+        background-color: color-mix(in srgb, var(--color-primary) 12%, transparent) !important;
+      }
 
-            &:hover,
-            &.mat-mdc-option-active {
-                background-color: color-mix(in srgb, var(--color-primary) 12%, transparent) !important;
-            }
-
-            &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
-                color: var(--color-primary);
-                background-color: color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
-            }
-        }
+      &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+        color: var(--color-primary);
+        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
+      }
     }
+  }
 
-    .mat-mdc-dialog-container {
-        --mdc-dialog-container-color: var(--color-surface-card);
-        --mdc-dialog-with-divider-divider-color: var(--color-border-default);
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: var(--color-surface-card);
+    --mdc-dialog-with-divider-divider-color: var(--color-border-default);
 
-        // Forçage absolu Material 18: La surface interne de la modale
-        .mdc-dialog__surface {
-            background-color: var(--color-surface-card) !important;
-        }
+    // Forçage absolu Material 18: La surface interne de la modale
+    .mdc-dialog__surface {
+      background-color: var(--color-surface-card) !important;
     }
+  }
 
-    .mat-mdc-snack-bar-container {
-        --mdc-snackbar-container-color: var(--color-surface-card);
-        --mdc-snackbar-supporting-text-color: var(--color-content-primary);
-    }
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: var(--color-surface-card);
+    --mdc-snackbar-supporting-text-color: var(--color-content-primary);
+  }
 
-    .mat-mdc-tooltip {
-        --mdc-plain-tooltip-container-color: var(--color-surface-card);
-        --mdc-plain-tooltip-supporting-text-color: var(--color-content-primary);
-    }
+  .mat-mdc-tooltip {
+    --mdc-plain-tooltip-container-color: var(--color-surface-card);
+    --mdc-plain-tooltip-supporting-text-color: var(--color-content-primary);
+  }
 }
 
 // styles.scss — Classes snackbar globales (hors encapsulation)
 .snack-success {
-    background: var(--color-success) !important;
-    color: var(--color-content-inverse) !important;
+  background: var(--color-success) !important;
+  color: var(--color-content-inverse) !important;
 }
 
 .snack-error {
-    background: var(--color-error) !important;
-    color: var(--color-content-inverse) !important;
+  background: var(--color-error) !important;
+  color: var(--color-content-inverse) !important;
 }
 
 .snack-warning {
-    background: var(--color-warning) !important;
-    color: var(--color-content-primary) !important;
+  background: var(--color-warning) !important;
+  color: var(--color-content-primary) !important;
 }
-
 
 /* 6. Force disabled buttons (Overriding Material blackish rgba 38% fallback) */
 button:disabled,
 .mat-mdc-button:disabled,
 .mat-mdc-raised-button:disabled,
 .mdc-button:disabled {
-    color: var(--color-content-disabled) !important;
-    background-color: var(--color-surface-disabled) !important;
-    opacity: 0.6;
+  color: var(--color-content-disabled) !important;
+  background-color: var(--color-surface-disabled) !important;
+  opacity: 0.6;
 }
 
 /* ─────────────────────────────────────────────────────────
    🌙 OVERRIDES MATERIAL : EXCLUSIF DARK MODE (SaaS Outline)
    ───────────────────────────────────────────────────────── */
-html[data-theme="dark"] body {
-    /* Textes & Curseurs */
-    --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
-    --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
-    --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
-    --mdc-outlined-text-field-caret-color: var(--color-primary);
+html[data-theme='dark'] body {
+  /* Textes & Curseurs */
+  --mdc-outlined-text-field-label-text-color: var(--color-content-secondary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--color-primary);
+  --mdc-outlined-text-field-input-text-color: var(--color-content-primary);
+  --mdc-outlined-text-field-caret-color: var(--color-primary);
 
-    /* Bordures (Outline) */
-    --mdc-outlined-text-field-outline-color: var(--color-border-strong);
-    --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
-    --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
+  /* Bordures (Outline) */
+  --mdc-outlined-text-field-outline-color: var(--color-border-strong);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-content-secondary);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
 
-    /* Menus déroulants et Icônes */
-    --mat-select-enabled-arrow-color: var(--color-content-secondary);
-    --mat-select-value-text-color: var(--color-content-primary);
-    --mat-select-panel-background-color: var(--color-surface-card);
-    --mdc-icon-button-icon-color: var(--color-content-secondary);
+  /* Menus déroulants et Icônes */
+  --mat-select-enabled-arrow-color: var(--color-content-secondary);
+  --mat-select-value-text-color: var(--color-content-primary);
+  --mat-select-panel-background-color: var(--color-surface-card);
+  --mdc-icon-button-icon-color: var(--color-content-secondary);
 
-    /* Modales (Dialogs) & Overlays */
-    --mdc-dialog-container-color: var(--color-surface-card);
-    --mdc-dialog-subhead-color: var(--color-content-primary);
-    --mdc-dialog-supporting-text-color: var(--color-content-secondary);
+  /* Modales (Dialogs) & Overlays */
+  --mdc-dialog-container-color: var(--color-surface-card);
+  --mdc-dialog-subhead-color: var(--color-content-primary);
+  --mdc-dialog-supporting-text-color: var(--color-content-secondary);
 }
 
 /* ─────────────────────────────────────────────────────────
    📊 GRILLES FINANCIÈRES : STYLE "PILL" (Saisie 2025)
    ───────────────────────────────────────────────────────── */
 .finaces-data-pill {
-    width: 100%;
-    background-color: var(--color-surface-hover);
-    color: var(--color-content-primary);
-    text-align: right;
-    font-size: 15px;
-    padding: 0.5rem 1rem;
-    border: 1px solid transparent;
-    border-radius: 9999px;
-    /* Forme très arrondie pour correspondre à "Saisie 2025" */
-    outline: none;
-    transition: all 0.2s ease-in-out;
+  width: 100%;
+  background-color: var(--color-surface-hover);
+  color: var(--color-content-primary);
+  text-align: right;
+  font-size: 15px;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  /* Forme très arrondie pour correspondre à "Saisie 2025" */
+  outline: none;
+  transition: all 0.2s ease-in-out;
 
-    &:hover:not(:focus) {
-        border-color: var(--color-border-strong);
-    }
+  &:hover:not(:focus) {
+    border-color: var(--color-border-strong);
+  }
 
-    &:focus {
-        border-color: var(--color-primary);
-        background-color: var(--color-surface-default);
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
-    }
+  &:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-surface-default);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
 
-    &::placeholder {
-        color: var(--color-content-disabled);
-    }
+  &::placeholder {
+    color: var(--color-content-disabled);
+  }
 }

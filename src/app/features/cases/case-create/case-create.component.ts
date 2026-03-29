@@ -90,22 +90,25 @@ export class CaseCreateComponent {
     this.isSubmitting.set(true);
 
     const payload = this.buildPayload();
-    this.caseService.saveCaseDraft(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        this.snackBar.open('Brouillon sauvegardé avec succès.', 'Fermer', {
-          duration: 3000,
-          panelClass: 'snack-success',
-        });
-      },
-      error: () => {
-        this.isSubmitting.set(false);
-        this.snackBar.open('Erreur lors de la sauvegarde du brouillon.', 'Fermer', {
-          duration: 5000,
-          panelClass: 'snack-error',
-        });
-      },
-    });
+    this.caseService
+      .saveCaseDraft(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.snackBar.open('Brouillon sauvegardé avec succès.', 'Fermer', {
+            duration: 3000,
+            panelClass: 'snack-success',
+          });
+        },
+        error: () => {
+          this.isSubmitting.set(false);
+          this.snackBar.open('Erreur lors de la sauvegarde du brouillon.', 'Fermer', {
+            duration: 5000,
+            panelClass: 'snack-error',
+          });
+        },
+      });
   }
 
   submitCase(): void {
@@ -124,10 +127,12 @@ export class CaseCreateComponent {
       panelClass: 'snack-success',
     });
 
-    of(null).pipe(delay(800), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.isSubmitting.set(false);
-      this.router.navigate(['/cases', '00000000-0000-0000-0000-000000000000', 'gate']);
-    });
+    of(null)
+      .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.isSubmitting.set(false);
+        this.router.navigate(['/cases', '00000000-0000-0000-0000-000000000000', 'gate']);
+      });
 
     /* == Futur câblage Backend (À DÉCOMMENTER) ==
         this.caseService.createCase(payload).subscribe({

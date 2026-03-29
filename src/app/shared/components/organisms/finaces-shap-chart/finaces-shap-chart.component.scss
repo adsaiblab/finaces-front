@@ -1,17 +1,17 @@
 :host {
-    display: block;
-    width: 100%;
+  display: block;
+  width: 100%;
 }
 
 .finaces-shap-chart-wrapper {
-    width: 100%;
-    overflow: visible;
+  width: 100%;
+  overflow: visible;
 
-    ::ng-deep .shap-bar {
-        transition: opacity 0.2s ease;
+  ::ng-deep .shap-bar {
+    transition: opacity 0.2s ease;
 
-        &:hover {
-            opacity: 0.8;
-        }
+    &:hover {
+      opacity: 0.8;
     }
+  }
 }

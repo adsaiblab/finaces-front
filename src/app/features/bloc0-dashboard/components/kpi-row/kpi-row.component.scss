@@ -1,89 +1,95 @@
 /* Isolation des couleurs du Design System via variables CSS natives */
 .kpi-card {
-    background-color: var(--color-surface-card);
-    border: 1px solid var(--color-border-default);
-    transition: box-shadow 0.2s ease-in-out;
-    cursor: pointer;
-    height: 100%;
-    border-radius: 0.75rem;
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  transition: box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  height: 100%;
+  border-radius: 0.75rem;
 
-    &:hover {
-        box-shadow: var(--shadow-md);
-        border-color: var(--color-border-strong);
-    }
+  &:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-strong);
+  }
 
-    &.kpi-mcc-border {
-        border-left: 4px solid var(--color-primary);
-    }
+  &.kpi-mcc-border {
+    border-left: 4px solid var(--color-primary);
+  }
 
-    &.kpi-ia-border {
-        border-left: 4px solid var(--color-info);
-    }
+  &.kpi-ia-border {
+    border-left: 4px solid var(--color-info);
+  }
 
-    &.kpi-warning-border {
-        border-left: 4px solid var(--color-warning);
-    }
+  &.kpi-warning-border {
+    border-left: 4px solid var(--color-warning);
+  }
 }
 
 .kpi-icon-container {
-    padding: 0.75rem;
-    border-radius: 9999px;
-    margin-right: 1rem;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  margin-right: 1rem;
 
-    &.mcc-bg {
-        background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
-    }
+  &.mcc-bg {
+    background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+  }
 
-    /* Basé sur var(--color-warning) avec opacité — Dark Mode natif */
-    &.warning-bg {
-        background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
-    }
+  /* Basé sur var(--color-warning) avec opacité — Dark Mode natif */
+  &.warning-bg {
+    background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
+  }
 
-    &.ia-bg {
-        background-color: color-mix(in srgb, var(--color-info) 10%, transparent);
-    }
+  &.ia-bg {
+    background-color: color-mix(in srgb, var(--color-info) 10%, transparent);
+  }
 }
 
 // ─ Icônes KPI (remplacent les style="" inline supprimés) ─────────────────
 .kpi-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 32px;
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
 
-    &.kpi-icon--primary { color: var(--color-primary); }
-    &.kpi-icon--warning { color: var(--color-warning); }
-    &.kpi-icon--info    { color: var(--color-info); }
+  &.kpi-icon--primary {
+    color: var(--color-primary);
+  }
+  &.kpi-icon--warning {
+    color: var(--color-warning);
+  }
+  &.kpi-icon--info {
+    color: var(--color-info);
+  }
 }
 
 /* Typographie stricte */
 .kpi-title {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-content-secondary);
-    margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-content-secondary);
+  margin: 0;
 }
 
 .kpi-value {
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: var(--color-content-primary);
-    margin: 0.25rem 0 0 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-content-primary);
+  margin: 0.25rem 0 0 0;
 
-    &.text-success {
-        color: var(--color-success);
-    }
+  &.text-success {
+    color: var(--color-success);
+  }
 
-    &.text-warning {
-        color: var(--color-warning);
-    }
+  &.text-warning {
+    color: var(--color-warning);
+  }
 
-    &.text-error {
-        color: var(--color-error);
-    }
+  &.text-error {
+    color: var(--color-error);
+  }
 }
 
 .kpi-subtitle {
-    font-size: 0.75rem;
-    color: var(--color-content-secondary);
-    margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-content-secondary);
+  margin-top: 0.5rem;
 }

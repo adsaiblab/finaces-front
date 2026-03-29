@@ -67,23 +67,23 @@ export class TensionComponent {
     forkJoin({
       mcc: this.scoringService.getScoring(this.caseId()).pipe(catchError(() => of(null))),
       ia: this.iaService.getPrediction(this.caseId()).pipe(catchError(() => of(null))),
-    }).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe((data) => {
-      // Dans une vraie application, on vérifierait si MCC et IA sont dispos.
-      // Pour le prototype, si ça échoue, on mock.
-      if (!data.mcc || !data.ia) {
-        if (!environment.production) {
-          console.warn('Data incomplete, falling back to mock Tension Data');
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        // Dans une vraie application, on vérifierait si MCC et IA sont dispos.
+        // Pour le prototype, si ça échoue, on mock.
+        if (!data.mcc || !data.ia) {
+          if (!environment.production) {
+            console.warn('Data incomplete, falling back to mock Tension Data');
+          }
+          this.loadMockTension();
+          return;
         }
-        this.loadMockTension();
-        return;
-      }
 
-      const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia as any);
-      this.tensionData.set(result);
-      this.isLoading.set(false);
-    });
+        const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia as any);
+        this.tensionData.set(result);
+        this.isLoading.set(false);
+      });
   }
 
   private loadMockTension(): void {
@@ -126,21 +126,23 @@ export class TensionComponent {
   public handleDecision(payload: AnalystDecisionPayload): void {
     this.isSubmitting.set(true);
     // Simulation de la sauvegarde de la décision
-    of(null).pipe(delay(1000), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.isSubmitting.set(false);
-      this.snackBar.open('Analyst decision recorded successfully.', 'OK', {
-        duration: 3000,
-        panelClass: 'snack-success',
-      });
+    of(null)
+      .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.isSubmitting.set(false);
+        this.snackBar.open('Analyst decision recorded successfully.', 'OK', {
+          duration: 3000,
+          panelClass: 'snack-success',
+        });
 
-      if (payload.decision === 'INVESTIGATE') {
-        this.router.navigate(['/cases', this.caseId(), 'stress']);
-      } else if (payload.decision === 'EXPERT_REVIEW') {
-        this.router.navigate(['/cases', this.caseId(), 'expert']);
-      } else {
-        this.router.navigate(['/cases', this.caseId(), 'rapport']);
-      }
-    });
+        if (payload.decision === 'INVESTIGATE') {
+          this.router.navigate(['/cases', this.caseId(), 'stress']);
+        } else if (payload.decision === 'EXPERT_REVIEW') {
+          this.router.navigate(['/cases', this.caseId(), 'expert']);
+        } else {
+          this.router.navigate(['/cases', this.caseId(), 'rapport']);
+        }
+      });
   }
 
   public navigateBack(): void {

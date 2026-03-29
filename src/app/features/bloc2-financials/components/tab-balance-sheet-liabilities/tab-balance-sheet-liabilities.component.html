@@ -1,73 +1,170 @@
 <form [formGroup]="liabilitiesForm" class="flex flex-col pt-2 pb-8">
+  <div class="flex flex-col">
+    <h3
+      class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2"
+    >
+      Equity
+    </h3>
 
-    <div class="flex flex-col">
-        <h3 class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2">
-            Equity</h3>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Share Capital</label>
-            <input type="number" formControlName="shareCapital" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Reserves</label>
-            <input type="number" formControlName="reserves" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Retained Earnings (Prior)</label>
-            <input type="number" formControlName="retainedEarningsPrior" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Current Year Earnings</label>
-            <input type="number" formControlName="currentYearEarnings" placeholder="0.00" class="finaces-data-pill">
-        </div>
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Share Capital</label>
+      <input
+        type="number"
+        formControlName="shareCapital"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
     </div>
 
-    <div class="flex flex-col mt-6">
-        <h3 class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2">
-            Non-Current Liabilities</h3>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Long-Term Financial Debt</label>
-            <input type="number" formControlName="longTermDebt" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Long-Term Provisions</label>
-            <input type="number" formControlName="longTermProvisions" placeholder="0.00" class="finaces-data-pill">
-        </div>
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Reserves</label>
+      <input
+        type="number"
+        formControlName="reserves"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
     </div>
 
-    <div class="flex flex-col mt-6">
-        <h3 class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2">
-            Current Liabilities</h3>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-[15px] text-[color:var(--color-content-primary)]">Short-Term Financial Debt</label>
-            <input type="number" formControlName="shortTermDebt" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-sm text-[color:var(--color-content-primary)]">Accounts Payable</label>
-            <input type="number" formControlName="accountsPayable" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-sm text-[color:var(--color-content-primary)]">Tax & Social Liabilities</label>
-            <input type="number" formControlName="taxAndSocialLiabilities" placeholder="0.00" class="finaces-data-pill">
-        </div>
-
-        <div class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors">
-            <label class="text-sm text-[color:var(--color-content-primary)]">Other Current Liabilities</label>
-            <input type="number" formControlName="otherCurrentLiabilities" placeholder="0.00" class="finaces-data-pill">
-        </div>
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Retained Earnings (Prior)</label
+      >
+      <input
+        type="number"
+        formControlName="retainedEarningsPrior"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
     </div>
 
-    <div class="grid grid-cols-[1fr_200px] items-center py-6 px-2 mt-4 border-t-2 border-[color:var(--color-warning)]">
-        <span class="text-base font-bold text-[color:var(--color-content-primary)] uppercase">Total Liabilities & Equity</span>
-        <span class="text-xl font-bold text-[color:var(--color-warning)] text-right pr-4">{{ totalLiabilities() | number:'1.2-2' }}</span>
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Current Year Earnings</label
+      >
+      <input
+        type="number"
+        formControlName="currentYearEarnings"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col mt-6">
+    <h3
+      class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2"
+    >
+      Non-Current Liabilities
+    </h3>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Long-Term Financial Debt</label
+      >
+      <input
+        type="number"
+        formControlName="longTermDebt"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
     </div>
 
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Long-Term Provisions</label
+      >
+      <input
+        type="number"
+        formControlName="longTermProvisions"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col mt-6">
+    <h3
+      class="font-semibold text-[color:var(--color-content-secondary)] uppercase text-xs tracking-wider mb-2"
+    >
+      Current Liabilities
+    </h3>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-[15px] text-[color:var(--color-content-primary)]"
+        >Short-Term Financial Debt</label
+      >
+      <input
+        type="number"
+        formControlName="shortTermDebt"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-sm text-[color:var(--color-content-primary)]">Accounts Payable</label>
+      <input
+        type="number"
+        formControlName="accountsPayable"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-sm text-[color:var(--color-content-primary)]"
+        >Tax & Social Liabilities</label
+      >
+      <input
+        type="number"
+        formControlName="taxAndSocialLiabilities"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+
+    <div
+      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
+    >
+      <label class="text-sm text-[color:var(--color-content-primary)]"
+        >Other Current Liabilities</label
+      >
+      <input
+        type="number"
+        formControlName="otherCurrentLiabilities"
+        placeholder="0.00"
+        class="finaces-data-pill"
+      />
+    </div>
+  </div>
+
+  <div
+    class="grid grid-cols-[1fr_200px] items-center py-6 px-2 mt-4 border-t-2 border-[color:var(--color-warning)]"
+  >
+    <span class="text-base font-bold text-[color:var(--color-content-primary)] uppercase"
+      >Total Liabilities & Equity</span
+    >
+    <span class="text-xl font-bold text-[color:var(--color-warning)] text-right pr-4">{{
+      totalLiabilities() | number: '1.2-2'
+    }}</span>
+  </div>
 </form>

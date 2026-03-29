@@ -64,8 +64,7 @@ export class ChecklistColumnComponent {
       const docsForYear = this.requiredTypes.map((rt) => {
         // Un document est considéré valide s'il est présent et n'est pas en statut d'intégrité KO
         const isUploaded = documents.some(
-          (d) =>
-            d.document_type === rt.type && d.status !== 'REJECTED',
+          (d) => d.document_type === rt.type && d.status !== 'REJECTED',
         );
 
         if (rt.required) {

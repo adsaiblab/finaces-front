@@ -1,42 +1,42 @@
 // SCSS pur "Fail-Fast" respectant les variables du Design System
 .finaces-table-container {
-    max-height: 600px;
-    overflow-y: auto;
+  max-height: 600px;
+  overflow-y: auto;
 
-    // Surcharge des éléments natifs Angular Material
-    ::ng-deep .mat-mdc-table {
-        background: transparent;
-    }
+  // Surcharge des éléments natifs Angular Material
+  ::ng-deep .mat-mdc-table {
+    background: transparent;
+  }
 
-    ::ng-deep .mat-mdc-header-cell {
-        border-bottom-color: var(--color-border-strong);
-        color: var(--color-content-secondary);
-    }
+  ::ng-deep .mat-mdc-header-cell {
+    border-bottom-color: var(--color-border-strong);
+    color: var(--color-content-secondary);
+  }
 
-    ::ng-deep .mat-mdc-cell {
-        border-bottom-color: var(--color-border-default);
-        color: var(--color-content-primary);
-        font-size: 0.875rem; // text-sm
-    }
+  ::ng-deep .mat-mdc-cell {
+    border-bottom-color: var(--color-border-default);
+    color: var(--color-content-primary);
+    font-size: 0.875rem; // text-sm
+  }
 
-    ::ng-deep .mat-mdc-row:last-child .mat-mdc-cell {
-        border-bottom: none;
-    }
+  ::ng-deep .mat-mdc-row:last-child .mat-mdc-cell {
+    border-bottom: none;
+  }
 }
 
 .text-success {
-    color: var(--color-success);
+  color: var(--color-success);
 }
 
 .text-warning {
-    color: var(--color-warning);
+  color: var(--color-warning);
 }
 
 .text-error {
-    color: var(--color-error);
+  color: var(--color-error);
 }
 
 .hidden-cell {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }

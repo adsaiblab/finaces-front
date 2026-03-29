@@ -3,21 +3,21 @@ import { MccConditionsComponent } from './mcc-conditions.component';
 import { MatDialogModule } from '@angular/material/dialog';
 
 describe('MccConditionsComponent', () => {
-    let component: MccConditionsComponent;
-    let fixture: ComponentFixture<MccConditionsComponent>;
+  let component: MccConditionsComponent;
+  let fixture: ComponentFixture<MccConditionsComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [MccConditionsComponent, MatDialogModule]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MccConditionsComponent, MatDialogModule],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(MccConditionsComponent);
-        component = fixture.componentInstance;
-        fixture.componentRef.setInput('conditions', []);
-        fixture.detectChanges();
-    });
+    fixture = TestBed.createComponent(MccConditionsComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('conditions', []);
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

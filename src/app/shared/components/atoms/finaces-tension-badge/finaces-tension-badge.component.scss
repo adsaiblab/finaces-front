@@ -1,97 +1,97 @@
 .finaces-tension {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 150ms ease-in-out;
+  border: 1px solid transparent;
+
+  &.tension-sm {
+    height: 20px;
+    padding: 2px 8px;
+    font-size: 11px;
+
+    .tension-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &.tension-md {
+    height: 28px;
+    padding: 4px 12px;
+    font-size: 13px;
+
+    .tension-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .tension-label {
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .tension-delta {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-weight: 500;
-    border-radius: 6px;
-    transition: all 150ms ease-in-out;
-    border: 1px solid transparent;
+    gap: 2px;
+    margin-left: 4px;
+    padding-left: 4px;
+    border-left: 1px solid currentColor;
+    opacity: 0.85;
 
-    &.tension-sm {
-        height: 20px;
-        padding: 2px 8px;
-        font-size: 11px;
-
-        .tension-icon {
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
-        }
+    .delta-arrow {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
     }
 
-    &.tension-md {
-        height: 28px;
-        padding: 4px 12px;
-        font-size: 13px;
-
-        .tension-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-        }
+    .delta-value {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
+  }
 
-    .tension-label {
-        white-space: nowrap;
-        flex: 1;
-    }
+  // --- Design System Colors (ZÉRO COULEUR EN DUR) ---
+  &.tension-none {
+    background-color: var(--success);
+    color: var(--text-inverse);
+  }
 
-    .tension-delta {
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
-        margin-left: 4px;
-        padding-left: 4px;
-        border-left: 1px solid currentColor;
-        opacity: 0.85;
+  &.tension-mild {
+    background-color: var(--info);
+    color: var(--text-inverse);
+  }
 
-        .delta-arrow {
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
-        }
+  &.tension-moderate {
+    background-color: var(--warning);
+    color: var(--text-inverse);
+  }
 
-        .delta-value {
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-    }
-
-    // --- Design System Colors (ZÉRO COULEUR EN DUR) ---
-    &.tension-none {
-        background-color: var(--success);
-        color: var(--text-inverse);
-    }
-
-    &.tension-mild {
-        background-color: var(--info);
-        color: var(--text-inverse);
-    }
-
-    &.tension-moderate {
-        background-color: var(--warning);
-        color: var(--text-inverse);
-    }
-
-    &.tension-severe {
-        background-color: var(--error);
-        color: var(--text-inverse);
-        border-color: color-mix(in srgb, var(--error) 20%, transparent);
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--error) 20%, transparent);
-        animation: pulse-danger 2s infinite;
-    }
+  &.tension-severe {
+    background-color: var(--error);
+    color: var(--text-inverse);
+    border-color: color-mix(in srgb, var(--error) 20%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--error) 20%, transparent);
+    animation: pulse-danger 2s infinite;
+  }
 }
 
 @keyframes pulse-danger {
-    0% {
-        box-shadow: 0 0 0 0 color-mix(in srgb, var(--error) 40%, transparent);
-    }
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--error) 40%, transparent);
+  }
 
-    70% {
-        box-shadow: 0 0 0 4px transparent;
-    }
+  70% {
+    box-shadow: 0 0 0 4px transparent;
+  }
 
-    100% {
-        box-shadow: 0 0 0 0 transparent;
-    }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
 }

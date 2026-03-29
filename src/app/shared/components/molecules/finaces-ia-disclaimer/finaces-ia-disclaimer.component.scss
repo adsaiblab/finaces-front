@@ -1,142 +1,142 @@
 .ia-disclaimer {
-    display: flex;
-    align-items: flex-start;
-    transition: all 200ms ease-in-out;
-    animation: disclaimer-slide-in 300ms ease-out;
+  display: flex;
+  align-items: flex-start;
+  transition: all 200ms ease-in-out;
+  animation: disclaimer-slide-in 300ms ease-out;
 
-    // Fix VIO-02: Utilisation du design system avec color-mix pour l'opacité dynamique
-    --ia-color: var(--color-info);
-    --ia-bg-light: color-mix(in srgb, var(--color-info) 8%, transparent);
-    --ia-border: color-mix(in srgb, var(--color-info) 20%, transparent);
+  // Fix VIO-02: Utilisation du design system avec color-mix pour l'opacité dynamique
+  --ia-color: var(--color-info);
+  --ia-bg-light: color-mix(in srgb, var(--color-info) 8%, transparent);
+  --ia-border: color-mix(in srgb, var(--color-info) 20%, transparent);
 
-    &.is-pilot {
-        --ia-color: var(--color-warning);
-        --ia-bg-light: color-mix(in srgb, var(--color-warning) 8%, transparent);
-        --ia-border: color-mix(in srgb, var(--color-warning) 30%, transparent);
+  &.is-pilot {
+    --ia-color: var(--color-warning);
+    --ia-bg-light: color-mix(in srgb, var(--color-warning) 8%, transparent);
+    --ia-border: color-mix(in srgb, var(--color-warning) 30%, transparent);
+  }
+
+  &.ia-banner {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--ia-bg-light);
+    border-left: 3px solid var(--ia-color);
+    border-radius: 4px;
+    margin-bottom: 16px;
+
+    .disclaimer-content {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      align-items: flex-start;
     }
 
-    &.ia-banner {
-        width: 100%;
-        padding: 12px 16px;
-        background-color: var(--ia-bg-light);
-        border-left: 3px solid var(--ia-color);
-        border-radius: 4px;
-        margin-bottom: 16px;
-
-        .disclaimer-content {
-            display: flex;
-            gap: 12px;
-            width: 100%;
-            align-items: flex-start;
-        }
-
-        .disclaimer-icon {
-            color: var(--ia-color);
-            margin-top: 2px;
-        }
-
-        .disclaimer-text-section {
-            flex: 1;
-
-            .disclaimer-main {
-                font-size: 13px;
-                font-weight: 500;
-                color: var(--color-content-primary);
-                margin: 0;
-            }
-        }
-
-        .dismiss-button {
-            margin-left: auto;
-            margin-top: -8px;
-            margin-right: -8px;
-
-            mat-icon {
-                color: var(--color-content-secondary);
-                font-size: 18px;
-            }
-        }
+    .disclaimer-icon {
+      color: var(--ia-color);
+      margin-top: 2px;
     }
 
-    &.ia-inline {
-        padding: 8px 12px;
-        background-color: var(--ia-bg-light);
-        border: 1px solid var(--ia-border);
-        border-radius: 4px;
+    .disclaimer-text-section {
+      flex: 1;
 
-        .disclaimer-content {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .disclaimer-icon {
-            color: var(--ia-color);
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-        }
-
-        .disclaimer-main {
-            font-size: 12px;
-            color: var(--color-content-primary);
-            margin: 0;
-        }
-
-        .dismiss-button {
-            margin-left: auto;
-
-            mat-icon {
-                font-size: 16px;
-                color: var(--color-content-secondary);
-            }
-        }
+      .disclaimer-main {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--color-content-primary);
+        margin: 0;
+      }
     }
 
-    &.ia-chip {
-        display: inline-flex;
-        padding: 4px 12px;
-        background-color: var(--ia-bg-light);
-        border: 1px solid var(--ia-color);
-        border-radius: 12px;
+    .dismiss-button {
+      margin-left: auto;
+      margin-top: -8px;
+      margin-right: -8px;
 
-        .disclaimer-content {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .disclaimer-icon {
-            color: var(--ia-color);
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
-        }
-
-        .disclaimer-main {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--ia-color);
-            margin: 0;
-        }
-
-        .dismiss-button {
-            mat-icon {
-                font-size: 14px;
-                color: var(--ia-color);
-            }
-        }
+      mat-icon {
+        color: var(--color-content-secondary);
+        font-size: 18px;
+      }
     }
+  }
+
+  &.ia-inline {
+    padding: 8px 12px;
+    background-color: var(--ia-bg-light);
+    border: 1px solid var(--ia-border);
+    border-radius: 4px;
+
+    .disclaimer-content {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .disclaimer-icon {
+      color: var(--ia-color);
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .disclaimer-main {
+      font-size: 12px;
+      color: var(--color-content-primary);
+      margin: 0;
+    }
+
+    .dismiss-button {
+      margin-left: auto;
+
+      mat-icon {
+        font-size: 16px;
+        color: var(--color-content-secondary);
+      }
+    }
+  }
+
+  &.ia-chip {
+    display: inline-flex;
+    padding: 4px 12px;
+    background-color: var(--ia-bg-light);
+    border: 1px solid var(--ia-color);
+    border-radius: 12px;
+
+    .disclaimer-content {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .disclaimer-icon {
+      color: var(--ia-color);
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+
+    .disclaimer-main {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ia-color);
+      margin: 0;
+    }
+
+    .dismiss-button {
+      mat-icon {
+        font-size: 14px;
+        color: var(--ia-color);
+      }
+    }
+  }
 }
 
 @keyframes disclaimer-slide-in {
-    from {
-        opacity: 0;
-        transform: translateY(-8px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

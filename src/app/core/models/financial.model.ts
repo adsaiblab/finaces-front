@@ -1,7 +1,22 @@
 import { CaseStatus } from './enums';
 
-export enum AccountingStandard { IFRS = 'IFRS', LOCAL = 'LOCAL', USGAAP = 'USGAAP' }
-export enum CurrencyCode { USD = 'USD', EUR = 'EUR', GBP = 'GBP', XOF = 'XOF', XAF = 'XAF', ZAR = 'ZAR', MAD = 'MAD', TND = 'TND', EGP = 'EGP', DZD = 'DZD' }
+export enum AccountingStandard {
+  IFRS = 'IFRS',
+  LOCAL = 'LOCAL',
+  USGAAP = 'USGAAP',
+}
+export enum CurrencyCode {
+  USD = 'USD',
+  EUR = 'EUR',
+  GBP = 'GBP',
+  XOF = 'XOF',
+  XAF = 'XAF',
+  ZAR = 'ZAR',
+  MAD = 'MAD',
+  TND = 'TND',
+  EGP = 'EGP',
+  DZD = 'DZD',
+}
 
 export interface BalanceSheetAssets {
   total_assets: number;

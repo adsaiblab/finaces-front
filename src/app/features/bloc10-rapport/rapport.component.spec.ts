@@ -5,26 +5,26 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
 describe('RapportComponent', () => {
-    let component: RapportComponent;
-    let fixture: ComponentFixture<RapportComponent>;
+  let component: RapportComponent;
+  let fixture: ComponentFixture<RapportComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [RapportComponent],
-            providers: [
-                provideHttpClient(),
-                provideHttpClientTesting(),
-                provideRouter([{ path: 'dashboard', children: [] }])
-            ]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RapportComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'dashboard', children: [] }]),
+      ],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(RapportComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-        await fixture.whenStable();
-    });
+    fixture = TestBed.createComponent(RapportComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

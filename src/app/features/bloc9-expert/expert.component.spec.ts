@@ -10,26 +10,26 @@ import { Component } from '@angular/core';
 class StubDashboardComponent {}
 
 describe('ExpertComponent', () => {
-    let component: ExpertComponent;
-    let fixture: ComponentFixture<ExpertComponent>;
+  let component: ExpertComponent;
+  let fixture: ComponentFixture<ExpertComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [ExpertComponent],
-            providers: [
-                provideHttpClient(),
-                provideHttpClientTesting(),
-                provideRouter([{ path: 'dashboard', component: StubDashboardComponent }]),
-                provideAnimations()
-            ]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ExpertComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: 'dashboard', component: StubDashboardComponent }]),
+        provideAnimations(),
+      ],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(ExpertComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    fixture = TestBed.createComponent(ExpertComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });
