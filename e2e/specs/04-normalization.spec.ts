@@ -14,15 +14,37 @@ const MOCK_NORMALIZATION = {
     accounting_standard: 'IFRS',
 };
 
+// Mock du dossier parent — nécessaire pour que case-workspace se charge
+const MOCK_CASE_BASE = {
+    id: TEST_CASE_ID,
+    bidder_name: 'E2E Test Company',
+    sector: 'BTP',
+    contract_value: 5000000,
+    contract_currency: 'MAD',
+    case_type: 'STANDARD',
+    status: 'IN_PROGRESS',
+    risk_class: 'B',
+    mcc_score: 72,
+    ia_score: 68,
+    tension_label: 'LOW',
+    fiscal_year: 2023,
+};
+
 test.describe('Isolation — Bloc 3 Normalization', () => {
 
     test.beforeEach(async ({ page }) => {
+        // Mock du dossier parent d’abord (exact match, avant wildcard)
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalization**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
         );
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ coherence_status: 'OK', coherence_alerts: [] }) })
         );
+        // Wildcard sécurité
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/**`, (route: any) => route.continue());
     });
 
     test('La page Normalization se charge et affiche le badge NORMALIZED', async ({ page }) => {

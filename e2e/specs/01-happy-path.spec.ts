@@ -7,12 +7,12 @@ import { TensionPage } from '../pages/tension.page';
 import { StressPage } from '../pages/stress.page';
 import { ExpertPage } from '../pages/expert.page';
 import { RapportPage } from '../pages/rapport.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-// ─── CONSTANTES DE TEST ──────────────────────────────────────────────────────
-// Doit correspondre à un UUID existant dans la DB de test (seed_e2e.py)
-const TEST_CASE_ID = 'TEST-CASE-001';
+// ─── CONSTANTES DE TEST ──────────────────────────────────────────────────
+const TEST_CASE_ID = TEST_CASE.id;
 
-// ─── MOCK PAYLOADS ───────────────────────────────────────────────────────────
+// ─── MOCK PAYLOADS ────────────────────────────────────────────────────
 const MOCK_CASE_BASE = {
     id: TEST_CASE_ID,
     bidder_name: 'E2E Test Company',
@@ -149,12 +149,11 @@ async function setupApiMocks(page: any, caseId: string) {
     await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => route.continue());
 }
 
-// ─── SUITE HAPPY PATH ────────────────────────────────────────────────────────
+// ─── SUITE HAPPY PATH ────────────────────────────────────────────────────
 test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
     // ⚠️ NE PAS surcharger storageState ici — playwright.config.ts le gère
     // via e2e/.auth/user.json généré par global-setup.ts.
-    // Surcharger avec 'e2e/auth/session.json' (chemin inexistant) cassait l'auth.
 
     test('Bloc 3 — Normalization : la page se charge et affiche le badge NORMALIZED', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
