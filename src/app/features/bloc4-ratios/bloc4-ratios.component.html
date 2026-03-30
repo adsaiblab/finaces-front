@@ -32,7 +32,6 @@
       (click)="launchScoringAndPrediction()"
       [disabled]="isLoading() || scoringInProgress() || !ratioSet()"
       class="finaces-primary-btn px-6 h-12 shadow-md"
-      data-testid="btn-launch-scoring"
     >
       @if (scoringInProgress()) {
         <span class="flex items-center">
@@ -58,7 +57,7 @@
   }
 
   @if (ratioSet(); as ratios) {
-    <main class="flex flex-col gap-8 w-full" data-testid="ratios-container">
+    <main class="flex flex-col gap-8 w-full">
       <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
       </app-coherence-alerts>
 
@@ -136,7 +135,6 @@
           (click)="launchScoringAndPrediction()"
           [disabled]="scoringInProgress()"
           class="finaces-primary-btn px-8"
-          data-testid="btn-launch-scoring-bottom"
         >
           @if (scoringInProgress()) {
             <span class="flex items-center">

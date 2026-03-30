@@ -1,0 +1,46 @@
+
+Warning: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues.
+    
+❯ Building...
+✔ Building...
+Initial chunk files | Names                   |  Raw size
+styles.css          | styles                  |  71.42 kB | 
+main.js             | main                    |  23.81 kB | 
+chunk-I6ZVHTXR.js   | -                       |   4.08 kB | 
+chunk-GPWMUCXD.js   | -                       |   1.94 kB | 
+chunk-VTUT5SM2.js   | -                       |   1.77 kB | 
+chunk-VUJOFXKG.js   | -                       | 938 bytes | 
+chunk-ZXLAMA2F.js   | -                       | 327 bytes | 
+
+                    | Initial total           | 104.29 kB
+
+Lazy chunk files    | Names                   |  Raw size
+chunk-SMXS2TFV.js   | gate-component          | 130.80 kB | 
+chunk-FHFAZ24G.js   | financials-component    | 122.51 kB | 
+chunk-ZCDP2Z7N.js   | -                       | 111.52 kB | 
+chunk-ALM5BYEE.js   | expert-component        | 110.17 kB | 
+chunk-T2FTMKXE.js   | rapport-component       |  99.47 kB | 
+chunk-X772NI2U.js   | case-create-component   |  97.39 kB | 
+chunk-OB5WTINI.js   | dashboard-component     |  86.12 kB | 
+chunk-HIOAEQTI.js   | tension-component       |  81.22 kB | 
+chunk-2XTIQBEX.js   | bloc4-ratios-component  |  79.51 kB | 
+chunk-2ROAAKLA.js   | consortium-component    |  77.98 kB | 
+chunk-LP4FJE2J.js   | scoring-mcc-component   |  77.07 kB | 
+chunk-F5CN6UDE.js   | normalization-component |  76.27 kB | 
+chunk-4CF55CQN.js   | stress-component        |  64.30 kB | 
+chunk-3ZXXVPAF.js   | admin-ia-component      |  57.31 kB | 
+chunk-GDMG6JGG.js   | cases-list-component    |  32.69 kB | 
+...and 15 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [5.529 seconds] - 2026-03-30T15:34:32.044Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://localhost:4200/
+  ➜  Network: http://192.168.1.214:4200/
+  ➜  press h + enter to show help

@@ -58,7 +58,6 @@
             formControlName="conclusion_text"
             rows="4"
             placeholder="Write the executive synthesis here..."
-            data-testid="textarea-expert-conclusion"
           ></textarea>
           @if (reviewForm.get('conclusion_text')?.hasError('required')) {
             <mat-error>Conclusion is required.</mat-error>
@@ -89,7 +88,6 @@
             type="submit"
             [disabled]="reviewForm.invalid || isSubmitting() || isSubmitted()"
             class="flex-1 sm:flex-none"
-            data-testid="btn-submit-expert-review"
           >
             <span class="material-icons mr-1">send</span>
             {{ isSubmitting() ? 'Submitting...' : 'Submit Expert Review' }}
@@ -101,7 +99,6 @@
             [disabled]="!isSubmitted()"
             (click)="closeCase()"
             class="flex-1 sm:flex-none"
-            data-testid="btn-close-case"
           >
             <span class="material-icons mr-1">lock</span> Close Case &rarr; Final Report
           </button>

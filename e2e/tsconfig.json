@@ -1,0 +1,14 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ESNext",
+        "types": [
+            "node",
+            "@playwright/test"
+        ]
+    },
+    "include": [
+        "**/*.ts"
+    ]
+}

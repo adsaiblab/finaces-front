@@ -37,7 +37,6 @@
             color="warn"
             (click)="buildReport()"
             [disabled]="isBuilding() || isExporting()"
-            data-testid="btn-build-report"
           >
             <span class="material-icons mr-1 text-sm">auto_awesome</span>
             {{
@@ -53,7 +52,6 @@
             color="primary"
             (click)="finalizeReport()"
             [disabled]="isBuilding() || isExporting()"
-            data-testid="btn-finalize-report"
           >
             <span class="material-icons mr-1 text-sm">lock</span> Finalize
           </button>
@@ -75,7 +73,6 @@
             color="primary"
             (click)="exportPdf()"
             [disabled]="isExporting() || isBuilding()"
-            data-testid="btn-export-pdf"
           >
             <span class="material-icons mr-1 text-sm">picture_as_pdf</span>
             {{ exportFormat() === 'PDF' ? 'Exporting...' : 'Download PDF' }}
@@ -303,7 +300,7 @@
               class="text-sm text-primary-dark font-bold uppercase tracking-widest mb-2 print:text-black"
               >Final Score</span
             >
-            <span class="text-4xl font-extrabold text-primary-dark" data-testid="final-mcc-score">
+            <span class="text-4xl font-extrabold text-primary-dark">
               {{ currentCase()?.mcc_score || '—' }}
             </span>
           </div>
@@ -312,7 +309,6 @@
               <span class="text-sm font-medium text-content-secondary">Calculated Risk Class</span>
               <finaces-risk-badge
                 [riskClass]="$any(currentCase()?.risk_class) || 'MODERATE'"
-                data-testid="final-risk-badge"
               ></finaces-risk-badge>
             </div>
           </div>

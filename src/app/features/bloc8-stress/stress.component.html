@@ -32,7 +32,6 @@
       (click)="runSimulation()"
       [disabled]="isSimulating()"
       class="finaces-primary-btn"
-      data-testid="btn-run-simulation"
     >
       @if (isSimulating()) {
         <mat-spinner diameter="20" class="inline-block"></mat-spinner>
@@ -78,7 +77,6 @@
       color="primary"
       (click)="proceedToExpert()"
       class="finaces-primary-btn px-8"
-      data-testid="btn-proceed-to-expert"
     >
       <span>Proceed to Expert Review</span>
       <mat-icon class="ml-2">arrow_forward</mat-icon>

@@ -21,7 +21,6 @@
           'bg-warning-lighter border-warning-default': alert.severity === 'MEDIUM',
           'bg-surface-default border-border-default': alert.severity === 'LOW',
         }"
-        data-testid="monitoring-alert-item"
       >
         <span
           class="material-icons mt-0.5 text-sm"
@@ -48,7 +47,6 @@
                 'text-warning-dark': alert.severity === 'MEDIUM',
                 'text-content-secondary': alert.severity === 'LOW',
               }"
-              data-testid="alert-type-label"
             >
               [{{ alert.severity }}] {{ alert.type }}
             </span>
