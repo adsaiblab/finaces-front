@@ -1,28 +1,21 @@
-<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28">
+<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28" data-testid="ia-root">
   @if (isLoading()) {
-    <div
-      class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
-    >
-      <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-      <p class="text-[color:var(--color-content-secondary)] font-medium">
-        Running AI Prediction Model...
-      </p>
-    </div>
+  <div class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
+    data-testid="ia-loading-spinner">
+    <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+    <p class="text-[color:var(--color-content-secondary)] font-medium">
+      Running AI Prediction Model...
+    </p>
+  </div>
   }
 
-  <app-finaces-ia-disclaimer
-    variant="banner"
-    [dismissible]="false"
-    [pilotMode]="false"
-  ></app-finaces-ia-disclaimer>
+  <app-finaces-ia-disclaimer variant="banner" [dismissible]="false" [pilotMode]="false"
+    data-testid="ia-disclaimer-banner"></app-finaces-ia-disclaimer>
 
   <header
-    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6 mt-2"
-  >
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6 mt-2">
     <div>
-      <h1
-        class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3"
-      >
+      <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
         <mat-icon class="text-[color:var(--color-info)]">psychology</mat-icon>
         AI Prediction Analysis
       </h1>
@@ -33,137 +26,109 @@
     </div>
 
     @if (predictionData(); as data) {
-      <div
-        class="flex items-center gap-3 text-xs text-[color:var(--color-content-secondary)] border border-[color:var(--color-border-default)] bg-[color:var(--color-surface-card)] p-2 rounded-lg"
-      >
-        <div class="flex flex-col pr-3 border-r border-[color:var(--color-border-default)]">
-          <span class="uppercase tracking-wider">Accuracy</span>
-          <span class="font-bold text-[color:var(--color-content-primary)]">{{
-            data.model_performance.accuracy | percent
+    <div
+      class="flex items-center gap-3 text-xs text-[color:var(--color-content-secondary)] border border-[color:var(--color-border-default)] bg-[color:var(--color-surface-card)] p-2 rounded-lg"
+      data-testid="ia-model-performance-badge">
+      <div class="flex flex-col pr-3 border-r border-[color:var(--color-border-default)]">
+        <span class="uppercase tracking-wider">Accuracy</span>
+        <span class="font-bold text-[color:var(--color-content-primary)]">{{
+          data.model_performance.accuracy | percent
           }}</span>
-        </div>
-        <div class="flex flex-col pl-1">
-          <span class="uppercase tracking-wider">Confidence Interval</span>
-          <span class="font-mono text-[color:var(--color-content-primary)]"
-            >[{{ data.confidence_interval.lower | number: '1.1-2' }} -
-            {{ data.confidence_interval.upper | number: '1.1-2' }}]</span
-          >
-        </div>
       </div>
+      <div class="flex flex-col pl-1">
+        <span class="uppercase tracking-wider">Confidence Interval</span>
+        <span class="font-mono text-[color:var(--color-content-primary)]">[{{ data.confidence_interval.lower | number:
+          '1.1-2' }} -
+          {{ data.confidence_interval.upper | number: '1.1-2' }}]</span>
+      </div>
+    </div>
     }
   </header>
 
   @if (error()) {
-    <div
-      class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center"
-    >
-      <span>{{ error() }}</span>
-      <button mat-button (click)="error.set(null)">Close</button>
-    </div>
+  <div
+    class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center"
+    data-testid="ia-error-banner">
+    <span>{{ error() }}</span>
+    <button mat-button (click)="error.set(null)">Close</button>
+  </div>
   }
 
   @if (predictionData(); as data) {
-    <main class="flex flex-col gap-8 flex-1">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        <div
-          class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm relative overflow-hidden"
-          [ngClass]="{ 'opacity-50 grayscale transition-all': simulationScore() !== null }"
-        >
-          <h3
-            class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4 flex items-center gap-2"
-          >
-            <mat-icon class="text-[16px]">memory</mat-icon> Predicted AI Score
-          </h3>
-          <finaces-score-gauge [score]="data.predicted_score"></finaces-score-gauge>
-          <finaces-risk-badge
-            [riskClass]="$any(data.predicted_risk_class)"
-            class="mt-4"
-          ></finaces-risk-badge>
-        </div>
-
-        @if (simulationScore() !== null) {
-          <div
-            class="bg-[color:var(--color-info)] bg-opacity-10 border-2 border-[color:var(--color-info)] rounded-xl p-6 flex flex-col items-center justify-center shadow-md relative animate-fade-in"
-          >
-            <div
-              class="absolute top-3 left-3 flex items-center gap-1 text-[color:var(--color-info)] text-xs font-bold uppercase"
-            >
-              <mat-icon class="text-[14px]">science</mat-icon> Simulation
-            </div>
-            <h3
-              class="text-sm font-bold text-[color:var(--color-info)] uppercase tracking-wider mb-4"
-            >
-              What-If Projected Score
-            </h3>
-            <finaces-score-gauge [score]="simulationScore()!"></finaces-score-gauge>
-            <finaces-risk-badge
-              [riskClass]="$any(simulationClass()!)"
-              class="mt-4"
-            ></finaces-risk-badge>
-          </div>
-        } @else {
-          <div
-            class="bg-[color:var(--color-surface-default)] border border-dashed border-[color:var(--color-border-strong)] rounded-xl p-6 flex flex-col items-center justify-center text-center"
-          >
-            <mat-icon class="text-4xl text-[color:var(--color-content-secondary)] mb-2 opacity-50"
-              >auto_graph</mat-icon
-            >
-            <h3 class="text-sm font-semibold text-[color:var(--color-content-secondary)]">
-              Simulation Area
-            </h3>
-            <p class="text-xs text-[color:var(--color-content-secondary)] mt-2">
-              Adjust features below to see projected outcomes here.
-            </p>
-          </div>
-        }
+  <main class="flex flex-col gap-8 flex-1" data-testid="ia-main-content">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+      <div
+        class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm relative overflow-hidden"
+        data-testid="ia-predicted-score-card"
+        [ngClass]="{ 'opacity-50 grayscale transition-all': simulationScore() !== null }">
+        <h3
+          class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+          <mat-icon class="text-[16px]">memory</mat-icon> Predicted AI Score
+        </h3>
+        <finaces-score-gauge [score]="data.predicted_score"></finaces-score-gauge>
+        <finaces-risk-badge [riskClass]="$any(data.predicted_risk_class)" class="mt-4"></finaces-risk-badge>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      @if (simulationScore() !== null) {
+      <div
+        class="bg-[color:var(--color-info)] bg-opacity-10 border-2 border-[color:var(--color-info)] rounded-xl p-6 flex flex-col items-center justify-center shadow-md relative animate-fade-in"
+        data-testid="ia-simulation-card">
         <div
-          class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 shadow-sm flex flex-col"
-        >
-          <app-finaces-shap-chart
-            [features]="data.shap_values.features"
-            [maxFeatures]="8"
-            [showValues]="true"
-            class="flex-1"
-          >
-          </app-finaces-shap-chart>
+          class="absolute top-3 left-3 flex items-center gap-1 text-[color:var(--color-info)] text-xs font-bold uppercase">
+          <mat-icon class="text-[14px]">science</mat-icon> Simulation
         </div>
-
-        <div>
-          <app-finaces-what-if
-            [features]="data.shap_values.features"
-            [isSimulating]="isSimulating()"
-            (simulate)="onSimulate($event)"
-            (reset)="onResetSimulation()"
-          >
-          </app-finaces-what-if>
-        </div>
+        <h3 class="text-sm font-bold text-[color:var(--color-info)] uppercase tracking-wider mb-4">
+          What-If Projected Score
+        </h3>
+        <finaces-score-gauge [score]="simulationScore()!"></finaces-score-gauge>
+        <finaces-risk-badge [riskClass]="$any(simulationClass()!)" class="mt-4"></finaces-risk-badge>
       </div>
-    </main>
-
-    <div
-      class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12"
-    >
-      <button
-        mat-button
-        (click)="navigateBack()"
-        class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
-      >
-        <mat-icon>arrow_back</mat-icon>
-        Back to MCC Scoring
-      </button>
-
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="proceedToTension()"
-        class="finaces-primary-btn px-8"
-      >
-        <span>Proceed to Tension Analysis</span>
-        <mat-icon class="ml-2">compare_arrows</mat-icon>
-      </button>
+      } @else {
+      <div
+        class="bg-[color:var(--color-surface-default)] border border-dashed border-[color:var(--color-border-strong)] rounded-xl p-6 flex flex-col items-center justify-center text-center"
+        data-testid="ia-simulation-placeholder">
+        <mat-icon class="text-4xl text-[color:var(--color-content-secondary)] mb-2 opacity-50">auto_graph</mat-icon>
+        <h3 class="text-sm font-semibold text-[color:var(--color-content-secondary)]">
+          Simulation Area
+        </h3>
+        <p class="text-xs text-[color:var(--color-content-secondary)] mt-2">
+          Adjust features below to see projected outcomes here.
+        </p>
+      </div>
+      }
     </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div
+        class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 shadow-sm flex flex-col"
+        data-testid="ia-shap-chart-card">
+        <app-finaces-shap-chart [features]="data.shap_values.features" [maxFeatures]="8" [showValues]="true"
+          class="flex-1">
+        </app-finaces-shap-chart>
+      </div>
+
+      <div data-testid="ia-whatif-card">
+        <app-finaces-what-if [features]="data.shap_values.features" [isSimulating]="isSimulating()"
+          (simulate)="onSimulate($event)" (reset)="onResetSimulation()">
+        </app-finaces-what-if>
+      </div>
+    </div>
+  </main>
+
+  <div
+    class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
+    <button mat-button (click)="navigateBack()"
+      class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
+      data-testid="ia-back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Back to MCC Scoring
+    </button>
+
+    <button mat-flat-button color="primary" (click)="proceedToTension()" class="finaces-primary-btn px-8"
+      data-testid="ia-proceed-tension-btn">
+      <span>Proceed to Tension Analysis</span>
+      <mat-icon class="ml-2">compare_arrows</mat-icon>
+    </button>
+  </div>
   }
 </div>

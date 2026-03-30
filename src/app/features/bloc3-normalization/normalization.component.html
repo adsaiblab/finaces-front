@@ -1,112 +1,97 @@
-<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-24">
+<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-24"
+  data-testid="normalization-root">
   @if (isLoading()) {
-    <div
-      class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
-    >
-      <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-      <p class="text-[color:var(--color-content-secondary)] font-medium">
-        Loading normalized financial data...
-      </p>
-    </div>
+  <div class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
+    data-testid="normalization-loading-spinner">
+    <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+    <p class="text-[color:var(--color-content-secondary)] font-medium">
+      Loading normalized financial data...
+    </p>
+  </div>
   }
 
   @if (normalizedData(); as data) {
-    <header
-      class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6"
-    >
-      <div>
-        <div class="flex items-center gap-3 mb-1">
-          <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
-            IFRS Normalization
-          </h1>
-          <span
-            class="px-3 py-1 rounded-full bg-[color:var(--color-success)] bg-opacity-10 text-[color:var(--color-success)] text-xs font-bold flex items-center gap-1 border border-[color:var(--color-success)] border-opacity-20"
-          >
-            <mat-icon class="text-[14px] w-[14px] h-[14px]">check_circle</mat-icon>
-            NORMALIZED
-          </span>
-        </div>
-        <p class="text-[color:var(--color-content-secondary)] text-sm">
-          Case #{{ caseId() }} — Review the accounting restatements applied by the system.
-        </p>
+  <header
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
+    <div>
+      <div class="flex items-center gap-3 mb-1">
+        <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
+          IFRS Normalization
+        </h1>
+        <span
+          class="px-3 py-1 rounded-full bg-[color:var(--color-success)] bg-opacity-10 text-[color:var(--color-success)] text-xs font-bold flex items-center gap-1 border border-[color:var(--color-success)] border-opacity-20"
+          data-testid="normalization-status-badge">
+          <mat-icon class="text-[14px] w-[14px] h-[14px]">check_circle</mat-icon>
+          NORMALIZED
+        </span>
       </div>
+      <p class="text-[color:var(--color-content-secondary)] text-sm">
+        Case #{{ caseId() }} — Review the accounting restatements applied by the system.
+      </p>
+    </div>
 
-      <div class="flex items-center gap-4">
-        <div
-          class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
-        >
-          Fiscal Year:
-          <span class="font-bold text-[color:var(--color-content-primary)]">{{
-            data.fiscal_year
+    <div class="flex items-center gap-4">
+      <div
+        class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
+        data-testid="normalization-fiscal-year-display">
+        Fiscal Year:
+        <span class="font-bold text-[color:var(--color-content-primary)]">{{
+          data.fiscal_year
           }}</span>
-        </div>
-
-        <button
-          mat-stroked-button
-          color="primary"
-          [disabled]="isRecalculating()"
-          (click)="recalculate()"
-        >
-          @if (!isRecalculating()) {
-            <mat-icon>refresh</mat-icon>
-          }
-          @if (isRecalculating()) {
-            <mat-spinner diameter="20" class="mr-2"></mat-spinner>
-          }
-          Recalculate
-        </button>
-      </div>
-    </header>
-
-    <main class="flex flex-col gap-8 flex-1">
-      <app-accounting-standard-section [data]="data" />
-
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
-            Comparative Statement
-          </h2>
-          <span class="text-sm text-[color:var(--color-content-secondary)]"
-            >Raw Data vs IFRS Norms</span
-          >
-        </div>
-        <app-comparative-table [data]="data" (rowClick)="scrollToAdjustments()" />
       </div>
 
-      <div id="adjustments-section" class="scroll-mt-6">
-        <app-adjustments-list [adjustments]="data.adjustments" />
-      </div>
-    </main>
-
-    <div
-      class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12"
-    >
-      <button
-        mat-button
-        (click)="navigateBackToFinancials()"
-        class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
-      >
-        <mat-icon>arrow_back</mat-icon>
-        Back to Financials
-      </button>
-
-      <button
-        mat-flat-button
-        color="primary"
-        [disabled]="isComputingRatios()"
-        (click)="computeRatios()"
-        class="finaces-primary-btn px-8"
-      >
-        @if (isComputingRatios()) {
-          <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+      <button mat-stroked-button color="primary" [disabled]="isRecalculating()" (click)="recalculate()"
+        data-testid="normalization-recalculate-btn">
+        @if (!isRecalculating()) {
+        <mat-icon>refresh</mat-icon>
         }
-        @if (!isComputingRatios()) {
-          <span>Compute Financial Ratios</span>
+        @if (isRecalculating()) {
+        <mat-spinner diameter="20" class="mr-2"></mat-spinner>
         }
-        @if (!isComputingRatios()) {
-          <mat-icon class="ml-2">navigate_next</mat-icon>
-        }
+        Recalculate
       </button>
     </div>
+  </header>
+
+  <main class="flex flex-col gap-8 flex-1">
+    <app-accounting-standard-section [data]="data" />
+
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
+          Comparative Statement
+        </h2>
+        <span class="text-sm text-[color:var(--color-content-secondary)]">Raw Data vs IFRS Norms</span>
+      </div>
+      <app-comparative-table [data]="data" (rowClick)="scrollToAdjustments()" />
+    </div>
+
+    <div id="adjustments-section" class="scroll-mt-6" data-testid="normalization-adjustments-section">
+      <app-adjustments-list [adjustments]="data.adjustments" />
+    </div>
+  </main>
+
+  <div
+    class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
+    <button mat-button (click)="navigateBackToFinancials()"
+      class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
+      data-testid="normalization-back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Financials
+    </button>
+
+    <button mat-flat-button color="primary" [disabled]="isComputingRatios()" (click)="computeRatios()"
+      class="finaces-primary-btn px-8" data-testid="normalization-compute-ratios-btn">
+      @if (isComputingRatios()) {
+      <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+      }
+      @if (!isComputingRatios()) {
+      <span>Compute Financial Ratios</span>
+      }
+      @if (!isComputingRatios()) {
+      <mat-icon class="ml-2">navigate_next</mat-icon>
+      }
+    </button>
+  </div>
   }
 </div>
