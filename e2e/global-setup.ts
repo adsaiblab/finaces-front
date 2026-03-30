@@ -3,13 +3,16 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * Playwright globalSetup — runs ONCE before the entire test suite.
  *
- * Responsibilities:
- *   1. Authenticate against the real backend API (POST /auth/login)
- *   2. Save the browser storage state (JWT token as Bearer header) to
- *      e2e/.auth/user.json so all tests reuse it — zero login repetition.
+ * STRATÉGIE AUTH (critique) :
+ *   AuthService stocke le JWT dans sessionStorage['finaces_token'].
+ *   storageState de Playwright ne capture PAS sessionStorage.
+ *   Solution : appel API direct → injection dans sessionStorage via
+ *   page.evaluate() → sauvegarde enrichie du storageState JSON avec
+ *   un champ 'sessionStorageEntries' custom lu par auth.fixture.ts.
  *
- * The auth flow uses the OAuth2PasswordRequestForm format expected by
- * finaces-api/app/api/auth.py: form-encoded { username, password }.
+ *   Pour les tests sans fixture (test.use({ storageState })), on utilise
+ *   un addInitScript injecté par playwright.config.ts via
+ *   une variable d'env E2E_TOKEN écrite dans .auth/token.txt.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -18,21 +21,21 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TEST_USER, API_BASE_URL, FRONTEND_BASE_URL } from './fixtures/test-data';
 
-const AUTH_STATE_PATH = path.join(__dirname, '.auth', 'user.json');
+const AUTH_DIR = path.join(__dirname, '.auth');
+const AUTH_STATE_PATH = path.join(AUTH_DIR, 'user.json');
+const TOKEN_PATH = path.join(AUTH_DIR, 'token.txt');
 
 export default async function globalSetup(_config: FullConfig): Promise<void> {
   console.log('\n[global-setup] Starting E2E authentication...');
 
   // ── 1. Ensure .auth directory exists ──────────────────────────────────────
-  const authDir = path.dirname(AUTH_STATE_PATH);
-  if (!fs.existsSync(authDir)) {
-    fs.mkdirSync(authDir, { recursive: true });
+  if (!fs.existsSync(AUTH_DIR)) {
+    fs.mkdirSync(AUTH_DIR, { recursive: true });
   }
 
-  // ── 2. Call the backend login endpoint directly (no browser needed) ───────
-  //    POST /auth/login — OAuth2PasswordRequestForm (application/x-www-form-urlencoded)
+  // ── 2. Call the backend login endpoint directly ────────────────────────────
   const formData = new URLSearchParams({
-    username: TEST_USER.email,    // Backend expects "username" = email
+    username: TEST_USER.email,
     password: TEST_USER.password,
   });
 
@@ -48,41 +51,62 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
       const body = await response.text();
       throw new Error(
         `Login failed: HTTP ${response.status} — ${body}\n` +
-        `Make sure the backend is running and seed_e2e.py has been executed.`
+        `➜ Make sure the backend is running and seed_e2e.py has been executed.\n` +
+        `➜ API URL: ${API_BASE_URL}`
       );
     }
 
     const data = (await response.json()) as { access_token: string; token_type: string };
     accessToken = data.access_token;
-    console.log(`[global-setup] ✅ Login successful for: ${TEST_USER.email}`);
+    console.log(`[global-setup] ✅ JWT obtained for: ${TEST_USER.email}`);
   } catch (err) {
     console.error('[global-setup] ❌ Authentication failed:', err);
     throw err;
   }
 
-  // ── 3. Save storage state: inject JWT into sessionStorage ─────────────────
-  //    AuthService (auth.service.ts) stores the token in:
-  //      sessionStorage.setItem('finaces_token', token)
-  //    The JWT interceptor reads: authService.getToken() → sessionStorage.getItem('finaces_token')
-  const browser = await chromium.launch();
-  const context = await browser.newContext({
-    baseURL: FRONTEND_BASE_URL,
-  });
+  // ── 3. Sauvegarder le token brut pour usage par addInitScript ─────────────
+  fs.writeFileSync(TOKEN_PATH, accessToken, 'utf-8');
+  console.log(`[global-setup] ✅ Token saved to: ${TOKEN_PATH}`);
 
+  // ── 4. Lancer un browser headless pour injecter dans sessionStorage ────────
+  //    storageState ne capture pas sessionStorage → on utilise page.evaluate
+  //    pour injecter, puis on sauvegarde localStorage+cookies (storageState
+  //    standard) ET on enrichit le JSON avec sessionStorage manuellement.
+  const browser = await chromium.launch();
+  const context = await browser.newContext({ baseURL: FRONTEND_BASE_URL });
   const page = await context.newPage();
 
-  // Navigate to the frontend to ensure the correct origin is set
+  // Naviguer vers la racine pour établir l'origine correcte
   await page.goto(FRONTEND_BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15_000 });
 
-  // Inject the token into localStorage so Playwright's storageState captures it
-  // (sessionStorage is ignored by storageState by default)
+  // Injecter le token dans sessionStorage (ce qu'Angular lit)
   await page.evaluate((token: string) => {
+    sessionStorage.setItem('finaces_token', token);
+  }, accessToken);
+
+  // Également dans localStorage comme fallback
+  await page.evaluate((token: string) => {
+    localStorage.setItem('finaces_token', token);
     localStorage.setItem('finaces_token_e2e_bridge', token);
   }, accessToken);
 
-  // Save context state (localStorage + cookies)
+  // Sauvegarder le storageState standard (localStorage + cookies)
   await context.storageState({ path: AUTH_STATE_PATH });
 
+  // ── 5. Enrichir le storageState JSON avec sessionStorage ──────────────────
+  //    On lit le fichier généré, on y ajoute les entries sessionStorage
+  //    pour que auth.fixture.ts puisse les rejouer via addInitScript.
+  const storageStateRaw = fs.readFileSync(AUTH_STATE_PATH, 'utf-8');
+  const storageStateJson = JSON.parse(storageStateRaw);
+
+  // Ajouter sessionStorage entries dans le JSON (champ custom)
+  storageStateJson.sessionStorageEntries = [
+    { origin: FRONTEND_BASE_URL, key: 'finaces_token', value: accessToken },
+  ];
+
+  fs.writeFileSync(AUTH_STATE_PATH, JSON.stringify(storageStateJson, null, 2));
+
   await browser.close();
-  console.log(`[global-setup] ✅ Storage state saved to: ${AUTH_STATE_PATH}`);
+  console.log(`[global-setup] ✅ Enriched storageState saved to: ${AUTH_STATE_PATH}`);
+  console.log(`[global-setup] ✅ sessionStorage['finaces_token'] injected in state.`);
 }

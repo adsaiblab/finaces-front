@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/auth.fixture';
 import { NormalizationPage } from '../pages/normalization.page';
 import { RatiosPage } from '../pages/ratios.page';
 import { ScoringPage } from '../pages/scoring.page';
@@ -9,11 +9,25 @@ import { ExpertPage } from '../pages/expert.page';
 import { RapportPage } from '../pages/rapport.page';
 
 // ─── CONSTANTES DE TEST ──────────────────────────────────────────────────────
-// Utiliser un caseId existant dans votre environnement de test.
-// Si vous utilisez storageState pour l'auth, ce caseId doit appartenir à l'user connecté.
+// Doit correspondre à un UUID existant dans la DB de test (seed_e2e.py)
 const TEST_CASE_ID = 'TEST-CASE-001';
 
 // ─── MOCK PAYLOADS ───────────────────────────────────────────────────────────
+const MOCK_CASE_BASE = {
+    id: TEST_CASE_ID,
+    bidder_name: 'E2E Test Company',
+    sector: 'BTP',
+    contract_value: 5000000,
+    contract_currency: 'MAD',
+    case_type: 'STANDARD',
+    status: 'IN_PROGRESS',
+    risk_class: 'B',
+    mcc_score: 72,
+    ia_score: 68,
+    tension_label: 'LOW',
+    fiscal_year: 2023,
+};
+
 const MOCK_NORMALIZATION = {
     case_id: TEST_CASE_ID,
     fiscal_year: 2023,
@@ -56,13 +70,21 @@ const MOCK_IA_PREDICTION = {
 
 const MOCK_TENSION = {
     case_id: TEST_CASE_ID,
-    scenarios: [],
+    level: 'LOW',
+    direction: 'IA_HIGHER',
+    delta_score: 4,
+    mcc_class: 'MODERATE',
+    ia_class: 'MODERATE',
+    class_divergence: false,
+    system_recommendation: 'No action required.',
+    requires_justification: false,
+    pillars_comparison: [],
     status: 'COMPUTED',
 };
 
 const MOCK_STRESS = {
     case_id: TEST_CASE_ID,
-    stress_results: [],
+    scenarios: [],
     status: 'COMPUTED',
 };
 
@@ -77,10 +99,17 @@ const MOCK_RAPPORT = {
     case_id: TEST_CASE_ID,
     report_url: '/reports/mock.pdf',
     status: 'GENERATED',
+    sections_complete: 14,
+    sections_total: 14,
+    recommendation: 'FAVORABLE',
 };
 
 // ─── HELPER : Setup de tous les mocks API pour un cas donné ──────────────────
 async function setupApiMocks(page: any, caseId: string) {
+    // Données de base du dossier (case-workspace charge cet endpoint au démarrage)
+    await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+    );
     // Bloc 3 - Normalization
     await page.route(`**/api/v1/cases/${caseId}/normalization**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
@@ -93,7 +122,7 @@ async function setupApiMocks(page: any, caseId: string) {
     await page.route(`**/api/v1/cases/${caseId}/scoring**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING) })
     );
-    // Bloc 6 - IA Prediction (peut être /prediction, /ia, /ai — on couvre large)
+    // Bloc 6 - IA Prediction
     await page.route(`**/api/v1/cases/${caseId}/prediction**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_PREDICTION) })
     );
@@ -112,23 +141,20 @@ async function setupApiMocks(page: any, caseId: string) {
     await page.route(`**/api/v1/cases/${caseId}/expert**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_EXPERT) })
     );
-    // Bloc 10 - Rapport (génération + récupération)
+    // Bloc 10 - Rapport
     await page.route(`**/api/v1/cases/${caseId}/report**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RAPPORT) })
     );
-    // Wildcard sécurité : capture tout autre appel vers ce case pour éviter les 404/400 bloquants
-    await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => {
-        // Laisser passer les routes déjà mockées, intercepter le reste
-        route.continue();
-    });
+    // Wildcard sécurité (intercepte tout appel résiduel vers ce case — ne bloque PAS)
+    await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => route.continue());
 }
 
 // ─── SUITE HAPPY PATH ────────────────────────────────────────────────────────
 test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
-    // L'utilisateur doit être authentifié. Assurez-vous que playwright.config.ts
-    // pointe vers un storageState valide (ex: e2e/auth/session.json).
-    test.use({ storageState: 'e2e/auth/session.json' });
+    // ⚠️ NE PAS surcharger storageState ici — playwright.config.ts le gère
+    // via e2e/.auth/user.json généré par global-setup.ts.
+    // Surcharger avec 'e2e/auth/session.json' (chemin inexistant) cassait l'auth.
 
     test('Bloc 3 — Normalization : la page se charge et affiche le badge NORMALIZED', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
@@ -148,7 +174,7 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
         await ratiosPage.expectRatiosDisplayed();
     });
 
-    test('Bloc 5 — Scoring MCC : la page se charge et affiche le score global et la risk class', async ({ page }) => {
+    test('Bloc 5 — Scoring MCC : la page se charge et affiche le score global', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
 
@@ -172,6 +198,7 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
         await page.goto(`/cases/${TEST_CASE_ID}/tension`);
         await tensionPage.expectPageLoaded();
+        await tensionPage.expectContentDisplayed();
     });
 
     test('Bloc 8 — Stress Test : le composant racine est visible', async ({ page }) => {
@@ -180,6 +207,7 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
         await page.goto(`/cases/${TEST_CASE_ID}/stress`);
         await stressPage.expectPageLoaded();
+        await stressPage.expectLayoutDisplayed();
     });
 
     test('Bloc 9 — Expert Opinion : le composant racine est visible', async ({ page }) => {
@@ -188,6 +216,7 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
         await page.goto(`/cases/${TEST_CASE_ID}/expert`);
         await expertPage.expectPageLoaded();
+        await expertPage.expectFormDisplayed();
     });
 
     test('Bloc 10 — Rapport Final : le composant racine est visible', async ({ page }) => {
@@ -196,22 +225,18 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
         await page.goto(`/cases/${TEST_CASE_ID}/rapport`);
         await rapportPage.expectPageLoaded();
+        await rapportPage.expectStructureDisplayed();
+        await rapportPage.expectGenerateBtnVisible();
     });
 
-    // ─── TEST INTÉGRÉ : Vérification de la chaîne de navigation (minimal) ────
     test('Navigation chain — Scoring vers IA via bouton Proceed (avec mock)', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
         const iaPage = new IaPage(page);
 
-        // Navigation directe au scoring (évite la dépendance aux étapes précédentes)
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectScoringDisplayed();
-
-        // Click sur "Proceed to AI Analysis" — le mock /prediction est déjà en place
         await scoringPage.clickProceedToIA();
-
-        // Vérification que l'on atterrit bien sur la page IA
         await iaPage.expectPageLoaded();
         await iaPage.expectPredictionDisplayed();
     });

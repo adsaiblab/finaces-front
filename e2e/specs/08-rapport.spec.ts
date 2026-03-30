@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/auth.fixture';
 import { RapportPage } from '../pages/rapport.page';
 
 const TEST_CASE_ID = 'TEST-CASE-001';

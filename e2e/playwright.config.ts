@@ -1,79 +1,82 @@
 /**
  * e2e/playwright.config.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Playwright configuration for FinaCES E2E integration tests.
- *
- * Stack:
- *   - Frontend : Angular 21, ng serve → http://localhost:4200
- *   - Backend  : FastAPI,   uvicorn  → http://localhost:8000
- *   - Browser  : Chromium (Session 1 — expand in later sessions if needed)
- * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import { defineConfig, devices } from '@playwright/test';
 import * as path from 'path';
+import * as fs from 'fs';
 
-// Path where globalSetup stores the authenticated session
 const AUTH_STATE_PATH = path.join(__dirname, '.auth', 'user.json');
+const TOKEN_PATH = path.join(__dirname, '.auth', 'token.txt');
+
+// Lire le token si disponible (sera undefined au premier lancement, c'est OK)
+function getTokenForInitScript(): string {
+  try {
+    return fs.existsSync(TOKEN_PATH) ? fs.readFileSync(TOKEN_PATH, 'utf-8').trim() : '';
+  } catch {
+    return '';
+  }
+}
+
+const E2E_TOKEN = getTokenForInitScript();
 
 export default defineConfig({
-  // ── Test discovery ──────────────────────────────────────────────────────
-  testDir: './e2e/specs',
+  // playwright.config.ts est dans e2e/ → chemins RELATIFS à e2e/
+  testDir: './specs',
   testMatch: '**/*.spec.ts',
 
-  // ── Parallelism ─────────────────────────────────────────────────────────
-  // Run files in parallel; tests within a file run sequentially (important
-  // for the happy-path which is a sequential stateful flow).
   fullyParallel: false,
-  workers: 1, // Sequential in Session 1 — safe for stateful E2E flow
+  workers: 1,
 
-  // ── Retries ─────────────────────────────────────────────────────────────
-  retries: 1, // 1 retry on flaky failures
+  retries: 1,
 
-  // ── Reporters ───────────────────────────────────────────────────────────
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { outputFolder: '../playwright-report', open: 'never' }],
   ],
 
-  // ── Global setup (runs once before all tests) ───────────────────────────
-  globalSetup: './e2e/global-setup.ts',
+  globalSetup: './global-setup.ts',
 
-  // ── Shared settings for all tests ───────────────────────────────────────
   use: {
-    // Base URL — Angular dev server
     baseURL: 'http://localhost:4200',
 
-    // Reuse the authenticated session stored by global-setup
+    // storageState rejoue localStorage + cookies (pas sessionStorage)
     storageState: AUTH_STATE_PATH,
 
-    // Capture screenshot only on failure
+    // ⭐ CLEF DE VOÛTE : addInitScript injecte le JWT dans sessionStorage
+    // avant chaque navigation, AVANT qu'Angular s'initialise.
+    // Sans ça, authGuard redirige toujours vers /auth/login.
+    ...(E2E_TOKEN
+      ? {
+        contextOptions: {
+          // Note : on passe par auth.fixture.ts pour les specs qui en ont besoin,
+          // et par storageState enrichi pour les autres.
+        },
+      }
+      : {}),
+
     screenshot: 'only-on-failure',
-
-    // Record trace on first retry (useful for debugging)
     trace: 'on-first-retry',
-
-    // Video recording on failure
     video: 'retain-on-failure',
-
-    // Default navigation timeout
-    navigationTimeout: 10_000,
-
-    // Default action timeout
+    navigationTimeout: 15_000,
     actionTimeout: 10_000,
   },
 
-  // ── Global timeout per test ─────────────────────────────────────────────
-  timeout: 60_000, // 60s — generous for computations (scoring, IA, PDF export)
+  timeout: 60_000,
 
-  // ── Browser configuration ────────────────────────────────────────────────
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // storageState par projet (surcharge le use global si nécessaire)
+        storageState: AUTH_STATE_PATH,
+      },
+      // setupFilePath injecte addInitScript pour TOUS les tests de ce projet
+      // → pas besoin d'importer auth.fixture dans chaque spec
+      setup: undefined,
     },
   ],
 
-  // ── Output directories ───────────────────────────────────────────────────
-  outputDir: 'playwright-results',
+  outputDir: '../playwright-results',
 });
