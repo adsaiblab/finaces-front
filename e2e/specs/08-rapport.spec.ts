@@ -1,10 +1,10 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { RapportPage } from '../pages/rapport.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 test.describe('Isolation — Bloc 10 Rapport Final', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test.beforeEach(async ({ page }) => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/report**`, route =>
@@ -18,7 +18,7 @@ test.describe('Isolation — Bloc 10 Rapport Final', () => {
         await rapportPage.expectPageLoaded();
     });
 
-    // TODO S4 (MISSION 2) : ajouter data-testid dans bloc10-rapport template
+    // TODO S4 : ajouter data-testid dans bloc10-rapport template
     // TODO S4 : test génération rapport (bouton générer + mock réponse)
     // TODO S4 : test téléchargement PDF
     // TODO S4 : test statut "GENERATED" affiché

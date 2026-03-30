@@ -2,11 +2,11 @@ import { test, expect } from '../fixtures/auth.fixture';
 import { TensionPage } from '../pages/tension.page';
 import { StressPage } from '../pages/stress.page';
 import { ExpertPage } from '../pages/expert.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 test.describe('Isolation — Blocs 7/8/9 Tension, Stress, Expert', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test('SKELETON — Bloc 7 Tension : composant racine visible', async ({ page }) => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/tension**`, route =>

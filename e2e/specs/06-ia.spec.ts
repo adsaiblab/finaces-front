@@ -1,7 +1,8 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { IaPage } from '../pages/ia.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_IA = {
     predicted_score: 68,
@@ -18,7 +19,6 @@ const MOCK_IA = {
 };
 
 test.describe('Isolation — Bloc 6 IA Prediction', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test.beforeEach(async ({ page }) => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/prediction**`, route =>

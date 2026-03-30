@@ -1,10 +1,10 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { FinancialsPage } from '../pages/financials.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 test.describe('Isolation — Bloc 2 Financials', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test.beforeEach(async ({ page }) => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/financials**`, route =>

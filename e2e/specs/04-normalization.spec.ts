@@ -1,7 +1,8 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { NormalizationPage } from '../pages/normalization.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_NORMALIZATION = {
     case_id: TEST_CASE_ID,
@@ -14,7 +15,6 @@ const MOCK_NORMALIZATION = {
 };
 
 test.describe('Isolation — Bloc 3 Normalization', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test.beforeEach(async ({ page }) => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalization**`, route =>

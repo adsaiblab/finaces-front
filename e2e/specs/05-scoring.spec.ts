@@ -1,7 +1,8 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { ScoringPage } from '../pages/scoring.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_SCORING = {
     case_id: TEST_CASE_ID,
@@ -18,13 +19,11 @@ const MOCK_SCORING = {
 };
 
 test.describe('Isolation — Bloc 5 Scoring MCC', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test.beforeEach(async ({ page }) => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/scoring**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING) })
         );
-        // Mock IA pour ne pas bloquer le bouton Proceed
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/prediction**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ predicted_score: 68, predicted_risk_class: 'B', model_version: 'mock', model_performance: { accuracy: 0.87 }, confidence_interval: { lower: 62, upper: 73 }, shap_values: { features: [] } }) })
         );

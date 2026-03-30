@@ -1,13 +1,12 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { GatePage } from '../pages/gate.page';
+import { TEST_CASE } from '../fixtures/test-data';
 
-const TEST_CASE_ID = 'TEST-CASE-001';
+const TEST_CASE_ID = TEST_CASE.id;
 
 test.describe('Isolation — Bloc 1b Gate', () => {
-    test.use({ storageState: 'e2e/auth/session.json' });
 
     test.beforeEach(async ({ page }) => {
-        // Mock IA evaluation endpoint
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/gate**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'SEALED', checklist: [] }) })
         );
