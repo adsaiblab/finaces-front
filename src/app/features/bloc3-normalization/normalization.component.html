@@ -34,6 +34,7 @@
       <div class="flex items-center gap-4">
         <div
           class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
+          data-testid="fiscal-year-badge"
         >
           Fiscal Year:
           <span class="font-bold text-[color:var(--color-content-primary)]">{{
@@ -46,6 +47,7 @@
           color="primary"
           [disabled]="isRecalculating()"
           (click)="recalculate()"
+          data-testid="btn-recalculate"
         >
           @if (!isRecalculating()) {
             <mat-icon>refresh</mat-icon>
@@ -96,6 +98,7 @@
         [disabled]="isComputingRatios()"
         (click)="computeRatios()"
         class="finaces-primary-btn px-8"
+        data-testid="btn-compute-ratios"
       >
         @if (isComputingRatios()) {
           <mat-spinner diameter="20" class="mr-2"></mat-spinner>

@@ -74,10 +74,11 @@
           >
             <mat-icon class="text-[16px]">memory</mat-icon> Predicted AI Score
           </h3>
-          <finaces-score-gauge [score]="data.predicted_score"></finaces-score-gauge>
+          <finaces-score-gauge [score]="data.predicted_score" data-testid="ai-score-gauge"></finaces-score-gauge>
           <finaces-risk-badge
             [riskClass]="$any(data.predicted_risk_class)"
             class="mt-4"
+            data-testid="ai-risk-badge"
           ></finaces-risk-badge>
         </div>
 
@@ -160,6 +161,7 @@
         color="primary"
         (click)="proceedToTension()"
         class="finaces-primary-btn px-8"
+        data-testid="btn-proceed-to-tension"
       >
         <span>Proceed to Tension Analysis</span>
         <mat-icon class="ml-2">compare_arrows</mat-icon>

@@ -43,6 +43,7 @@
         [direction]="data.direction"
         [deltaScore]="data.delta_score"
         [recommendation]="data.system_recommendation"
+        data-testid="tension-banner"
       >
       </app-tension-banner>
 
@@ -61,6 +62,7 @@
       <app-analyst-decision
         [requiresJustification]="data.requires_justification"
         (decisionSubmitted)="handleDecision($event)"
+        data-testid="analyst-decision-form"
       >
       </app-analyst-decision>
     </main>

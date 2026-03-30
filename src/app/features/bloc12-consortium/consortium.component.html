@@ -47,13 +47,15 @@
       >
         <section
           class="lg:col-span-1 bg-surface-card rounded-xl shadow-md border border-border-default p-6 flex flex-col items-center justify-center text-center print:border-gray-300 print:shadow-none break-inside-avoid"
+          data-testid="consortium-score-section"
         >
-          <span class="text-4xl font-extrabold text-content-primary mb-3">{{
+          <span class="text-4xl font-extrabold text-content-primary mb-3" data-testid="consortium-final-score">{{
             currentConsortium()?.combined_scorecard?.final_score | number: '1.2-2'
           }}</span>
           <finaces-risk-badge
             [riskClass]="$any(currentConsortium()?.combined_scorecard?.risk_class) || 'MODERATE'"
             mb="4"
+            data-testid="consortium-risk-badge"
           ></finaces-risk-badge>
           <span class="text-sm font-medium text-content-secondary"
             >Combined Consortium Viability</span
@@ -107,6 +109,7 @@
                 color="primary"
                 (click)="openMemberDialog()"
                 [disabled]="isLoading() || isEditingShares()"
+                data-testid="btn-add-member"
               >
                 <span class="material-icons mr-1 text-sm">add</span> New Member
               </button>
@@ -213,6 +216,7 @@
           color="primary"
           (click)="recalculateScore()"
           [disabled]="totalParticipation() !== 100 || isCalculating() || isEditingShares()"
+          data-testid="btn-recalculate-consortium"
         >
           <span class="material-icons mr-1 text-sm">sync</span>
           {{ isCalculating() ? 'Calculating...' : 'Force Aggregation' }}
@@ -222,6 +226,7 @@
           color="accent"
           (click)="continueToStress()"
           [disabled]="totalParticipation() !== 100 || isLeaderBlocking() || isEditingShares()"
+          data-testid="btn-validate-consortium"
         >
           Validate structural analysis
           <span class="material-icons ml-1 text-sm">arrow_forward</span>

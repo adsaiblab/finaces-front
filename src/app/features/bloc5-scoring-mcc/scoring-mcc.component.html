@@ -61,7 +61,7 @@
           >
             Global MCC Score
           </h3>
-          <finaces-score-gauge [score]="data.global_score"></finaces-score-gauge>
+          <finaces-score-gauge [score]="data.global_score" data-testid="global-score-gauge"></finaces-score-gauge>
         </div>
 
         <div
@@ -75,6 +75,7 @@
           <finaces-risk-badge
             [riskClass]="$any(data.risk_class)"
             class="transform scale-125"
+            data-testid="risk-class-badge"
           ></finaces-risk-badge>
         </div>
       </div>
@@ -128,6 +129,7 @@
         color="primary"
         (click)="proceedNext()"
         class="finaces-primary-btn px-8"
+        data-testid="btn-proceed-to-ai"
       >
         <span>Proceed to AI Analysis</span>
         <mat-icon class="ml-2">smart_toy</mat-icon>
