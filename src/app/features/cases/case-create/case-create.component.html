@@ -15,7 +15,7 @@
     </button>
   </div>
 
-  <mat-stepper [linear]="true" #stepper class="custom-stepper">
+  <mat-stepper [linear]="true" #stepper class="custom-stepper" data-testid="case-create-stepper">
     <mat-step [stepControl]="marketInfoForm">
       <ng-template matStepLabel>Market Information</ng-template>
       <app-step1-market-info [formGroup]="marketInfoForm" />
@@ -25,6 +25,7 @@
           color="primary"
           matStepperNext
           [disabled]="marketInfoForm.invalid || isSubmitting()"
+          data-testid="case-create-next-btn"
         >
           Next
         </button>
@@ -49,6 +50,7 @@
           color="primary"
           matStepperNext
           [disabled]="bidderForm.invalid || isSubmitting()"
+          data-testid="case-create-next-btn"
         >
           Next
         </button>
@@ -60,7 +62,7 @@
       <app-step3-summary [parentForm]="caseForm" />
       <div class="step-actions">
         <button mat-button matStepperPrevious [disabled]="isSubmitting()">Previous</button>
-        <button mat-raised-button color="primary" matStepperNext [disabled]="isSubmitting()">
+        <button mat-raised-button color="primary" matStepperNext [disabled]="isSubmitting()" data-testid="case-create-next-btn">
           Validate & Continue
         </button>
       </div>
@@ -68,7 +70,7 @@
 
     <mat-step>
       <ng-template matStepLabel>Confirmation</ng-template>
-      <app-step4-confirmation (submitCase)="submitCase()" />
+      <app-step4-confirmation (submitCase)="submitCase()" data-testid="case-create-confirmation-step" />
       @if (isSubmitting()) {
         <div class="submitting-indicator">Processing...</div>
       }

@@ -9,7 +9,6 @@ describe('DocumentsColumnComponent', () => {
   let fixture: ComponentFixture<DocumentsColumnComponent>;
 
   beforeEach(async () => {
-    // Stub alert globally for invalid file tests
     vi.stubGlobal('alert', vi.fn());
 
     await TestBed.configureTestingModule({
@@ -18,39 +17,41 @@ describe('DocumentsColumnComponent', () => {
 
     fixture = TestBed.createComponent(DocumentsColumnComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('devrait créer le composant', () => {
     expect(component).toBeTruthy();
   });
 
-  it("devrait mettre à jour le dataSource via l'Input documents", async () => {
-    const mockDocs = [
+  it("devrait mettre à jour le tableau via l'Input documents", async () => {
+    const mockDocs: GateDocumentOut[] = [
       {
         id: '1',
         case_id: 'c1',
         file_name: 'test.pdf',
-        document_type: 'BILAN',
-        reliability_level: 'HIGH',
-        status: 'PRESENT',
-        integrity_status: 'OK',
+        document_type: 'BILAN' as any,
+        reliability_level: 'HIGH' as any,
+        status: 'PRESENT' as any,
+        integrity_status: 'OK' as any,
         red_flags: [],
         uploaded_at: '',
-      },
-    ] as unknown as GateDocumentOut[];
+        fiscal_year: 2023,
+        file_size: 1024,
+      } as any,
+    ];
+    
     fixture.componentRef.setInput('documents', mockDocs);
-    await fixture.whenStable();
+    fixture.detectChanges();
 
-    expect(component.dataSource.data.length).toBe(1);
-    expect(component.dataSource.data[0].file_name).toBe('test.pdf');
+    expect(component.documents().length).toBe(1);
+    expect(component.documents()[0].file_name).toBe('test.pdf');
   });
 
   it('devrait rejeter un fichier avec une extension non valide', () => {
     const emitSpy = vi.spyOn(component.fileDropped, 'emit');
     const invalidFile = new File([''], 'test.exe', { type: 'application/x-msdownload' });
 
-    // Test logic encapsulée (on utilise any pour bypass le private scope le temps du test)
     (component as any).handleFile(invalidFile);
 
     expect(window.alert).toHaveBeenCalledWith(

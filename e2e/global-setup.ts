@@ -74,12 +74,13 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
   // Navigate to the frontend to ensure the correct origin is set
   await page.goto(FRONTEND_BASE_URL, { waitUntil: 'domcontentloaded', timeout: 15_000 });
 
-  // Inject the token into sessionStorage with the exact key AuthService uses
+  // Inject the token into localStorage so Playwright's storageState captures it
+  // (sessionStorage is ignored by storageState by default)
   await page.evaluate((token: string) => {
-    sessionStorage.setItem('finaces_token', token);
+    localStorage.setItem('finaces_token_e2e_bridge', token);
   }, accessToken);
 
-  // Save context state (sessionStorage + cookies)
+  // Save context state (localStorage + cookies)
   await context.storageState({ path: AUTH_STATE_PATH });
 
   await browser.close();

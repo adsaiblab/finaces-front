@@ -10,7 +10,7 @@
         Resume active workflows or inspect completed evaluation phases.
       </p>
     </div>
-    <button mat-flat-button color="primary" routerLink="/cases/new">
+    <button mat-flat-button color="primary" routerLink="/cases/new" data-testid="cases-list-new-case-btn">
       <span class="material-icons text-sm mr-2">add</span> New Request
     </button>
   </div>
@@ -73,6 +73,7 @@
         class="w-full bg-sidebar-active-bg border border-strong rounded-md py-2 pl-9 pr-3 text-sm text-primary focus:outline-none focus:border-primary transition-colors"
         [ngModel]="searchQuery()"
         (input)="updateSearch($event)"
+        data-testid="cases-list-search-input"
       />
     </div>
   </div>
@@ -99,7 +100,7 @@
         </div>
       } @else {
         <div class="overflow-x-auto flex-grow w-full">
-          <table class="w-full text-left border-collapse min-w-[1000px] table-fixed">
+          <table class="w-full text-left border-collapse min-w-[1000px] table-fixed" data-testid="cases-list-table">
             <thead
               class="bg-sidebar-active-bg sticky top-0 z-10 border-b-2 border-strong shadow-sm"
             >
@@ -116,7 +117,7 @@
             </thead>
             <tbody class="divide-y divide-strong">
               @for (caseItem of filteredCases(); track caseItem) {
-                <tr class="hover:bg-sidebar-active-bg transition-colors group">
+                <tr class="hover:bg-sidebar-active-bg transition-colors group" data-testid="cases-list-row">
                   <!-- Couloir de gauche : Infos Dossier -->
                   <td class="py-4 px-4 align-middle">
                     <div class="flex items-center gap-3">

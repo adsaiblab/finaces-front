@@ -10,7 +10,7 @@
 
   <mat-form-field appearance="outline">
     <mat-label>Market Reference</mat-label>
-    <input matInput formControlName="market_reference" placeholder="ex: MCC-2024-001" />
+    <input matInput formControlName="market_reference" placeholder="ex: MCC-2024-001" data-testid="case-create-market-reference-input" />
     @if (formGroup().get('market_reference')?.hasError('pattern')) {
       <mat-error>Required format: AAA-1234-123</mat-error>
     }
@@ -18,7 +18,7 @@
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Full Market Title</mat-label>
-    <input matInput formControlName="market_label" />
+    <input matInput formControlName="market_label" data-testid="case-create-market-label-input" />
     @if (formGroup().get('market_label')?.hasError('required')) {
       <mat-error>Title is required.</mat-error>
     }
@@ -27,7 +27,7 @@
   <div class="amount-currency-group">
     <mat-form-field appearance="outline" class="field-amount">
       <mat-label>Contract amount</mat-label>
-      <input matInput type="number" formControlName="contract_value" min="0" />
+      <input matInput type="number" formControlName="contract_value" min="0" data-testid="case-create-contract-value-input" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="field-currency">

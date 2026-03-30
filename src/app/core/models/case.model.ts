@@ -58,18 +58,19 @@ export interface StatusTransition {
 
 export interface EvaluationCaseOut {
   id: string;
-  name: string;
-  bidder_name: string;
-  country: string;
-  sector: string;
-  contract_value: number;
-  contract_currency: string;
-  contract_months: number;
+  name?: string;
+  bidder_name?: string;
+  market_reference?: string;
+  country?: string;
+  sector?: string;
+  contract_value?: number;
+  contract_currency?: string;
+  contract_months?: number;
   case_type: CaseType;
   status: CaseStatus;
-  created_at: string;
-  updated_at: string;
-  created_by: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
   case_manager_id?: string;
   mcc_score?: number;
   ia_score?: number;

@@ -26,12 +26,12 @@
   <div class="table-wrapper">
     <h3 class="table-title">UPLOADED DOCUMENTS</h3>
 
-    @if (dataSource.data.length === 0) {
+    @if (documents().length === 0) {
       <div class="empty-state">No documents have been uploaded yet.</div>
     }
 
-    @if (dataSource.data.length > 0) {
-      <table mat-table [dataSource]="dataSource" class="documents-table">
+    @if (documents().length > 0) {
+      <table mat-table [dataSource]="documents()" class="documents-table">
         <ng-container matColumnDef="document_type">
           <th mat-header-cell *matHeaderCellDef>Document</th>
           <td mat-cell *matCellDef="let doc">

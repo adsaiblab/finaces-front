@@ -22,11 +22,18 @@ type AuthFixtures = {
 export const test = base.extend<AuthFixtures>({
   /**
    * Provides a page with the JWT already in sessionStorage.
-   * The storageState from playwright.config.ts is automatically applied
-   * by Playwright to every new browser context — so this fixture
-   * simply returns the default `page` under a semantic name.
+   * We copy it from localStorage (where it was saved by global-setup)
+   * into sessionStorage where AuthService expects it.
    */
   authenticatedPage: async ({ page }, use) => {
+    // Inject the bridge script before the page loads
+    await page.addInitScript(() => {
+      const token = localStorage.getItem('finaces_token_e2e_bridge');
+      if (token) {
+        sessionStorage.setItem('finaces_token', token);
+      }
+    });
+
     await use(page);
   },
 });

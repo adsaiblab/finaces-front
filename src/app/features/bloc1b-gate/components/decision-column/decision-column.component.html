@@ -27,7 +27,7 @@
       <p class="state-desc">
         Not yet evaluated. Make sure all required documents have been uploaded.
       </p>
-      <button mat-flat-button color="primary" class="action-btn" (click)="evaluate.emit()">
+      <button mat-flat-button color="primary" class="action-btn" (click)="evaluate.emit()" data-testid="gate-evaluate-btn">
         Run Gate Evaluation
       </button>
       <p class="note">Note: Automatic evaluation of uploaded documents via our AI engine.</p>
@@ -101,7 +101,7 @@
       </div>
       <div class="actions-group">
         @if (isPassed()) {
-          <button mat-flat-button color="primary" class="action-btn" (click)="sealGate.emit()">
+          <button mat-flat-button color="primary" class="action-btn" (click)="sealGate.emit()" data-testid="gate-seal-btn">
             Seal the Gate
           </button>
           <button
@@ -109,6 +109,7 @@
             color="accent"
             class="action-btn mt-2"
             (click)="goToFinancials.emit()"
+            data-testid="gate-go-to-financials-btn"
           >
             Go to Financials
           </button>

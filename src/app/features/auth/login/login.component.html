@@ -53,6 +53,7 @@
               placeholder="votre.nom"
               formControlName="username"
               autocomplete="username"
+              data-testid="login-username-input"
             />
           </div>
           @if (showFieldError('username')) {
@@ -83,6 +84,7 @@
               placeholder="••••••••"
               formControlName="password"
               autocomplete="current-password"
+              data-testid="login-password-input"
             />
             <button
               type="button"
@@ -142,7 +144,7 @@
           </div>
         }
 
-        <button id="login-submit" class="btn-primary" type="submit" [disabled]="isLoading()">
+        <button id="login-submit" class="btn-primary" type="submit" [disabled]="isLoading()" data-testid="login-submit-btn">
           @if (isLoading()) {
             <span class="spinner" aria-hidden="true"></span>
             Connexion en cours…

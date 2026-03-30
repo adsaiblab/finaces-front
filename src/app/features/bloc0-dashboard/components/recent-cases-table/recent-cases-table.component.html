@@ -5,11 +5,11 @@
   </div>
 
   @if (cases().length > 0) {
-    <table mat-table [dataSource]="cases()" class="custom-table">
+    <table mat-table [dataSource]="cases()" class="custom-table" data-testid="dashboard-recent-cases-table">
       <ng-container matColumnDef="reference">
         <th mat-header-cell *matHeaderCellDef>Ref.</th>
         <td mat-cell *matCellDef="let element">
-          <a [routerLink]="['/cases', element.id]" class="ref-link">
+          <a [routerLink]="['/cases', element.id]" class="ref-link" data-testid="dashboard-recent-case-link">
             {{ element.id | slice: 0 : 8 }}
           </a>
         </td>
@@ -61,7 +61,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" data-testid="dashboard-recent-case-row"></tr>
     </table>
   } @else {
     <div class="empty-state">

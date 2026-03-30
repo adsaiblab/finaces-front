@@ -6,10 +6,9 @@ import {
   ChangeDetectionStrategy,
   viewChild,
   ElementRef,
-  effect,
 } from '@angular/core';
 
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -51,14 +50,8 @@ export class DocumentsColumnComponent {
     'integrity_status',
     'actions',
   ];
-  dataSource = new MatTableDataSource<GateDocumentOut>([]);
+  
   isDragOver = false;
-
-  constructor() {
-    effect(() => {
-      this.dataSource.data = this.documents() || [];
-    });
-  }
 
   triggerFileInput(): void {
     this.fileInputRef()?.nativeElement.click();
