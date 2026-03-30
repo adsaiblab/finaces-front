@@ -6,23 +6,19 @@ const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_NORMALIZATION = {
     statement_id: 'mock-e2e-001',
-    case_id: TEST_CASE_ID,
     fiscal_year: 2023,
-    adjustments: [
-        { id: 1, label: 'Restatement A', amount: 50000 },
-    ],
-    comparative_statement: {},
-    accounting_standard: 'IFRS',
     normalized_revenue: 8500000,
     normalized_ebitda: 4000000,
     normalized_net_income: 2850000,
     normalized_working_capital: 1500000,
     normalized_cash_flow: 500000,
+    adjustments: [
+        { line_item: 'EBITDA', original_value: 3500000, adjusted_value: 4000000, reason: 'Add back D&A', confidence: 98 },
+    ],
     confidence_score: 92,
     normalization_date: '2026-01-01T00:00:00.000Z',
 };
 
-// Mock du dossier parent — nécessaire pour que case-workspace se charge
 const MOCK_CASE_BASE = {
     id: TEST_CASE_ID,
     bidder_name: 'E2E Test Company',
@@ -41,19 +37,27 @@ const MOCK_CASE_BASE = {
 test.describe('Isolation — Bloc 3 Normalization', () => {
 
     test.beforeEach(async ({ page }) => {
-        // Mock du dossier parent d'abord (exact match, avant wildcard)
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
-        );
-        // ⚠️ CaseService.getNormalizedFinancials() appelle /normalized-financials (pas /normalization)
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
-        );
+        // ⚠️ Playwright évalue les routes en ordre LIFO (dernier enregistré = priorité max).
+        // On enregistre donc le wildcard continue() EN PREMIER (priorité la plus basse)
+        // et les mocks spécifiques EN DERNIER (priorité la plus haute).
+
+        // 1. Wildcard sécurité — laisse passer tout le reste (priorité basse)
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/**`, (route: any) => route.continue());
+
+        // 2. Mock ratios (priorité moyenne)
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ coherence_status: 'OK', coherence_alerts: [] }) })
         );
-        // Wildcard sécurité
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/**`, (route: any) => route.continue());
+
+        // 3. Mock normalized-financials (priorité haute) — CaseService.getNormalizedFinancials()
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
+        );
+
+        // 4. Mock dossier parent exact (priorité maximale) — case-workspace setCaseId
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
     });
 
     test('La page Normalization se charge et affiche le badge NORMALIZED', async ({ page }) => {
