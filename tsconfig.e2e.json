@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "types": ["node"],
+    "outDir": "./node_modules/.cache/playwright-ts",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["e2e/**/*.ts"],
+  "exclude": ["node_modules", "src", "dist"]
+}

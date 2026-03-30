@@ -1,3 +1,7 @@
 .DS_Store
 node_modules/
 .angular/
+dist/
+# E2E — Ne jamais committer les tokens/credentials
+e2e/.auth/
+e2e/.env.e2e

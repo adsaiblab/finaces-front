@@ -1,0 +1,105 @@
+/**
+ * e2e/fixtures/test-data.ts
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Single source of truth for all E2E test constants.
+ * MUST stay in sync with finaces-api/scripts/seed_e2e.py
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/** Backend API base URL (no trailing slash) */
+export const API_BASE_URL = process.env['E2E_API_URL'] ?? 'http://localhost:8000';
+
+/** Frontend base URL — set in playwright.config.ts as `baseURL`, used here for API calls */
+export const FRONTEND_BASE_URL = process.env['E2E_FRONTEND_URL'] ?? 'http://localhost:4200';
+
+/** ─── Test user credentials (matches seed_e2e.py) ──────────────────────── */
+export const TEST_USER = {
+  email: process.env['E2E_USER_EMAIL'] ?? 'e2e.analyst@finaces.test',
+  password: process.env['E2E_USER_PASSWORD'] ?? 'E2eFinaCES2026!',
+  firstName: 'E2E',
+  lastName: 'Analyst',
+  role: 'ANALYST',
+} as const;
+
+/** ─── Test case reference (matches seed_e2e.py) ────────────────────────── */
+export const TEST_CASE = {
+  marketReference: 'E2E-TEST-DOSSIER-001',
+  bidderName: 'Société de Test E2E SA',
+  contractValue: 5_000_000,
+  contractCurrency: 'USD',
+  contractDurationMonths: 24,
+  caseType: 'SINGLE',
+} as const;
+
+/** ─── API Endpoints (verified against finaces-api/app/main.py + routes) ── */
+export const API_ENDPOINTS = {
+  // Auth (no /api/v1 prefix — public route)
+  login: `${API_BASE_URL}/auth/login`,
+  health: `${API_BASE_URL}/health`,
+
+  // Cases
+  cases: `${API_BASE_URL}/api/v1/cases`,
+
+  // Gate
+  gateEvaluate: (id: string) => `${API_BASE_URL}/api/v1/gate/${id}/evaluate`,
+
+  // Financials
+  financials: (id: string) => `${API_BASE_URL}/api/v1/financials/${id}`,
+  normalizedFinancials: (id: string) => `${API_BASE_URL}/api/v1/normalization/${id}`,
+
+  // Normalization
+  normalization: (id: string) => `${API_BASE_URL}/api/v1/normalization/${id}`,
+
+  // Ratios
+  ratiosCompute: (id: string) => `${API_BASE_URL}/api/v1/ratios/${id}/compute`,
+
+  // Scoring
+  score: (id: string) => `${API_BASE_URL}/api/v1/scoring/${id}/score`,
+
+  // IA
+  iaPredict: (id: string) => `${API_BASE_URL}/api/v1/ia/predict/${id}`,
+  iaSimulate: (id: string) => `${API_BASE_URL}/api/v1/ia/cases/${id}/simulate`,
+
+  // Stress
+  stressRun: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/stress/run`,
+  stressGet: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/stress`,
+
+  // Expert
+  expertReview: (id: string) => `${API_BASE_URL}/api/v1/experts/${id}/expert-review`,
+
+  // Report
+  reportBuild: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/report/build`,
+  reportGet: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/report`,
+  exportPdf: (id: string) => `${API_BASE_URL}/api/v1/export/${id}/export/pdf`,
+  exportWord: (id: string) => `${API_BASE_URL}/api/v1/export/${id}/export/word`,
+} as const;
+
+/** ─── Frontend Routes ──────────────────────────────────────────────────── */
+export const ROUTES = {
+  login: '/auth/login',
+  dashboard: '/dashboard',
+  cases: '/cases',
+  caseNew: '/cases/new',
+  gate: (id: string) => `/cases/${id}/gate`,
+  financials: (id: string) => `/cases/${id}/financials`,
+  normalization: (id: string) => `/cases/${id}/normalization`,
+  ratios: (id: string) => `/cases/${id}/ratios`,
+  scoringMcc: (id: string) => `/cases/${id}/scoring-mcc`,
+  ia: (id: string) => `/cases/${id}/ia`,
+  tension: (id: string) => `/cases/${id}/tension`,
+  stress: (id: string) => `/cases/${id}/stress`,
+  expert: (id: string) => `/cases/${id}/expert`,
+  rapport: (id: string) => `/cases/${id}/rapport`,
+} as const;
+
+/** ─── Timeouts ─────────────────────────────────────────────────────────── */
+export const TIMEOUTS = {
+  /** Default wait for any API response */
+  apiResponse: 15_000,
+  /** Page navigation */
+  navigation: 10_000,
+  /** Heavy computations (scoring, IA prediction) */
+  computation: 30_000,
+  /** Export generation (PDF/Word) */
+  export: 45_000,
+} as const;
