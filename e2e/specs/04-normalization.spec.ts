@@ -5,6 +5,7 @@ import { TEST_CASE } from '../fixtures/test-data';
 const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_NORMALIZATION = {
+    statement_id: 'mock-e2e-001',
     case_id: TEST_CASE_ID,
     fiscal_year: 2023,
     adjustments: [
@@ -12,6 +13,13 @@ const MOCK_NORMALIZATION = {
     ],
     comparative_statement: {},
     accounting_standard: 'IFRS',
+    normalized_revenue: 8500000,
+    normalized_ebitda: 4000000,
+    normalized_net_income: 2850000,
+    normalized_working_capital: 1500000,
+    normalized_cash_flow: 500000,
+    confidence_score: 92,
+    normalization_date: '2026-01-01T00:00:00.000Z',
 };
 
 // Mock du dossier parent — nécessaire pour que case-workspace se charge
@@ -33,11 +41,12 @@ const MOCK_CASE_BASE = {
 test.describe('Isolation — Bloc 3 Normalization', () => {
 
     test.beforeEach(async ({ page }) => {
-        // Mock du dossier parent d’abord (exact match, avant wildcard)
+        // Mock du dossier parent d'abord (exact match, avant wildcard)
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
         );
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalization**`, route =>
+        // ⚠️ CaseService.getNormalizedFinancials() appelle /normalized-financials (pas /normalization)
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
         );
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios**`, route =>
