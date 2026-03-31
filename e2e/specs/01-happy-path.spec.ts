@@ -9,10 +9,10 @@ import { ExpertPage } from '../pages/expert.page';
 import { RapportPage } from '../pages/rapport.page';
 import { TEST_CASE } from '../fixtures/test-data';
 
-// ─── CONSTANTES DE TEST ──────────────────────────────────────────────────
+// ─── CONSTANTES DE TEST ─────────────────────────────────────────────
 const TEST_CASE_ID = TEST_CASE.id;
 
-// ─── MOCK PAYLOADS ────────────────────────────────────────────────────
+// ─── MOCK PAYLOADS ────────────────────────────────────────────────
 const MOCK_CASE_BASE = {
     id: TEST_CASE_ID,
     bidder_name: 'E2E Test Company',
@@ -104,12 +104,20 @@ const MOCK_RAPPORT = {
     recommendation: 'FAVORABLE',
 };
 
-// ─── HELPER : Setup de tous les mocks API pour un cas donné ──────────────────
+// ─── HELPER : Setup de tous les mocks API ───────────────────────────────
+//
+// ⚠️  Règle LIFO Playwright : le DERNIER route() enregistré a la priorité MAX.
+//     → Wildcard continue() EN PREMIER  (priorité la plus basse)
+//     → Mocks spécifiques EN DERNIER   (priorité la plus haute)
+//
 async function setupApiMocks(page: any, caseId: string) {
-    // Données de base du dossier (case-workspace charge cet endpoint au démarrage)
-    await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
-    );
+    // ── 0. Wildcard sécurité EN PREMIER ──────────────────────────────
+    // Intercepte tout appel résiduel vers ce case sans le bloquer.
+    // Doit être enregistré EN PREMIER pour avoir la priorité la plus BASSE.
+    await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => route.continue());
+
+    // ── 1. Mocks spécifiques EN DERNIER (priorité maximale) ──────────────
+
     // Bloc 3 - Normalization
     await page.route(`**/api/v1/cases/${caseId}/normalization**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
@@ -145,20 +153,18 @@ async function setupApiMocks(page: any, caseId: string) {
     await page.route(`**/api/v1/cases/${caseId}/report**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RAPPORT) })
     );
-    // Wildcard sécurité (intercepte tout appel résiduel vers ce case — ne bloque PAS)
-    await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => route.continue());
+    // Données de base du dossier EN DERNIER — exact match, priorité maximale
+    await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+    );
 }
 
-// ─── SUITE HAPPY PATH ────────────────────────────────────────────────────
+// ─── SUITE HAPPY PATH ─────────────────────────────────────────────
 test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
-
-    // ⚠️ NE PAS surcharger storageState ici — playwright.config.ts le gère
-    // via e2e/.auth/user.json généré par global-setup.ts.
 
     test('Bloc 3 — Normalization : la page se charge et affiche le badge NORMALIZED', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const normalizationPage = new NormalizationPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await normalizationPage.expectPageLoaded();
         await normalizationPage.expectNormalizedBadgeVisible();
@@ -167,7 +173,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 4 — Ratios : la page se charge et affiche le contenu principal', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const ratiosPage = new RatiosPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/ratios`);
         await ratiosPage.expectPageLoaded();
         await ratiosPage.expectRatiosDisplayed();
@@ -176,7 +181,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 5 — Scoring MCC : la page se charge et affiche le score global', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectPageLoaded();
         await scoringPage.expectScoringDisplayed();
@@ -185,7 +189,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 6 — IA Prediction : la page se charge et affiche la carte de score prédit', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const iaPage = new IaPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/ia`);
         await iaPage.expectPageLoaded();
         await iaPage.expectPredictionDisplayed();
@@ -194,7 +197,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 7 — Tension : le composant racine est visible', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const tensionPage = new TensionPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/tension`);
         await tensionPage.expectPageLoaded();
         await tensionPage.expectContentDisplayed();
@@ -203,7 +205,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 8 — Stress Test : le composant racine est visible', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const stressPage = new StressPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/stress`);
         await stressPage.expectPageLoaded();
         await stressPage.expectLayoutDisplayed();
@@ -212,7 +213,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 9 — Expert Opinion : le composant racine est visible', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const expertPage = new ExpertPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/expert`);
         await expertPage.expectPageLoaded();
         await expertPage.expectFormDisplayed();
@@ -221,7 +221,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     test('Bloc 10 — Rapport Final : le composant racine est visible', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const rapportPage = new RapportPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/rapport`);
         await rapportPage.expectPageLoaded();
         await rapportPage.expectStructureDisplayed();
@@ -232,7 +231,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
         await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
         const iaPage = new IaPage(page);
-
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectScoringDisplayed();
         await scoringPage.clickProceedToIA();
