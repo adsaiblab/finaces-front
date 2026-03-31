@@ -82,17 +82,20 @@ e2e/
 ## Feuille de route par session
 
 ### Session 1 — Base (terminée ✅)
+
 - Setup Playwright, `global-setup.ts`, `auth.fixture.ts`
 - `02-auth.spec.ts` : login, logout, guard redirect
 - `03-financials.spec.ts` : happy path Bloc 2
 - Pipeline CI de base
 
 ### Session 2 — Happy Path S1→S10 (terminée ✅)
+
 - `01-happy-path.spec.ts` : navigation complète Blocs 3→10
 - Page Objects : `normalization.page.ts`, `ratios.page.ts`, etc.
 - `data-testid` ajoutés sur les composants clés
 
 ### Session 3 — Isolation Blocs 3→10 (terminée ✅)
+
 - `04-normalization.spec.ts` → `09-gate.spec.ts`
 - Mocks Playwright pour chaque bloc
 - Fix LIFO route order
@@ -101,24 +104,28 @@ e2e/
 ### Session 4 — CI/CD + Nouveaux blocs + Approfondissement (en cours 🔄)
 
 **Jour 1 — CI/CD GitHub Actions** *(terminé ✅)*
+
 - Pipeline `e2e.yml` : PostgreSQL + Redis + FastAPI + Angular + Playwright
 - Pipeline `ci.yml` : Lint + Vitest + Build
 - `CODEOWNERS` : review obligatoire sur `e2e/` et `.github/`
 - Fixes successifs : `asyncpg`, Redis service
 
 **Jour 2 — Nouveaux blocs (Option B)**
+
 - `10-expert.spec.ts` : soumission formulaire expert, validation
 - `11-rapport.spec.ts` : génération PDF, export Word
 - `12-consortium.spec.ts` : formulaire multi-entités
 - `13-admin-ia.spec.ts` : dashboard admin, calibration modèle
 
 **Jour 3 — Approfondissement isolation (Option A)**
+
 - Tous les `// TODO S4` dans les 8 specs existants
 - Navigation entre blocs (chaînes complètes)
 - États loading/skeleton
 - Recalculate, override scoring, simulation IA
 
 **Jour 4 — Cas d'erreur (Option D)**
+
 - API 500 → message d'erreur affiché
 - Token expiré → redirect `/auth/login`
 - Dossier 404 → page not found
@@ -133,6 +140,7 @@ e2e/
 correctement **ensemble**, sur de vraies données, sans aucun mock Playwright.
 
 **Prérequis :**
+
 1. Enrichir `finaces-api/scripts/seed_e2e.py` avec **toutes** les données liées :
    - `FinancialStatement` complet avec actif/passif/income/cashflow
    - `NormalizedFinancials` avec adjustments
@@ -184,7 +192,7 @@ test.describe('Intégration réelle — Front ↔ API ↔ DB', () => {
 });
 ```
 
-3. Séparer la CI en **deux jobs** :
+1. Séparer la CI en **deux jobs** :
    - `job: e2e-mocked` → toujours vert, bloque le merge (rapide ~5 min)
    - `job: e2e-integration` → informatif, ne bloque pas le merge (lent ~15 min)
 
