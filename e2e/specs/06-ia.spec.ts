@@ -18,17 +18,23 @@ const MOCK_IA = {
     },
 };
 
+const MOCK_MODEL = {
+    id: 'mock-model-id',
+    name: 'XGBoost FinaCES',
+    version: 'v2.1-test',
+    accuracy: 0.87,
+};
+
 test.describe('Isolation — Bloc 6 IA Prediction', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/prediction**`, route =>
+        // IaService.getPrediction() calls GET /ia/predict/:caseId
+        await page.route(`**/api/v1/ia/predict/${TEST_CASE_ID}**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA) })
         );
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ia**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA) })
-        );
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/tension**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ scenarios: [] }) })
+        // IaService.getActiveModel() calls GET /ia/models/active
+        await page.route(`**/api/v1/ia/models/active**`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_MODEL) })
         );
     });
 
