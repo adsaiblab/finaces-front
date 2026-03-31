@@ -58,29 +58,30 @@ const MOCK_SCORING = {
     override: null,
 };
 
+// Bloc 6 — IA : deux endpoints appelés en forkJoin
+// - GET /ia/predict/:caseId  → IaService.getPrediction()
+// - GET /ia/models/active    → IaService.getActiveModel()
 const MOCK_IA_PREDICTION = {
     case_id: TEST_CASE_ID,
     predicted_score: 68,
     predicted_risk_class: 'B',
     model_version: 'v2.1-mock',
-    model_performance: { accuracy: 0.87, precision: 0.85, recall: 0.88 },
     confidence_interval: { lower: 62.5, upper: 73.5 },
     shap_values: { features: [] },
 };
 
-const MOCK_TENSION = {
-    case_id: TEST_CASE_ID,
-    level: 'LOW',
-    direction: 'IA_HIGHER',
-    delta_score: 4,
-    mcc_class: 'MODERATE',
-    ia_class: 'MODERATE',
-    class_divergence: false,
-    system_recommendation: 'No action required.',
-    requires_justification: false,
-    pillars_comparison: [],
-    status: 'COMPUTED',
+const MOCK_IA_MODEL = {
+    model_id: 'mock-model-1',
+    model_version: 'v2.1-mock',
+    auc_roc: 0.89,
+    accuracy: 0.85,
+    f1_score: 0.82,
 };
+
+// Bloc 7 — Tension : PAS de mock API nécessaire.
+// La tension est calculée localement par TensionCalculatorService
+// à partir des données MCC (scoring) et IA déjà en mémoire.
+// Le composant appelle GET /score et GET /ia/predict/:id (déjà mockés).
 
 const MOCK_STRESS = {
     case_id: TEST_CASE_ID,
@@ -118,41 +119,53 @@ async function setupApiMocks(page: any, caseId: string) {
 
     // ── 1. Mocks spécifiques EN DERNIER (priorité maximale) ──────────────
 
-    // Bloc 3 - Normalization
-    await page.route(`**/api/v1/cases/${caseId}/normalization**`, (route: any) =>
+    // Bloc 3 — Normalization
+    // case.service.ts → GET /cases/:id/normalized-financials
+    await page.route(`**/api/v1/cases/${caseId}/normalized-financials`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
     );
-    // Bloc 4 - Ratios
-    await page.route(`**/api/v1/cases/${caseId}/ratios**`, (route: any) =>
+
+    // Bloc 4 — Ratios
+    // ratio-calculation.service.ts → POST /cases/:id/ratios/compute
+    await page.route(`**/api/v1/cases/${caseId}/ratios/compute`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RATIOS) })
     );
-    // Bloc 5 - Scoring MCC
-    await page.route(`**/api/v1/cases/${caseId}/scoring**`, (route: any) =>
+
+    // Bloc 5 — Scoring MCC
+    // scoring-mcc.service.ts → GET /cases/:id/score
+    await page.route(`**/api/v1/cases/${caseId}/score`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING) })
     );
-    // Bloc 6 - IA Prediction
-    await page.route(`**/api/v1/cases/${caseId}/prediction**`, (route: any) =>
+
+    // Bloc 6 — IA Prediction (forkJoin de 2 appels)
+    // ia.service.ts → GET /ia/predict/:caseId
+    await page.route(`**/api/v1/ia/predict/${caseId}`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_PREDICTION) })
     );
-    await page.route(`**/api/v1/cases/${caseId}/ia**`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_PREDICTION) })
+    // ia.service.ts → GET /ia/models/active
+    await page.route(`**/api/v1/ia/models/active`, (route: any) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_MODEL) })
     );
-    // Bloc 7 - Tension
-    await page.route(`**/api/v1/cases/${caseId}/tension**`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_TENSION) })
-    );
-    // Bloc 8 - Stress
-    await page.route(`**/api/v1/cases/${caseId}/stress**`, (route: any) =>
+
+    // Bloc 7 — Tension : pas de mock API (calcul local TensionCalculatorService).
+    // Le composant réutilise GET /score et GET /ia/predict/:id déjà mockés ci-dessus.
+
+    // Bloc 8 — Stress Test
+    // stress.service.ts → GET /cases/:id/stress
+    await page.route(`**/api/v1/cases/${caseId}/stress`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_STRESS) })
     );
-    // Bloc 9 - Expert
+
+    // Bloc 9 — Expert Opinion
     await page.route(`**/api/v1/cases/${caseId}/expert**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_EXPERT) })
     );
-    // Bloc 10 - Rapport
+
+    // Bloc 10 — Rapport Final
     await page.route(`**/api/v1/cases/${caseId}/report**`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RAPPORT) })
     );
+
     // Données de base du dossier EN DERNIER — exact match, priorité maximale
     await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
