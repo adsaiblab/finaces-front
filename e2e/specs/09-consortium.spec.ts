@@ -4,13 +4,14 @@
  * Isolation — Bloc 12 Consortium
  * Session 4 Jour 2
  *
- * URL réelles :
- *   GET /api/v1/cases/:id        → CaseService.getCaseDetail
+ * URL réelles (environment.apiUrl = http://localhost:8000/api/v1) :
+ *   GET /api/v1/cases/:id             → CaseService.getCaseDetail
  *   GET /api/v1/cases/:id/consortium  → ConsortiumService.getConsortium
  *
- * NOTE : le template actuel n'a PAS de data-testid pour les boutons
- * recalculate/continue/members-table. Les tests qui les utilisent
- * passeront UNIQUEMENT après ajout des data-testid dans le template.
+ * FIX : les patterns glob DOIVENT inclure /api/v1/ pour matcher
+ * l'URL réelle construite par les services Angular.
+ * (avant : "**/cases/${ID}/consortium" ne matchait pas
+ *          "http://localhost:8000/api/v1/cases/:id/consortium")
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { test, expect } from '../fixtures/auth.fixture';
@@ -91,9 +92,17 @@ const MOCK_CONSORTIUM_LEADER_BLOCKING = {
     ],
 };
 
-// Helper : mock l'URL réelle → GET /api/v1/cases/:id/consortium
+// Helper : mock GET /api/v1/cases/:id/consortium
+// DOIT inclure /api/v1/ — environment.apiUrl = http://localhost:8000/api/v1
 async function mockConsortium(page: any, body: any) {
-    await page.route(`**/cases/${ID}/consortium`, route =>
+    await page.route(`**/api/v1/cases/${ID}/consortium`, (route: any) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+    );
+}
+
+// Helper : mock GET /api/v1/cases/:id
+async function mockCaseDetail(page: any, body: any) {
+    await page.route(`**/api/v1/cases/${ID}`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
     );
 }
@@ -104,9 +113,7 @@ async function mockConsortium(page: any, body: any) {
 test.describe('Consortium — État nominal (participation 100%)', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_CONSORTIUM) })
-        );
+        await mockCaseDetail(page, MOCK_CASE_CONSORTIUM);
         await mockConsortium(page, MOCK_CONSORTIUM);
     });
 
@@ -167,9 +174,7 @@ test.describe('Consortium — État nominal (participation 100%)', () => {
 test.describe('Consortium — Leader bloquant (score < 1.5)', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_CONSORTIUM) })
-        );
+        await mockCaseDetail(page, MOCK_CASE_CONSORTIUM);
         await mockConsortium(page, MOCK_CONSORTIUM_LEADER_BLOCKING);
     });
 
@@ -195,15 +200,12 @@ test.describe('Consortium — Leader bloquant (score < 1.5)', () => {
 test.describe('Consortium — Guard : case type SINGLE', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_SINGLE) })
-        );
+        await mockCaseDetail(page, MOCK_CASE_SINGLE);
     });
 
     test('Consortium — un case SINGLE est redirigé hors de /consortium', async ({ page }) => {
         await page.goto(`/cases/${ID}/consortium`);
         // Le consortiumGuard redirige vers /cases/:id ou /dashboard
-        // On vérifie juste que l'URL n'est plus /consortium
         await expect(page).not.toHaveURL(new RegExp(`/cases/${ID}/consortium`), { timeout: TIMEOUTS.navigation });
     });
 
