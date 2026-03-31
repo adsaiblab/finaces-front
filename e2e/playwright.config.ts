@@ -9,8 +9,7 @@ import * as fs from 'fs';
 const AUTH_STATE_PATH = path.join(__dirname, '.auth', 'user.json');
 const TOKEN_PATH = path.join(__dirname, '.auth', 'token.txt');
 
-// Lire le token si disponible (sera undefined au premier lancement, c'est OK)
-function getTokenForInitScript(): string {
+function getToken(): string {
   try {
     return fs.existsSync(TOKEN_PATH) ? fs.readFileSync(TOKEN_PATH, 'utf-8').trim() : '';
   } catch {
@@ -18,16 +17,14 @@ function getTokenForInitScript(): string {
   }
 }
 
-const E2E_TOKEN = getTokenForInitScript();
+const E2E_TOKEN = getToken();
 
 export default defineConfig({
-  // playwright.config.ts est dans e2e/ → chemins RELATIFS à e2e/
   testDir: './specs',
   testMatch: '**/*.spec.ts',
 
   fullyParallel: false,
   workers: 1,
-
   retries: 1,
 
   reporter: [
@@ -39,21 +36,7 @@ export default defineConfig({
 
   use: {
     baseURL: 'http://localhost:4200',
-
-    // storageState rejoue localStorage + cookies (pas sessionStorage)
     storageState: AUTH_STATE_PATH,
-
-    // ⭐ CLEF DE VOÛTE : addInitScript injecte le JWT dans sessionStorage
-    // avant chaque navigation, AVANT qu'Angular s'initialise.
-    // Sans ça, authGuard redirige toujours vers /auth/login.
-    ...(E2E_TOKEN
-      ? {
-        contextOptions: {
-          // Note : on passe par auth.fixture.ts pour les specs qui en ont besoin,
-          // et par storageState enrichi pour les autres.
-        },
-      }
-      : {}),
 
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
@@ -69,12 +52,21 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // storageState par projet (surcharge le use global si nécessaire)
         storageState: AUTH_STATE_PATH,
+        // ⭐ CLEF DE VOÛTE : injecte finaces_token dans sessionStorage
+        // AVANT chaque navigation, AVANT qu'Angular s'initialise.
+        // Sans ça, authGuard (production build) voit sessionStorage vide
+        // et redirige vers /auth/login → page blanche → tous les tests échouent.
+        ...(E2E_TOKEN
+          ? {
+              initScripts: [
+                {
+                  content: `sessionStorage.setItem('finaces_token', ${JSON.stringify(E2E_TOKEN)});`,
+                },
+              ],
+            }
+          : {}),
       },
-      // setupFilePath injecte addInitScript pour TOUS les tests de ce projet
-      // → pas besoin d'importer auth.fixture dans chaque spec
-      setup: undefined,
     },
   ],
 
