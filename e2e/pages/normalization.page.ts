@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, Response } from '@playwright/test';
 
 /**
  * Normalization Page Object (Bloc 3)
@@ -34,14 +34,17 @@ export class NormalizationPage {
     }
 
     /**
-     * statusBadge is inside @if(normalizedData()) — wait for the mock
-     * response first so Angular has time to set the signal.
+     * statusBadge is inside @if(normalizedData()).
+     * Pass a responsePromise created BEFORE page.goto() to avoid the race
+     * condition where the response arrives before waitForResponse is registered.
+     *
+     * Usage:
+     *   const resp = page.waitForResponse(r => r.url().includes('normalized-financials'));
+     *   await page.goto(...);
+     *   await normPage.expectNormalizedBadgeVisible(resp);
      */
-    async expectNormalizedBadgeVisible() {
-        await this.page.waitForResponse(
-            (r) => r.url().includes('normalized-financials') && r.status() === 200,
-            { timeout: 10000 }
-        );
+    async expectNormalizedBadgeVisible(responsePromise: Promise<Response>) {
+        await responsePromise;
         await expect(this.statusBadge).toBeVisible({ timeout: 10000 });
         await expect(this.statusBadge).toContainText('NORMALIZED');
     }

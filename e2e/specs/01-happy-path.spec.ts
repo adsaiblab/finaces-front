@@ -9,10 +9,10 @@ import { ExpertPage } from '../pages/expert.page';
 import { RapportPage } from '../pages/rapport.page';
 import { TEST_CASE } from '../fixtures/test-data';
 
-// ─── CONSTANTES DE TEST ─────────────────────────────────────────────
+// ─── CONSTANTES DE TEST ───────────────────────────────────────────────────
 const TEST_CASE_ID = TEST_CASE.id;
 
-// ─── MOCK PAYLOADS ────────────────────────────────────────────────
+// ─── MOCK PAYLOADS ──────────────────────────────────────────────────────────────────────────
 
 // Bloc 3 — FinancialStatementNormalizedSchema (financial.model.ts)
 const MOCK_NORMALIZATION = {
@@ -223,17 +223,12 @@ const MOCK_CASE_BASE = {
     fiscal_year: 2023,
 };
 
-// ─── HELPER : Setup de tous les mocks API ───────────────────────────────
-//
-// ⚠️  Règle LIFO Playwright : le DERNIER route() enregistré a la priorité MAX.
-//     → Wildcard continue() EN PREMIER  (priorité la plus basse)
-//     → Mocks spécifiques EN DERNIER   (priorité la plus haute)
-//
+// ─── HELPER : Setup de tous les mocks API ───────────────────────────────────────────────
 async function setupApiMocks(page: any, caseId: string) {
-    // ── 0. Wildcard sécurité EN PREMIER ──────────────────────────────
+    // ── 0. Wildcard sécurité EN PREMIER ────────────────────────────────────
     await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => route.continue());
 
-    // ── 1. Mocks spécifiques EN DERNIER (priorité maximale) ──────────────
+    // ── 1. Mocks spécifiques EN DERNIER (priorité maximale) ──────────────────────
 
     // Bloc 3 — Normalization
     await page.route(`**/api/v1/cases/${caseId}/normalized-financials`, (route: any) =>
@@ -258,8 +253,6 @@ async function setupApiMocks(page: any, caseId: string) {
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_MODEL) })
     );
 
-    // Bloc 7 — Tension : pas de mock API (calcul local TensionCalculatorService).
-
     // Bloc 8 — Stress Test
     await page.route(`**/api/v1/cases/${caseId}/stress`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_STRESS) })
@@ -281,39 +274,52 @@ async function setupApiMocks(page: any, caseId: string) {
     );
 }
 
-// ─── SUITE HAPPY PATH ─────────────────────────────────────────────
+// ─── SUITE HAPPY PATH ───────────────────────────────────────────────────────────────
 test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
 
     test('Bloc 3 — Normalization : la page se charge et affiche le badge NORMALIZED', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const normalizationPage = new NormalizationPage(page);
+        // Register BEFORE goto to avoid race condition
+        const normResp = page.waitForResponse(
+            (r: any) => r.url().includes('normalized-financials') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await normalizationPage.expectPageLoaded();
-        await normalizationPage.expectNormalizedBadgeVisible();
+        await normalizationPage.expectNormalizedBadgeVisible(normResp);
     });
 
     test('Bloc 4 — Ratios : la page se charge et affiche le contenu principal', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const ratiosPage = new RatiosPage(page);
+        const ratiosResp = page.waitForResponse(
+            (r: any) => r.url().includes('ratios/compute') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/ratios`);
         await ratiosPage.expectPageLoaded();
-        await ratiosPage.expectRatiosDisplayed();
+        await ratiosPage.expectRatiosDisplayed(ratiosResp);
     });
 
     test('Bloc 5 — Scoring MCC : la page se charge et affiche le score global', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
+        const scoreResp = page.waitForResponse(
+            (r: any) => r.url().includes('/score') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectPageLoaded();
-        await scoringPage.expectScoringDisplayed();
+        await scoringPage.expectScoringDisplayed(scoreResp);
     });
 
     test('Bloc 6 — IA Prediction : la page se charge et affiche la carte de score prédit', async ({ page }) => {
         await setupApiMocks(page, TEST_CASE_ID);
         const iaPage = new IaPage(page);
+        const iaResp = page.waitForResponse(
+            (r: any) => r.url().includes('ia/predict') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/ia`);
         await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed();
+        await iaPage.expectPredictionDisplayed(iaResp);
     });
 
     test('Bloc 7 — Tension : le composant racine est visible', async ({ page }) => {
@@ -353,11 +359,19 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
         await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
         const iaPage = new IaPage(page);
+        // Pre-register score response before goto
+        const scoreResp = page.waitForResponse(
+            (r: any) => r.url().includes('/score') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
-        await scoringPage.expectScoringDisplayed();
+        await scoringPage.expectScoringDisplayed(scoreResp);
+        // Pre-register IA response before click (click triggers navigation + new HTTP calls)
+        const iaResp = page.waitForResponse(
+            (r: any) => r.url().includes('ia/predict') && r.status() === 200
+        );
         await scoringPage.clickProceedToIA();
         await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed();
+        await iaPage.expectPredictionDisplayed(iaResp);
     });
 
 });

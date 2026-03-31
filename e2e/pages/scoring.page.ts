@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, Response } from '@playwright/test';
 
 /**
  * Scoring MCC Page Object (Bloc 5)
@@ -41,14 +41,15 @@ export class ScoringPage {
     }
 
     /**
-     * Wait for the /score API mock then assert main-content which is
-     * inside @if(scoringData()).
+     * Pass a responsePromise created BEFORE page.goto() to avoid race condition.
+     *
+     * Usage:
+     *   const resp = page.waitForResponse(r => r.url().includes('/score'));
+     *   await page.goto(...);
+     *   await scoringPage.expectScoringDisplayed(resp);
      */
-    async expectScoringDisplayed() {
-        await this.page.waitForResponse(
-            (r) => r.url().includes('/score') && r.status() === 200,
-            { timeout: 10000 }
-        );
+    async expectScoringDisplayed(responsePromise: Promise<Response>) {
+        await responsePromise;
         await expect(this.mainContent).toBeVisible({ timeout: 10000 });
         await expect(this.globalScoreCard).toBeVisible({ timeout: 10000 });
     }

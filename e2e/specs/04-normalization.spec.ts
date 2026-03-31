@@ -37,24 +37,13 @@ const MOCK_CASE_BASE = {
 test.describe('Isolation — Bloc 3 Normalization', () => {
 
     test.beforeEach(async ({ page }) => {
-        // ⚠️ Playwright évalue les routes en ordre LIFO (dernier enregistré = priorité max).
-        // On enregistre donc le wildcard continue() EN PREMIER (priorité la plus basse)
-        // et les mocks spécifiques EN DERNIER (priorité la plus haute).
-
-        // 1. Wildcard sécurité — laisse passer tout le reste (priorité basse)
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/**`, (route: any) => route.continue());
-
-        // 2. Mock ratios (priorité moyenne)
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ coherence_status: 'OK', coherence_alerts: [] }) })
         );
-
-        // 3. Mock normalized-financials (priorité haute) — CaseService.getNormalizedFinancials()
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
         );
-
-        // 4. Mock dossier parent exact (priorité maximale) — case-workspace setCaseId
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
         );
@@ -62,9 +51,13 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
 
     test('La page Normalization se charge et affiche le badge NORMALIZED', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
+        // Register BEFORE goto to avoid race condition
+        const normResp = page.waitForResponse(
+            (r: any) => r.url().includes('normalized-financials') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await normalizationPage.expectPageLoaded();
-        await normalizationPage.expectNormalizedBadgeVisible();
+        await normalizationPage.expectNormalizedBadgeVisible(normResp);
     });
 
     test('L\'année fiscale est affichée dans le header', async ({ page }) => {

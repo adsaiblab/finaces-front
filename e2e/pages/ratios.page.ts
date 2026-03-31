@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, Response } from '@playwright/test';
 
 /**
  * Ratios Page Object (Bloc 4)
@@ -18,13 +18,13 @@ export class RatiosPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.root                  = page.getByTestId('ratios-root');
-        this.loadingSpinner        = page.getByTestId('ratios-loading-spinner');
-        this.launchScoringBtn      = page.getByTestId('ratios-launch-scoring-btn');
-        this.mainContent           = page.getByTestId('ratios-main-content');
-        this.backBtn               = page.getByTestId('ratios-back-btn');
+        this.root                   = page.getByTestId('ratios-root');
+        this.loadingSpinner         = page.getByTestId('ratios-loading-spinner');
+        this.launchScoringBtn       = page.getByTestId('ratios-launch-scoring-btn');
+        this.mainContent            = page.getByTestId('ratios-main-content');
+        this.backBtn                = page.getByTestId('ratios-back-btn');
         this.launchScoringFooterBtn = page.getByTestId('ratios-launch-scoring-footer-btn');
-        this.errorBanner           = page.getByTestId('ratios-error-banner');
+        this.errorBanner            = page.getByTestId('ratios-error-banner');
     }
 
     /** Root div is ALWAYS rendered — safe to assert immediately. */
@@ -33,15 +33,15 @@ export class RatiosPage {
     }
 
     /**
-     * ratios-launch-scoring-btn is in the <header> OUTSIDE @if(ratioSet())
-     * so it renders immediately. We just wait for the API mock first to let
-     * Angular update ratioSet() and unlock the button.
+     * Pass a responsePromise created BEFORE page.goto() to avoid race condition.
+     *
+     * Usage:
+     *   const resp = page.waitForResponse(r => r.url().includes('ratios/compute'));
+     *   await page.goto(...);
+     *   await ratiosPage.expectRatiosDisplayed(resp);
      */
-    async expectRatiosDisplayed() {
-        await this.page.waitForResponse(
-            (r) => r.url().includes('ratios/compute') && r.status() === 200,
-            { timeout: 10000 }
-        );
+    async expectRatiosDisplayed(responsePromise: Promise<Response>) {
+        await responsePromise;
         await expect(this.launchScoringBtn).toBeVisible({ timeout: 10000 });
         await expect(this.mainContent).toBeVisible({ timeout: 10000 });
     }

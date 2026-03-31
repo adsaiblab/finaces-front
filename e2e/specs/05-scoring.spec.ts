@@ -29,8 +29,12 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
 
     test('Le Score Global et la Risk Class sont affichés', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
+        // Register BEFORE goto to avoid race condition
+        const scoreResp = page.waitForResponse(
+            (r: any) => r.url().includes('/score') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
-        await scoringPage.expectScoringDisplayed();
+        await scoringPage.expectScoringDisplayed(scoreResp);
         await expect(scoringPage.globalScoreCard).toBeVisible();
         await expect(scoringPage.riskClassCard).toBeVisible();
     });

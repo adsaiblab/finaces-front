@@ -23,6 +23,8 @@ const MOCK_MODEL = {
     name: 'XGBoost FinaCES',
     version: 'v2.1-test',
     accuracy: 0.87,
+    auc_roc: 0.89,
+    f1_score: 0.82,
 };
 
 test.describe('Isolation — Bloc 6 IA Prediction', () => {
@@ -40,8 +42,13 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
 
     test('La page IA se charge et affiche la carte de score prédit', async ({ page }) => {
         const iaPage = new IaPage(page);
+        // Register BEFORE goto to avoid race condition
+        const iaResp = page.waitForResponse(
+            (r: any) => r.url().includes('ia/predict') && r.status() === 200
+        );
         await page.goto(`/cases/${TEST_CASE_ID}/ia`);
-        await iaPage.expectPredictionDisplayed();
+        await iaPage.expectPageLoaded();
+        await iaPage.expectPredictionDisplayed(iaResp);
         await expect(iaPage.predictedScoreCard).toBeVisible();
     });
 

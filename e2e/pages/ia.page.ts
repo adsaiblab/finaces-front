@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, Response } from '@playwright/test';
 
 /**
  * IA Page Object (Bloc 6)
@@ -44,17 +44,18 @@ export class IaPage {
     }
 
     /**
-     * ia-disclaimer-banner is ALWAYS rendered outside @if.
-     * Then wait for the predict API mock so Angular sets predictionData().
+     * Pass a responsePromise created BEFORE page.goto() to avoid race condition.
+     * The forkJoin fires both /ia/predict/:id and /ia/models/active simultaneously.
+     * Waiting for the predict response is sufficient to know both resolved.
+     *
+     * Usage:
+     *   const resp = page.waitForResponse(r => r.url().includes('ia/predict'));
+     *   await page.goto(...);
+     *   await iaPage.expectPredictionDisplayed(resp);
      */
-    async expectPredictionDisplayed() {
-        // disclaimer is always present — quick sanity check
+    async expectPredictionDisplayed(responsePromise: Promise<Response>) {
         await expect(this.disclaimerBanner).toBeVisible({ timeout: 10000 });
-        // wait for the forkJoin (predict + models/active) to resolve
-        await this.page.waitForResponse(
-            (r) => r.url().includes('ia/predict') && r.status() === 200,
-            { timeout: 10000 }
-        );
+        await responsePromise;
         await expect(this.mainContent).toBeVisible({ timeout: 10000 });
         await expect(this.predictedScoreCard).toBeVisible({ timeout: 10000 });
     }
