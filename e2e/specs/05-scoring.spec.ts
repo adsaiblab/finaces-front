@@ -87,14 +87,9 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
         await expect(scoringPage.pillarsGrid).toBeVisible();
     });
 
-    // -----------------------------------------------------------------------
-    // TODO S4 : test override avec formulaire mock
-    // -----------------------------------------------------------------------
     test('Override — la zone override est visible et le mock retourne status OVERRIDE', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
 
-        // Le clic sur override soumet un POST/PATCH vers /score ou /score/override
-        // On mock ce retour pour simuler l'override applique
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/score/override**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING_OVERRIDE) })
         );
@@ -104,15 +99,16 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
         );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectScoringDisplayed(scoreResp);
-
-        // La zone override doit etre visible dans le DOM (elle est toujours rendue)
         await expect(scoringPage.overrideZone).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
-    test('Override — le badge OVERRIDE est affiche quand override est actif (mock direct)', async ({ page }) => {
+    // -----------------------------------------------------------------------
+    // Le template affiche "MANUALLY OVERRIDDEN" (pas "OVERRIDE") quand
+    // le scoring a un override actif. Valeur lue directement dans le DOM.
+    // -----------------------------------------------------------------------
+    test('Override — le badge MANUALLY OVERRIDDEN est affiche quand override est actif (mock direct)', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
 
-        // Reroute le GET /score pour retourner directement un scoring avec override actif
         await page.unroute(`**/api/v1/cases/${TEST_CASE_ID}/score`);
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/score`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING_OVERRIDE) })
@@ -123,15 +119,14 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
         );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectScoringDisplayed(scoreResp);
-        // Le badge doit indiquer OVERRIDE (pas SYSTEM COMPUTED)
-        await expect(scoringPage.statusBadge).toContainText('OVERRIDE', { timeout: TIMEOUTS.apiResponse });
+        // Le template affiche "MANUALLY OVERRIDDEN" (valeur exacte du DOM)
+        await expect(scoringPage.statusBadge).toContainText('MANUALLY OVERRIDDEN', { timeout: TIMEOUTS.apiResponse });
     });
 
     // -----------------------------------------------------------------------
-    // TODO S4 : test navigation Proceed vers IA
+    // Navigation Scoring -> IA
     // -----------------------------------------------------------------------
     test('Navigation — le bouton Proceed navigue vers /ia', async ({ page }) => {
-        // Mocks pour la page de destination IA
         await page.route(`**/api/v1/ia/predict/${TEST_CASE_ID}**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA) })
         );

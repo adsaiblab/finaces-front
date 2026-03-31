@@ -91,12 +91,16 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
     });
 
     // -----------------------------------------------------------------------
-    // TODO S4 : test recalculate avec mock reponse
+    // Recalculate : le bouton existe dans @if(normalizedData())
+    // Sequence correcte :
+    //   1. goto + attendre le PREMIER appel
+    //   2. attendre que le badge (et donc recalculateBtn) soit visible
+    //   3. enregistrer waitForResponse AVANT le clic
+    //   4. cliquer et attendre la reponse
     // -----------------------------------------------------------------------
     test('Recalculate — le clic declenche un second appel API et met a jour le badge', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
 
-        // Compteur d'appels pour detecter le recalcul
         let callCount = 0;
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route => {
             callCount++;
@@ -109,20 +113,22 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
         );
         await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await normalizationPage.expectPageLoaded();
+        // Attendre le premier appel ET que le badge soit visible
+        // avant de chercher recalculateBtn (qui est dans @if(normalizedData()))
         await normalizationPage.expectNormalizedBadgeVisible(firstResp);
+        await expect(normalizationPage.recalculateBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
 
-        // Clic recalculate — attend la reponse du 2e appel
+        // Enregistrer waitForResponse AVANT le clic pour eviter la race
         const secondResp = page.waitForResponse(
             (r: any) => r.url().includes('normalized-financials') && r.status() === 200
         );
         await normalizationPage.recalculateBtn.click();
         await secondResp;
-        // Le badge doit rester visible apres recalcul
         await expect(normalizationPage.statusBadge).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     // -----------------------------------------------------------------------
-    // TODO S4 : test navigation retour vers Financials
+    // Navigation retour vers Financials
     // -----------------------------------------------------------------------
     test('Navigation — le bouton Back navigue vers /financials', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
@@ -142,7 +148,6 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
         const normalizationPage = new NormalizationPage(page);
         const ratiosPage = new RatiosPage(page);
 
-        // Mock ratios pour la page de destination
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios/compute**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RATIOS) })
         );
