@@ -4,15 +4,13 @@
  * Isolation — Bloc 12 Consortium
  * Session 4 Jour 2
  *
- * IMPORTANT : le consortiumGuard protège la route /cases/:id/consortium.
- * Il vérifie que le case est de type CONSORTIUM ou GROUPEMENT.
- * On doit mocker :
- *   - GET /api/v1/cases/:id  → case_type: 'CONSORTIUM'
- *   - GET /api/v1/consortium/:id  → données consortium
+ * URL réelles :
+ *   GET /api/v1/cases/:id        → CaseService.getCaseDetail
+ *   GET /api/v1/cases/:id/consortium  → ConsortiumService.getConsortium
  *
- * NOTE : le template actuel n'a PAS de data-testid. Les tests ci-dessous
- * utilisent les data-testid listés dans le pré-requis de ce livrable.
- * Ils passeront UNIQUEMENT après ajout des data-testid dans le template.
+ * NOTE : le template actuel n'a PAS de data-testid pour les boutons
+ * recalculate/continue/members-table. Les tests qui les utilisent
+ * passeront UNIQUEMENT après ajout des data-testid dans le template.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { test, expect } from '../fixtures/auth.fixture';
@@ -93,6 +91,13 @@ const MOCK_CONSORTIUM_LEADER_BLOCKING = {
     ],
 };
 
+// Helper : mock l'URL réelle → GET /api/v1/cases/:id/consortium
+async function mockConsortium(page: any, body: any) {
+    await page.route(`**/cases/${ID}/consortium`, route =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+    );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ÉTAT NOMINAL — Consortium valide (participation = 100%)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -102,9 +107,7 @@ test.describe('Consortium — État nominal (participation 100%)', () => {
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_CONSORTIUM) })
         );
-        await page.route(`**/api/v1/consortium/${ID}**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CONSORTIUM) })
-        );
+        await mockConsortium(page, MOCK_CONSORTIUM);
     });
 
     test('SKELETON — Consortium : composant racine visible', async ({ page }) => {
@@ -167,9 +170,7 @@ test.describe('Consortium — Leader bloquant (score < 1.5)', () => {
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_CONSORTIUM) })
         );
-        await page.route(`**/api/v1/consortium/${ID}**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CONSORTIUM_LEADER_BLOCKING) })
-        );
+        await mockConsortium(page, MOCK_CONSORTIUM_LEADER_BLOCKING);
     });
 
     test('Consortium — l\'alerte "leader bloquant" est visible', async ({ page }) => {
