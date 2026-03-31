@@ -130,7 +130,7 @@ jobs:
       - name: Serve Angular app
         working-directory: finaces-front
         run: |
-          npx serve dist/finaces-front/browser -l 4200 --no-clipboard &
+          npx serve dist/finaces-front/browser -l 4200 --single --no-clipboard &
           echo $! > /tmp/frontend.pid
 
       - name: Wait for frontend to be ready
