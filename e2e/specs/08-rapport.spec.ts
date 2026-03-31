@@ -64,6 +64,13 @@ const MOCK_AUDIT_TRAIL = [
     },
 ];
 
+// Helper : mock l'URL réelle de AuditService.getTrail → GET /api/v1/audit/trail?case_id=...
+async function mockAuditTrail(page: any, body: any[]) {
+    await page.route(`**/audit/trail**`, route =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+    );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ÉTAT INITIAL — Aucun rapport généré
 // ─────────────────────────────────────────────────────────────────────────────
@@ -77,9 +84,7 @@ test.describe('Rapport — État initial (aucun rapport)', () => {
         await page.route(`**/api/v1/cases/${ID}/report**`, route =>
             route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'No report found' }) })
         );
-        await page.route(`**/api/v1/audit/${ID}**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
-        );
+        await mockAuditTrail(page, []);
     });
 
     test('SKELETON — Rapport : composant racine visible', async ({ page }) => {
@@ -123,9 +128,7 @@ test.describe('Rapport — Rapport DRAFT généré', () => {
         await page.route(`**/api/v1/cases/${ID}/report**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_DRAFT) })
         );
-        await page.route(`**/api/v1/audit/${ID}**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_AUDIT_TRAIL) })
-        );
+        await mockAuditTrail(page, MOCK_AUDIT_TRAIL);
     });
 
     test('Rapport — tous les 5 chapitres sont affichés', async ({ page }) => {
@@ -236,9 +239,7 @@ test.describe('Rapport — Rapport FINAL', () => {
         await page.route(`**/api/v1/cases/${ID}/report**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_FINAL) })
         );
-        await page.route(`**/api/v1/audit/${ID}**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_AUDIT_TRAIL) })
-        );
+        await mockAuditTrail(page, MOCK_AUDIT_TRAIL);
     });
 
     test('Rapport FINAL — le badge "Finalized" est visible', async ({ page }) => {
@@ -284,9 +285,8 @@ test.describe('Rapport — Audit Trail', () => {
         await page.route(`**/api/v1/cases/${ID}/report**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_DRAFT) })
         );
-        await page.route(`**/api/v1/audit/${ID}**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_AUDIT_TRAIL) })
-        );
+        // URL réelle : GET /api/v1/audit/trail?case_id=...
+        await mockAuditTrail(page, MOCK_AUDIT_TRAIL);
     });
 
     test('Audit Trail — la section audit est visible quand il y a des événements', async ({ page }) => {
