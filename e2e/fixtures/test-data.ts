@@ -4,6 +4,8 @@
  * Single source of truth for all E2E test constants.
  * MUST stay in sync with finaces-api/scripts/seed_e2e.py
  * ─────────────────────────────────────────────────────────────────────────────
+ * Session 4 Jour 2 : ajout routes consortium et admin-ia
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
 /** Backend API base URL (no trailing slash) */
@@ -74,6 +76,14 @@ export const API_ENDPOINTS = {
   reportGet: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/report`,
   exportPdf: (id: string) => `${API_BASE_URL}/api/v1/export/${id}/export/pdf`,
   exportWord: (id: string) => `${API_BASE_URL}/api/v1/export/${id}/export/word`,
+
+  // Consortium
+  consortium: (id: string) => `${API_BASE_URL}/api/v1/consortium/${id}`,
+  consortiumMembers: (id: string) => `${API_BASE_URL}/api/v1/consortium/${id}/members`,
+  consortiumCalculate: (id: string) => `${API_BASE_URL}/api/v1/consortium/${id}/calculate`,
+
+  // Audit
+  audit: (id: string) => `${API_BASE_URL}/api/v1/audit/${id}`,
 } as const;
 
 /** ─── Frontend Routes ──────────────────────────────────────────────────── */
@@ -82,6 +92,7 @@ export const ROUTES = {
   dashboard: '/dashboard',
   cases: '/cases',
   caseNew: '/cases/new',
+  adminIa: '/admin-ia',                                          // ← ajouté S4J2
   gate: (id: string) => `/cases/${id}/gate`,
   financials: (id: string) => `/cases/${id}/financials`,
   normalization: (id: string) => `/cases/${id}/normalization`,
@@ -92,6 +103,7 @@ export const ROUTES = {
   stress: (id: string) => `/cases/${id}/stress`,
   expert: (id: string) => `/cases/${id}/expert`,
   rapport: (id: string) => `/cases/${id}/rapport`,
+  consortium: (id: string) => `/cases/${id}/consortium`,         // ← ajouté S4J2
 } as const;
 
 /** ─── Timeouts ─────────────────────────────────────────────────────────── */
