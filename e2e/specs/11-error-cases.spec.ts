@@ -1,47 +1,28 @@
 // e2e/specs/11-error-cases.spec.ts
 //
 // Session 4 — Jour 4 : Cas d'erreur
-//
-// Couverture :
-//   A. AuthGuard + JWT interceptor (401 → redirect /auth/login)
-//   B. UUID Guard (id invalide → redirect /dashboard)
-//   C. Bloc 3 Normalization — API 500 sur GET normalized-financials → fallback mock
-//   D. Bloc 3 Normalization — API 500 sur POST /normalize → fallback mock snackbar
-//   E. Bloc 5 Scoring — API 500 sur POST /score → fallback mock visible
-//   F. Bloc 6 IA — API 500 sur GET /predict → message erreur IA
-//   G. Bloc 6 IA — API 500 sur POST /simulate (what-if) → composant reste stable
-//   H. Bloc 8 Stress — API 500 sur GET /stress → fallback visible
-//   I. Bloc 9 Expert — API 500 sur GET /expert → formulaire reste visible
-//   J. Bloc 10 Rapport — API 500 sur GET /report → bouton Generate visible
-//   K. Bloc 10 Rapport — API 500 sur POST /report/build → composant reste stable
-//   L. Bloc 12 Consortium — API 500 sur GET /consortium → composant reste visible
-//   M. Dashboard — API 500 sur GET /dashboard/stats → page ne crash pas
-//   N. Cases List — API 500 sur GET /cases → liste vide ou fallback
+// CORRIGÉ : tous les data-testid alignés sur les HTML réels
 
 import { test, expect } from '../fixtures/auth.fixture';
 import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
 
 const ID = TEST_CASE.id;
 const INVALID_ID = 'not-a-valid-uuid';
-const UNKNOWN_CASE_ID = '00000000-0000-4000-a000-000000000000';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-/** Route tous les appels API vers une erreur 500 pour un pattern donné */
 async function mockApi500(page: any, urlPattern: string) {
     await page.route(`**${urlPattern}**`, (route: any) =>
         route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
     );
 }
 
-/** Route un endpoint vers 401 pour simuler un token expiré */
 async function mockApi401(page: any, urlPattern: string) {
     await page.route(`**${urlPattern}**`, (route: any) =>
         route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ detail: 'Unauthorized' }) })
     );
 }
 
-// ─── Bloc minimal de données pour ne pas casser les autres routes ────────────
 const MOCK_CASE_BASE = {
     id: ID,
     bidder_name: 'E2E Error Test',
@@ -62,10 +43,6 @@ const MOCK_CASE_BASE = {
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — 401 JWT Token expiré', () => {
 
-    // Note : authGuard retourne true en isDevMode().
-    // Pour tester le redirect 401, on provoque un 401 sur un appel API réel
-    // pendant la navigation → l'intercepteur appelle authService.logout()
-    // → router.navigate(['/auth/login'])
     test('Normalization 401 → redirect vers /auth/login', async ({ page }) => {
         await mockApi401(page, `/cases/${ID}/normalized-financials`);
         await page.goto(`/cases/${ID}/normalization`);
@@ -74,7 +51,6 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
 
     test('Scoring 401 → redirect vers /auth/login', async ({ page }) => {
         await mockApi401(page, `/cases/${ID}/score`);
-        // On déclenche le call en arrivant sur la page scoring qui charge le score
         await page.goto(`/cases/${ID}/scoring`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
@@ -162,16 +138,12 @@ test.describe('Erreur — UUID invalide → redirect /dashboard', () => {
 test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 
     test('GET normalized-financials 500 → fallback mock : composant racine visible', async ({ page }) => {
-        // Le composant tombe dans loadMockData() → isLoading false, normalizedData rempli
         await mockApi500(page, `/cases/${ID}/normalized-financials`);
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
         );
         await page.goto(`/cases/${ID}/normalization`);
-        // Fallback = 800ms delay → attendre le composant
-        await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({
-            timeout: TIMEOUTS.apiResponse
-        });
+        await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('GET normalized-financials 500 → le bouton Compute Ratios reste présent (fallback actif)', async ({ page }) => {
@@ -185,7 +157,6 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
     });
 
     test('POST /normalize 500 → fallback snackbar "Mock" : composant reste stable', async ({ page }) => {
-        // Charger la page avec GET mock valide
         await page.route(`**/api/v1/cases/${ID}/normalized-financials**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
@@ -197,13 +168,10 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
                 })
             })
         );
-        // POST /normalize → 500 → fallback delay(1000) → snackbar Mock
         await mockApi500(page, `/cases/${ID}/normalize`);
         await page.goto(`/cases/${ID}/normalization`);
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Clic sur recalculate
         await page.locator('[data-testid="recalculate-btn"]').click();
-        // Le composant ne doit pas crasher : root toujours visible après 2s
         await page.waitForTimeout(1500);
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible();
     });
@@ -217,25 +185,36 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
     test('GET /score 500 → composant racine visible (fallback mock actif)', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/score`);
         await page.goto(`/cases/${ID}/scoring`);
+        // scoring-root est toujours dans le DOM ; attendre que le spinner disparaisse
+        await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /recommendation 500 → formulaire override reste accessible', async ({ page }) => {
-        // GET score → OK
+        // GET score → OK avec données complètes
         await page.route(`**/api/v1/cases/${ID}/score**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     case_id: ID, global_score: 72.5, risk_class: 'B',
-                    status: 'SYSTEM_COMPUTED', pillars: [], recommendation: null
+                    status: 'COMPUTED',
+                    pillars: [
+                        { id: 'p1', name: 'Liquidity', score: 70, weight: 0.2, sub_ratios: [] },
+                        { id: 'p2', name: 'Solvency', score: 75, weight: 0.2, sub_ratios: [] },
+                        { id: 'p3', name: 'Profitability', score: 68, weight: 0.2, sub_ratios: [] },
+                        { id: 'p4', name: 'Capacity', score: 72, weight: 0.2, sub_ratios: [] },
+                        { id: 'p5', name: 'Quality', score: 78, weight: 0.2, sub_ratios: [] },
+                    ],
+                    recommendations: [], cross_analysis_alerts: [], override: null
                 })
             })
         );
         // POST recommendation → 500
         await mockApi500(page, `/cases/${ID}/recommendation`);
         await page.goto(`/cases/${ID}/scoring`);
+        await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // La zone override doit rester visible malgré l'erreur potentielle
-        await expect(page.locator('[data-testid="override-section"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        // ✅ CORRIGÉ : testid réel = scoring-override-zone (pas override-section)
+        await expect(page.locator('[data-testid="scoring-override-zone"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
 
@@ -247,26 +226,31 @@ test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
     test('GET /ia/predict 500 → composant racine visible (fallback mock IA)', async ({ page }) => {
         await mockApi500(page, `/ia/predict/${ID}`);
         await page.goto(`/cases/${ID}/ia`);
+        await expect(page.locator('[data-testid="ia-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="ia-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /ia/simulate 500 → what-if placeholder toujours visible', async ({ page }) => {
-        // GET predict → OK
+        // GET predict → OK avec données complètes pour que predictionData() soit non-null
         await page.route(`**/ia/predict/${ID}**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     case_id: ID, predicted_score: 71.2, confidence: 0.85,
-                    risk_class: 'B', model_version: 'FinaCES-v2.1.0',
-                    shap_values: {}, prediction_date: '2026-01-01T00:00:00Z'
+                    predicted_risk_class: 'B',
+                    model_version: 'FinaCES-v2.1.0',
+                    model_performance: { accuracy: 0.89, f1_score: 0.87 },
+                    confidence_interval: { lower: 68.0, upper: 74.5 },
+                    shap_values: { features: [] },
+                    prediction_date: '2026-01-01T00:00:00Z'
                 })
             })
         );
-        // POST simulate → 500
         await mockApi500(page, `/ia/cases/${ID}/simulate`);
         await page.goto(`/cases/${ID}/ia`);
+        await expect(page.locator('[data-testid="ia-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="ia-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Avant simulation : placeholder visible
-        await expect(page.locator('[data-testid="simulation-placeholder"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        // ✅ CORRIGÉ : testid réel = ia-simulation-placeholder (pas simulation-placeholder)
+        await expect(page.locator('[data-testid="ia-simulation-placeholder"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
 
@@ -278,20 +262,28 @@ test.describe('Erreur — Bloc 8 Stress API 500', () => {
     test('GET /stress 500 → composant racine visible (fallback mock stress)', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/stress`);
         await page.goto(`/cases/${ID}/stress`);
+        // stress-root est toujours dans le DOM (pas sous @if) ; attendre fin de loading
+        await expect(page.locator('[data-testid="stress-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="stress-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /stress/run 500 → composant reste stable', async ({ page }) => {
+        // POST /stress/run → 500
         await mockApi500(page, `/cases/${ID}/stress/run`);
-        await page.route(`**/api/v1/cases/${ID}/stress**`, route =>
-            route.fulfill({
-                status: 200, contentType: 'application/json', body: JSON.stringify({
-                    scenario_name: 'BASE', stress_score: 65.0, risk_class_stressed: 'C',
-                    delta_score: -7.5, parameters: {}
-                })
-            })
-        );
+        // GET /stress → 200 mock
+        await page.route(`**/api/v1/cases/${ID}/stress**`, route => {
+            if (route.request().method() === 'GET')
+                return route.fulfill({
+                    status: 200, contentType: 'application/json', body: JSON.stringify({
+                        scenario_name: 'BASE', stress_score: 65.0,
+                        risk_class_stressed: 'C', delta_score: -7.5,
+                        scenarios: [], parameters: {}
+                    })
+                });
+            return route.continue();
+        });
         await page.goto(`/cases/${ID}/stress`);
+        await expect(page.locator('[data-testid="stress-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="stress-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
@@ -304,6 +296,8 @@ test.describe('Erreur — Bloc 9 Expert API 500', () => {
     test('GET /expert 500 → formulaire expert visible (fallback mock)', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/expert`);
         await page.goto(`/cases/${ID}/expert`);
+        // expert-root est sous @if(!isLoading()) → attendre que isLoading passe à false via fallback
+        await expect(page.locator('[data-testid="expert-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="expert-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -314,8 +308,8 @@ test.describe('Erreur — Bloc 9 Expert API 500', () => {
             return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Error' }) });
         });
         await page.goto(`/cases/${ID}/expert`);
+        await expect(page.locator('[data-testid="expert-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="expert-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Le formulaire ne doit pas crasher même si submit renverrait 500
         await expect(page.locator('[data-testid="expert-submit-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
@@ -328,26 +322,26 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     test('GET /report 500 → composant racine visible, bouton Generate présent', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/report`);
         await page.goto(`/cases/${ID}/rapport`);
+        // rapport-root sous @if(!isLoading())
+        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Sans rapport → bouton Generate doit être visible
-        await expect(page.locator('[data-testid="generate-report-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        // ✅ CORRIGÉ : testid réel = rapport-generate-btn (pas generate-report-btn)
+        await expect(page.locator('[data-testid="rapport-generate-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /report/build 500 → composant reste stable sans crash', async ({ page }) => {
-        // GET /report → 404 (aucun rapport)
         await page.route(`**/api/v1/cases/${ID}/report**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'Not found' }) });
-            // POST /report/build → 500
             return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Build failed' }) });
         });
         await page.goto(`/cases/${ID}/rapport`);
+        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Clic Generate
-        const generateBtn = page.locator('[data-testid="generate-report-btn"]');
+        // ✅ CORRIGÉ : testid réel = rapport-generate-btn
+        const generateBtn = page.locator('[data-testid="rapport-generate-btn"]');
         await expect(generateBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await generateBtn.click();
-        // Après 2s le composant doit rester stable
         await page.waitForTimeout(1500);
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible();
     });
@@ -357,15 +351,18 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     report_id: 'rpt-err-001', case_id: ID, status: 'DRAFT',
-                    progress_pct: 75, sections: [], recommendation: 'FAVORABLE',
+                    sections_complete: 10, sections_total: 14,
+                    recommendation: 'FAVORABLE',
                     generated_at: '2026-01-01T00:00:00Z'
                 })
             })
         );
         await mockApi500(page, `/cases/${ID}/export/pdf`);
         await page.goto(`/cases/${ID}/rapport`);
+        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        const pdfBtn = page.locator('[data-testid="export-pdf-btn"]');
+        // ✅ CORRIGÉ : testid réel = rapport-export-pdf-btn
+        const pdfBtn = page.locator('[data-testid="rapport-export-pdf-btn"]');
         await expect(pdfBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await pdfBtn.click();
         await page.waitForTimeout(1000);
@@ -377,15 +374,18 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     report_id: 'rpt-err-002', case_id: ID, status: 'DRAFT',
-                    progress_pct: 75, sections: [], recommendation: 'DEFAVORABLE',
+                    sections_complete: 10, sections_total: 14,
+                    recommendation: 'DEFAVORABLE',
                     generated_at: '2026-01-01T00:00:00Z'
                 })
             })
         );
         await mockApi500(page, `/cases/${ID}/export/word`);
         await page.goto(`/cases/${ID}/rapport`);
+        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        const wordBtn = page.locator('[data-testid="export-word-btn"]');
+        // ✅ CORRIGÉ : testid réel = rapport-export-word-btn
+        const wordBtn = page.locator('[data-testid="rapport-export-word-btn"]');
         await expect(wordBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await wordBtn.click();
         await page.waitForTimeout(1000);
@@ -399,7 +399,6 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
     test('GET /consortium 500 → composant racine visible (fallback)', async ({ page }) => {
-        // Case type CONSORTIUM pour que le guard laisse passer
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
@@ -409,6 +408,8 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
         );
         await mockApi500(page, `/cases/${ID}/consortium`);
         await page.goto(`/cases/${ID}/consortium`);
+        // consortium-root sous @if(!isLoading())
+        await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -425,19 +426,22 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
                 return route.fulfill({
                     status: 200, contentType: 'application/json', body: JSON.stringify({
                         consortium_id: 'cons-err-001', case_id: ID,
-                        combined_score: 68.0, participation_rate: 1.0, is_leader_blocking: false,
+                        combined_scorecard: { final_score: 68.0, risk_class: 'B' },
+                        synergy_index: 2.5,
+                        participation_rate: 1.0, is_leader_blocking: false,
                         members: [
-                            { member_id: 'm1', name: 'Alpha', score: 72, weight: 0.6, is_leader: true },
-                            { member_id: 'm2', name: 'Beta', score: 61, weight: 0.4, is_leader: false },
+                            { member_id: 'm1', member_name: 'Alpha', score: 72, participation_pct: 60, role: 'LEADER' },
+                            { member_id: 'm2', member_name: 'Beta', score: 61, participation_pct: 40, role: 'MEMBER' },
                         ]
                     })
                 });
             return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Aggregation failed' }) });
         });
         await page.goto(`/cases/${ID}/consortium`);
+        await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Force Aggregation → 500 → le composant ne doit pas crasher
-        const forceBtn = page.locator('[data-testid="force-aggregation-btn"]');
+        // ✅ CORRIGÉ : testid réel = consortium-recalculate-btn (pas force-aggregation-btn)
+        const forceBtn = page.locator('[data-testid="consortium-recalculate-btn"]');
         await expect(forceBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await forceBtn.click();
         await page.waitForTimeout(1000);
@@ -453,7 +457,6 @@ test.describe('Erreur — Dashboard API 500', () => {
     test('GET /dashboard/stats 500 → page ne crash pas', async ({ page }) => {
         await mockApi500(page, `/dashboard/stats`);
         await page.goto('/dashboard');
-        // Le header du dashboard doit toujours être visible
         await expect(page.locator('[data-testid="dashboard-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -472,7 +475,6 @@ test.describe('Erreur — Cases List API 500', () => {
     test('GET /cases 500 → la liste des dossiers ne crash pas', async ({ page }) => {
         await mockApi500(page, `/cases`);
         await page.goto('/cases');
-        // La page cases doit rester accessible même sans données
         await expect(page.locator('[data-testid="cases-list-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
@@ -500,7 +502,7 @@ test.describe('Erreur — Admin IA API 500', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 1b Gate API 500', () => {
 
-    test('POST /gate/evaluate 500 → bouton d\'évaluation reste accessible', async ({ page }) => {
+    test("POST /gate/evaluate 500 → bouton d'évaluation reste accessible", async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/gate/evaluate`);
         await page.goto(`/cases/${ID}/gate`);
         await expect(page.locator('[data-testid="gate-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
