@@ -1,18 +1,18 @@
 /**
  * e2e/specs/09-consortium.spec.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Isolation — Bloc 12 Consortium
+ * ---------------------------------------------------------------------------
+ * Isolation - Bloc 12 Consortium
  * Session 4 Jour 2
  *
- * URL réelles (environment.apiUrl = http://localhost:8000/api/v1) :
- *   GET /api/v1/cases/:id             → CaseService.getCaseDetail
- *   GET /api/v1/cases/:id/consortium  → ConsortiumService.getConsortium
+ * URL reelles (environment.apiUrl = http://localhost:8000/api/v1) :
+ *   GET /api/v1/cases/:id             -> CaseService.getCaseDetail
+ *   GET /api/v1/cases/:id/consortium  -> ConsortiumService.getConsortium
  *
  * FIX : les patterns glob DOIVENT inclure /api/v1/ pour matcher
- * l'URL réelle construite par les services Angular.
- * (avant : "**/cases/${ID}/consortium" ne matchait pas
- *          "http://localhost:8000/api/v1/cases/:id/consortium")
- * ─────────────────────────────────────────────────────────────────────────────
+ * l'URL reelle construite par les services Angular.
+ * (avant : "cases/ID/consortium" ne matchait pas
+ *          "http://localhost:8000/api/v1/cases/ID/consortium")
+ * ---------------------------------------------------------------------------
  */
 import { test, expect } from '../fixtures/auth.fixture';
 import { ConsortiumPage } from '../pages/consortium.page';
@@ -20,7 +20,7 @@ import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
 
 const ID = TEST_CASE.id;
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+// -- Mocks -------------------------------------------------------------------
 
 const MOCK_CASE_CONSORTIUM = {
     id: ID,
@@ -76,7 +76,7 @@ const MOCK_CONSORTIUM_LEADER_BLOCKING = {
             member_name: 'Weak Leader',
             role: 'LEADER',
             participation_pct: 60,
-            score: 1.2, // < 1.5 → bloquant
+            score: 1.2, // < 1.5 -> bloquant
             risk_class: 'VERY_HIGH',
             status: 'ACTIVE',
         },
@@ -93,7 +93,6 @@ const MOCK_CONSORTIUM_LEADER_BLOCKING = {
 };
 
 // Helper : mock GET /api/v1/cases/:id/consortium
-// DOIT inclure /api/v1/ — environment.apiUrl = http://localhost:8000/api/v1
 async function mockConsortium(page: any, body: any) {
     await page.route(`**/api/v1/cases/${ID}/consortium`, (route: any) =>
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
@@ -107,9 +106,9 @@ async function mockCaseDetail(page: any, body: any) {
     );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ÉTAT NOMINAL — Consortium valide (participation = 100%)
-// ─────────────────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// ETAT NOMINAL - Consortium valide (participation = 100%)
+// ---------------------------------------------------------------------------
 test.describe('Consortium — État nominal (participation 100%)', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -168,9 +167,9 @@ test.describe('Consortium — État nominal (participation 100%)', () => {
 
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ÉTAT BLOQUANT — Leader avec score critique
-// ─────────────────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// ETAT BLOQUANT - Leader avec score critique
+// ---------------------------------------------------------------------------
 test.describe('Consortium — Leader bloquant (score < 1.5)', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -194,9 +193,9 @@ test.describe('Consortium — Leader bloquant (score < 1.5)', () => {
 
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GUARD — Case non-CONSORTIUM redirigé
-// ─────────────────────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// GUARD - Case non-CONSORTIUM redirige
+// ---------------------------------------------------------------------------
 test.describe('Consortium — Guard : case type SINGLE', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -205,7 +204,6 @@ test.describe('Consortium — Guard : case type SINGLE', () => {
 
     test('Consortium — un case SINGLE est redirigé hors de /consortium', async ({ page }) => {
         await page.goto(`/cases/${ID}/consortium`);
-        // Le consortiumGuard redirige vers /cases/:id ou /dashboard
         await expect(page).not.toHaveURL(new RegExp(`/cases/${ID}/consortium`), { timeout: TIMEOUTS.navigation });
     });
 
