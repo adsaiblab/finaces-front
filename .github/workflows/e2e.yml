@@ -57,7 +57,7 @@ jobs:
         with:
           repository: adsaiblab/finaces-api
           path: finaces-api
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
 
       # ── 2. Setup Python + backend ─────────────────────────────────────────
       - name: Setup Python 3.11
