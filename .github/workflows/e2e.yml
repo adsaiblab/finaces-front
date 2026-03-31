@@ -19,9 +19,8 @@ jobs:
 
     env:
       # ── Backend ──────────────────────────────────────────────────────────
-      # ⚠️ postgresql+asyncpg:// obligatoire : alembic/env.py utilise async_engine_from_config
-      # postgresql:// (sans driver) force SQLAlchemy à charger psycopg2 → ModuleNotFoundError
       DATABASE_URL: postgresql+asyncpg://finaces:finaces@localhost:5432/finaces_e2e
+      REDIS_URL: redis://localhost:6379
       SECRET_KEY: ci-secret-key-not-for-production
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 60
@@ -43,6 +42,18 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      # ⚠️ FastAPILimiter.init(redis) est appelé au lifespan du backend
+      # Sans ce service, uvicorn crashe immédiatement avec ConnectionRefusedError :6379
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
