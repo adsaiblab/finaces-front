@@ -1,8 +1,8 @@
 @if (!isLoading()) {
-  <div class="w-full h-full p-6">
+  <div data-testid="consortium-root" class="w-full h-full p-6">
     <div class="flex items-center justify-between mb-8 print:mb-4">
       <div>
-        <h1 class="text-2xl font-bold text-content-primary print:text-black">
+        <h1 data-testid="consortium-header" class="text-2xl font-bold text-content-primary print:text-black">
           Consortium Structural Analysis
         </h1>
         <p class="text-sm text-content-secondary mt-1 print:text-gray-700">
@@ -24,6 +24,7 @@
       <div class="mb-6 space-y-3 print:hidden">
         @if (totalParticipation() !== 100) {
           <div
+            data-testid="consortium-participation-error"
             class="bg-error-lighter border-l-4 border-error-default p-3 rounded flex gap-3 text-sm"
           >
             <span class="material-icons text-error-dark">warning</span>
@@ -35,6 +36,7 @@
         }
         @if (isLeaderBlocking()) {
           <div
+            data-testid="consortium-leader-blocking-error"
             class="bg-error-lighter border-l-4 border-error-default p-3 rounded flex gap-3 text-sm"
           >
             <span class="material-icons text-error-dark">block</span>
@@ -46,6 +48,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 print:grid-cols-1 print:gap-4"
       >
         <section
+          data-testid="consortium-combined-score"
           class="lg:col-span-1 bg-surface-card rounded-xl shadow-md border border-border-default p-6 flex flex-col items-center justify-center text-center print:border-gray-300 print:shadow-none break-inside-avoid"
         >
           <span class="text-4xl font-extrabold text-content-primary mb-3">{{
@@ -103,6 +106,7 @@
             <h3 class="text-lg font-bold text-content-primary">Members Shares & Global Scores</h3>
             <div class="flex gap-3">
               <button
+                data-testid="consortium-add-member-btn"
                 mat-flat-button
                 color="primary"
                 (click)="openMemberDialog()"
@@ -134,7 +138,7 @@
                   <th class="py-3 px-2 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody data-testid="consortium-members-table">
                 @for (member of currentConsortium()?.members; track member.member_id) {
                   <tr class="border-b hover:bg-surface-hover transition-colors">
                     <td class="py-3 px-2 font-medium text-content-primary">
@@ -209,6 +213,7 @@
         class="flex justify-between items-center border-t border-border-default pt-6 print:hidden"
       >
         <button
+          data-testid="consortium-recalculate-btn"
           mat-stroked-button
           color="primary"
           (click)="recalculateScore()"
@@ -218,6 +223,7 @@
           {{ isCalculating() ? 'Calculating...' : 'Force Aggregation' }}
         </button>
         <button
+          data-testid="consortium-continue-btn"
           mat-flat-button
           color="accent"
           (click)="continueToStress()"
@@ -228,7 +234,7 @@
         </button>
       </div>
     } @else {
-      <div class="text-center py-12 text-content-secondary print:hidden">
+      <div data-testid="consortium-not-initialized-msg" class="text-center py-12 text-content-secondary print:hidden">
         <span class="material-icons text-4xl mb-4 text-content-tertiary">group_off</span>
         <p>This case is not initialized as a Consortium. Initialize through step 1.</p>
       </div>
@@ -238,6 +244,7 @@
 
 @if (isLoading()) {
   <div
+    data-testid="consortium-loading-spinner"
     class="absolute inset-0 bg-surface-background/80 flex flex-col justify-center items-center z-50 print:hidden"
   >
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>

@@ -1,7 +1,7 @@
-<div class="w-full h-full p-6 bg-surface-background relative">
+<div data-testid="admin-ia-root" class="w-full h-full p-6 bg-surface-background relative">
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-content-primary flex items-center gap-3">
+      <h1 data-testid="admin-ia-header" class="text-2xl font-bold text-content-primary flex items-center gap-3">
         <span class="material-icons text-primary-default">psychology</span>
         AI / ML Operations Center
       </h1>
@@ -17,6 +17,7 @@
   </div>
 
   <div
+    data-testid="admin-ia-disclaimer-banner"
     class="mb-6 bg-info-lighter border-l-4 border-info-default p-4 rounded text-sm text-info-dark flex items-center gap-3"
   >
     <span class="material-icons">info</span>
@@ -28,7 +29,7 @@
   </div>
 
   @if (!isLoading() && dashboardData()) {
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <div data-testid="admin-ia-dashboard-grid" class="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <div class="xl:col-span-3">
         <app-model-list [models]="dashboardData()!.models" (viewConfig)="openModelConfig($event)">
         </app-model-list>
@@ -53,6 +54,7 @@
 
   @if (isLoading()) {
     <div
+      data-testid="admin-ia-loading-spinner"
       class="absolute inset-0 bg-surface-background/80 flex flex-col justify-center items-center z-50"
     >
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>

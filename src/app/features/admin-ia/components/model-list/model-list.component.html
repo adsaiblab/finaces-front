@@ -1,4 +1,4 @@
-<section class="bg-surface-card border border-border-default rounded-xl shadow-sm p-6">
+<section data-testid="admin-ia-model-list" class="bg-surface-card border border-border-default rounded-xl shadow-sm p-6">
   <div class="flex justify-between items-center mb-4">
     <h3 class="text-lg font-bold text-content-primary flex items-center gap-2">
       <span class="material-icons text-primary-default">account_tree</span>
@@ -19,7 +19,7 @@
           <th class="py-3 px-2 text-right">Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody data-testid="admin-ia-models-table">
         @for (m of models(); track m) {
           <tr class="border-b border-border-default hover:bg-surface-hover">
             <td class="py-3 px-2 font-bold text-content-primary">{{ m.version }}</td>
