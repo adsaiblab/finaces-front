@@ -91,39 +91,51 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
     });
 
     // -----------------------------------------------------------------------
-    // Recalculate : le bouton existe dans @if(normalizedData())
-    // Sequence correcte :
-    //   1. goto + attendre le PREMIER appel
-    //   2. attendre que le badge (et donc recalculateBtn) soit visible
-    //   3. enregistrer waitForResponse AVANT le clic
-    //   4. cliquer et attendre la reponse
+    // Recalculate :
+    //   Le bouton appelle POST /cases/:id/normalize (normalizeFinancials)
+    //   puis en cas de succes rappelle GET /normalized-financials (loadNormalizedData).
+    //   On mock les deux endpoints et on attend le GET du rechargement.
     // -----------------------------------------------------------------------
-    test('Recalculate — le clic declenche un second appel API et met a jour le badge', async ({ page }) => {
+    test('Recalculate — le clic declenche POST /normalize puis recharge le badge', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
 
-        let callCount = 0;
+        // Mock POST /normalize (declencheur du recalcul)
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalize**`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION_V2) })
+        );
+
+        // Surcharger le GET normalized-financials pour retourner V2 apres le recalcul
+        let getCallCount = 0;
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route => {
-            callCount++;
-            const body = callCount >= 2 ? MOCK_NORMALIZATION_V2 : MOCK_NORMALIZATION;
+            getCallCount++;
+            const body = getCallCount >= 2 ? MOCK_NORMALIZATION_V2 : MOCK_NORMALIZATION;
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
         });
 
-        const firstResp = page.waitForResponse(
+        // Charger la page — 1er GET normalized-financials
+        const firstGet = page.waitForResponse(
             (r: any) => r.url().includes('normalized-financials') && r.status() === 200
         );
         await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await normalizationPage.expectPageLoaded();
-        // Attendre le premier appel ET que le badge soit visible
-        // avant de chercher recalculateBtn (qui est dans @if(normalizedData()))
-        await normalizationPage.expectNormalizedBadgeVisible(firstResp);
+        await normalizationPage.expectNormalizedBadgeVisible(firstGet);
+        // recalculateBtn est dans @if(normalizedData()) : attend qu'il soit visible
         await expect(normalizationPage.recalculateBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
 
-        // Enregistrer waitForResponse AVANT le clic pour eviter la race
-        const secondResp = page.waitForResponse(
+        // Enregistrer l'attente du 2e GET AVANT le clic
+        const secondGet = page.waitForResponse(
             (r: any) => r.url().includes('normalized-financials') && r.status() === 200
         );
+        // Verifier aussi que le POST /normalize est bien emis
+        const postNormalize = page.waitForRequest(
+            (req: any) => req.url().includes('/normalize') && req.method() === 'POST'
+        );
         await normalizationPage.recalculateBtn.click();
-        await secondResp;
+        // Le POST doit partir
+        await postNormalize;
+        // Puis le GET de rechargement doit arriver
+        await secondGet;
+        // Le badge doit rester visible apres le rechargement
         await expect(normalizationPage.statusBadge).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
