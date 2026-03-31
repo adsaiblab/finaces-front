@@ -19,7 +19,9 @@ jobs:
 
     env:
       # ── Backend ──────────────────────────────────────────────────────────
-      DATABASE_URL: postgresql://finaces:finaces@localhost:5432/finaces_e2e
+      # ⚠️ postgresql+asyncpg:// obligatoire : alembic/env.py utilise async_engine_from_config
+      # postgresql:// (sans driver) force SQLAlchemy à charger psycopg2 → ModuleNotFoundError
+      DATABASE_URL: postgresql+asyncpg://finaces:finaces@localhost:5432/finaces_e2e
       SECRET_KEY: ci-secret-key-not-for-production
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 60
