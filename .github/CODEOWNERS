@@ -1,0 +1,11 @@
+# CODEOWNERS — FinaCES Front
+# Reviewers automatiquement assignés selon les chemins
+
+# Tout le repo
+* @adsaiblab
+
+# Specs E2E — review obligatoire avant merge
+e2e/ @adsaiblab
+
+# Workflows CI/CD
+.github/ @adsaiblab
