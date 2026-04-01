@@ -1,6 +1,6 @@
 // e2e/specs/11-error-cases.spec.ts
 // Session 4 — Jour 4 : Cas d'erreur
-// CORRIGÉ v4 : basé sur lecture code réel (scoring.component.ts, html, guards)
+// CORRIGÉ v5 : scoring route = /scoring-mcc (pas /scoring) + consortiumGuard mock
 
 import { test, expect } from '../fixtures/auth.fixture';
 import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
@@ -48,12 +48,10 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
-    // FIX #1 : mocker /score (route réelle du composant ScoringMccComponent.loadScoring())
-    // Le composant appelle scoringService.getScoring() → /api/v1/cases/:id/score
-    // Pas /api/v1/cases/:id qui est le resolver de CaseContext
+    // FIX v5 : route réelle = /scoring-mcc (pas /scoring)
     test('Scoring 401 → redirect vers /auth/login', async ({ page }) => {
         await mockApi401(page, `/api/v1/cases/${ID}/score`);
-        await page.goto(`/cases/${ID}/scoring`);
+        await page.goto(`/cases/${ID}/scoring-mcc`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
@@ -100,10 +98,9 @@ test.describe('Erreur — UUID invalide → redirect /dashboard', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
     });
 
-    // FIX #2 : /scoring a bien un UUID guard — confirmé par les autres blocs qui redirigent tous
-    // Le commentaire "pas de guard" était erroné
-    test('UUID invalide sur /scoring redirige vers /dashboard', async ({ page }) => {
-        await page.goto(`/cases/${INVALID_ID}/scoring`);
+    // FIX v5 : route réelle = /scoring-mcc
+    test('UUID invalide sur /scoring-mcc redirige vers /dashboard', async ({ page }) => {
+        await page.goto(`/cases/${INVALID_ID}/scoring-mcc`);
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
     });
 
@@ -152,9 +149,6 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
-    // FIX #3 : Le composant Normalization a un fallback mock interne sur erreur 500
-    // → normalizedData() est peuplé avec données mock → le bouton compute-ratios-btn RESTE visible
-    // L'assertion not.toBeVisible() était incorrecte par rapport au comportement réel
     test('GET normalized-financials 500 → fallback mock actif, compute-ratios-btn visible', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/normalized-financials`);
         await page.route(`**/api/v1/cases/${ID}`, route =>
@@ -163,7 +157,6 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
         await page.goto(`/cases/${ID}/normalization`);
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="normalization-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Fallback mock interne maintient le bouton visible
         await expect(page.locator('[data-testid="normalization-compute-ratios-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -191,24 +184,19 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // D — Bloc 5 Scoring : API 500
-// FIX #4 + #5 : Le resolver /api/v1/cases/:id DOIT répondre 200 en premier.
-// Sans ça, le CaseContextService n'a pas de case → Angular redirige vers /dashboard
-// avant même de charger ScoringMccComponent → scoring-root jamais dans le DOM.
+// FIX v5 : route réelle = /scoring-mcc (pas /scoring)
+// Le resolver CaseContextService est un simple signal sans HTTP.
+// Le composant charge dès que la route /scoring-mcc est atteinte.
 // scoring-root est TOUJOURS présent dans le DOM (pas sous @if dans le template).
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 
-    // FIX #4 : Séparer le mock resolver (200) du mock score (500)
     test('GET /score 500 → composant racine visible, spinner absent, error-banner visible', async ({ page }) => {
-        // Le resolver CaseContextService doit répondre 200 pour que le composant charge
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
-        );
         // Seule la route /score renvoie 500 → ScoringMccComponent.loadScoring() entre dans error()
         await page.route(`**/api/v1/cases/${ID}/score**`, route =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
-        await page.goto(`/cases/${ID}/scoring`);
+        await page.goto(`/cases/${ID}/scoring-mcc`);
         // scoring-root est toujours dans le DOM (pas sous @if)
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -218,11 +206,7 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
         await expect(page.locator('[data-testid="scoring-main-content"]')).not.toBeVisible();
     });
 
-    // FIX #5 : Ajouter mock resolver 200 pour que le composant charge avant de tester l'override-zone
     test('POST /recommendation 500 → formulaire override reste accessible', async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
-        );
         await page.route(`**/api/v1/cases/${ID}/score**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
@@ -240,7 +224,7 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
             })
         );
         await mockApi500(page, `/cases/${ID}/recommendation`);
-        await page.goto(`/cases/${ID}/scoring`);
+        await page.goto(`/cases/${ID}/scoring-mcc`);
         await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-override-zone"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -300,7 +284,7 @@ test.describe('Erreur — Bloc 8 Stress API 500', () => {
 
     test('POST /stress/run 500 → composant reste stable', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/stress/run`);
-        await page.route(`**/api/v1/cases/${ID}/stress**`, route => {
+        await page.route(`**/api/v1/cases/${ID}/stress**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({
                     status: 200, contentType: 'application/json', body: JSON.stringify({
@@ -417,20 +401,21 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // I — Bloc 12 Consortium : API 500
-// FIX #6 : Le composant Consortium a un catchError → sur 500, isLoading passe à false
-// Le spinner disparaît et consortium-root devient visible
-// L'ancienne assertion "spinner toBeVisible" était incorrecte
+// FIX v5 : consortiumGuard appelle getCaseDetail → mock /api/v1/cases/${ID}
+// OBLIGATOIRE avec case_type: 'CONSORTIUM' AVANT le mock 500 consortium
+// Sans ce mock, le guard fait catchError → redirect /dashboard → test KO
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
-    // FIX #6 : catchError actif → isLoading = false sur erreur → spinner absent, root visible
     test('GET /consortium 500 → catchError actif : spinner absent, consortium-root visible', async ({ page }) => {
+        // consortiumGuard doit passer → mock getCaseDetail avec case_type CONSORTIUM
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json',
                 body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' })
             })
         );
+        // Après que le guard passe, le composant appelle getConsortium → 500
         await mockApi500(page, `/cases/${ID}/consortium`);
         await page.goto(`/cases/${ID}/consortium`);
         // catchError dans le composant → isLoading = false → spinner disparaît
@@ -494,14 +479,9 @@ test.describe('Erreur — Dashboard API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // K — Cases List : API 500
-// FIX #7 : Le sélecteur 'app-cases-list, [data-testid="cases-list-root"], main'
-// est fragile — si la route redirige ou si le data-testid n'est pas rendu,
-// le test échoue. On vérifie uniquement que l'URL reste sur /cases et que
-// body est visible → test robuste peu importe le comportement exact du composant.
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Cases List API 500', () => {
 
-    // FIX #7 : Utiliser body (toujours présent) + URL check → test robuste
     test('GET /cases 500 → la liste des dossiers ne crash pas', async ({ page }) => {
         await mockApi500(page, `/api/v1/cases`);
         await page.goto('/cases');
