@@ -1,5 +1,5 @@
 @if (case$ | async; as caseData) {
-  <div class="gate-layout">
+  <div class="gate-layout" data-testid="gate-root">
     <header class="gate-header">
       <div class="header-content">
         <div class="title-group">
@@ -7,9 +7,7 @@
           <div class="breadcrumb">Cases &gt; {{ caseData.name }} &gt; Document Gate</div>
         </div>
         <div class="status-group">
-          <span class="status-badge" [ngClass]="caseData.status.toLowerCase()">{{
-            caseData.status
-          }}</span>
+          <span class="status-badge" [ngClass]="caseData.status.toLowerCase()">{{ caseData.status }}</span>
         </div>
       </div>
     </header>
@@ -29,6 +27,7 @@
       </section>
       <section class="col-decision">
         <app-decision-column
+          data-testid="gate-evaluate-btn"
           [decision]="decision$ | async"
           [isEvaluating]="(isEvaluating$ | async) || false"
           (evaluate)="onEvaluateGate()"

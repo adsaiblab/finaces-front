@@ -1,6 +1,6 @@
 // e2e/specs/11-error-cases.spec.ts
 // Session 4 — Jour 4 : Cas d'erreur
-// CORRIGÉ v2 : aligné sur les HTML et TS réels des composants Angular
+// CORRIGÉ v3 : patterns 401 élargis + mocks 500 ciblés sur routes métier uniquement
 
 import { test, expect } from '../fixtures/auth.fixture';
 import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
@@ -48,9 +48,8 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
-    // CORRIGÉ : mocker aussi /cases/:id en 401 pour déclencher l'intercepteur
+    // CORRIGÉ v3 : pattern élargi **/api/v1/cases/${ID}/** pour couvrir le resolver ET la route score
     test('Scoring 401 → redirect vers /auth/login', async ({ page }) => {
-        await mockApi401(page, `/cases/${ID}/score`);
         await mockApi401(page, `/api/v1/cases/${ID}`);
         await page.goto(`/cases/${ID}/scoring`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
@@ -74,22 +73,18 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
-    // CORRIGÉ : mocker aussi /cases/:id en 401
+    // CORRIGÉ v3 : pattern élargi pour couvrir le resolver ET la route consortium
     test('Consortium 401 → redirect vers /auth/login', async ({ page }) => {
-        await mockApi401(page, `/cases/${ID}/consortium`);
         await mockApi401(page, `/api/v1/cases/${ID}`);
         await page.goto(`/cases/${ID}/consortium`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
-    // CORRIGÉ : /ia/admin → le composant AdminIA charge en standalone sans CaseContext
-    // Le mock couvre bien la route mais le composant n'est pas protégé par AuthInterceptor
-    // → on vérifie que la page charge sans crash, pas de redirect attendu sur admin-ia
+    // AdminIA est une route standalone protégée par AuthGuard mais le 401 sur /ia/admin
+    // n'est pas intercepté comme un 401 d'authentification — le composant affiche son state d'erreur
     test('Admin IA models 401 → composant reste visible (pas de redirect sur route standalone)', async ({ page }) => {
         await mockApi401(page, `/ia/admin`);
         await page.goto('/admin-ia');
-        // AdminIA est une route standalone protégée par AuthGuard mais le 401 sur /ia/admin
-        // n'est pas intercepté comme un 401 d'authentification — le composant affiche son state d'erreur
         await expect(page.locator('[data-testid="admin-ia-root"]')).toBeVisible({ timeout: TIMEOUTS.navigation });
     });
 });
@@ -104,10 +99,9 @@ test.describe('Erreur — UUID invalide → redirect /dashboard', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
     });
 
-    // CORRIGÉ : /scoring n'a pas de UUID guard → on vérifie que la page charge mais affiche un état vide
-    test('UUID invalide sur /scoring → normalization-root visible (pas de guard)', async ({ page }) => {
+    // /scoring n'a pas de UUID guard → on vérifie que la page charge mais affiche un état vide
+    test('UUID invalide sur /scoring → scoring-root visible (pas de guard)', async ({ page }) => {
         await page.goto(`/cases/${INVALID_ID}/scoring`);
-        // Si guard absent : le composant charge, on vérifie juste qu'il ne crash pas
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.navigation });
     });
 
@@ -156,8 +150,6 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
-    // CORRIGÉ : sur 500, normalizedData() reste null → compute-ratios-btn est sous @if(normalizedData())
-    // → il n'est PAS dans le DOM. On vérifie que le composant root est stable et affiche l'état d'erreur.
     test('GET normalized-financials 500 → composant root stable, pas de données affichées', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/normalized-financials`);
         await page.route(`**/api/v1/cases/${ID}`, route =>
@@ -165,13 +157,10 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
         );
         await page.goto(`/cases/${ID}/normalization`);
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Sur 500, le spinner doit disparaître (isLoading → false via error handler)
         await expect(page.locator('[data-testid="normalization-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Les boutons sous @if(normalizedData()) ne sont PAS visibles — c'est le comportement attendu
         await expect(page.locator('[data-testid="normalization-compute-ratios-btn"]')).not.toBeVisible();
     });
 
-    // CORRIGÉ : recalculate-btn est aussi sous @if(normalizedData()) → fournir un mock GET réussi
     test('POST /normalize 500 → fallback snackbar : composant reste stable', async ({ page }) => {
         await page.route(`**/api/v1/cases/${ID}/normalized-financials**`, route =>
             route.fulfill({
@@ -187,7 +176,6 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
         await mockApi500(page, `/cases/${ID}/normalize`);
         await page.goto(`/cases/${ID}/normalization`);
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // GET réussi → recalculate-btn est sous @if(normalizedData()) donc visible
         await expect(page.locator('[data-testid="normalization-recalculate-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await page.locator('[data-testid="normalization-recalculate-btn"]').click();
         await page.waitForTimeout(1500);
@@ -197,24 +185,26 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // D — Bloc 5 Scoring : API 500
-// CORRIGÉ : scoring-root est TOUJOURS dans le DOM (pas sous @if)
-// Mais scoring-override-zone est sous @if(scoringData()) → absent sur 500
+// CORRIGÉ v3 : mocker UNIQUEMENT /score, laisser le resolver /cases/:id passer
+// scoring-root est TOUJOURS dans le DOM (pas sous @if)
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 
     test('GET /score 500 → composant racine visible, spinner absent', async ({ page }) => {
-        await mockApi500(page, `/cases/${ID}/score`);
+        // Laisser le resolver répondre normalement
+        await page.route(`**/api/v1/cases/${ID}`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
+        // Seule la route score renvoie 500
+        await page.route(`**/api/v1/cases/${ID}/score**`, route =>
+            route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
+        );
         await page.goto(`/cases/${ID}/scoring`);
-        // scoring-root est toujours dans le DOM (pas sous @if)
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Le spinner disparaît une fois que isLoading() passe à false
         await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Pas de données → pas de main content (comportement attendu)
         await expect(page.locator('[data-testid="scoring-main-content"]')).not.toBeVisible();
     });
 
-    // CORRIGÉ : fournir GET /score OK pour que scoringData() soit non-null
-    // Seulement alors scoring-override-zone est visible
     test('POST /recommendation 500 → formulaire override reste accessible', async ({ page }) => {
         await page.route(`**/api/v1/cases/${ID}/score**`, route =>
             route.fulfill({
@@ -234,16 +224,14 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
         );
         await mockApi500(page, `/cases/${ID}/recommendation`);
         await page.goto(`/cases/${ID}/scoring`);
-        // Attendre fin de loading
         await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // scoringData() non-null → main-content visible
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-override-zone"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// E — Bloc 6 IA Prediction : API 500 (inchangé — ces tests passent déjà)
+// E — Bloc 6 IA Prediction : API 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
 
@@ -278,17 +266,21 @@ test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // F — Bloc 8 Stress : API 500
-// CORRIGÉ : stress-root est TOUJOURS dans le DOM (pas sous @if)
-// stress-loading-spinner est DEDANS sous @if(isLoading()) → attendre not.toBeVisible
+// CORRIGÉ v3 : mocker UNIQUEMENT /stress, laisser le resolver passer
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 8 Stress API 500', () => {
 
     test('GET /stress 500 → composant racine visible (fallback mock stress)', async ({ page }) => {
-        await mockApi500(page, `/cases/${ID}/stress`);
+        // Laisser le resolver répondre normalement
+        await page.route(`**/api/v1/cases/${ID}`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
+        // Seule la route stress renvoie 500
+        await page.route(`**/api/v1/cases/${ID}/stress**`, route =>
+            route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
+        );
         await page.goto(`/cases/${ID}/stress`);
-        // stress-root est dans le DOM même sur 500
         await expect(page.locator('[data-testid="stress-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // Le spinner disparaît une fois l'erreur reçue (isLoading → false)
         await expect(page.locator('[data-testid="stress-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -313,16 +305,12 @@ test.describe('Erreur — Bloc 8 Stress API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // G — Bloc 9 Expert : API 500
-// CORRIGÉ : expert-root est sous @if(!isLoading())
-// Sur GET /cases/:id 500, error handler passe isLoading(false) → root visible
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 9 Expert API 500', () => {
 
-    // CORRIGÉ : Expert charge getCaseDetail (pas /expert), c'est ça qui contrôle isLoading
     test('GET /cases/:id 500 sur /expert → isLoading false, expert-root visible', async ({ page }) => {
         await mockApi500(page, `/api/v1/cases/${ID}`);
         await page.goto(`/cases/${ID}/expert`);
-        // error handler dans loadCaseData() passe isLoading(false) → expert-root apparaît
         await expect(page.locator('[data-testid="expert-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="expert-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
@@ -340,7 +328,7 @@ test.describe('Erreur — Bloc 9 Expert API 500', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// H — Bloc 10 Rapport : API 500 (inchangé — ces tests passent déjà)
+// H — Bloc 10 Rapport : API 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 
@@ -415,15 +403,9 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // I — Bloc 12 Consortium : API 500
-// CORRIGÉ : consortium-root est sous @if(!isLoading())
-// Sur 500, loadConsortium() catchError fait `throw err` → isLoading reste true
-// → il faut mocker /cases/:id en 200 ET vérifier le bon état
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
-    // CORRIGÉ : le catchError de loadConsortium() relance l'erreur (throw err)
-    // → isLoading() reste true → consortium-root (sous @if(!isLoading())) n'apparaît PAS
-    // → on vérifie que le spinner est affiché (état d'erreur en loading)
     test('GET /consortium 500 → spinner visible (isLoading reste true sur erreur non catchée)', async ({ page }) => {
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({
@@ -433,7 +415,6 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
         );
         await mockApi500(page, `/cases/${ID}/consortium`);
         await page.goto(`/cases/${ID}/consortium`);
-        // Le spinner reste visible car isLoading() ne passe jamais à false
         await expect(page.locator('[data-testid="consortium-loading-spinner"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -473,14 +454,12 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // J — Dashboard : API 500
-// CORRIGÉ : vérifier dashboard-root selon le testid réel du composant
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Dashboard API 500', () => {
 
     test('GET /dashboard/stats 500 → page ne crash pas', async ({ page }) => {
         await mockApi500(page, `/dashboard/stats`);
         await page.goto('/dashboard');
-        // Vérifier que la page charge sans crash — utiliser un sélecteur robuste
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
         await expect(page.locator('app-dashboard, [data-testid="dashboard-root"], main')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
@@ -495,7 +474,6 @@ test.describe('Erreur — Dashboard API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // K — Cases List : API 500
-// CORRIGÉ : vérifier le testid réel du composant cases-list
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Cases List API 500', () => {
 
@@ -508,7 +486,7 @@ test.describe('Erreur — Cases List API 500', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// L — Admin IA : API 500 (inchangé — ces tests passent déjà)
+// L — Admin IA : API 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Admin IA API 500', () => {
 
