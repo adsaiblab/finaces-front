@@ -88,6 +88,7 @@ export class ScoringMccComponent {
   private loadScoring(): void {
     this.isLoading.set(true);
     this.error.set(null);
+    this.scoringData.set(null);
 
     this.scoringService
       .getScoring(this.caseId())
@@ -97,11 +98,20 @@ export class ScoringMccComponent {
           this.scoringData.set(data);
           this.isLoading.set(false);
         },
-        error: () => {
+        error: (err) => {
+          const status = err?.status;
+          if (status === 401 || status === 403) {
+            // Let the AuthInterceptor handle redirect — do not swallow
+            this.isLoading.set(false);
+            return;
+          }
           if (!environment.production) {
             console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Scoring');
+            this.loadMockData();
+          } else {
+            this.error.set('Unable to load scoring data. Please try again.');
+            this.isLoading.set(false);
           }
-          this.loadMockData();
         },
       });
   }
@@ -209,7 +219,7 @@ export class ScoringMccComponent {
                     original_score: currentData.global_score,
                     new_score: payload.new_score,
                     original_risk_class: currentData.risk_class,
-                    new_risk_class: 'ADJUSTED', // Example
+                    new_risk_class: 'ADJUSTED',
                     reason: payload.reason,
                     author: 'Current User (Senior Analyst)',
                     timestamp: new Date().toISOString(),
@@ -228,7 +238,6 @@ export class ScoringMccComponent {
   }
 
   public proceedNext(): void {
-    // Proceed to AI Bloc (Bloc 6) or Tension (Bloc 7) depending on workflow
     this.router.navigate(['/cases', this.caseId(), 'ia']);
   }
 }

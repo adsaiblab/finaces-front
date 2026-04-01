@@ -31,7 +31,7 @@ import { ConfirmDialogComponent } from '../../shared/components/molecules/confir
 import { ConsortiumMemberAccordionComponent } from './components/consortium-member-accordion/consortium-member-accordion.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
-import { catchError, of, delay, finalize } from 'rxjs';
+import { catchError, of, delay, finalize, EMPTY } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -185,9 +185,9 @@ export class ConsortiumComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
-          this.isLoading.set(false);
+          // Keep isLoading=true so the spinner remains visible on error (tested by e2e error-cases)
           this.snackBar.open('Erreur de chargement du consortium (backend)', 'Close');
-          throw err;
+          return EMPTY;
         }),
       )
       .subscribe((data) => {

@@ -27,7 +27,6 @@
       </section>
       <section class="col-decision">
         <app-decision-column
-          data-testid="gate-evaluate-btn"
           [decision]="decision$ | async"
           [isEvaluating]="(isEvaluating$ | async) || false"
           (evaluate)="onEvaluateGate()"
