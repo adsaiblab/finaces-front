@@ -176,7 +176,7 @@ export class ConsortiumComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => {
-          // Keep isLoading=true so the spinner remains visible on error (tested by e2e error-cases)
+          this.isLoading.set(false);
           this.snackBar.open('Erreur de chargement du consortium (backend)', 'Close');
           return EMPTY;
         }),
