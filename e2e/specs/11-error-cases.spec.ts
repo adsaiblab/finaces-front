@@ -1,6 +1,6 @@
 // e2e/specs/11-error-cases.spec.ts
 // Session 4 — Jour 4 : Cas d'erreur
-// CORRIGÉ v5 : scoring route = /scoring-mcc (pas /scoring) + consortiumGuard mock
+// CORRIGÉ v6 : consortium mock URL = /api/v1/consortium/${ID} (pas /cases/${ID}/consortium)
 
 import { test, expect } from '../fixtures/auth.fixture';
 import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
@@ -401,49 +401,72 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // I — Bloc 12 Consortium : API 500
-// FIX v5 : consortiumGuard appelle getCaseDetail → mock /api/v1/cases/${ID}
-// OBLIGATOIRE avec case_type: 'CONSORTIUM' AVANT le mock 500 consortium
-// Sans ce mock, le guard fait catchError → redirect /dashboard → test KO
+//
+// FIX v6 : URL réelle du ConsortiumService = /api/v1/consortium/${ID}
+//          (confirmé dans test-data.ts → API_ENDPOINTS.consortium)
+//          L'ancien pattern `/cases/${ID}/consortium` ne matchait JAMAIS
+//          → appel passait au backend réel (DOWN en CI) → timeout
+//          → catchError → EMPTY → isLoading reste true → consortium-root KO
+//
+// Séquence correcte :
+//   1. mock /api/v1/cases/${ID} (exact) → 200 CONSORTIUM → guard passe
+//   2. mock /api/v1/consortium/${ID}    → 500 → catchError → isLoading false
+//   3. @if(!isLoading()) → consortium-root visible ✅
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
     test('GET /consortium 500 → catchError actif : spinner absent, consortium-root visible', async ({ page }) => {
-        // consortiumGuard doit passer → mock getCaseDetail avec case_type CONSORTIUM
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({
+        // Step 1 — guard consortiumGuard appelle getCaseDetail → doit renvoyer CONSORTIUM
+        await page.route(`**/api/v1/cases/${ID}`, (route: any) => {
+            // Vérification URL exacte : ne pas intercepter /api/v1/cases/${ID}/...
+            const url = route.request().url();
+            if (url.includes(`/cases/${ID}/`) && !url.endsWith(`/cases/${ID}`)) {
+                return route.continue();
+            }
+            return route.fulfill({
                 status: 200, contentType: 'application/json',
-                body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' })
-            })
+                body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' }),
+            });
+        });
+        // Step 2 — ConsortiumService.getConsortium → vraie URL = /api/v1/consortium/${ID}
+        await page.route(`**/api/v1/consortium/${ID}**`, (route: any) =>
+            route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
-        // Après que le guard passe, le composant appelle getConsortium → 500
-        await mockApi500(page, `/cases/${ID}/consortium`);
         await page.goto(`/cases/${ID}/consortium`);
-        // catchError dans le composant → isLoading = false → spinner disparaît
+        // catchError dans loadConsortium() → isLoading.set(false) → spinner absent
         await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        // @if(!isLoading()) → consortium-root rendu (currentConsortium() = null → not-initialized-msg)
         await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /consortium/aggregate 500 → composant reste stable', async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}`, route =>
-            route.fulfill({
+        // Step 1 — guard
+        await page.route(`**/api/v1/cases/${ID}`, (route: any) => {
+            const url = route.request().url();
+            if (url.includes(`/cases/${ID}/`) && !url.endsWith(`/cases/${ID}`)) {
+                return route.continue();
+            }
+            return route.fulfill({
                 status: 200, contentType: 'application/json',
-                body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' })
-            })
-        );
-        await page.route(`**/api/v1/cases/${ID}/consortium**`, (route: any) => {
+                body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' }),
+            });
+        });
+        // Step 2 — GET consortium → 200 avec membres valides
+        await page.route(`**/api/v1/consortium/${ID}**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({
                     status: 200, contentType: 'application/json', body: JSON.stringify({
-                        consortium_id: 'cons-err-001', case_id: ID,
-                        combined_scorecard: { final_score: 68.0, risk_class: 'B' },
+                        joint_venture_type: 'SOLIDAIRE',
                         synergy_index: 2.5,
-                        participation_rate: 1.0, is_leader_blocking: false,
+                        weakest_member_id: 'm2',
+                        combined_scorecard: { final_score: 68.0, risk_class: 'B' },
                         members: [
-                            { member_id: 'm1', member_name: 'Alpha', score: 72, participation_pct: 60, role: 'LEADER' },
-                            { member_id: 'm2', member_name: 'Beta', score: 61, participation_pct: 40, role: 'MEMBER' },
-                        ]
+                            { member_id: 'm1', member_name: 'Alpha', score: 3.8, participation_pct: 60, role: 'LEADER', risk_class: 'LOW', status: 'ACTIVE' },
+                            { member_id: 'm2', member_name: 'Beta',  score: 2.1, participation_pct: 40, role: 'MEMBER', risk_class: 'HIGH', status: 'ACTIVE' },
+                        ],
                     })
                 });
+            // POST aggregate → 500
             return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Aggregation failed' }) });
         });
         await page.goto(`/cases/${ID}/consortium`);
