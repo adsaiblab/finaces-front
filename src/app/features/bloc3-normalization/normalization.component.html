@@ -10,7 +10,6 @@
   </div>
   }
 
-  @if (normalizedData(); as data) {
   <header
     class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
     <div>
@@ -18,12 +17,14 @@
         <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
           IFRS Normalization
         </h1>
+        @if (normalizedData()) {
         <span
           class="px-3 py-1 rounded-full bg-[color:var(--color-success)] bg-opacity-10 text-[color:var(--color-success)] text-xs font-bold flex items-center gap-1 border border-[color:var(--color-success)] border-opacity-20"
           data-testid="normalization-status-badge">
           <mat-icon class="text-[14px] w-[14px] h-[14px]">check_circle</mat-icon>
           NORMALIZED
         </span>
+        }
       </div>
       <p class="text-[color:var(--color-content-secondary)] text-sm">
         Case #{{ caseId() }} — Review the accounting restatements applied by the system.
@@ -31,6 +32,7 @@
     </div>
 
     <div class="flex items-center gap-4">
+      @if (normalizedData(); as data) {
       <div
         class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
         data-testid="normalization-fiscal-year-display">
@@ -39,8 +41,9 @@
           data.fiscal_year
           }}</span>
       </div>
+      }
 
-      <button mat-stroked-button color="primary" [disabled]="isRecalculating()" (click)="recalculate()"
+      <button mat-stroked-button color="primary" [disabled]="isRecalculating() || isLoading()" (click)="recalculate()"
         data-testid="normalization-recalculate-btn">
         @if (!isRecalculating()) {
         <mat-icon>refresh</mat-icon>
@@ -53,6 +56,7 @@
     </div>
   </header>
 
+  @if (normalizedData(); as data) {
   <main class="flex flex-col gap-8 flex-1">
     <app-accounting-standard-section [data]="data" />
 
@@ -70,6 +74,7 @@
       <app-adjustments-list [adjustments]="data.adjustments" />
     </div>
   </main>
+  }
 
   <div
     class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
@@ -80,7 +85,7 @@
       Back to Financials
     </button>
 
-    <button mat-flat-button color="primary" [disabled]="isComputingRatios()" (click)="computeRatios()"
+    <button mat-flat-button color="primary" [disabled]="isComputingRatios() || isLoading() || !normalizedData()" (click)="computeRatios()"
       class="finaces-primary-btn px-8" data-testid="normalization-compute-ratios-btn">
       @if (isComputingRatios()) {
       <mat-spinner diameter="20" class="mr-2"></mat-spinner>
@@ -93,5 +98,4 @@
       }
     </button>
   </div>
-  }
 </div>
