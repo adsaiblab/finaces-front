@@ -1,6 +1,9 @@
 // e2e/specs/11-error-cases.spec.ts
 // Session 4 — Jour 4 : Cas d'erreur
-// CORRIGÉ v6 : consortium mock URL = /api/v1/consortium/${ID} (pas /cases/${ID}/consortium)
+// CORRIGÉ v7 : URLs réelles ConsortiumService = /api/v1/cases/${ID}/consortium*
+//   getConsortium      → GET  /api/v1/cases/${ID}/consortium
+//   calculateConsortium → POST /api/v1/cases/${ID}/consortium/calculate
+// Mock case-detail strict par endsWith pour éviter de matcher les sous-routes
 
 import { test, expect } from '../fixtures/auth.fixture';
 import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
@@ -22,6 +25,19 @@ async function mockApi401(page: any, urlPattern: string) {
     );
 }
 
+// Mock /api/v1/cases/${ID} STRICT : ne pas intercepter les sous-routes
+// (/consortium, /consortium/calculate, /stress, etc.)
+// On compare la fin de l'URL : doit se terminer exactement par /cases/${ID}
+async function mockCaseDetail(page: any, caseId: string, body: object) {
+    await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => {
+        // sous-route (/consortium, /stress...) → laisser passer
+        return route.continue();
+    });
+    await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+    );
+}
+
 const MOCK_CASE_BASE = {
     id: ID,
     bidder_name: 'E2E Error Test',
@@ -37,6 +53,17 @@ const MOCK_CASE_BASE = {
     fiscal_year: 2023,
 };
 
+const MOCK_CONSORTIUM_DATA = {
+    joint_venture_type: 'SOLIDAIRE',
+    synergy_index: 2.5,
+    weakest_member_id: 'm2',
+    combined_scorecard: { final_score: 3.45, risk_class: 'MODERATE' },
+    members: [
+        { member_id: 'm1', member_name: 'Alpha Corp', score: 3.8, participation_pct: 60, role: 'LEADER', risk_class: 'LOW',  status: 'ACTIVE' },
+        { member_id: 'm2', member_name: 'Beta Ltd',   score: 2.1, participation_pct: 40, role: 'MEMBER', risk_class: 'HIGH', status: 'ACTIVE' },
+    ],
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // A — JWT Interceptor : 401 → redirect /auth/login
 // ═══════════════════════════════════════════════════════════════════════════
@@ -48,7 +75,6 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
-    // FIX v5 : route réelle = /scoring-mcc (pas /scoring)
     test('Scoring 401 → redirect vers /auth/login', async ({ page }) => {
         await mockApi401(page, `/api/v1/cases/${ID}/score`);
         await page.goto(`/cases/${ID}/scoring-mcc`);
@@ -79,8 +105,6 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
-    // AdminIA est une route standalone protégée par AuthGuard mais le 401 sur /ia/admin
-    // n'est pas intercepté comme un 401 d'authentification — le composant affiche son state d'erreur
     test('Admin IA models 401 → composant reste visible (pas de redirect sur route standalone)', async ({ page }) => {
         await mockApi401(page, `/ia/admin`);
         await page.goto('/admin-ia');
@@ -98,7 +122,6 @@ test.describe('Erreur — UUID invalide → redirect /dashboard', () => {
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
     });
 
-    // FIX v5 : route réelle = /scoring-mcc
     test('UUID invalide sur /scoring-mcc redirige vers /dashboard', async ({ page }) => {
         await page.goto(`/cases/${INVALID_ID}/scoring-mcc`);
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
@@ -136,7 +159,7 @@ test.describe('Erreur — UUID invalide → redirect /dashboard', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// C — Bloc 3 Normalization : API 500 → comportement réel
+// C — Bloc 3 Normalization : API 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 
@@ -184,25 +207,17 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // D — Bloc 5 Scoring : API 500
-// FIX v5 : route réelle = /scoring-mcc (pas /scoring)
-// Le resolver CaseContextService est un simple signal sans HTTP.
-// Le composant charge dès que la route /scoring-mcc est atteinte.
-// scoring-root est TOUJOURS présent dans le DOM (pas sous @if dans le template).
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 
     test('GET /score 500 → composant racine visible, spinner absent, error-banner visible', async ({ page }) => {
-        // Seule la route /score renvoie 500 → ScoringMccComponent.loadScoring() entre dans error()
         await page.route(`**/api/v1/cases/${ID}/score**`, route =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
         await page.goto(`/cases/${ID}/scoring-mcc`);
-        // scoring-root est toujours dans le DOM (pas sous @if)
         await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // error() est setté → scoring-error-banner apparaît
         await expect(page.locator('[data-testid="scoring-error-banner"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // scoringData() est null → scoring-main-content (@if scoringData()) n'est pas rendu
         await expect(page.locator('[data-testid="scoring-main-content"]')).not.toBeVisible();
     });
 
@@ -213,11 +228,11 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
                     case_id: ID, global_score: 72.5, risk_class: 'B',
                     status: 'COMPUTED',
                     pillars: [
-                        { id: 'p1', name: 'Liquidity', score: 70, weight: 0.2, sub_ratios: [] },
-                        { id: 'p2', name: 'Solvency', score: 75, weight: 0.2, sub_ratios: [] },
+                        { id: 'p1', name: 'Liquidity',     score: 70, weight: 0.2, sub_ratios: [] },
+                        { id: 'p2', name: 'Solvency',      score: 75, weight: 0.2, sub_ratios: [] },
                         { id: 'p3', name: 'Profitability', score: 68, weight: 0.2, sub_ratios: [] },
-                        { id: 'p4', name: 'Capacity', score: 72, weight: 0.2, sub_ratios: [] },
-                        { id: 'p5', name: 'Quality', score: 78, weight: 0.2, sub_ratios: [] },
+                        { id: 'p4', name: 'Capacity',      score: 72, weight: 0.2, sub_ratios: [] },
+                        { id: 'p5', name: 'Quality',       score: 78, weight: 0.2, sub_ratios: [] },
                     ],
                     recommendations: [], cross_analysis_alerts: [], override: null
                 })
@@ -402,76 +417,55 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 // I — Bloc 12 Consortium : API 500
 //
-// FIX v6 : URL réelle du ConsortiumService = /api/v1/consortium/${ID}
-//          (confirmé dans test-data.ts → API_ENDPOINTS.consortium)
-//          L'ancien pattern `/cases/${ID}/consortium` ne matchait JAMAIS
-//          → appel passait au backend réel (DOWN en CI) → timeout
-//          → catchError → EMPTY → isLoading reste true → consortium-root KO
+// FIX v7 : URLs réelles confirmées dans consortium.service.ts :
+//   getConsortium       → GET  /api/v1/cases/${ID}/consortium
+//   calculateConsortium → POST /api/v1/cases/${ID}/consortium/calculate
 //
-// Séquence correcte :
-//   1. mock /api/v1/cases/${ID} (exact) → 200 CONSORTIUM → guard passe
-//   2. mock /api/v1/consortium/${ID}    → 500 → catchError → isLoading false
-//   3. @if(!isLoading()) → consortium-root visible ✅
+// Problème de collision résolu avec mockCaseDetail() :
+//   → route **/api/v1/cases/${ID}/**  → continue() (laisse passer sous-routes)
+//   → route **/api/v1/cases/${ID}    → 200 CONSORTIUM (exact)
+//
+// Handler consortium unique sur **/api/v1/cases/${ID}/consortium** :
+//   GET  → 200 MOCK_CONSORTIUM_DATA
+//   POST (calculate) → 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
     test('GET /consortium 500 → catchError actif : spinner absent, consortium-root visible', async ({ page }) => {
-        // Step 1 — guard consortiumGuard appelle getCaseDetail → doit renvoyer CONSORTIUM
-        await page.route(`**/api/v1/cases/${ID}`, (route: any) => {
-            // Vérification URL exacte : ne pas intercepter /api/v1/cases/${ID}/...
-            const url = route.request().url();
-            if (url.includes(`/cases/${ID}/`) && !url.endsWith(`/cases/${ID}`)) {
-                return route.continue();
-            }
-            return route.fulfill({
-                status: 200, contentType: 'application/json',
-                body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' }),
-            });
-        });
-        // Step 2 — ConsortiumService.getConsortium → vraie URL = /api/v1/consortium/${ID}
-        await page.route(`**/api/v1/consortium/${ID}**`, (route: any) =>
+        // mock case-detail STRICT : sous-routes → continue()
+        await mockCaseDetail(page, ID, { ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' });
+        // GET /consortium → 500 → catchError → EMPTY → isLoading false
+        await page.route(`**/api/v1/cases/${ID}/consortium**`, (route: any) =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
         await page.goto(`/cases/${ID}/consortium`);
-        // catchError dans loadConsortium() → isLoading.set(false) → spinner absent
         await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // @if(!isLoading()) → consortium-root rendu (currentConsortium() = null → not-initialized-msg)
         await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /consortium/aggregate 500 → composant reste stable', async ({ page }) => {
-        // Step 1 — guard
-        await page.route(`**/api/v1/cases/${ID}`, (route: any) => {
-            const url = route.request().url();
-            if (url.includes(`/cases/${ID}/`) && !url.endsWith(`/cases/${ID}`)) {
-                return route.continue();
-            }
-            return route.fulfill({
-                status: 200, contentType: 'application/json',
-                body: JSON.stringify({ ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' }),
-            });
-        });
-        // Step 2 — GET consortium → 200 avec membres valides
-        await page.route(`**/api/v1/consortium/${ID}**`, (route: any) => {
+        // mock case-detail STRICT
+        await mockCaseDetail(page, ID, { ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' });
+        // GET /consortium → 200, POST /consortium/calculate → 500
+        await page.route(`**/api/v1/cases/${ID}/consortium**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({
-                    status: 200, contentType: 'application/json', body: JSON.stringify({
-                        joint_venture_type: 'SOLIDAIRE',
-                        synergy_index: 2.5,
-                        weakest_member_id: 'm2',
-                        combined_scorecard: { final_score: 68.0, risk_class: 'B' },
-                        members: [
-                            { member_id: 'm1', member_name: 'Alpha', score: 3.8, participation_pct: 60, role: 'LEADER', risk_class: 'LOW', status: 'ACTIVE' },
-                            { member_id: 'm2', member_name: 'Beta',  score: 2.1, participation_pct: 40, role: 'MEMBER', risk_class: 'HIGH', status: 'ACTIVE' },
-                        ],
-                    })
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify(MOCK_CONSORTIUM_DATA),
                 });
-            // POST aggregate → 500
-            return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Aggregation failed' }) });
+            // POST calculate → 500
+            return route.fulfill({
+                status: 500,
+                contentType: 'application/json',
+                body: JSON.stringify({ detail: 'Aggregation failed' }),
+            });
         });
         await page.goto(`/cases/${ID}/consortium`);
         await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        // consortium-recalculate-btn visible uniquement si currentConsortium() non-null
+        // MOCK_CONSORTIUM_DATA → members 60+40=100% → bouton actif
         const forceBtn = page.locator('[data-testid="consortium-recalculate-btn"]');
         await expect(forceBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await forceBtn.click();
