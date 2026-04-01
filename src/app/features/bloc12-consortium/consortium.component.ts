@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Router } from '@angular/router';
 import { CaseContextService } from '../../core/services/case-context.service';
-import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormArray } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -43,7 +43,6 @@ import { environment } from '../../../environments/environment';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-
     ConsortiumMemberAccordionComponent,
     FinacesScoreGaugeComponent,
     FinacesRiskBadgeComponent,
@@ -64,18 +63,14 @@ export class ConsortiumComponent {
   private fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
-  // Règle 3: Route param retrieval
   caseId = '';
 
   currentCase = signal<EvaluationCaseDetailOut | null>(null);
   currentConsortium = signal<ConsortiumScorecardOutput | null>(null);
   isLoading = signal<boolean>(true);
   isCalculating = signal<boolean>(false);
-
-  // Track inline editing state for shares [P18 Requirement]
   isEditingShares = signal<boolean>(false);
 
-  // Derivations via Signals
   totalParticipation = computed(() => {
     const data = this.currentConsortium();
     if (!data || !data.members) return 0;
@@ -95,14 +90,10 @@ export class ConsortiumComponent {
     return this.currentConsortium()?.weakest_member_id || null;
   });
 
-  // [UI SIMULATION] - Derive detailed combined scores for full view targets
   detailedCombinedPillars = computed(() => {
     const mems = this.currentConsortium()?.members || [];
     if (mems.length === 0) return {};
-
-    // Simplistic weighted average from member scores to simulate real data
     const combinedFinalScore = this.currentConsortium()?.combined_scorecard?.final_score || 0;
-
     const generateCombinedPillar = (offset: number) => {
       const score = Math.max(1, Math.min(5, combinedFinalScore + offset));
       let label: any = 'MODERATE';
@@ -110,7 +101,6 @@ export class ConsortiumComponent {
       if (score < 2) label = 'WEAK';
       return { score, label };
     };
-
     return {
       liquidity: generateCombinedPillar(0.3),
       solvency: generateCombinedPillar(-0.2),
@@ -142,6 +132,7 @@ export class ConsortiumComponent {
       )
       .subscribe((c: EvaluationCaseDetailOut | null) => {
         this.currentCase.set(c);
+        // Always load consortium even if case detail failed
         this.loadConsortium();
       });
   }
@@ -184,7 +175,7 @@ export class ConsortiumComponent {
     req$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        catchError((err) => {
+        catchError(() => {
           // Keep isLoading=true so the spinner remains visible on error (tested by e2e error-cases)
           this.snackBar.open('Erreur de chargement du consortium (backend)', 'Close');
           return EMPTY;
@@ -201,7 +192,6 @@ export class ConsortiumComponent {
       width: '500px',
       data: { member },
     });
-
     dialogRef
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -211,7 +201,6 @@ export class ConsortiumComponent {
           const req$ = member
             ? this.consortiumService.updateMember(this.caseId, member.member_id, result)
             : this.consortiumService.addMember(this.caseId, result);
-
           req$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (res) => {
               this.currentConsortium.set(res);
@@ -227,14 +216,12 @@ export class ConsortiumComponent {
       });
   }
 
-  // Handle inline share editing submission [P18 Requirement]
   saveSharesInline(editedShares: Record<string, number>): void {
     if (this.totalParticipation() !== 100) {
       this.snackBar.open('Total shares must be 100%', 'Close');
       return;
     }
     this.isLoading.set(true);
-    // Appel HTTP réel à implémenter :
     of(null)
       .pipe(
         delay(800),
@@ -290,7 +277,6 @@ export class ConsortiumComponent {
       this.snackBar.open('Participation must equal exactly 100%', 'Close', { duration: 3000 });
       return;
     }
-
     this.isCalculating.set(true);
     this.consortiumService
       .calculateConsortium(this.caseId)

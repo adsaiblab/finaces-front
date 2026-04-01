@@ -21,7 +21,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { ScoringMccService } from './services/scoring-mcc.service';
-import { environment } from '../../../environments/environment';
 import { ScoringMccSchema, ScoreOverridePayload } from '../../core/models/scoring.model';
 
 import {
@@ -63,7 +62,6 @@ export class ScoringMccComponent {
   public isOverriding = signal<boolean>(false);
   public error = signal<string | null>(null);
 
-  // T36: Computed pillar accessors for template convenience (ScorecardOut.pillars[])
   readonly liquidityPillar = computed(
     () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('liquid')) ?? null,
   );
@@ -105,88 +103,11 @@ export class ScoringMccComponent {
             this.router.navigate(['/auth/login']);
             return;
           }
-          if (!environment.production) {
-            console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Scoring');
-            this.loadMockData();
-          } else {
-            this.error.set('Unable to load scoring data. Please try again.');
-            this.isLoading.set(false);
-          }
+          // On any other error (500, network…): show error state, no mock
+          this.error.set('Unable to load scoring data. Please try again.');
+          this.scoringData.set(null);
+          this.isLoading.set(false);
         },
-      });
-  }
-
-  private loadMockData(): void {
-    of(null)
-      .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.scoringData.set({
-          case_id: this.caseId(),
-          global_score: 3.8,
-          risk_class: 'MODERATE',
-          calculation_date: new Date().toISOString(),
-          status: 'COMPUTED',
-          pillars: [
-            {
-              id: 'p1',
-              name: 'Liquidity',
-              score: 3.5,
-              weight: 20,
-              status: 'GOOD',
-              key_drivers: ['Adequate current ratio', 'Optimized WCR'],
-            },
-            {
-              id: 'p2',
-              name: 'Solvency',
-              score: 2.1,
-              weight: 25,
-              status: 'POOR',
-              key_drivers: ['High debt to equity', 'Gearing limit reached'],
-            },
-            {
-              id: 'p3',
-              name: 'Profitability',
-              score: 4.5,
-              weight: 25,
-              status: 'EXCELLENT',
-              key_drivers: ['Strong EBITDA margin', 'Consistent ROE'],
-            },
-            {
-              id: 'p4',
-              name: 'Capacity',
-              score: 3.8,
-              weight: 15,
-              status: 'GOOD',
-              key_drivers: ['Solid operating cash flow'],
-            },
-            {
-              id: 'p5',
-              name: 'Quality',
-              score: 4.0,
-              weight: 15,
-              status: 'GOOD',
-              key_drivers: ['Audited statements', 'Tier 1 auditor'],
-            },
-          ],
-          recommendations: [
-            {
-              id: 'r1',
-              type: 'WARNING',
-              message:
-                'The solvency pillar heavily penalizes the global score. Recommend requiring additional guarantees.',
-            },
-            {
-              id: 'r2',
-              type: 'POSITIVE',
-              message:
-                'Outstanding profitability metrics compensate for short-term liquidity stress.',
-            },
-          ],
-          cross_analysis_alerts: [
-            'Divergence: Profitability is EXCELLENT but Cash Flow Capacity is only GOOD. Investigate working capital absorption.',
-          ],
-        });
-        this.isLoading.set(false);
       });
   }
 
@@ -205,7 +126,6 @@ export class ScoringMccComponent {
           });
         },
         error: () => {
-          // Fallback simulate success
           of(null)
             .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {

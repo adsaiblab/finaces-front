@@ -1,7 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 import { CaseContextService } from '../../core/services/case-context.service';
@@ -10,12 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 import { CaseService } from '../../core/services/case.service';
-import { environment } from '../../../environments/environment';
 import { FinancialStatementNormalizedSchema } from '../../core/models';
 
-// Import the barrel file
 import {
   AccountingStandardSectionComponent,
   ComparativeTableComponent,
@@ -49,14 +47,12 @@ export class NormalizationComponent {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
 
-  // State Signals
   public normalizedData = signal<FinancialStatementNormalizedSchema | null>(null);
   public isLoading = signal<boolean>(true);
   public isComputingRatios = signal<boolean>(false);
   public isRecalculating = signal<boolean>(false);
 
   ngOnInit(): void {
-    // Parent or current route fallback logic
     this.caseId.set(this.caseContext.caseId());
     this.loadNormalizedData();
   }
@@ -64,7 +60,6 @@ export class NormalizationComponent {
   private loadNormalizedData(): void {
     this.isLoading.set(true);
 
-    // API Call handling
     this.caseService
       .getNormalizedFinancials(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -74,47 +69,10 @@ export class NormalizationComponent {
           this.isLoading.set(false);
         },
         error: () => {
-          // MOCK Enterprise-grade Prototype Fallback if API is not ready
-          if (!environment.production) {
-            console.warn('API returned error, falling back to mock data for prototyping.');
-          }
-          this.loadMockData();
+          // On API error (including 500): show empty state, no mock data
+          this.normalizedData.set(null);
+          this.isLoading.set(false);
         },
-      });
-  }
-
-  private loadMockData(): void {
-    of(null)
-      .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.normalizedData.set({
-          statement_id: 'mock-123',
-          fiscal_year: 2023,
-          normalized_revenue: 8500000,
-          normalized_ebitda: 4000000,
-          normalized_net_income: 2850000,
-          normalized_working_capital: 1500000,
-          normalized_cash_flow: 500000,
-          adjustments: [
-            {
-              line_item: 'EBITDA',
-              original_value: 3500000,
-              adjusted_value: 4000000,
-              reason: 'Added back depreciation and amortization',
-              confidence: 98,
-            },
-            {
-              line_item: 'Short Term Debt',
-              original_value: 1100000,
-              adjusted_value: 950000,
-              reason: 'Reclassified portion to Long Term Debt',
-              confidence: 85,
-            },
-          ],
-          confidence_score: 92,
-          normalization_date: new Date().toISOString(),
-        } as any);
-        this.isLoading.set(false);
       });
   }
 
@@ -137,7 +95,6 @@ export class NormalizationComponent {
           this.isRecalculating.set(false);
         },
         error: () => {
-          // Fallback simulate success
           of(null)
             .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
@@ -163,7 +120,6 @@ export class NormalizationComponent {
           this.router.navigate(['/cases', this.caseId(), 'ratios']);
         },
         error: () => {
-          // Fallback simulate success
           of(null)
             .pipe(delay(1500), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
