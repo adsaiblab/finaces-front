@@ -17,7 +17,7 @@ export class ScoringMccService {
       tap((result) => console.log('✅ [Scoring MCC] Fetched successfully:', result)),
       catchError((err) => {
         console.error('❌ [Scoring MCC] Fetch error:', err);
-        return throwError(() => new Error('Failed to retrieve MCC Scoring.'));
+        return throwError(() => err);
       }),
     );
   }
@@ -32,7 +32,7 @@ export class ScoringMccService {
         tap((result) => console.log('✅ [Scoring MCC] Override applied:', result)),
         catchError((err) => {
           console.error('❌ [Scoring MCC] Override error:', err);
-          return throwError(() => new Error('Failed to apply manual score override.'));
+          return throwError(() => err);
         }),
       );
   }
