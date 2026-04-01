@@ -101,8 +101,8 @@ export class ScoringMccComponent {
         error: (err) => {
           const status = err?.status;
           if (status === 401 || status === 403) {
-            // Let the AuthInterceptor handle redirect — do not swallow
             this.isLoading.set(false);
+            this.router.navigate(['/auth/login']);
             return;
           }
           if (!environment.production) {
