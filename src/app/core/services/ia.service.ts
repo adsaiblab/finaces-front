@@ -12,6 +12,7 @@ import {
   WhatIfResult,
   IAModelInfo,
 } from '../models/ia.model';
+import { ConvergenceDataPoint } from '../models/ia-admin.model';
 
 @Injectable({
   providedIn: 'root',
@@ -54,5 +55,19 @@ export class IaService {
         return throwError(() => new Error('Failed to retrieve active IA model information.'));
       }),
     );
+  }
+
+  public getConvergenceChart(modelId: string): Observable<ConvergenceDataPoint[]> {
+    return this.http
+      .get<ConvergenceDataPoint[]>(`${this.baseUrl}/ia/models/${modelId}/convergence`)
+      .pipe(
+        catchError((err) => {
+          if (!environment.production)
+            console.error('[IA Model] Convergence chart error:', err);
+          return throwError(
+            () => new Error('Failed to retrieve convergence data for this model.'),
+          );
+        }),
+      );
   }
 }
