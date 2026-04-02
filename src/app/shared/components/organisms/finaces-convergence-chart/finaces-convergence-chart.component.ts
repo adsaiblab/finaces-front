@@ -51,8 +51,10 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnDestro
   public convergenceData = input<ConvergenceDataPoint[]>([]);
   public height = input<number>(280);
 
-  @ViewChild('convergenceCanvas', { static: true })
-  canvasRef!: ElementRef<HTMLCanvasElement>;
+  // static: false — le canvas est dans un @if, il ne peut pas être résolu
+  // avant ngAfterViewInit. static:true sur un @if = canvasRef toujours undefined.
+  @ViewChild('convergenceCanvas', { static: false })
+  canvasRef?: ElementRef<HTMLCanvasElement>;
 
   private chart: Chart<'line'> | null = null;
   private isViewInit = false;
@@ -60,7 +62,8 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnDestro
   constructor() {
     effect(() => {
       const data = this.convergenceData();
-      if (this.isViewInit) {
+      // Double-guard : isViewInit ET canvasRef disponible (canvas dans @if)
+      if (this.isViewInit && this.canvasRef?.nativeElement) {
         this.ngZone.runOutsideAngular(() => {
           requestAnimationFrame(() => this.renderChart(data));
         });
@@ -80,7 +83,7 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnDestro
   ngAfterViewInit(): void {
     this.isViewInit = true;
     const data = this.convergenceData();
-    if (data && data.length > 0) {
+    if (data && data.length > 0 && this.canvasRef?.nativeElement) {
       this.ngZone.runOutsideAngular(() => {
         this.renderChart(data);
       });
@@ -103,8 +106,10 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnDestro
   }
 
   private renderChart(data: ConvergenceDataPoint[]): void {
+    // Guard: canvasRef peut être undefined si convergenceData est vide (canvas dans @if)
+    if (!this.canvasRef?.nativeElement || !data.length) return;
+
     const canvas = this.canvasRef.nativeElement;
-    if (!canvas || !data.length) return;
 
     if (this.chart) {
       this.chart.destroy();
@@ -113,7 +118,6 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnDestro
 
     const colorPrimary = this.getCssVar('--color-primary', '--primary', '#6366F1');
     const colorError = this.getCssVar('--color-error', '--error', '#EF4444');
-    const colorSuccess = this.getCssVar('--color-success', '--success', '#22C55E');
     const colorTextSecondary = this.getCssVar(
       '--color-content-secondary',
       '--text-secondary',
