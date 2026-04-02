@@ -1,3 +1,8 @@
+<a
+  href="#main-content"
+  class="skip-link sr-only focus:not-sr-only"
+>Passer au contenu principal</a>
+
 <div
   class="flex h-screen w-full bg-surface-default text-content-primary overflow-hidden transition-colors duration-300"
 >
@@ -12,22 +17,25 @@
       }
       <button
         (click)="toggleSidebar()"
+        aria-label="Basculer la navigation"
         class="p-1 hover:bg-sidebar-surface-active rounded text-sidebar-content transition-colors flex items-center justify-center"
       >
         <mat-icon class="w-6 h-6 material-icons-outlined">menu</mat-icon>
       </button>
     </div>
 
-    <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
+    <nav aria-label="Navigation principale" class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
       <a
         routerLink="/dashboard"
         routerLinkActive="active-menu"
         [routerLinkActiveOptions]="{ exact: true }"
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
-        title="Dashboard"
+        [title]="isSidebarOpen() ? '' : 'Dashboard'"
+        [attr.aria-label]="!isSidebarOpen() ? 'Dashboard' : null"
       >
         <mat-icon
           class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
+          aria-hidden="true"
           >dashboard</mat-icon
         >
         @if (isSidebarOpen()) {
@@ -39,10 +47,12 @@
         routerLink="/cases"
         routerLinkActive="active-menu"
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
-        title="Cases"
+        [title]="isSidebarOpen() ? '' : 'Cases'"
+        [attr.aria-label]="!isSidebarOpen() ? 'Cases' : null"
       >
         <mat-icon
           class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
+          aria-hidden="true"
           >folder_open</mat-icon
         >
         @if (isSidebarOpen()) {
@@ -54,10 +64,12 @@
         routerLink="/admin-ia"
         routerLinkActive="active-menu"
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
-        title="ML/AI"
+        [title]="isSidebarOpen() ? '' : 'ML/AI'"
+        [attr.aria-label]="!isSidebarOpen() ? 'ML/AI Administration' : null"
       >
         <mat-icon
           class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
+          aria-hidden="true"
           >smart_toy</mat-icon
         >
         @if (isSidebarOpen()) {
@@ -70,27 +82,36 @@
   <div class="flex-1 flex flex-col min-w-0">
     <header
       class="h-topbar bg-surface-card border-b border-border-default px-6 flex items-center justify-end transition-colors duration-300 shadow-sm z-10"
+      role="banner"
     >
       <button
         (click)="toggleTheme()"
+        aria-label="Basculer le thème clair/sombre"
         class="p-2 rounded-full hover:bg-surface-hover transition-colors border border-border-default text-content-secondary hover:text-content-primary flex items-center justify-center cursor-pointer"
       >
         @if (!isDark()) {
           <mat-icon
             class="w-5 h-5 material-icons-outlined text-[20px] flex items-center justify-center"
+            aria-hidden="true"
             >dark_mode</mat-icon
           >
         }
         @if (isDark()) {
           <mat-icon
             class="w-5 h-5 material-icons-outlined text-[20px] flex items-center justify-center"
+            aria-hidden="true"
             >light_mode</mat-icon
           >
         }
       </button>
     </header>
 
-    <main class="flex-1 overflow-y-auto bg-surface-default transition-colors duration-300">
+    <main
+      id="main-content"
+      class="flex-1 overflow-y-auto bg-surface-default transition-colors duration-300 p-6"
+      role="main"
+      tabindex="-1"
+    >
       <router-outlet></router-outlet>
     </main>
   </div>
