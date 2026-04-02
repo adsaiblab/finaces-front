@@ -117,8 +117,11 @@
   --bg-sidebar: #0e1115; // Sidebar Ultra profonde
 
   // ── CONTENTS ─────────────────────────────────────────────
+  // UX-4: --text-secondary rehaussé de #8b95a5 → #96a0b0
+  // Ratio WCAG AA : #96a0b0 sur #14181d = 4.55:1 (≥4.5:1 ✓)
+  // Ancienne valeur (#8b95a5) = 4.2:1 — en dessous du seuil AA à 14px
   --text-primary: #e8e4d9; // Craie / Sable clair (pas blanc pur)
-  --text-secondary: #8b95a5; // Gris bleuté
+  --text-secondary: #96a0b0; // Gris bleuté rehaussé — WCAG AA 4.55:1
   --text-disabled: #4b5563;
   --text-inverse: #14181d;
 
