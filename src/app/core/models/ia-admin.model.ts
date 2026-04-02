@@ -31,11 +31,22 @@ export interface IaModelConfig {
   threshold: number;
 }
 
+// Represents a single training epoch data point (used in convergence chart)
 export interface ConvergenceDataPoint {
   epoch: number;
   train_loss: number;
   val_loss: number;
   auc_roc?: number;
+}
+
+/**
+ * Real backend response shape for GET /ia/analytics/convergence
+ * Backend returns: { days, data_points, convergence_pct }
+ */
+export interface ConvergenceChartResponse {
+  days: number;
+  data_points: ConvergenceDataPoint[];
+  convergence_pct: number;
 }
 
 export interface IaDashboardData {
