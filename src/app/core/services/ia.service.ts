@@ -12,7 +12,7 @@ import {
   WhatIfResult,
   IAModelInfo,
 } from '../models/ia.model';
-import { ConvergenceDataPoint } from '../models/ia-admin.model';
+import { ConvergenceChartResponse } from '../models/ia-admin.model';
 
 @Injectable({
   providedIn: 'root',
@@ -57,15 +57,25 @@ export class IaService {
     );
   }
 
-  public getConvergenceChart(modelId: string): Observable<ConvergenceDataPoint[]> {
+  /**
+   * Fetches convergence chart data for the admin dashboard.
+   *
+   * Backend: GET /ia/analytics/convergence?days={days}
+   * Returns: { days, data_points: ConvergenceDataPoint[], convergence_pct }
+   *
+   * @param days  Time window in days (7–365). Defaults to 30.
+   */
+  public getConvergenceChart(days = 30): Observable<ConvergenceChartResponse> {
     return this.http
-      .get<ConvergenceDataPoint[]>(`${this.baseUrl}/ia/models/${modelId}/convergence`)
+      .get<ConvergenceChartResponse>(`${this.baseUrl}/ia/analytics/convergence`, {
+        params: { days: days.toString() },
+      })
       .pipe(
         catchError((err) => {
           if (!environment.production)
             console.error('[IA Model] Convergence chart error:', err);
           return throwError(
-            () => new Error('Failed to retrieve convergence data for this model.'),
+            () => new Error('Failed to retrieve convergence data.'),
           );
         }),
       );
