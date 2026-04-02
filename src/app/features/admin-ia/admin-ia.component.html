@@ -38,6 +38,7 @@
       <div class="xl:col-span-1 h-full">
         <app-performance-metrics
           [metrics]="dashboardData()!.global_metrics"
+          [convergenceData]="convergenceData()"
         ></app-performance-metrics>
       </div>
       <div class="xl:col-span-2 h-full">
