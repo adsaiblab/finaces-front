@@ -1,8 +1,8 @@
-name: CI — Lint, Unit Tests & Build
+name: CI — Lint, Unit Tests, Build & Deploy Staging
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
     branches: [main]
 
@@ -11,6 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ─────────────────────────────────────────────────────────────
+  # JOB 1 : Lint + Unit Tests + Build (always — main & develop)
+  # ─────────────────────────────────────────────────────────────
   quality:
     name: Lint + Unit Tests + Build
     runs-on: ubuntu-latest
@@ -37,3 +40,57 @@ jobs:
 
       - name: Build (production)
         run: npm run build:ci
+
+  # ─────────────────────────────────────────────────────────────
+  # JOB 2 : Deploy to Staging VPS (push develop only)
+  # Requires GitHub Secrets:
+  #   STAGING_SSH_KEY   → private key (RSA/ED25519) for root@168.231.84.70
+  #   STAGING_SSH_HOST  → 168.231.84.70
+  #   STAGING_SSH_USER  → root
+  # ─────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy → staging.adsa.cloud
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: quality
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build staging
+        run: npm run build:staging
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.STAGING_SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Prepare remote directory
+        run: |
+          ssh -i ~/.ssh/id_ed25519 \
+            ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_SSH_HOST }} \
+            "mkdir -p /var/www/finaces-staging"
+
+      - name: Deploy via rsync
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519" \
+            dist/finaces-front/browser/ \
+            ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_SSH_HOST }}:/var/www/finaces-staging/
+
+      - name: Notify deploy success
+        run: |
+          echo "✅ Staging deployed to https://staging.adsa.cloud — $(date -u)"
