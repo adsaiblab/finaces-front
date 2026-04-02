@@ -5,10 +5,9 @@ import {
   ElementRef,
   AfterViewInit,
   OnDestroy,
-  OnChanges,
-  SimpleChanges,
   HostListener,
   input,
+  effect,
   inject,
   NgZone,
 } from '@angular/core';
@@ -45,29 +44,30 @@ Chart.register(
   styleUrls: ['./finaces-convergence-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FinacesConvergenceChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class FinacesConvergenceChartComponent implements AfterViewInit, OnDestroy {
   private ngZone = inject(NgZone);
 
   public convergenceData = input<ConvergenceDataPoint[]>([]);
   public height = input<number>(280);
 
-  // static: false : le canvas est dans un @if, il n'existe pas avant ngAfterViewInit
-  @ViewChild('convergenceCanvas', { static: false })
-  canvasRef?: ElementRef<HTMLCanvasElement>;
+  // static: true fonctionne car le canvas est TOUJOURS dans le DOM
+  // (le @if ne wrappe que l'empty state, pas le canvas)
+  // Pattern identique à finaces-stress-chart
+  @ViewChild('convergenceCanvas', { static: true })
+  canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private chart: Chart<'line'> | null = null;
   private isViewInit = false;
 
-  // ngOnChanges : déclenche un re-rendu quand convergenceData change APRES ngAfterViewInit.
-  // On utilise ngOnChanges plutot qu'un effect() pour eviter le conflit de scheduler
-  // "Schedulers cannot synchronously execute watches while scheduling" en mode zoneless.
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['convergenceData'] && this.isViewInit) {
+  constructor() {
+    effect(() => {
       const data = this.convergenceData();
-      this.ngZone.runOutsideAngular(() => {
-        requestAnimationFrame(() => this.renderChart(data));
-      });
-    }
+      if (this.isViewInit) {
+        this.ngZone.runOutsideAngular(() => {
+          requestAnimationFrame(() => this.renderChart(data));
+        });
+      }
+    });
   }
 
   @HostListener('window:resize')
@@ -82,7 +82,7 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnChange
   ngAfterViewInit(): void {
     this.isViewInit = true;
     const data = this.convergenceData();
-    if (data?.length && this.canvasRef?.nativeElement) {
+    if (data?.length) {
       this.ngZone.runOutsideAngular(() => {
         this.renderChart(data);
       });
@@ -105,21 +105,20 @@ export class FinacesConvergenceChartComponent implements AfterViewInit, OnChange
   }
 
   private renderChart(data: ConvergenceDataPoint[]): void {
-    if (!this.canvasRef?.nativeElement || !data.length) return;
-
     const canvas = this.canvasRef.nativeElement;
+    if (!canvas || !data.length) return;
 
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
     }
 
-    const colorPrimary    = this.getCssVar('--color-primary',          '--primary',        '#6366F1');
-    const colorError      = this.getCssVar('--color-error',            '--error',          '#EF4444');
-    const colorTextSec    = this.getCssVar('--color-content-secondary','--text-secondary',  '#64748B');
-    const colorBorder     = this.getCssVar('--color-border-default',   '--border',          '#E2E8F0');
-    const colorCard       = this.getCssVar('--color-surface-card',     '--bg-card',         '#FFFFFF');
-    const colorTextPrim   = this.getCssVar('--color-content-primary',  '--text-primary',    '#1E293B');
+    const colorPrimary  = this.getCssVar('--color-primary',           '--primary',         '#6366F1');
+    const colorError    = this.getCssVar('--color-error',             '--error',           '#EF4444');
+    const colorTextSec  = this.getCssVar('--color-content-secondary', '--text-secondary',  '#64748B');
+    const colorBorder   = this.getCssVar('--color-border-default',    '--border',          '#E2E8F0');
+    const colorCard     = this.getCssVar('--color-surface-card',      '--bg-card',         '#FFFFFF');
+    const colorTextPrim = this.getCssVar('--color-content-primary',   '--text-primary',    '#1E293B');
 
     const labels    = data.map((d) => `E${d.epoch}`);
     const trainLoss = data.map((d) => d.train_loss);

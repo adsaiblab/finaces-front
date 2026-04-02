@@ -52,6 +52,7 @@ describe('FinacesConvergenceChartComponent', () => {
         disconnect() {}
       },
     );
+    // rAF synchrone : identique au pattern finaces-stress-chart.spec.ts
     vi.stubGlobal('requestAnimationFrame', (cb: Function) => { cb(); return 0; });
   });
 
@@ -59,10 +60,7 @@ describe('FinacesConvergenceChartComponent', () => {
     vi.unstubAllGlobals();
   });
 
-  // Pattern identique a finaces-stress-chart.spec.ts (meme projet, meme setup zoneless) :
-  // setInput() + detectChanges() directement, sans await entre eux.
-  // Fonctionne car le composant utilise ngOnChanges (pas d'effect() qui conflicte
-  // avec le scheduler zoneless).
+  // Pattern 100% identique à finaces-stress-chart.spec.ts
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FinacesConvergenceChartComponent],
