@@ -1,18 +1,48 @@
-// ─── Page Shell ──────────────────────────────────────────────────────────────
+// ─── Page Shell ───────────────────────────────────────────────────────────────────────
 
 .login-page {
   display: flex;
   min-height: 100vh;
   font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-  background: var(--bg-default, #f2efe9);
+  background: var(--color-surface-default);
 }
 
-// ─── Branding Panel (left, dark) ─────────────────────────────────────────────
+// ─── Mobile Logo (visible uniquement < 768px) ──────────────────────────────
+
+.mobile-logo {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+
+  .mobile-logo-icon {
+    font-size: 20px;
+    color: var(--color-primary);
+    line-height: 1;
+  }
+
+  .mobile-logo-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-content-primary);
+    text-transform: uppercase;
+  }
+}
+
+// ─── Branding Panel (left, dark) ─────────────────────────────────────────
 
 .brand-panel {
   position: relative;
   flex: 0 0 45%;
-  background: var(--bg-sidebar, #2b323a);
+  // UX-4: le panel gauche garde toujours son fond sidebar (dark by design)
+  // indépendamment du data-theme — c'est intentionnel (contenu inverse)
+  background: var(--color-surface-sidebar);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,6 +79,7 @@
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.08em;
+  // Toujours clair (surface sombre fixe)
   color: #f2efe9;
   text-transform: uppercase;
 }
@@ -90,7 +121,7 @@
   }
 }
 
-// ─── Decorative elements ──────────────────────────────────────────────────────
+// ─── Decorative elements ────────────────────────────────────────────────
 
 .brand-decoration {
   position: absolute;
@@ -128,7 +159,7 @@
   background-size: 48px 48px;
 }
 
-// ─── Form Panel (right, warm) ─────────────────────────────────────────────────
+// ─── Form Panel (right) ─────────────────────────────────────────────────
 
 .form-panel {
   flex: 1;
@@ -136,6 +167,8 @@
   align-items: center;
   justify-content: center;
   padding: 48px 24px;
+  // Suit le thème (clair ou sombre) via le token surface-default
+  background: var(--color-surface-default);
 }
 
 .form-inner {
@@ -146,13 +179,13 @@
   gap: 32px;
 }
 
-// ─── Form Header ──────────────────────────────────────────────────────────────
+// ─── Form Header ───────────────────────────────────────────────────────
 
 .form-header {
   h2 {
     font-size: 26px;
     font-weight: 600;
-    color: var(--text-primary, #1c2431);
+    color: var(--color-content-primary);
     margin: 0 0 8px;
     letter-spacing: -0.02em;
   }
@@ -160,12 +193,12 @@
 
 .form-subtitle {
   font-size: 14px;
-  color: var(--text-secondary, #5c6773);
+  color: var(--color-content-secondary);
   margin: 0;
   line-height: 1.5;
 }
 
-// ─── Form Fields ──────────────────────────────────────────────────────────────
+// ─── Form Fields ───────────────────────────────────────────────────────
 
 .login-form {
   display: flex;
@@ -182,7 +215,7 @@
 .field-label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary, #1c2431);
+  color: var(--color-content-primary);
   letter-spacing: 0.01em;
 }
 
@@ -190,21 +223,23 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: white;
-  border: 1px solid var(--border, #e5e0d8);
+  // UX-4: remplacement de `background: white` hardcodé par le token card
+  // white → var(--color-surface-card) — s'adapte automatiquement light/dark
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
   border-radius: 8px;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
 
   &:focus-within {
-    border-color: var(--primary, #2c4b5e);
-    box-shadow: 0 0 0 3px rgba(44, 75, 94, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
   }
 
   &.has-error {
-    border-color: var(--error, #bc3b3b);
-    box-shadow: 0 0 0 3px rgba(188, 59, 59, 0.08);
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-error) 10%, transparent);
   }
 }
 
@@ -212,7 +247,7 @@
   display: flex;
   align-items: center;
   padding: 0 12px;
-  color: var(--text-disabled, #a1a8b3);
+  color: var(--color-content-disabled);
   flex-shrink: 0;
 }
 
@@ -221,13 +256,13 @@
   padding: 11px 12px 11px 0;
   font-size: 14px;
   font-family: inherit;
-  color: var(--text-primary, #1c2431);
+  color: var(--color-content-primary);
   background: transparent;
   border: none;
   outline: none;
 
   &::placeholder {
-    color: var(--text-disabled, #a1a8b3);
+    color: var(--color-content-disabled);
   }
 }
 
@@ -238,36 +273,36 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-disabled, #a1a8b3);
+  color: var(--color-content-disabled);
   transition: color 0.15s;
   flex-shrink: 0;
 
   &:hover {
-    color: var(--text-secondary, #5c6773);
+    color: var(--color-content-secondary);
   }
 }
 
 .field-error {
   font-size: 12px;
-  color: var(--error, #bc3b3b);
+  color: var(--color-error);
   letter-spacing: 0.01em;
 }
 
-// ─── Alert ────────────────────────────────────────────────────────────────────
+// ─── Alert ───────────────────────────────────────────────────────────────────────
 
 .alert-error {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 14px;
-  background: rgba(188, 59, 59, 0.06);
-  border: 1px solid rgba(188, 59, 59, 0.2);
+  background: color-mix(in srgb, var(--color-error) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 24%, transparent);
   border-radius: 8px;
   font-size: 13px;
-  color: var(--error, #bc3b3b);
+  color: var(--color-error);
 }
 
-// ─── Submit Button ────────────────────────────────────────────────────────────
+// ─── Submit Button ──────────────────────────────────────────────────────────
 
 .btn-primary {
   display: flex;
@@ -276,8 +311,11 @@
   gap: 8px;
   width: 100%;
   padding: 13px 24px;
-  background: var(--primary, #2c4b5e);
-  color: #f2efe9;
+  background: var(--color-primary);
+  // UX-4: texte toujours en color-content-inverse pour garantir le contraste
+  // Light: #2c4b5e fond (bleu) + #f2efe9 texte = 8.6:1 ✓
+  // Dark:  #d4b483 fond (laiton) + #14181d texte = 7.4:1 ✓ (anciennement #f2efe9 = 2.1:1 ✗)
+  color: var(--color-content-inverse);
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -291,7 +329,7 @@
   margin-top: 4px;
 
   &:hover:not(:disabled) {
-    background: var(--primary-light, #4a7a9e);
+    background: var(--color-primary-light);
   }
 
   &:active:not(:disabled) {
@@ -304,13 +342,13 @@
   }
 }
 
-// ─── Spinner ──────────────────────────────────────────────────────────────────
+// ─── Spinner ────────────────────────────────────────────────────────────────────
 
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(242, 239, 233, 0.3);
-  border-top-color: #f2efe9;
+  border: 2px solid color-mix(in srgb, var(--color-content-inverse) 30%, transparent);
+  border-top-color: var(--color-content-inverse);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -322,13 +360,13 @@
   }
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
+// ─── Footer ─────────────────────────────────────────────────────────────────────
 
 .form-footer {
   p {
     text-align: center;
     font-size: 12px;
-    color: var(--text-disabled, #a1a8b3);
+    color: var(--color-content-disabled);
     margin: 0;
   }
 
