@@ -6,7 +6,7 @@
 <div
   class="layout-shell flex h-screen w-full bg-surface-default text-content-primary overflow-hidden transition-colors duration-300"
 >
-  <!-- ===== BACKDROP MOBILE (overlay sombre derrière la sidebar) ===== -->
+  <!-- ===== BACKDROP MOBILE ===== -->
   @if (isMobile() && isSidebarOpen()) {
     <div
       class="mobile-backdrop"
@@ -24,7 +24,6 @@
     [class.sidebar--mobile-overlay]="isMobile()"
     [attr.aria-hidden]="isMobile() && !isSidebarOpen() ? 'true' : null"
   >
-    <!-- Logo / Toggle -->
     <div class="h-topbar flex items-center justify-between px-4 border-b border-border-default">
       @if (isSidebarOpen()) {
         <span class="font-bold text-lg text-sidebar-content-active truncate">FinaCES</span>
@@ -38,9 +37,7 @@
       </button>
     </div>
 
-    <!-- Nav links -->
     <nav aria-label="Navigation principale" class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
-
       <a
         routerLink="/dashboard"
         routerLinkActive="active-menu"
@@ -51,13 +48,8 @@
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
         [attr.aria-label]="!isSidebarOpen() ? 'Dashboard' : null"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >dashboard</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">Dashboard</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">dashboard</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">Dashboard</span> }
       </a>
 
       <a
@@ -69,13 +61,8 @@
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
         [attr.aria-label]="!isSidebarOpen() ? 'Dossiers' : null"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >folder_open</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">Dossiers</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">folder_open</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">Dossiers</span> }
       </a>
 
       <a
@@ -87,17 +74,11 @@
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
         [attr.aria-label]="!isSidebarOpen() ? 'ML/AI Administration' : null"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >smart_toy</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">ML/AI</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">smart_toy</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">ML/AI</span> }
       </a>
     </nav>
 
-    <!-- Section utilisateur / logout -->
     <div class="border-t border-border-default px-2 py-3">
       <button
         (click)="logout()"
@@ -106,26 +87,18 @@
         class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active cursor-pointer"
         aria-label="Se déconnecter"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >logout</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">Déconnexion</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">logout</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">Déconnexion</span> }
       </button>
     </div>
   </aside>
 
   <!-- ===== MAIN AREA ===== -->
   <div class="flex-1 flex flex-col min-w-0">
-
-    <!-- Header avec breadcrumb -->
     <header
       class="h-topbar bg-surface-card border-b border-border-default px-6 flex items-center justify-between transition-colors duration-300 shadow-sm z-10"
       role="banner"
     >
-      <!-- Bouton hamburger visible uniquement sur mobile -->
       @if (isMobile()) {
         <button
           (click)="toggleSidebar()"
@@ -136,7 +109,6 @@
         </button>
       }
 
-      <!-- Breadcrumb -->
       <nav aria-label="Fil d'ariane" class="flex items-center gap-2 text-sm flex-1">
         <span class="text-content-secondary font-medium">FinaCES</span>
         @if (pageLabel()) {
@@ -145,7 +117,6 @@
         }
       </nav>
 
-      <!-- Theme toggle -->
       <button
         (click)="toggleTheme()"
         aria-label="Basculer le thème clair/sombre"
@@ -160,9 +131,11 @@
       </button>
     </header>
 
+    <!-- T2 : class.route-entering déclenche .route-entering de styles.scss -->
     <main
       id="main-content"
       class="flex-1 overflow-y-auto bg-surface-default transition-colors duration-300 p-6"
+      [class.route-entering]="isNavigating()"
       role="main"
       tabindex="-1"
     >

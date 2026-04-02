@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal, HostListener } from '@angular/core';
-import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { Router, RouterModule, NavigationEnd, NavigationStart } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, filter } from 'rxjs/operators';
 
@@ -31,23 +31,43 @@ export class AppLayoutComponent {
   /** Desktop: sidebar ouverte par défaut. Mobile: fermée par défaut. */
   isSidebarOpen = signal(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
 
-  /** Vrai si la fenêtre est < 768px — la sidebar est alors un overlay. */
+  /** Vrai si la fenêtre est < 768px. */
   isMobile = signal(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+  /**
+   * Vrai pendant la navigation (NavigationStart → NavigationEnd).
+   * Branché sur <main [class.route-entering]="isNavigating()">
+   * pour déclencher l'animation CSS sans AnimationModule Angular.
+   */
+  isNavigating = signal(false);
 
   /** Label court de la page courante pour le breadcrumb. */
   readonly pageLabel = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      map(() => this.titleStrategy.getPageLabel(this.router.routerState.snapshot)),
+      map(() => {
+        this.isNavigating.set(false);
+        return this.titleStrategy.getPageLabel(this.router.routerState.snapshot);
+      }),
     ),
     { initialValue: this.titleStrategy.getPageLabel(this.router.routerState.snapshot) },
   );
+
+  constructor() {
+    // Démarre l'animation à chaque début de navigation
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationStart))
+      .subscribe(() => {
+        this.isNavigating.set(true);
+        // Reset automatique après la durée de l'animation (280ms + marge)
+        setTimeout(() => this.isNavigating.set(false), 350);
+      });
+  }
 
   @HostListener('window:resize')
   onResize(): void {
     const mobile = window.innerWidth < 768;
     this.isMobile.set(mobile);
-    // Sur desktop : sidebar toujours visible ; sur mobile : auto-close quand on passe en mobile
     if (!mobile) {
       this.isSidebarOpen.set(true);
     }
