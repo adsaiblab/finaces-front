@@ -1,223 +1,95 @@
 <form [formGroup]="pnlForm" class="flex flex-col pt-2 pb-8">
-  <!-- Items list -->
   <div class="flex flex-col">
-    <!-- Revenue (Sales) -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-sm font-semibold text-[color:var(--color-content-primary)]"
-        >Revenue (Sales)</label
-      >
+
+    <div class="finaces-data-row">
+      <label class="text-sm font-semibold text-[color:var(--color-content-primary)]">Revenue (Sales)</label>
       <input type="number" formControlName="revenue" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Sold Production -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
+    <div class="finaces-data-row">
       <label class="text-[15px] text-[color:var(--color-content-primary)]">Sold Production</label>
-      <input
-        type="number"
-        formControlName="soldProduction"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+      <input type="number" formControlName="soldProduction" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Other Operating Income -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]"
-        >Other Operating Income</label
-      >
-      <input
-        type="number"
-        formControlName="otherOperatingIncome"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Other Operating Income</label>
+      <input type="number" formControlName="otherOperatingIncome" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Consumed Purchases -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]"
-        >Consumed Purchases</label
-      >
-      <input
-        type="number"
-        formControlName="consumedPurchases"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Consumed Purchases</label>
+      <input type="number" formControlName="consumedPurchases" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- External Expenses -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
+    <div class="finaces-data-row">
       <label class="text-[15px] text-[color:var(--color-content-primary)]">External Expenses</label>
-      <input
-        type="number"
-        formControlName="externalExpenses"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+      <input type="number" formControlName="externalExpenses" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Personnel Expenses -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]"
-        >Personnel Expenses</label
-      >
-      <input
-        type="number"
-        formControlName="personnelExpenses"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Personnel Expenses</label>
+      <input type="number" formControlName="personnelExpenses" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Taxes & Duties -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]">Taxes & Duties</label>
-      <input
-        type="number"
-        formControlName="taxesAndDuties"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Taxes &amp; Duties</label>
+      <input type="number" formControlName="taxesAndDuties" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Depreciation & Amortization -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]"
-        >Depreciation & Amortization</label
-      >
-      <input
-        type="number"
-        formControlName="depreciationAmortization"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Depreciation &amp; Amortization</label>
+      <input type="number" formControlName="depreciationAmortization" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Résultat d'exploitation (Calculated) -->
-    <div class="grid grid-cols-[1fr_200px] items-center py-4 px-2 mt-2">
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)]"
-        >Operating Income</span
-      >
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{
-        operatingIncome() | number: '1.2-2'
-      }}</span>
+    <!-- Operating Income (Calculated) -->
+    <div class="finaces-data-row">
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)]">Operating Income</span>
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{ operatingIncome() | number: '1.2-2' }}</span>
     </div>
 
     <!-- EBITDA (Calculated) -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] px-2"
-    >
+    <div class="finaces-data-row">
       <span class="text-sm font-bold text-[color:var(--color-content-primary)]">EBITDA</span>
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{
-        ebitda() | number: '1.2-2'
-      }}</span>
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{ ebitda() | number: '1.2-2' }}</span>
     </div>
 
-    <!-- Financial Income -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 mt-4 transition-colors"
-    >
+    <div class="finaces-data-row" style="margin-top: 1rem">
       <label class="text-[15px] text-[color:var(--color-content-primary)]">Financial Income</label>
-      <input
-        type="number"
-        formControlName="financialIncome"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+      <input type="number" formControlName="financialIncome" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Financial Expenses -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]"
-        >Financial Expenses</label
-      >
-      <input
-        type="number"
-        formControlName="financialExpenses"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Financial Expenses</label>
+      <input type="number" formControlName="financialExpenses" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Résultat financier (Calculated) -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-4 border-b border-[color:var(--color-border-default)] px-2 mt-2"
-    >
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)]"
-        >Net Financial Result</span
-      >
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{
-        netFinancialResult() | number: '1.2-2'
-      }}</span>
+    <!-- Net Financial Result (Calculated) -->
+    <div class="finaces-data-row">
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)]">Net Financial Result</span>
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{ netFinancialResult() | number: '1.2-2' }}</span>
     </div>
 
-    <!-- Résultat courant (Calculated) -->
-    <div class="grid grid-cols-[1fr_200px] items-center py-4 px-2 mt-2">
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)]"
-        >Ordinary Income</span
-      >
-      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{
-        ordinaryIncome() | number: '1.2-2'
-      }}</span>
+    <!-- Ordinary Income (Calculated) -->
+    <div class="finaces-data-row">
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)]">Ordinary Income</span>
+      <span class="text-sm font-bold text-[color:var(--color-content-primary)] text-right pr-4">{{ ordinaryIncome() | number: '1.2-2' }}</span>
     </div>
 
-    <!-- Exceptional Income -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
-      <label class="text-[15px] text-[color:var(--color-content-primary)]"
-        >Exceptional Income (Expense)</label
-      >
-      <input
-        type="number"
-        formControlName="exceptionalIncome"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+    <div class="finaces-data-row">
+      <label class="text-[15px] text-[color:var(--color-content-primary)]">Exceptional Income (Expense)</label>
+      <input type="number" formControlName="exceptionalIncome" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
-    <!-- Income Tax -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
-    >
+    <div class="finaces-data-row">
       <label class="text-[15px] text-[color:var(--color-content-primary)]">Income Tax</label>
-      <input
-        type="number"
-        formControlName="incomeTax"
-        placeholder="0.00"
-        class="finaces-data-pill"
-      />
+      <input type="number" formControlName="incomeTax" placeholder="0.00" class="finaces-data-pill" />
     </div>
 
     <!-- NET INCOME -->
-    <div
-      class="grid grid-cols-[1fr_200px] items-center py-6 px-2 mt-4 border-t-2 border-[color:var(--color-primary)]"
-    >
-      <span class="text-base font-bold text-[color:var(--color-content-primary)] uppercase"
-        >Net Income</span
-      >
-      <span class="text-xl font-bold text-[color:var(--color-primary)] text-right pr-4">{{
-        netIncome() | number: '1.2-2'
-      }}</span>
+    <div class="finaces-data-row finaces-data-row--total">
+      <span class="text-base font-bold text-[color:var(--color-content-primary)] uppercase">Net Income</span>
+      <span class="text-xl font-bold text-[color:var(--color-primary)] text-right pr-4">{{ netIncome() | number: '1.2-2' }}</span>
     </div>
+
   </div>
 </form>
