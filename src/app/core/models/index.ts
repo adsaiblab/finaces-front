@@ -13,3 +13,4 @@ export * from './tension.model';
 export * from './ratio.model';
 export * from './report.model';
 export * from './audit.model';
+export * from './ia-admin.model';
