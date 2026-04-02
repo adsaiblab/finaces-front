@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FinacesConvergenceChartComponent } from './finaces-convergence-chart.component';
 import { ConvergenceDataPoint } from '../../../../core/models/ia-admin.model';
 import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest';
@@ -59,7 +59,9 @@ describe('FinacesConvergenceChartComponent', () => {
     vi.unstubAllGlobals();
   });
 
-  beforeEach(async () => {
+  // waitForAsync : canvasRef est static:false (canvas dans @if)
+  // => il n'est résolu qu'après detectChanges() + tick de la CD.
+  beforeEach(waitForAsync(async () => {
     await TestBed.configureTestingModule({
       imports: [FinacesConvergenceChartComponent],
     }).compileComponents();
@@ -69,8 +71,12 @@ describe('FinacesConvergenceChartComponent', () => {
 
     fixture.componentRef.setInput('convergenceData', mockData);
     fixture.componentRef.setInput('height', 280);
+
+    // Premier detectChanges : rend le template, résout canvasRef (static:false)
     fixture.detectChanges();
-  });
+    // Attendre que tous les effets asynchrones (effect(), requestAnimationFrame mocké) soient flushés
+    await fixture.whenStable();
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -89,15 +95,21 @@ describe('FinacesConvergenceChartComponent', () => {
     expect(chartInstance.data.datasets[1].label).toBe('Validation Loss');
   });
 
-  it('should show empty state when convergenceData is empty', () => {
+  it('should show empty state when convergenceData is empty', waitForAsync(async () => {
     fixture.componentRef.setInput('convergenceData', []);
     fixture.detectChanges();
+    await fixture.whenStable();
+
     const emptyState = fixture.nativeElement.querySelector('.convergence-empty');
     expect(emptyState).toBeTruthy();
-  });
+  }));
 
   it('should clean up chart on component destroy', () => {
-    const destroySpy = vi.spyOn((component as any).chart, 'destroy');
+    // Le chart doit exister avant de tester destroy
+    const chartInstance = (component as any).chart;
+    expect(chartInstance).toBeTruthy();
+
+    const destroySpy = vi.spyOn(chartInstance, 'destroy');
     component.ngOnDestroy();
     expect(destroySpy).toHaveBeenCalled();
   });
