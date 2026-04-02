@@ -3,16 +3,6 @@ import { FinacesConvergenceChartComponent } from './finaces-convergence-chart.co
 import { ConvergenceDataPoint } from '../../../../core/models/ia-admin.model';
 import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest';
 
-/**
- * Zoneless TestBed (setupTestBed({ zoneless: true }) dans test-setup.js) :
- * - PAS de Zone.js => pas de waitForAsync / fakeAsync
- * - Les effect() Angular s’exécutent de façon asynchrone via le scheduler interne
- * - Règle critique : ne jamais appeler detectChanges() PENDANT qu’un effect() tourne
- *   => toujours flushEffects() entre setInput() et le detectChanges() suivant
- */
-const flushEffects = (): Promise<void> =>
-  new Promise<void>((resolve) => setTimeout(resolve, 0));
-
 describe('FinacesConvergenceChartComponent', () => {
   let component: FinacesConvergenceChartComponent;
   let fixture: ComponentFixture<FinacesConvergenceChartComponent>;
@@ -69,6 +59,10 @@ describe('FinacesConvergenceChartComponent', () => {
     vi.unstubAllGlobals();
   });
 
+  // Pattern identique a finaces-stress-chart.spec.ts (meme projet, meme setup zoneless) :
+  // setInput() + detectChanges() directement, sans await entre eux.
+  // Fonctionne car le composant utilise ngOnChanges (pas d'effect() qui conflicte
+  // avec le scheduler zoneless).
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FinacesConvergenceChartComponent],
@@ -80,7 +74,6 @@ describe('FinacesConvergenceChartComponent', () => {
     fixture.componentRef.setInput('convergenceData', mockData);
     fixture.componentRef.setInput('height', 280);
     fixture.detectChanges();
-    await flushEffects();
   });
 
   it('should create', () => {
@@ -100,15 +93,9 @@ describe('FinacesConvergenceChartComponent', () => {
     expect(chartInstance.data.datasets[1].label).toBe('Validation Loss');
   });
 
-  it('should show empty state when convergenceData is empty', async () => {
-    // 1. Changer le signal
+  it('should show empty state when convergenceData is empty', () => {
     fixture.componentRef.setInput('convergenceData', []);
-    // 2. CRITIQUE : laisser le scheduler zoneless terminer le cycle effect()
-    //    déclenché par le changement de signal AVANT d’appeler detectChanges()
-    await flushEffects();
-    // 3. Maintenant detectChanges() peut s’exécuter sans conflit de scheduler
     fixture.detectChanges();
-    await flushEffects();
 
     const emptyState = fixture.nativeElement.querySelector('.convergence-empty');
     expect(emptyState).toBeTruthy();
