@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { IaDashboardData } from '../../../core/models/ia-admin.model';
+import { ConvergenceDataPoint, IaDashboardData } from '../../../core/models/ia-admin.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminIaService {
@@ -111,6 +111,18 @@ export class AdminIaService {
         },
       ],
     };
-    return of(mockData).pipe(delay(800)); // Simulate network latency
+    return of(mockData).pipe(delay(800));
+  }
+
+  getConvergenceChart(_modelId: string): Observable<ConvergenceDataPoint[]> {
+    const mockData: ConvergenceDataPoint[] = Array.from({ length: 40 }, (_, i) => ({
+      epoch: i + 1,
+      train_loss: parseFloat((0.85 * Math.exp(-i * 0.07) + 0.05).toFixed(4)),
+      val_loss: parseFloat(
+        (0.92 * Math.exp(-i * 0.065) + 0.07 + (Math.random() * 0.02 - 0.01)).toFixed(4),
+      ),
+      auc_roc: parseFloat((0.5 + (0.47 * i) / 39).toFixed(4)),
+    }));
+    return of(mockData).pipe(delay(600));
   }
 }
