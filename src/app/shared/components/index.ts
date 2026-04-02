@@ -11,3 +11,4 @@ export * from './molecules/finaces-pillar-row/finaces-pillar-row.component';
 export * from './organisms/finaces-shap-chart/finaces-shap-chart.component';
 export * from './organisms/finaces-stress-chart/finaces-stress-chart.component';
 export * from './organisms/finaces-what-if/finaces-what-if.component';
+export * from './organisms/finaces-convergence-chart/finaces-convergence-chart.component';
