@@ -1,0 +1,26 @@
+<div class="finaces-convergence-container">
+  <div class="convergence-header">
+    <h3 class="convergence-title">
+      <mat-icon class="convergence-icon">show_chart</mat-icon>
+      Training Convergence
+    </h3>
+    @if (!convergenceData().length) {
+      <span class="convergence-badge badge-empty">No data</span>
+    } @else {
+      <span class="convergence-badge badge-ready">
+        {{ convergenceData().length }} epochs
+      </span>
+    }
+  </div>
+
+  @if (!convergenceData().length) {
+    <div class="convergence-empty">
+      <mat-icon>query_stats</mat-icon>
+      <p>No convergence data available for this model.</p>
+    </div>
+  } @else {
+    <div class="chart-wrapper" [style.height.px]="height()">
+      <canvas #convergenceCanvas class="convergence-canvas"></canvas>
+    </div>
+  }
+</div>

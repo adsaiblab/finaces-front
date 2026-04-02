@@ -1,0 +1,99 @@
+.finaces-convergence-container {
+  width: 100%;
+  background-color: var(--color-surface-card);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+
+  .convergence-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .convergence-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-content-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .convergence-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--color-primary);
+      }
+    }
+
+    .convergence-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+
+      &.badge-empty {
+        background-color: color-mix(in srgb, var(--color-content-secondary) 10%, transparent);
+        color: var(--color-content-secondary);
+        border-color: color-mix(in srgb, var(--color-content-secondary) 20%, transparent);
+      }
+
+      &.badge-ready {
+        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        color: var(--color-primary);
+        border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+      }
+    }
+  }
+
+  .convergence-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 16px;
+    color: var(--color-content-secondary);
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      opacity: 0.4;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      text-align: center;
+    }
+  }
+
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
+
+    .convergence-canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .finaces-convergence-container {
+    padding: 12px;
+
+    .convergence-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+}
