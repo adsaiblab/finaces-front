@@ -1,0 +1,96 @@
+// ───────────────────────────────────────────────────────────────────────────
+// FinaCES — Global Styles
+// ───────────────────────────────────────────────────────────────────────────
+
+@use 'tailwindcss';
+@use './styles/spacing' as *;
+
+// ─── P1 : Scrollbar harmonise Firefox avec Webkit ─────────────────────────
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+// ─── P2 : Focus-visible ring global (keyboard nav) ──────────────────────
+:focus-visible {
+  outline: 2px solid var(--color-primary, #01696f);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// ─── P4 : Active menu item (routerLinkActive) ──────────────────────────
+.active-menu {
+  background-color: var(--sidebar-active-bg, oklch(0.92 0.02 200))  !important;
+  color:            var(--sidebar-active, oklch(0.35 0.08 200))      !important;
+  font-weight: 600;
+
+  .mat-icon, .material-icons, .material-icons-outlined {
+    color: var(--sidebar-active, oklch(0.35 0.08 200));
+  }
+}
+
+// ─── P4 bis : Skip link (a11y clavier) ──────────────────────────────
+.skip-link {
+  position: fixed;
+  top: var(--space-2, 8px);
+  left: var(--space-2, 8px);
+  z-index: 9999;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  background: var(--color-primary, #01696f);
+  color: #fff;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform 200ms ease;
+
+  &:focus {
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// ─── P5 : Reduced motion global ────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// ─── T1 : Transitions de route — fadeSlide ───────────────────────────
+// Appliquer la classe .route-transition sur <router-outlet> + wrapper
+// ou sur <main> directement via NavigationEnd dans le layout.
+// UX-3 : on anime le <main> au niveau CSS pur — pas d’AnimationModule Angular
+// pour éviter de casser les tests existants.
+//
+// Usage : [class.route-entering]="isNavigating()" sur <main>
+
+.route-entering {
+  animation: routeFadeSlideIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes routeFadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
