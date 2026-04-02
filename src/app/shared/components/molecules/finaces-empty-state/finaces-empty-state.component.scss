@@ -1,4 +1,63 @@
-:host {
-  display: block;
-  width: 100%;
+// ─── Entry animation : le conteneur entier monte en fondu ─────────────────
+.empty-state-host {
+  animation: emptyFadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// ─── Icône : pulse doux en boucle pour attirer l'œil ──────────────────────
+.empty-icon-wrapper {
+  animation:
+    emptyFadeInUp 400ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    emptyIconPulse 3s ease-in-out 600ms infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Titre : léger décalage pour un effet "cascade"
+.empty-title {
+  animation: emptyFadeInUp 400ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// Description : décalage supplémentaire
+.empty-desc {
+  animation: emptyFadeInUp 400ms 140ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// CTA : dernier à apparaître
+.empty-cta {
+  animation: emptyFadeInUp 400ms 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// ─── Keyframes ────────────────────────────────────────────────────
+@keyframes emptyFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes emptyIconPulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%       { transform: scale(1.06); opacity: 0.85; }
 }

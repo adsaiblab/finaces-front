@@ -6,15 +6,16 @@ import { uuidGuard } from './core/guards/uuid.guard';
 import { consortiumGuard } from './core/guards/consortium.guard';
 
 export const routes: Routes = [
-  // 1. Routes publiques (Hors du layout principal)
+  // 1. Routes publiques
   {
     path: 'auth/login',
     canActivate: [noAuthGuard],
     loadComponent: () =>
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+    title: 'FinaCES — Connexion',
   },
 
-  // 2. Routes privées (À l'intérieur de l'App Shell)
+  // 2. Routes privées
   {
     path: '',
     component: AppLayoutComponent,
@@ -24,25 +25,19 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/bloc0-dashboard/dashboard.component').then(
-            (m) => m.DashboardComponent,
-          ),
+          import('./features/bloc0-dashboard/dashboard.component').then((m) => m.DashboardComponent),
         title: 'FinaCES — Tableau de Bord',
       },
       {
         path: 'cases',
         loadComponent: () =>
-          import('./features/cases/cases-list/cases-list.component').then(
-            (m) => m.CasesListComponent,
-          ),
+          import('./features/cases/cases-list/cases-list.component').then((m) => m.CasesListComponent),
+        title: 'FinaCES — Dossiers',
       },
-      // NOUVELLE ROUTE : Création de dossier (Placée AVANT cases/:id)
       {
         path: 'cases/new',
         loadComponent: () =>
-          import('./features/cases/case-create/case-create.component').then(
-            (m) => m.CaseCreateComponent,
-          ),
+          import('./features/cases/case-create/case-create.component').then((m) => m.CaseCreateComponent),
         title: 'FinaCES — Nouveau Dossier',
       },
       {
@@ -52,22 +47,18 @@ export const routes: Routes = [
         title: 'FinaCES — Administration IA',
       },
 
-      // Espace de travail d'un dossier spécifique (Nested Routing pour les blocs)
+      // Espace de travail d’un dossier spécifique
       {
         path: 'cases/:id',
         canActivate: [uuidGuard],
         loadComponent: () =>
-          import('./features/cases/case-workspace/case-workspace.component').then(
-            (m) => m.CaseWorkspaceComponent,
-          ),
+          import('./features/cases/case-workspace/case-workspace.component').then((m) => m.CaseWorkspaceComponent),
         children: [
           { path: '', redirectTo: 'recevabilite', pathMatch: 'full' },
           {
             path: 'recevabilite',
             loadComponent: () =>
-              import('./features/bloc1a-recevabilite/recevabilite.component').then(
-                (m) => m.RecevabiliteComponent,
-              ),
+              import('./features/bloc1a-recevabilite/recevabilite.component').then((m) => m.RecevabiliteComponent),
             title: 'FinaCES — Recevabilité',
           },
           {
@@ -79,33 +70,25 @@ export const routes: Routes = [
           {
             path: 'financials',
             loadComponent: () =>
-              import('./features/bloc2-financials/financials.component').then(
-                (m) => m.FinancialsComponent,
-              ),
+              import('./features/bloc2-financials/financials.component').then((m) => m.FinancialsComponent),
             title: 'FinaCES — États Financiers',
           },
           {
             path: 'normalization',
             loadComponent: () =>
-              import('./features/bloc3-normalization/normalization.component').then(
-                (m) => m.NormalizationComponent,
-              ),
+              import('./features/bloc3-normalization/normalization.component').then((m) => m.NormalizationComponent),
             title: 'FinaCES — Normalisation',
           },
           {
             path: 'ratios',
             loadComponent: () =>
-              import('./features/bloc4-ratios/bloc4-ratios.component').then(
-                (m) => m.Bloc4RatiosComponent,
-              ),
+              import('./features/bloc4-ratios/bloc4-ratios.component').then((m) => m.Bloc4RatiosComponent),
             title: 'FinaCES — Ratios Financiers',
           },
           {
             path: 'scoring-mcc',
             loadComponent: () =>
-              import('./features/bloc5-scoring-mcc/scoring-mcc.component').then(
-                (m) => m.ScoringMccComponent,
-              ),
+              import('./features/bloc5-scoring-mcc/scoring-mcc.component').then((m) => m.ScoringMccComponent),
             title: 'FinaCES — Scoring MCC',
           },
           {
@@ -141,9 +124,7 @@ export const routes: Routes = [
           {
             path: 'consortium',
             loadComponent: () =>
-              import('./features/bloc12-consortium/consortium.component').then(
-                (m) => m.ConsortiumComponent,
-              ),
+              import('./features/bloc12-consortium/consortium.component').then((m) => m.ConsortiumComponent),
             canActivate: [consortiumGuard],
             title: 'FinaCES — Consortium',
           },
@@ -152,13 +133,11 @@ export const routes: Routes = [
     ],
   },
 
-  // 3. Fallback (404)
+  // 3. Fallback 404
   {
     path: '**',
     loadComponent: () =>
-      import('./shared/components/pages/not-found/not-found.component').then(
-        (m) => m.NotFoundComponent,
-      ),
+      import('./shared/components/pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
     title: 'FinaCES — Page introuvable',
   },
 ];

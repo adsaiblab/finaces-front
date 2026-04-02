@@ -13,14 +13,21 @@
     }
   </div>
 
+  <!-- Empty state : visible par CSS quand pas de données -->
+  <!-- Le canvas reste TOUJOURS dans le DOM (static:true requis par ViewChild + effect()) -->
+  <!-- Pattern identique à finaces-stress-chart -->
   @if (!convergenceData().length) {
     <div class="convergence-empty">
       <mat-icon>query_stats</mat-icon>
       <p>No convergence data available for this model.</p>
     </div>
-  } @else {
-    <div class="chart-wrapper" [style.height.px]="height()">
-      <canvas #convergenceCanvas class="convergence-canvas"></canvas>
-    </div>
   }
+
+  <div
+    class="chart-wrapper"
+    [style.height.px]="height()"
+    [style.display]="convergenceData().length ? 'block' : 'none'"
+  >
+    <canvas #convergenceCanvas class="convergence-canvas"></canvas>
+  </div>
 </div>

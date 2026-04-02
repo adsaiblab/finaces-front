@@ -1,3 +1,44 @@
+// ─── Active menu item ─────────────────────────────────────────────────────────
 .active-menu {
   @apply bg-sidebar-active-bg text-sidebar-active !important;
+}
+
+// ─── Sidebar states ───────────────────────────────────────────────────────────
+.sidebar {
+  // Desktop : largeur normale
+  &--open    { width: var(--sidebar-width, 240px); }
+  &--collapsed { width: 4rem; }   // w-16
+
+  // Mobile overlay : position fixe, translate hors écran quand fermée
+  &--mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: var(--sidebar-width, 240px);
+    transform: translateX(0);
+    z-index: 50;
+  }
+
+  &--hidden {
+    transform: translateX(-100%);
+  }
+}
+
+// ─── Mobile backdrop ─────────────────────────────────────────────────────────
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: oklch(0.1 0 0 / 0.45);
+  z-index: 40;
+  animation: fadeInBackdrop 200ms ease forwards;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

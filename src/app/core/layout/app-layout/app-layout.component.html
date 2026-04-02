@@ -4,15 +4,26 @@
 >Passer au contenu principal</a>
 
 <div
-  class="flex h-screen w-full bg-surface-default text-content-primary overflow-hidden transition-colors duration-300"
+  class="layout-shell flex h-screen w-full bg-surface-default text-content-primary overflow-hidden transition-colors duration-300"
 >
+  <!-- ===== BACKDROP MOBILE ===== -->
+  @if (isMobile() && isSidebarOpen()) {
+    <div
+      class="mobile-backdrop"
+      (click)="closeSidebarIfMobile()"
+      aria-hidden="true"
+    ></div>
+  }
+
   <!-- ===== SIDEBAR ===== -->
   <aside
-    class="bg-surface-sidebar flex flex-col transition-all duration-300 ease-in-out relative z-20 shadow-lg border-r border-border-default"
-    [class.w-sidebar]="isSidebarOpen()"
-    [class.w-16]="!isSidebarOpen()"
+    class="sidebar bg-surface-sidebar flex flex-col transition-all duration-300 ease-in-out relative z-20 shadow-lg border-r border-border-default"
+    [class.sidebar--open]="isSidebarOpen()"
+    [class.sidebar--collapsed]="!isSidebarOpen() && !isMobile()"
+    [class.sidebar--hidden]="!isSidebarOpen() && isMobile()"
+    [class.sidebar--mobile-overlay]="isMobile()"
+    [attr.aria-hidden]="isMobile() && !isSidebarOpen() ? 'true' : null"
   >
-    <!-- Logo / Toggle -->
     <div class="h-topbar flex items-center justify-between px-4 border-b border-border-default">
       @if (isSidebarOpen()) {
         <span class="font-bold text-lg text-sidebar-content-active truncate">FinaCES</span>
@@ -26,25 +37,19 @@
       </button>
     </div>
 
-    <!-- Nav links -->
     <nav aria-label="Navigation principale" class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-2">
-
       <a
         routerLink="/dashboard"
         routerLinkActive="active-menu"
         [routerLinkActiveOptions]="{ exact: true }"
         [matTooltip]="!isSidebarOpen() ? 'Dashboard' : ''"
         matTooltipPosition="right"
+        (click)="closeSidebarIfMobile()"
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
         [attr.aria-label]="!isSidebarOpen() ? 'Dashboard' : null"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >dashboard</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">Dashboard</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">dashboard</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">Dashboard</span> }
       </a>
 
       <a
@@ -52,16 +57,12 @@
         routerLinkActive="active-menu"
         [matTooltip]="!isSidebarOpen() ? 'Dossiers' : ''"
         matTooltipPosition="right"
+        (click)="closeSidebarIfMobile()"
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
         [attr.aria-label]="!isSidebarOpen() ? 'Dossiers' : null"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >folder_open</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">Dossiers</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">folder_open</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">Dossiers</span> }
       </a>
 
       <a
@@ -69,20 +70,15 @@
         routerLinkActive="active-menu"
         [matTooltip]="!isSidebarOpen() ? 'ML/AI Administration' : ''"
         matTooltipPosition="right"
+        (click)="closeSidebarIfMobile()"
         class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active group cursor-pointer"
         [attr.aria-label]="!isSidebarOpen() ? 'ML/AI Administration' : null"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >smart_toy</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">ML/AI</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">smart_toy</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">ML/AI</span> }
       </a>
     </nav>
 
-    <!-- ===== N2 : Section utilisateur bas de sidebar ===== -->
     <div class="border-t border-border-default px-2 py-3">
       <button
         (click)="logout()"
@@ -91,61 +87,55 @@
         class="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-active-bg transition-colors text-sidebar hover:text-sidebar-active cursor-pointer"
         aria-label="Se déconnecter"
       >
-        <mat-icon
-          class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center"
-          aria-hidden="true"
-        >logout</mat-icon>
-        @if (isSidebarOpen()) {
-          <span class="truncate text-sm font-medium">Déconnexion</span>
-        }
+        <mat-icon class="w-5 h-5 shrink-0 material-icons-outlined text-[20px] flex items-center justify-center" aria-hidden="true">logout</mat-icon>
+        @if (isSidebarOpen()) { <span class="truncate text-sm font-medium">Déconnexion</span> }
       </button>
     </div>
   </aside>
 
   <!-- ===== MAIN AREA ===== -->
   <div class="flex-1 flex flex-col min-w-0">
-
-    <!-- Header avec breadcrumb -->
     <header
       class="h-topbar bg-surface-card border-b border-border-default px-6 flex items-center justify-between transition-colors duration-300 shadow-sm z-10"
       role="banner"
     >
-      <!-- S2 : Breadcrumb / titre de la page courante -->
-      <nav aria-label="Fil d'ariane" class="flex items-center gap-2 text-sm">
+      @if (isMobile()) {
+        <button
+          (click)="toggleSidebar()"
+          aria-label="Ouvrir la navigation"
+          class="p-2 mr-3 rounded hover:bg-surface-hover transition-colors text-content-secondary hover:text-content-primary flex items-center justify-center cursor-pointer"
+        >
+          <mat-icon class="w-5 h-5 material-icons-outlined" aria-hidden="true">menu</mat-icon>
+        </button>
+      }
+
+      <nav aria-label="Fil d'ariane" class="flex items-center gap-2 text-sm flex-1">
         <span class="text-content-secondary font-medium">FinaCES</span>
         @if (pageLabel()) {
-          <mat-icon
-            class="text-[16px] text-content-tertiary"
-            aria-hidden="true"
-          >chevron_right</mat-icon>
+          <mat-icon class="text-[16px] text-content-tertiary" aria-hidden="true">chevron_right</mat-icon>
           <span class="text-content-primary font-semibold">{{ pageLabel() }}</span>
         }
       </nav>
 
-      <!-- Theme toggle -->
       <button
         (click)="toggleTheme()"
         aria-label="Basculer le thème clair/sombre"
         class="p-2 rounded-full hover:bg-surface-hover transition-colors border border-border-default text-content-secondary hover:text-content-primary flex items-center justify-center cursor-pointer"
       >
         @if (!isDark()) {
-          <mat-icon
-            class="w-5 h-5 material-icons-outlined text-[20px] flex items-center justify-center"
-            aria-hidden="true"
-          >dark_mode</mat-icon>
+          <mat-icon class="w-5 h-5 material-icons-outlined text-[20px]" aria-hidden="true">dark_mode</mat-icon>
         }
         @if (isDark()) {
-          <mat-icon
-            class="w-5 h-5 material-icons-outlined text-[20px] flex items-center justify-center"
-            aria-hidden="true"
-          >light_mode</mat-icon>
+          <mat-icon class="w-5 h-5 material-icons-outlined text-[20px]" aria-hidden="true">light_mode</mat-icon>
         }
       </button>
     </header>
 
+    <!-- T2 : class.route-entering déclenche .route-entering de styles.scss -->
     <main
       id="main-content"
       class="flex-1 overflow-y-auto bg-surface-default transition-colors duration-300 p-6"
+      [class.route-entering]="isNavigating()"
       role="main"
       tabindex="-1"
     >
