@@ -24,9 +24,23 @@ export interface IaMonitoringAlert {
   detected_at: string;
 }
 
+export interface IaModelConfig {
+  algorithm: string;
+  hyperparameters: Record<string, number | string>;
+  features_count: number;
+  threshold: number;
+}
+
+export interface ConvergenceDataPoint {
+  epoch: number;
+  train_loss: number;
+  val_loss: number;
+  auc_roc?: number;
+}
+
 export interface IaDashboardData {
   models: IaModelInfo[];
-  active_model_config: any;
+  active_model_config: IaModelConfig;
   global_metrics: {
     train: { accuracy: number; f1_score: number; roc_auc: number };
     val: { accuracy: number; f1_score: number; roc_auc: number };
