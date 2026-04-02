@@ -1,7 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinacesConvergenceChartComponent } from './finaces-convergence-chart.component';
 import { ConvergenceDataPoint } from '../../../../core/models/ia-admin.model';
 import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest';
+
+// Helpers zoneless : flush microtasks + macrotasks (rAF mocké = synchrone dans le setup global)
+const flushEffects = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 describe('FinacesConvergenceChartComponent', () => {
   let component: FinacesConvergenceChartComponent;
@@ -16,6 +19,7 @@ describe('FinacesConvergenceChartComponent', () => {
   ];
 
   beforeAll(() => {
+    // getContext déjà mocké dans test-setup.js — on re-spy pour être sûr
     if (typeof HTMLCanvasElement !== 'undefined') {
       vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
         fillRect: () => {},
@@ -52,16 +56,18 @@ describe('FinacesConvergenceChartComponent', () => {
         disconnect() {}
       },
     );
-    vi.stubGlobal('requestAnimationFrame', (cb: Function) => cb());
+    // rAF synchrone : le callback est appelé immédiatement — pas de macro-task à attendre
+    vi.stubGlobal('requestAnimationFrame', (cb: Function) => { cb(); return 0; });
   });
 
   afterAll(() => {
     vi.unstubAllGlobals();
   });
 
-  // waitForAsync : canvasRef est static:false (canvas dans @if)
-  // => il n'est résolu qu'après detectChanges() + tick de la CD.
-  beforeEach(waitForAsync(async () => {
+  // Mode zoneless : pas de Zone.js, pas de waitForAsync / fakeAsync.
+  // On utilise async/await natif + flushEffects() (setTimeout 0) pour
+  // laisser les effets Angular et le rAF mocké se résoudre.
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FinacesConvergenceChartComponent],
     }).compileComponents();
@@ -72,11 +78,11 @@ describe('FinacesConvergenceChartComponent', () => {
     fixture.componentRef.setInput('convergenceData', mockData);
     fixture.componentRef.setInput('height', 280);
 
-    // Premier detectChanges : rend le template, résout canvasRef (static:false)
+    // Premier detectChanges : rend le template, résout @ViewChild static:false
     fixture.detectChanges();
-    // Attendre que tous les effets asynchrones (effect(), requestAnimationFrame mocké) soient flushés
-    await fixture.whenStable();
-  }));
+    // Flush effets Angular zoneless + rAF mocké
+    await flushEffects();
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -95,17 +101,17 @@ describe('FinacesConvergenceChartComponent', () => {
     expect(chartInstance.data.datasets[1].label).toBe('Validation Loss');
   });
 
-  it('should show empty state when convergenceData is empty', waitForAsync(async () => {
+  it('should show empty state when convergenceData is empty', async () => {
     fixture.componentRef.setInput('convergenceData', []);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await flushEffects();
 
     const emptyState = fixture.nativeElement.querySelector('.convergence-empty');
     expect(emptyState).toBeTruthy();
-  }));
+  });
 
   it('should clean up chart on component destroy', () => {
-    // Le chart doit exister avant de tester destroy
+    // Le chart doit exister (créé dans beforeEach)
     const chartInstance = (component as any).chart;
     expect(chartInstance).toBeTruthy();
 
