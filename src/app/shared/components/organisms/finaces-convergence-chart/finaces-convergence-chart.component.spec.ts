@@ -3,8 +3,15 @@ import { FinacesConvergenceChartComponent } from './finaces-convergence-chart.co
 import { ConvergenceDataPoint } from '../../../../core/models/ia-admin.model';
 import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest';
 
-// Helpers zoneless : flush microtasks + macrotasks (rAF mocké = synchrone dans le setup global)
-const flushEffects = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+/**
+ * Zoneless TestBed (setupTestBed({ zoneless: true }) dans test-setup.js) :
+ * - PAS de Zone.js => pas de waitForAsync / fakeAsync
+ * - Les effect() Angular s’exécutent de façon asynchrone via le scheduler interne
+ * - Règle critique : ne jamais appeler detectChanges() PENDANT qu’un effect() tourne
+ *   => toujours flushEffects() entre setInput() et le detectChanges() suivant
+ */
+const flushEffects = (): Promise<void> =>
+  new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 describe('FinacesConvergenceChartComponent', () => {
   let component: FinacesConvergenceChartComponent;
@@ -19,7 +26,6 @@ describe('FinacesConvergenceChartComponent', () => {
   ];
 
   beforeAll(() => {
-    // getContext déjà mocké dans test-setup.js — on re-spy pour être sûr
     if (typeof HTMLCanvasElement !== 'undefined') {
       vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
         fillRect: () => {},
@@ -56,7 +62,6 @@ describe('FinacesConvergenceChartComponent', () => {
         disconnect() {}
       },
     );
-    // rAF synchrone : le callback est appelé immédiatement — pas de macro-task à attendre
     vi.stubGlobal('requestAnimationFrame', (cb: Function) => { cb(); return 0; });
   });
 
@@ -64,9 +69,6 @@ describe('FinacesConvergenceChartComponent', () => {
     vi.unstubAllGlobals();
   });
 
-  // Mode zoneless : pas de Zone.js, pas de waitForAsync / fakeAsync.
-  // On utilise async/await natif + flushEffects() (setTimeout 0) pour
-  // laisser les effets Angular et le rAF mocké se résoudre.
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FinacesConvergenceChartComponent],
@@ -77,10 +79,7 @@ describe('FinacesConvergenceChartComponent', () => {
 
     fixture.componentRef.setInput('convergenceData', mockData);
     fixture.componentRef.setInput('height', 280);
-
-    // Premier detectChanges : rend le template, résout @ViewChild static:false
     fixture.detectChanges();
-    // Flush effets Angular zoneless + rAF mocké
     await flushEffects();
   });
 
@@ -102,7 +101,12 @@ describe('FinacesConvergenceChartComponent', () => {
   });
 
   it('should show empty state when convergenceData is empty', async () => {
+    // 1. Changer le signal
     fixture.componentRef.setInput('convergenceData', []);
+    // 2. CRITIQUE : laisser le scheduler zoneless terminer le cycle effect()
+    //    déclenché par le changement de signal AVANT d’appeler detectChanges()
+    await flushEffects();
+    // 3. Maintenant detectChanges() peut s’exécuter sans conflit de scheduler
     fixture.detectChanges();
     await flushEffects();
 
@@ -111,7 +115,6 @@ describe('FinacesConvergenceChartComponent', () => {
   });
 
   it('should clean up chart on component destroy', () => {
-    // Le chart doit exister (créé dans beforeEach)
     const chartInstance = (component as any).chart;
     expect(chartInstance).toBeTruthy();
 
