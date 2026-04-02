@@ -40,7 +40,7 @@ $finaces-dummy-theme: mat.define-theme(
 @tailwind components;
 @tailwind utilities;
 
-// ─ BLOC 4 : MAPPING MDC -> FINACES MANIFESTE (Zéro HEX/RGB) ───────────
+// ─ BLOC 4 : MAPPING MDC -> FINACES MANIFESTE (Zéro HEX/RGB) ───────
 // C'est ici que l'on connecte la machinerie Material à nos tokens dynamiques.
 :root {
   --mdc-theme-primary: var(--color-primary);
@@ -338,7 +338,6 @@ html[data-theme='dark'] body {
   padding: 0.5rem 1rem;
   border: 1px solid transparent;
   border-radius: 9999px;
-  /* Forme très arrondie pour correspondre à "Saisie 2025" */
   outline: none;
   transition: all 0.2s ease-in-out;
 
@@ -354,5 +353,87 @@ html[data-theme='dark'] body {
 
   &::placeholder {
     color: var(--color-content-disabled);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   UX-4 — TABLES FINANCIÈRES RESPONSIVE (Cards sur mobile)
+   Source of truth unique : appliqué à tous les blocs financiers.
+
+   Usage HTML (remplace grid grid-cols-[1fr_200px] hardcodé) :
+     <div class="finaces-data-row">
+       <label>...</label>
+       <input class="finaces-data-pill" ... />
+     </div>
+
+   Sur desktop (≥ 640px) : label + input côte à côte (comportement actuel).
+   Sur mobile (< 640px)  : label au-dessus, input dessous, full-width
+                           — avec fond card, border-radius et padding accrus.
+   ───────────────────────────────────────────────────────── */
+
+.finaces-data-row {
+  // — Desktop : layout 2 colonnes (label | input)
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  align-items: center;
+  padding: 0.625rem 0.5rem; // py-2.5 px-2
+  border-bottom: 1px solid var(--color-border-default);
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+  }
+
+  // — Mobile (< 640px) : card stack
+  @media (max-width: 639px) {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.875rem 0.75rem;
+    border-bottom: none;
+    border-radius: 8px;
+    background-color: var(--color-surface-card);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-content-primary) 8%, transparent);
+    margin-bottom: 0.5rem;
+
+    &:hover {
+      background-color: var(--color-surface-card);
+    }
+
+    // Le label devient un en-tête de carte
+    label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-content-secondary);
+    }
+
+    // L'input prend toute la largeur
+    .finaces-data-pill {
+      width: 100%;
+      font-size: 16px; // ≥ 16px : évite le zoom iOS sur focus
+      text-align: right;
+      padding: 0.625rem 1rem;
+    }
+  }
+
+  // — Ligne totale (ex: "Total Assets") : pas de hover, style distinct
+  &.finaces-data-row--total {
+    border-top: 2px solid var(--color-primary);
+    border-bottom: none;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-top: 1rem;
+
+    &:hover {
+      background-color: transparent;
+    }
+
+    @media (max-width: 639px) {
+      background-color: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      margin-bottom: 0;
+    }
   }
 }
