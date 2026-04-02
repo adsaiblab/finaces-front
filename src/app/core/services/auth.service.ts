@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
@@ -9,6 +9,15 @@ import { environment } from '../../../environments/environment';
 interface JwtPayload {
   exp: number;
   sub: string;
+  /** Champs optionnels selon le back — on accepte ce qui vient */
+  username?: string;
+  name?: string;
+  role?: string;
+}
+
+export interface CurrentUser {
+  username: string;
+  role: string;
 }
 
 @Injectable({
@@ -20,6 +29,9 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   readonly logout$ = new Subject<void>();
 
+  /** Signal lu directement dans le template — pas de subscribe manuel. */
+  readonly currentUser = signal<CurrentUser | null>(null);
+
   login(username: string, password: string): Observable<{ access_token: string }> {
     return this.http
       .post<{ access_token: string }>(`${environment.apiUrl}/auth/token`, { username, password })
@@ -28,6 +40,7 @@ export class AuthService {
 
   setToken(token: string): void {
     sessionStorage.setItem(this.TOKEN_KEY, token);
+    this._refreshCurrentUser(token);
   }
 
   getToken(): string | null {
@@ -39,7 +52,11 @@ export class AuthService {
     if (!token) return false;
     try {
       const payload = jwtDecode<JwtPayload>(token);
-      return payload.exp > Date.now() / 1000;
+      const valid = payload.exp > Date.now() / 1000;
+      if (valid && !this.currentUser()) {
+        this._refreshCurrentUser(token);
+      }
+      return valid;
     } catch {
       return false;
     }
@@ -47,7 +64,20 @@ export class AuthService {
 
   logout(): void {
     sessionStorage.removeItem(this.TOKEN_KEY);
+    this.currentUser.set(null);
     this.logout$.next();
     this.router.navigate(['/auth/login']);
+  }
+
+  private _refreshCurrentUser(token: string): void {
+    try {
+      const p = jwtDecode<JwtPayload>(token);
+      this.currentUser.set({
+        username: p.username ?? p.name ?? p.sub ?? 'Utilisateur',
+        role: p.role ?? 'Analyste',
+      });
+    } catch {
+      this.currentUser.set(null);
+    }
   }
 }
