@@ -1,8 +1,14 @@
 import { PercentPipe, DecimalPipe, NgClass } from '@angular/common';
-import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of, forkJoin } from 'rxjs';
-import { catchError, delay, map } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 import { Router } from '@angular/router';
@@ -56,17 +62,29 @@ export class IaComponent {
   private readonly snackBar    = inject(MatSnackBar);
   private readonly destroyRef  = inject(DestroyRef);
 
-  // ─── State signals ────────────────────────────────────────────────
-  readonly caseId          = signal<string>('');
-  readonly predictionData  = signal<IAPredictionResult | null>(null);
-  readonly isLoading       = signal<boolean>(true);
-  readonly isSimulating    = signal<boolean>(false);
+  // ─── Identité ─────────────────────────────────────────────────────
+  readonly caseId = signal<string>('');
 
-  // ─── Error signal (unique pour le forkJoin double) ────────────────────
+  // ─── Double skeleton indépendant (forkJoin prediction + model) ───
+  // isLoading reste le signal de niveau composant (les deux sont en cours)
+  // isPredictionLoading / isModelLoading permettent un skeleton granulaire
+  readonly isLoading           = signal<boolean>(true);
+  readonly isPredictionLoading = signal<boolean>(true);
+  readonly isModelLoading      = signal<boolean>(true);
+
+  // ─── Données ──────────────────────────────────────────────────────
+  readonly predictionData = signal<IAPredictionResult | null>(null);
+
+  // ─── Erreurs ──────────────────────────────────────────────────────
+  /** Erreur du forkJoin (chargement initial prediction + model) */
   readonly predictionError = signal<ErrorCode | null>(null);
   readonly retryCount      = signal<number>(0);
 
-  // ─── Résultat simulation (temporaire, pas de DB write) ───────────────
+  /** Erreur isolée du What-If simulate (n'écrase pas le forkJoin) */
+  readonly whatIfError     = signal<ErrorCode | null>(null);
+
+  // ─── Simulation (CONTRAINTE MÉTIER : zéro écriture DB) ───────────
+  readonly isSimulating    = signal<boolean>(false);
   readonly simulationScore = signal<number | null>(null);
   readonly simulationClass = signal<string | null>(null);
 
@@ -75,56 +93,80 @@ export class IaComponent {
     this.loadPrediction();
   }
 
-  // ─── Chargement ────────────────────────────────────────────────
+  // ─── Chargement forkJoin ──────────────────────────────────────────
   loadPrediction(): void {
+    // Reset global
     this.isLoading.set(true);
+    this.isPredictionLoading.set(true);
+    this.isModelLoading.set(true);
     this.predictionError.set(null);
     this.simulationScore.set(null);
     this.simulationClass.set(null);
 
-    // forkJoin double : prediction + model info
     forkJoin({
       prediction: this.iaService.getPrediction(this.caseId()),
       model:      this.iaService.getActiveModel(),
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        map(({ prediction, model }) => ({
-          ...prediction,
-          model_performance: {
-            auc_roc:  model.auc_roc,
-            accuracy: model.accuracy,
-            f1_score: model.f1_score,
-          },
-        })),
-        catchError(() => {
-          if (!environment.production) {
-            console.warn('[IA] Backend indisponible — mode mock activé');
-          }
-          return of(null);
+        map(({ prediction, model }) => {
+          // Les deux streams sont résolus : on marque les deux skeletons terminés
+          this.isPredictionLoading.set(false);
+          this.isModelLoading.set(false);
+          return {
+            ...prediction,
+            model_performance: {
+              auc_roc:  model.auc_roc,
+              accuracy: model.accuracy,
+              f1_score: model.f1_score,
+            },
+          };
         }),
       )
       .subscribe({
         next: (enriched) => {
-          if (enriched) {
-            this.predictionData.set(enriched as IAPredictionResult);
+          this.predictionData.set(enriched as IAPredictionResult);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          // Redirect automatique sur 401/403
+          const status = err?.status;
+          if (status === 401 || status === 403) {
             this.isLoading.set(false);
-          } else {
-            // Backend indisponible — fallback mock
+            this.isPredictionLoading.set(false);
+            this.isModelLoading.set(false);
+            this.router.navigate(['/auth/login']);
+            return;
+          }
+
+          if (!environment.production) {
+            console.warn('[IA] Backend indisponible — mode mock activé');
+            this.isPredictionLoading.set(false);
+            this.isModelLoading.set(false);
             this.loadMockData();
+          } else {
+            this.predictionError.set('server');
+            this.isPredictionLoading.set(false);
+            this.isModelLoading.set(false);
+            this.isLoading.set(false);
           }
         },
       });
   }
 
-  // ─── Retry public (appelé par FinacesInlineErrorComponent) ──────────
+  // ─── Retry public (appelé par FinacesInlineErrorComponent) ───────
   onRetry(): void {
     this.retryCount.update(n => n + 1);
     this.predictionError.set(null);
     this.loadPrediction();
   }
 
-  // ─── Mock data (dév uniquement) ─────────────────────────────────
+  /** Alias cohérent avec le pattern scoring — les deux noms sont valides */
+  onRetryLoad(): void {
+    this.onRetry();
+  }
+
+  // ─── Mock data (développement uniquement) ────────────────────────
   private loadMockData(): void {
     of(null)
       .pipe(delay(1200), takeUntilDestroyed(this.destroyRef))
@@ -155,9 +197,11 @@ export class IaComponent {
       });
   }
 
-  // ─── Simulation What-If (CONTRAINTE MÉTIER : zéro écriture DB) ─────
+  // ─── Simulation What-If (CONTRAINTE MÉTIER : zéro écriture DB) ───
   onSimulate(scenario: WhatIfScenarioInput): void {
     this.isSimulating.set(true);
+    this.whatIfError.set(null);
+
     this.iaService
       .simulateWhatIf(this.caseId(), scenario)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -168,17 +212,23 @@ export class IaComponent {
           this.isSimulating.set(false);
           this.snackBar.open('Simulation appliquée avec succès.', 'OK', { duration: 3000 });
         },
-        error: () => {
-          // Mock fallback simulation (dév uniquement)
-          of(null)
-            .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => {
-              const baseScore = this.predictionData()?.predicted_score ?? 0;
-              this.simulationScore.set(Math.min(5, baseScore + 0.7));
-              this.simulationClass.set('MODERATE');
-              this.isSimulating.set(false);
-              this.snackBar.open('Simulation terminée (mode mock).', 'OK', { duration: 3000 });
-            });
+        error: (err) => {
+          const status = err?.status;
+          if (!environment.production) {
+            // Fallback mock simulation (dév uniquement)
+            of(null)
+              .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
+              .subscribe(() => {
+                const baseScore = this.predictionData()?.predicted_score ?? 0;
+                this.simulationScore.set(Math.min(5, baseScore + 0.7));
+                this.simulationClass.set('MODERATE');
+                this.isSimulating.set(false);
+                this.snackBar.open('Simulation terminée (mode mock).', 'OK', { duration: 3000 });
+              });
+          } else {
+            this.whatIfError.set(status === 422 ? 'validation' : 'server');
+            this.isSimulating.set(false);
+          }
         },
       });
   }
@@ -186,6 +236,7 @@ export class IaComponent {
   onResetSimulation(): void {
     this.simulationScore.set(null);
     this.simulationClass.set(null);
+    this.whatIfError.set(null);
   }
 
   navigateBack(): void {
