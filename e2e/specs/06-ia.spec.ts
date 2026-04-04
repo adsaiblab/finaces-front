@@ -6,39 +6,42 @@ import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
 const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_IA = {
-    predicted_score: 68,
-    predicted_risk_class: 'B',
-    model_version: 'v2.1-test',
-    model_performance: { accuracy: 0.87, precision: 0.85, recall: 0.88 },
-    confidence_interval: { lower: 62.5, upper: 73.5 },
-    shap_values: {
-        features: [
-            { name: 'Current Ratio', value: 0.35, impact: 'positive' },
-            { name: 'Debt/Equity', value: -0.22, impact: 'negative' },
-        ],
-    },
+    case_id: TEST_CASE_ID,
+    ia_score: 72.5,
+    ia_probability_default: 0.18,
+    ia_risk_class: 'MODERATE',
+    model_version: 'e2e-stub-v1.0',
+    predicted_at: '2024-01-15T10:00:00Z',
+    explanations: null,
+    threshold_info: {},
 };
 
 const MOCK_MODEL = {
-    id: 'mock-model-id',
-    name: 'XGBoost FinaCES',
-    version: 'v2.1-test',
-    accuracy: 0.87,
-    auc_roc: 0.89,
-    f1_score: 0.82,
+    id: 'mock-model-e2e-001',
+    model_name: 'XGBoost Risk Classifier',
+    version: 'e2e-stub-v1.0',
+    metrics: {
+        auc_roc: 0.89,
+        accuracy: 0.85,
+        f1_score: 0.82,
+    },
+    created_at: '2024-01-01T00:00:00Z',
 };
 
 const MOCK_IA_SIMULATION = {
-    ...MOCK_IA,
-    predicted_score: 74,
-    predicted_risk_class: 'A',
-    model_version: 'v2.1-test (simulation)',
+    case_id: TEST_CASE_ID,
+    ia_score: 58.0,
+    ia_probability_default: 0.09,
+    ia_risk_class: 'LOW',
+    model_version: 'e2e-stub-v1.0',
+    predicted_at: '2024-01-15T10:00:00Z',
+    explanations: null,
+    threshold_info: {},
 };
 
 const MOCK_TENSION_BASE = {
-    tension_label: 'LOW',
-    mcc_score: 3.5,
-    ia_score: 68,
+    mcc_score: 3.2,
+    ia_score: 72.5,
     delta: 0.2,
     pillars: [],
 };
@@ -87,7 +90,8 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
     });
 
     // -----------------------------------------------------------------------
-    // What-if : le template affiche TOUJOURS les deux zones en parallele
+    // What-if : route réelle = POST /ia/cases/{case_id}/simulate
+    // Le template affiche TOUJOURS les deux zones en parallele
     // (whatIfCard = formulaire de saisie, simulationPlaceholder = zone resultat)
     // Les deux coexistent dans le DOM : pas de bascule @if exclusive.
     // On verifie uniquement que whatIfCard est bien rendu.
@@ -95,10 +99,7 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
     test('What-if — la simulation retourne un score different et masque le placeholder', async ({ page }) => {
         const iaPage = new IaPage(page);
 
-        await page.route(`**/api/v1/ia/simulate**`, route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_SIMULATION) })
-        );
-        await page.route(`**/api/v1/ia/predict/${TEST_CASE_ID}/simulate**`, route =>
+        await page.route(`**/api/v1/ia/cases/${TEST_CASE_ID}/simulate**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_SIMULATION) })
         );
 

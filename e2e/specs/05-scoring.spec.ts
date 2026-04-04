@@ -7,50 +7,73 @@ const TEST_CASE_ID = TEST_CASE.id;
 
 const MOCK_SCORING = {
     case_id: TEST_CASE_ID,
-    global_score: 72,
-    risk_class: 'B',
-    status: 'COMPUTED',
-    pillars: [
-        { id: 'p1', name: 'Liquidity', score: 70, weight: 0.2 },
-        { id: 'p2', name: 'Solvency', score: 75, weight: 0.2 },
-    ],
-    recommendations: [],
+    system_calculated_score: 3.2,
+    system_risk_class: 'MODERATE',
+    global_score: 3.2,
+    base_risk_class: 'MODERATE',
+    final_risk_class: 'MODERATE',
+    is_overridden: false,
+    override_rationale: null,
+    risk_profile: 'BALANCED',
+    risk_description: 'Profil équilibré',
+    synergy_index: null,
+    synergy_bonus: null,
     cross_analysis_alerts: [],
-    override: null,
+    trends_summary: {},
+    smart_recommendations: ['Surveiller la trésorerie'],
+    overrides_applied: [],
+    computed_at: '2024-01-15T10:00:00Z',
+    pillars: [
+        {
+            id: 'liquidity',
+            name: 'Liquidité',
+            score: 3.0,
+            weight: 0.25,
+            trend: [2.8, 3.0, 3.2],
+            signals: ['Ratio courant satisfaisant'],
+            detailText: 'Liquidité correcte',
+        },
+        {
+            id: 'solvency',
+            name: 'Solvabilité',
+            score: 3.0,
+            weight: 0.25,
+            trend: [2.5, 2.8, 3.0],
+            signals: ['Endettement maîtrisé'],
+            detailText: 'Solvabilité correcte',
+        },
+    ],
 };
 
 const MOCK_SCORING_OVERRIDE = {
     ...MOCK_SCORING,
-    override: {
-        analyst_comment: 'Secteur strategique — ajustement manuel',
-        override_score: 78,
-        override_risk_class: 'A',
-    },
-    global_score: 78,
-    risk_class: 'A',
-    status: 'OVERRIDE',
+    global_score: 3.8,
+    final_risk_class: 'HIGH',
+    is_overridden: true,
+    override_rationale: 'Override justifié — secteur stratégique',
 };
 
 const MOCK_IA = {
-    predicted_score: 68,
-    predicted_risk_class: 'B',
-    model_version: 'v2.1-test',
-    model_performance: { accuracy: 0.87, precision: 0.85, recall: 0.88 },
-    confidence_interval: { lower: 62.5, upper: 73.5 },
-    shap_values: {
-        features: [
-            { name: 'Current Ratio', value: 0.35, impact: 'positive' },
-        ],
-    },
+    case_id: TEST_CASE_ID,
+    ia_score: 72.5,
+    ia_probability_default: 0.18,
+    ia_risk_class: 'MODERATE',
+    model_version: 'e2e-stub-v1.0',
+    predicted_at: '2024-01-15T10:00:00Z',
+    explanations: null,
+    threshold_info: {},
 };
 
 const MOCK_MODEL = {
-    id: 'mock-model-id',
-    name: 'XGBoost FinaCES',
-    version: 'v2.1-test',
-    accuracy: 0.87,
-    auc_roc: 0.89,
-    f1_score: 0.82,
+    id: 'mock-model-e2e-001',
+    model_name: 'XGBoost Risk Classifier',
+    version: 'e2e-stub-v1.0',
+    metrics: {
+        auc_roc: 0.89,
+        accuracy: 0.85,
+        f1_score: 0.82,
+    },
+    created_at: '2024-01-01T00:00:00Z',
 };
 
 // ---------------------------------------------------------------------------
