@@ -20,6 +20,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
+import {
+  FinacesInlineErrorComponent,
+  ErrorCode,
+} from '../../shared/components';
 import { ScoringMccService } from './services/scoring-mcc.service';
 import { ScoringMccSchema, ScoreOverridePayload } from '../../core/models/scoring.model';
 
@@ -42,6 +46,7 @@ import {
     RecommendationsSectionComponent,
     FinacesScoreGaugeComponent,
     FinacesRiskBadgeComponent,
+    FinacesInlineErrorComponent,
     NgClass,
   ],
   templateUrl: './scoring-mcc.component.html',
@@ -49,18 +54,26 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScoringMccComponent {
-  private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private scoringService = inject(ScoringMccService);
-  private snackBar = inject(MatSnackBar);
+  private readonly caseContext    = inject(CaseContextService);
+  private readonly router         = inject(Router);
+  private readonly scoringService = inject(ScoringMccService);
+  private readonly snackBar       = inject(MatSnackBar);
+  private readonly destroyRef     = inject(DestroyRef);
 
-  public caseId = signal<string>('');
-  private readonly destroyRef = inject(DestroyRef);
+  // ─── State signals ────────────────────────────────────────────────
+  readonly caseId      = signal<string>('');
+  readonly scoringData = signal<ScoringMccSchema | null>(null);
+  readonly isLoading   = signal<boolean>(true);
+  readonly isOverriding = signal<boolean>(false);
 
-  public scoringData = signal<ScoringMccSchema | null>(null);
-  public isLoading = signal<boolean>(true);
-  public isOverriding = signal<boolean>(false);
-  public error = signal<string | null>(null);
+  // ─── Error signals (remplacent l'ancien signal error: string|null) ───
+  readonly loadError  = signal<ErrorCode | null>(null);
+  readonly retryCount = signal<number>(0);
+
+  // ─── Computed signals ────────────────────────────────────────
+  readonly hasNoPillars = computed(
+    () => !this.isLoading() && !this.loadError() && (this.scoringData()?.pillars?.length ?? 0) === 0,
+  );
 
   readonly liquidityPillar = computed(
     () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('liquid')) ?? null,
@@ -83,9 +96,10 @@ export class ScoringMccComponent {
     this.loadScoring();
   }
 
+  // ─── Chargement ────────────────────────────────────────────────
   private loadScoring(): void {
     this.isLoading.set(true);
-    this.error.set(null);
+    this.loadError.set(null);
     this.scoringData.set(null);
 
     this.scoringService
@@ -103,14 +117,21 @@ export class ScoringMccComponent {
             this.router.navigate(['/auth/login']);
             return;
           }
-          // On any other error (500, network…): show error state, no mock
-          this.error.set('Unable to load scoring data. Please try again.');
+          this.loadError.set('server');
           this.scoringData.set(null);
           this.isLoading.set(false);
         },
       });
   }
 
+  // ─── Retry (appelé par FinacesInlineErrorComponent) ─────────────────────
+  onRetryLoad(): void {
+    this.retryCount.update(n => n + 1);
+    this.loadError.set(null);
+    this.loadScoring();
+  }
+
+  // ─── Override ──────────────────────────────────────────────────
   public handleOverride(payload: ScoreOverridePayload): void {
     this.isOverriding.set(true);
     this.scoringService
@@ -120,7 +141,7 @@ export class ScoringMccComponent {
         next: (updatedData) => {
           this.scoringData.set(updatedData);
           this.isOverriding.set(false);
-          this.snackBar.open('Score override applied successfully.', 'OK', {
+          this.snackBar.open('Surclassement appliqué avec succès.', 'OK', {
             duration: 3000,
             panelClass: 'snack-success',
           });
@@ -136,18 +157,18 @@ export class ScoringMccComponent {
                   global_score: payload.new_score,
                   status: 'OVERRIDDEN',
                   override: {
-                    original_score: currentData.global_score,
-                    new_score: payload.new_score,
+                    original_score:     currentData.global_score,
+                    new_score:          payload.new_score,
                     original_risk_class: currentData.risk_class,
-                    new_risk_class: 'ADJUSTED',
-                    reason: payload.reason,
-                    author: 'Current User (Senior Analyst)',
-                    timestamp: new Date().toISOString(),
+                    new_risk_class:     'ADJUSTED',
+                    reason:             payload.reason,
+                    author:             'Analyste senior',
+                    timestamp:          new Date().toISOString(),
                   },
                 });
               }
               this.isOverriding.set(false);
-              this.snackBar.open('Score override applied (Mock Mode).', 'OK', { duration: 3000 });
+              this.snackBar.open('Surclassement appliqué (mode démo).', 'OK', { duration: 3000 });
             });
         },
       });
