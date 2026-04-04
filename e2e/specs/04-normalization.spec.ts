@@ -5,48 +5,93 @@ import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
 
 const TEST_CASE_ID = TEST_CASE.id;
 
-const MOCK_NORMALIZATION = {
-    statement_id: 'mock-e2e-001',
-    fiscal_year: 2023,
-    normalized_revenue: 8500000,
-    normalized_ebitda: 4000000,
-    normalized_net_income: 2850000,
-    normalized_working_capital: 1500000,
-    normalized_cash_flow: 500000,
-    adjustments: [
-        { line_item: 'EBITDA', original_value: 3500000, adjusted_value: 4000000, reason: 'Add back D&A', confidence: 98 },
-    ],
-    confidence_score: 92,
-    normalization_date: '2026-01-01T00:00:00.000Z',
-};
+const MOCK_NORMALIZATION = [
+    {
+        id: 'mock-norm-2022',
+        fiscal_year: 2022,
+        revenue: 1800000.0,
+        ebitda: 360000.0,
+        net_income: 216000.0,
+        operating_cash_flow: 270000.0,
+        adjustments_count: 2,
+    },
+    {
+        id: 'mock-norm-2023',
+        fiscal_year: 2023,
+        revenue: 2000000.0,
+        ebitda: 400000.0,
+        net_income: 240000.0,
+        operating_cash_flow: 300000.0,
+        adjustments_count: 3,
+    },
+];
 
-const MOCK_NORMALIZATION_V2 = {
-    ...MOCK_NORMALIZATION,
-    statement_id: 'mock-e2e-002',
-    confidence_score: 95,
-    adjustments: [
-        { line_item: 'EBITDA', original_value: 3500000, adjusted_value: 4200000, reason: 'Recalculated', confidence: 99 },
-    ],
-};
+const MOCK_NORMALIZATION_V2 = [
+    {
+        id: 'mock-norm-2022',
+        fiscal_year: 2022,
+        revenue: 1800000.0,
+        ebitda: 360000.0,
+        net_income: 216000.0,
+        operating_cash_flow: 270000.0,
+        adjustments_count: 2,
+    },
+    {
+        id: 'mock-norm-2023-v2',
+        fiscal_year: 2023,
+        revenue: 2000000.0,
+        ebitda: 420000.0,
+        net_income: 252000.0,
+        operating_cash_flow: 315000.0,
+        adjustments_count: 4,
+    },
+];
 
-const MOCK_RATIOS = {
-    coherence_status: 'OK',
-    coherence_alerts: [],
-};
+const MOCK_RATIOS = [
+    {
+        id: 'mock-ratio-2022',
+        case_id: TEST_CASE_ID,
+        fiscal_year: 2022,
+        normalized_statement_id: 'mock-norm-2022',
+        current_ratio: 1.8,
+        quick_ratio: 1.2,
+        cash_ratio: 0.4,
+        working_capital_requirement: 150000.0,
+        cash_flow_capacity_margin_pct: 0.15,
+        debt_to_equity: 0.9,
+        net_margin: 0.12,
+        ebitda_margin: 0.20,
+        z_score_altman: 2.8,
+        z_score_zone: 'GREY',
+        coherence_alerts_json: [],
+    },
+    {
+        id: 'mock-ratio-2023',
+        case_id: TEST_CASE_ID,
+        fiscal_year: 2023,
+        normalized_statement_id: 'mock-norm-2023',
+        current_ratio: 1.9,
+        quick_ratio: 1.3,
+        cash_ratio: 0.5,
+        working_capital_requirement: 160000.0,
+        cash_flow_capacity_margin_pct: 0.16,
+        debt_to_equity: 0.85,
+        net_margin: 0.12,
+        ebitda_margin: 0.20,
+        z_score_altman: 3.0,
+        z_score_zone: 'SAFE',
+        coherence_alerts_json: [],
+    },
+];
 
 const MOCK_CASE_BASE = {
     id: TEST_CASE_ID,
     bidder_name: 'E2E Test Company',
     sector: 'BTP',
     contract_value: 5000000,
-    contract_currency: 'MAD',
+    contract_currency: 'USD',
     case_type: 'STANDARD',
-    status: 'IN_PROGRESS',
-    risk_class: 'B',
-    mcc_score: 72,
-    ia_score: 68,
-    tension_label: 'LOW',
-    fiscal_year: 2023,
+    status: 'SCORING_DONE',
 };
 
 // ---------------------------------------------------------------------------
