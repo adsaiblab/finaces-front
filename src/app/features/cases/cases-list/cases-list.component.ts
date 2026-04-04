@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CaseService } from '../../../core/services/case.service';
 import { FinacesSkeletonLoaderComponent } from '../../../shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component';
 import { FinacesEmptyStateComponent } from '../../../shared/components/molecules/finaces-empty-state/finaces-empty-state.component';
+import { FinacesInlineErrorComponent, ErrorCode } from '../../../shared/components/molecules/finaces-inline-error/finaces-inline-error.component';
 import { EvaluationCaseOut } from '../../../core/models/case.model';
 
 export type StepStatus = 'COMPLETED' | 'ACTIVE' | 'LOCKED';
@@ -45,6 +46,7 @@ export interface HubCase {
     MatTooltipModule,
     FinacesSkeletonLoaderComponent,
     FinacesEmptyStateComponent,
+    FinacesInlineErrorComponent,
     DatePipe,
     NgClass,
   ],
@@ -59,8 +61,15 @@ export class CasesListComponent implements OnInit {
 
   cases = signal<HubCase[]>([]);
   isLoading = signal<boolean>(true);
+  loadError = signal<ErrorCode | null>(null);
+  retryCount = signal<number>(0);
   searchQuery = signal<string>('');
   filterMode = signal<'ALL' | 'PENDING_GATE' | 'REQUIRE_ATTENTION' | 'READY_REPORT'>('ALL');
+
+  /** Liste vide après un chargement réussi (≠ erreur API) */
+  hasNoCasesAtAll = computed(
+    () => !this.isLoading() && this.loadError() === null && this.cases().length === 0,
+  );
 
   filteredCases = computed(() => {
     let result = this.cases();
@@ -99,6 +108,7 @@ export class CasesListComponent implements OnInit {
 
   private loadCases(): void {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     this.caseService
       .getCases()
@@ -109,7 +119,7 @@ export class CasesListComponent implements OnInit {
             id: bc.id,
             bidder_name: bc.bidder_name || bc.market_reference || 'N/A',
             updated_at: bc.updated_at || bc.created_at || new Date().toISOString(),
-            assignee: 'Analyst',
+            assignee: 'Analyste',
             steps: this.deriveSteps(bc.status),
           }));
           this.cases.set(hubCases);
@@ -117,9 +127,16 @@ export class CasesListComponent implements OnInit {
         },
         error: () => {
           this.cases.set([]);
+          this.loadError.set('server');
           this.isLoading.set(false);
         },
       });
+  }
+
+  onRetryLoad(): void {
+    const current = this.retryCount();
+    this.retryCount.set(current + 1);
+    this.loadCases();
   }
 
   private deriveSteps(status: string): ProcessStep[] {
@@ -130,11 +147,11 @@ export class CasesListComponent implements OnInit {
       exp: StepStatus,
       rep: StepStatus,
     ): ProcessStep[] => [
-      { id: 'gate', name: 'Documentary Gate', status: gate, targetRoute: 'gate' },
-      { id: 'financials', name: 'Financials & Ratios', status: fin, targetRoute: 'financials' },
+      { id: 'gate', name: 'Revue documentaire', status: gate, targetRoute: 'gate' },
+      { id: 'financials', name: 'Financiers & Ratios', status: fin, targetRoute: 'financials' },
       { id: 'scoring', name: 'Scoring & Tension', status: scor, targetRoute: 'tension' },
-      { id: 'expert', name: 'Expert Review', status: exp, targetRoute: 'expert' },
-      { id: 'report', name: 'Final Report', status: rep, targetRoute: 'rapport' },
+      { id: 'expert', name: 'Avis expert', status: exp, targetRoute: 'expert' },
+      { id: 'report', name: 'Rapport final', status: rep, targetRoute: 'rapport' },
     ];
 
     if (status === 'DRAFT' || status === 'PENDING_DOCS') {
