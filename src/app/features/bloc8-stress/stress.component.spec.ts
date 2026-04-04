@@ -2,104 +2,210 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StressComponent } from './stress.component';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { StressService } from '../../core/services/stress.service';
-import { of, throwError } from 'rxjs';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { of } from 'rxjs';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { By } from '@angular/platform-browser';
+
+const MOCK_STRESS_DATA = {
+  case_id: 'case-123',
+  computed_at: '2026-04-04T00:00:00Z',
+  base_parameters: {
+    contract_value: 1200000,
+    initial_cash: 250000,
+    available_credit: 100000,
+    operating_cash_flow: 45000,
+    milestones: [],
+  },
+  scenarios: [
+    {
+      scenario_name: 'Référence',
+      description: 'Standard',
+      min_cash_balance: 120000,
+      months_in_negative: 0,
+      status: 'RESILIENT',
+      cash_curve: [],
+    },
+  ],
+};
 
 describe('StressComponent', () => {
   let component: StressComponent;
   let fixture: ComponentFixture<StressComponent>;
 
   const mockStressService = {
-    getStressTests: vi.fn().mockReturnValue(of({ scenarios: [] })),
-    runCustomStressTest: vi.fn().mockReturnValue(of({})),
+    getStressTests: vi.fn().mockReturnValue(of(MOCK_STRESS_DATA)),
+    runCustomStressTest: vi.fn().mockReturnValue(of(MOCK_STRESS_DATA)),
   };
 
-  const mockCaseContext = {
-    caseId: () => 'case-123',
-  };
+  const mockCaseContext = { caseId: () => 'case-123' };
 
   beforeEach(async () => {
     vi.stubGlobal('requestAnimationFrame', (cb: Function) => cb());
-    mockStressService.getStressTests.mockReturnValue(of({ scenarios: [] }));
-    mockStressService.runCustomStressTest.mockReturnValue(of({}));
+    mockStressService.getStressTests.mockReturnValue(of(MOCK_STRESS_DATA));
+    mockStressService.runCustomStressTest.mockReturnValue(of(MOCK_STRESS_DATA));
 
     await TestBed.configureTestingModule({
       imports: [StressComponent, NoopAnimationsModule],
       providers: [
-        { provide: StressService, useValue: mockStressService },
+        { provide: StressService,      useValue: mockStressService },
         { provide: CaseContextService, useValue: mockCaseContext },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(StressComponent);
+    fixture   = TestBed.createComponent(StressComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+    TestBed.resetTestingModule();
+  });
+
+  // ─── Création & init ─────────────────────────────────────────────────────────
   it('should create and load data on init', () => {
     expect(component).toBeTruthy();
     expect(mockStressService.getStressTests).toHaveBeenCalledWith('case-123');
   });
 
-  it('should trigger simulation', () => {
+  it('should trigger simulation via runCustomStressTest', () => {
     component.runSimulation();
     expect(mockStressService.runCustomStressTest).toHaveBeenCalled();
   });
 
-  it('should have loadError null by default', () => {
+  // ─── État initial des signals ─────────────────────────────────────────────────
+  it('loadError() devrait être null par défaut', () => {
     expect(component.loadError()).toBeNull();
   });
 
-  it('should set loadError when API fails and no mock available', () => {
-    // On force l’erreur en court-circuitant loadMockData
-    component.loadError.set('Erreur de chargement');
-    fixture.detectChanges();
-    expect(component.loadError()).toBe('Erreur de chargement');
+  it('simulationError() devrait être null par défaut', () => {
+    expect(component.simulationError()).toBeNull();
   });
 
-  it('should reset loadError and increment retryCount on onRetryLoad()', () => {
-    component.loadError.set('Erreur de chargement');
+  it('retryCount() devrait être 0 par défaut', () => {
+    expect(component.retryCount()).toBe(0);
+  });
+
+  it('activeTab() devrait être CONTRACT par défaut', () => {
+    expect(component.activeTab()).toBe('CONTRACT');
+  });
+
+  // ─── loadError (ErrorCode) ───────────────────────────────────────────────
+  it('loadError peut être positionné à "server" (ErrorCode)', () => {
+    component.loadError.set('server');
+    expect(component.loadError()).toBe('server');
+  });
+
+  it('onRetryLoad() devrait réinitialiser loadError et incrémenter retryCount', () => {
+    component.loadError.set('server');
     const before = component.retryCount();
     component.onRetryLoad();
     expect(component.loadError()).toBeNull();
     expect(component.retryCount()).toBe(before + 1);
   });
 
-  it('should have hasNoData false when stressData is set', () => {
+  // ─── simulationError (ErrorCode) ───────────────────────────────────────────
+  it('simulationError peut être positionné à "server"', () => {
+    component.simulationError.set('server');
+    expect(component.simulationError()).toBe('server');
+  });
+
+  it('simulationError peut être effacé', () => {
+    component.simulationError.set('server');
+    component.simulationError.set(null);
+    expect(component.simulationError()).toBeNull();
+  });
+
+  it('runSimulation() vide simulationError au début', () => {
+    component.simulationError.set('server');
+    component.runSimulation();
+    expect(component.simulationError()).toBeNull();
+  });
+
+  // ─── hasNoData computed ───────────────────────────────────────────────────
+  it('hasNoData devrait être false quand stressData est défini', () => {
     component.isLoading.set(false);
     component.loadError.set(null);
-    component.stressData.set({ scenarios: [], case_id: 'case-123', computed_at: '', base_parameters: {} as any });
-    fixture.detectChanges();
+    component.stressData.set(MOCK_STRESS_DATA);
     expect(component.hasNoData()).toBe(false);
   });
 
-  it('should have hasNoData true when loading done, no error, no data', () => {
+  it('hasNoData devrait être true quand loading=false, pas d\'erreur, pas de données', () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.stressData.set(null);
-    fixture.detectChanges();
     expect(component.hasNoData()).toBe(true);
   });
 
-  it('should set isSimulationError to false when runSimulation starts', () => {
-    component.isSimulationError.set(true);
-    component.runSimulation();
-    // Au moment du subscribe, isSimulationError doit être false
-    expect(component.isSimulationError()).toBe(false);
+  // ─── Toggle setTab() ───────────────────────────────────────────────────────
+  it('setTab("MACRO") devrait changer activeTab à MACRO', () => {
+    component.setTab('MACRO');
+    expect(component.activeTab()).toBe('MACRO');
   });
 
-  it('should show skeleton while isLoading is true', () => {
+  it('setTab("SHOCK") devrait changer activeTab à SHOCK', () => {
+    component.setTab('SHOCK');
+    expect(component.activeTab()).toBe('SHOCK');
+  });
+
+  it('setTab("CONTRACT") depuis SHOCK devrait revenir à CONTRACT', () => {
+    component.setTab('SHOCK');
+    component.setTab('CONTRACT');
+    expect(component.activeTab()).toBe('CONTRACT');
+  });
+
+  // ─── Rendu template ────────────────────────────────────────────────────────────
+  it('devrait afficher le skeleton (stress-loading-spinner) quand isLoading = true', () => {
     component.isLoading.set(true);
     fixture.detectChanges();
     const el = fixture.nativeElement.querySelector('[data-testid="stress-loading-spinner"]');
     expect(el).toBeTruthy();
   });
 
-  it('should hide skeleton after loading completes', () => {
+  it('devrait masquer le skeleton après chargement', () => {
     component.isLoading.set(false);
     fixture.detectChanges();
     const el = fixture.nativeElement.querySelector('[data-testid="stress-loading-spinner"]');
     expect(el).toBeFalsy();
+  });
+
+  it('les 3 boutons de tabs devraient être dans le DOM quand le contenu est chargé', () => {
+    component.isLoading.set(false);
+    component.stressData.set(MOCK_STRESS_DATA);
+    fixture.detectChanges();
+    const contract = fixture.debugElement.query(By.css('[data-testid="stress-tab-contract"]'));
+    const macro    = fixture.debugElement.query(By.css('[data-testid="stress-tab-macro"]'));
+    const shock    = fixture.debugElement.query(By.css('[data-testid="stress-tab-shock"]'));
+    expect(contract).toBeTruthy();
+    expect(macro).toBeTruthy();
+    expect(shock).toBeTruthy();
+  });
+
+  it('stress-contract-panel visible quand activeTab = CONTRACT', () => {
+    component.isLoading.set(false);
+    component.stressData.set(MOCK_STRESS_DATA);
+    component.setTab('CONTRACT');
+    fixture.detectChanges();
+    const panel = fixture.debugElement.query(By.css('[data-testid="stress-contract-panel"]'));
+    expect(panel).toBeTruthy();
+  });
+
+  it('stress-macro-panel visible quand activeTab = MACRO', () => {
+    component.isLoading.set(false);
+    component.stressData.set(MOCK_STRESS_DATA);
+    component.setTab('MACRO');
+    fixture.detectChanges();
+    const panel = fixture.debugElement.query(By.css('[data-testid="stress-macro-panel"]'));
+    expect(panel).toBeTruthy();
+  });
+
+  it('stress-shock-panel visible quand activeTab = SHOCK', () => {
+    component.isLoading.set(false);
+    component.stressData.set(MOCK_STRESS_DATA);
+    component.setTab('SHOCK');
+    fixture.detectChanges();
+    const panel = fixture.debugElement.query(By.css('[data-testid="stress-shock-panel"]'));
+    expect(panel).toBeTruthy();
   });
 });
