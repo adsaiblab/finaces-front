@@ -13,6 +13,7 @@ import { delay } from 'rxjs/operators';
 
 import { CaseService } from '../../core/services/case.service';
 import { FinancialStatementNormalizedSchema } from '../../core/models';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components';
 
 import {
   AccountingStandardSectionComponent,
@@ -29,6 +30,7 @@ import {
     MatBadgeModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    FinacesSkeletonLoaderComponent,
     AccountingStandardSectionComponent,
     ComparativeTableComponent,
     AdjustmentsListComponent,
