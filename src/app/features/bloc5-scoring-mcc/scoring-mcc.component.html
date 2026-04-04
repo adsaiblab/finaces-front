@@ -1,18 +1,16 @@
 <div class="scoring-host" data-testid="scoring-root">
 
-  <!-- ─── SKELETON : affiché pendant le chargement initial ──────────────── -->
+  <!-- ─── SKELETON : affiché pendant le chargement initial ────────────────────── -->
   @if (isLoading()) {
-    <div class="scoring-skeleton" data-testid="scoring-loading-spinner" aria-busy="true" aria-label="Chargement du scoring MCC">
-      <div class="scoring-skeleton__header skeleton"></div>
-      <div class="scoring-skeleton__grid">
-        <div class="skeleton scoring-skeleton__block"></div>
-        <div class="skeleton scoring-skeleton__block"></div>
-      </div>
-      <div class="skeleton scoring-skeleton__pillars"></div>
-    </div>
+    <finaces-skeleton-loader
+      variant="gauge"
+      [rows]="2"
+      data-testid="scoring-loading-spinner"
+      aria-label="Chargement du scoring MCC"
+    />
   }
 
-  <!-- ─── ERREUR chargement ─────────────────────────────────────────────── -->
+  <!-- ─── ERREUR chargement ────────────────────────────────────────────────── -->
   @if (loadError() && !isLoading()) {
     <div class="scoring-error-wrapper" data-testid="scoring-load-error">
       <finaces-inline-error
@@ -25,7 +23,7 @@
     </div>
   }
 
-  <!-- ─── CONTENU PRINCIPAL ─────────────────────────────────────────────── -->
+  <!-- ─── CONTENU PRINCIPAL ────────────────────────────────────────────────── -->
   @if (!isLoading() && !loadError()) {
     <div class="scoring-content" data-testid="scoring-main-content">
 
