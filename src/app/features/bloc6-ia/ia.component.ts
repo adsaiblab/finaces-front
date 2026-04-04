@@ -5,6 +5,7 @@ import {
   signal,
   inject,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of, forkJoin } from 'rxjs';
@@ -55,7 +56,7 @@ import {
   styleUrls: ['./ia.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IaComponent {
+export class IaComponent implements OnInit {
   private readonly caseContext = inject(CaseContextService);
   private readonly router      = inject(Router);
   private readonly iaService   = inject(IaService);
@@ -66,8 +67,6 @@ export class IaComponent {
   readonly caseId = signal<string>('');
 
   // --- Double skeleton independant (forkJoin prediction + model) ---
-  // isLoading reste le signal de niveau composant (les deux sont en cours)
-  // isPredictionLoading / isModelLoading permettent un skeleton granulaire
   readonly isLoading           = signal<boolean>(true);
   readonly isPredictionLoading = signal<boolean>(true);
   readonly isModelLoading      = signal<boolean>(true);
@@ -76,11 +75,8 @@ export class IaComponent {
   readonly predictionData = signal<IAPredictionResult | null>(null);
 
   // --- Erreurs ---
-  /** Erreur du forkJoin (chargement initial prediction + model) */
   readonly predictionError = signal<ErrorCode | null>(null);
   readonly retryCount      = signal<number>(0);
-
-  /** Erreur isolee du What-If simulate (n'ecrase pas le forkJoin) */
   readonly whatIfError     = signal<ErrorCode | null>(null);
 
   // --- Simulation (CONTRAINTE METIER : zero ecriture DB) ---
@@ -95,7 +91,6 @@ export class IaComponent {
 
   // --- Chargement forkJoin ---
   loadPrediction(): void {
-    // Reset global
     this.isLoading.set(true);
     this.isPredictionLoading.set(true);
     this.isModelLoading.set(true);
@@ -110,7 +105,6 @@ export class IaComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         map(({ prediction, model }) => {
-          // Les deux streams sont resolus : on marque les deux skeletons termines
           this.isPredictionLoading.set(false);
           this.isModelLoading.set(false);
           return {
@@ -125,12 +119,10 @@ export class IaComponent {
       )
       .subscribe({
         next: (enriched) => {
-          // Cast via unknown pour eviter le type overlap entre le spread et IAPredictionResult
           this.predictionData.set(enriched as unknown as IAPredictionResult);
           this.isLoading.set(false);
         },
         error: (err) => {
-          // Redirect automatique sur 401/403
           const status = err?.status;
           if (status === 401 || status === 403) {
             this.isLoading.set(false);
@@ -155,14 +147,13 @@ export class IaComponent {
       });
   }
 
-  // --- Retry public (appele par FinacesInlineErrorComponent) ---
+  // --- Retry public ---
   onRetry(): void {
     this.retryCount.update(n => n + 1);
     this.predictionError.set(null);
     this.loadPrediction();
   }
 
-  /** Alias coherent avec le pattern scoring — les deux noms sont valides */
   onRetryLoad(): void {
     this.onRetry();
   }
@@ -188,8 +179,8 @@ export class IaComponent {
             features: [
               { feature_name: 'Dette / Capitaux propres', feature_value: '4.2',   shap_value:  0.8, direction: 'positive', magnitude: 0.8 },
               { feature_name: 'Marge EBITDA',            feature_value: '8.4%',  shap_value: -0.5, direction: 'negative', magnitude: 0.5 },
-              { feature_name: 'Cash-flow operationnel',  feature_value: '1,2M', shap_value:  0.3, direction: 'positive', magnitude: 0.3 },
-              { feature_name: 'Ratio de liquidite',     feature_value: '1.1',   shap_value:  0.2, direction: 'positive', magnitude: 0.2 },
+              { feature_name: 'Cash-flow operationnel',  feature_value: '1,2M',  shap_value:  0.3, direction: 'positive', magnitude: 0.3 },
+              { feature_name: 'Ratio de liquidite',      feature_value: '1.1',   shap_value:  0.2, direction: 'positive', magnitude: 0.2 },
               { feature_name: 'DSO (jours)',              feature_value: '65',    shap_value: -0.1, direction: 'negative', magnitude: 0.1 },
             ],
           },
@@ -211,12 +202,11 @@ export class IaComponent {
           this.simulationScore.set(result.predicted_score_if ?? 3.1);
           this.simulationClass.set(result.predicted_class_if ?? 'MODERATE');
           this.isSimulating.set(false);
-          this.snackBar.open('Simulation appliquee avec succes.', 'OK', { duration: 3000 });
+          this.snackBar.open('Simulation appliquée avec succès.', 'OK', { duration: 3000 });
         },
         error: (err) => {
           const status = err?.status;
           if (!environment.production) {
-            // Fallback mock simulation (dev uniquement)
             of(null)
               .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
               .subscribe(() => {
@@ -224,10 +214,9 @@ export class IaComponent {
                 this.simulationScore.set(Math.min(5, baseScore + 0.7));
                 this.simulationClass.set('MODERATE');
                 this.isSimulating.set(false);
-                this.snackBar.open('Simulation terminee (mode mock).', 'OK', { duration: 3000 });
+                this.snackBar.open('Simulation terminée (mode mock).', 'OK', { duration: 3000 });
               });
           } else {
-            // 422 = donnees de simulation invalides → 'generic' (ErrorCode valide)
             this.whatIfError.set(status === 422 ? 'generic' : 'server');
             this.isSimulating.set(false);
           }
