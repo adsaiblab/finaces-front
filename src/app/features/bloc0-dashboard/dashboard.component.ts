@@ -4,13 +4,15 @@ import {
   inject,
   signal,
   computed,
+  DestroyRef,
+  OnInit,
 } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { CaseService } from '../../core/services/case.service';
 import {
@@ -37,7 +39,6 @@ import { ConvergenceChartComponent } from './components/convergence-chart/conver
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    AsyncPipe,
     MatButtonModule,
     MatIconModule,
     RouterLink,
@@ -53,8 +54,9 @@ import { ConvergenceChartComponent } from './components/convergence-chart/conver
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly caseService = inject(CaseService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly UI_LABELS = UI_LABELS;
 
   // ─── Loading signals (granulaires — 1 par stream) ────────────────────
@@ -85,63 +87,80 @@ export class DashboardComponent {
     () => !this.isTensionsLoading() && !this.tensionsError() && this.tensionsLoaded().length === 0,
   );
 
-  // ─── Data streams ─────────────────────────────────────────────────────
-  readonly stats$: Observable<DashboardStatsOut | null> = this.caseService
-    .getDashboardStats()
-    .pipe(
-      tap(() => {
-        this.statsError.set(null);
-        this.isKpiLoading.set(false);
-      }),
-      catchError(() => {
-        this.statsError.set('server');
-        this.isKpiLoading.set(false);
-        return of(null);
-      }),
-    );
+  // ─── Data Signals ───────────────────────────────────────────────────────
+  readonly statsData = signal<DashboardStatsOut | null>(null);
+  readonly recentCasesData = signal<EvaluationCaseDetailOut[]>([]);
+  readonly chartDataLoaded = signal<ConvergenceChartOut | null>(null);
 
-  readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService
-    .getRecentCases(5)
-    .pipe(
-      tap(() => {
-        this.casesError.set(null);
-        this.isCasesLoading.set(false);
-      }),
-      catchError(() => {
-        this.casesError.set('server');
-        this.isCasesLoading.set(false);
-        return of([]);
-      }),
-    );
+  ngOnInit(): void {
+    this.caseService
+      .getDashboardStats()
+      .pipe(
+        tap((data) => {
+          this.statsData.set(data);
+          this.statsError.set(null);
+          this.isKpiLoading.set(false);
+        }),
+        catchError(() => {
+          this.statsError.set('server');
+          this.isKpiLoading.set(false);
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
 
-  readonly tensions$: Observable<TensionAlertOut[]> = this.caseService
-    .getActiveTensionCases()
-    .pipe(
-      tap((data) => {
-        this.tensionsError.set(null);
-        this.isTensionsLoading.set(false);
-        this.tensionsLoaded.set(data);
-      }),
-      catchError(() => {
-        this.tensionsError.set('server');
-        this.isTensionsLoading.set(false);
-        return of([]);
-      }),
-    );
+    this.caseService
+      .getRecentCases(5)
+      .pipe(
+        tap((data) => {
+          this.recentCasesData.set(data);
+          this.casesError.set(null);
+          this.isCasesLoading.set(false);
+        }),
+        catchError(() => {
+          this.casesError.set('server');
+          this.isCasesLoading.set(false);
+          return of([]);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
 
-  readonly chartData$: Observable<ConvergenceChartOut | null> = this.caseService
-    .getConvergenceChart(30)
-    .pipe(
-      tap(() => {
-        this.chartError.set(null);
-        this.isChartLoading.set(false);
-      }),
-      catchError(() => {
-        this.chartError.set('server');
-        this.isChartLoading.set(false);
-        return of(null);
-      }),
-    );
+    this.caseService
+      .getActiveTensionCases()
+      .pipe(
+        tap((data) => {
+          this.tensionsError.set(null);
+          this.isTensionsLoading.set(false);
+          this.tensionsLoaded.set(data);
+        }),
+        catchError(() => {
+          this.tensionsError.set('server');
+          this.isTensionsLoading.set(false);
+          return of([]);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
+    this.caseService
+      .getConvergenceChart(30)
+      .pipe(
+        tap((data) => {
+          this.chartDataLoaded.set(data);
+          this.chartError.set(null);
+          this.isChartLoading.set(false);
+        }),
+        catchError(() => {
+          this.chartError.set('server');
+          this.isChartLoading.set(false);
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
 
   // ─── Retry handlers ───────────────────────────────────────────────────
   onRetryStats(): void {

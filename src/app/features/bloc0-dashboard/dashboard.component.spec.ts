@@ -39,7 +39,6 @@ describe('DashboardComponent', () => {
       ...serviceOverrides,
     };
 
-    HTMLCanvasElement.prototype.getContext = vi.fn() as any;
     globalThis.ResizeObserver = class {
       observe() {}
       unobserve() {}

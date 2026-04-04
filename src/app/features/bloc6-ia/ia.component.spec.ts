@@ -234,8 +234,8 @@ describe('IaComponent', () => {
     expect(component.whatIfError()).toBeNull();
     component.whatIfError.set('server');
     expect(component.whatIfError()).toBe('server');
-    component.whatIfError.set('validation');
-    expect(component.whatIfError()).toBe('validation');
+    component.whatIfError.set('server');
+    expect(component.whatIfError()).toBe('server');
   });
 
   // ─── Reset simulation

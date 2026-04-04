@@ -20,7 +20,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StressService } from '../../core/services/stress.service';
 import { StressTestResponse, StressParameters, Milestone, StressScenarioInputSchema, StressScenarioResult } from '../../core/models/stress.model';
 import {
-  FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
   ErrorCode,
 } from '../../shared/components';
@@ -42,7 +41,6 @@ export type StressTab = 'CONTRACT' | 'MACRO' | 'SHOCK';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    FinacesSkeletonLoaderComponent,
     FinacesInlineErrorComponent,
     StressParametersComponent,
     MilestoneTimelineComponent,
@@ -62,7 +60,7 @@ export class StressComponent {
   readonly caseId = signal<string>('');
 
   readonly stressData    = signal<StressTestResponse | null>(null);
-  readonly isLoading     = signal<boolean>(true);
+  readonly isLoading     = signal<boolean>(false);
   readonly isSimulating  = signal<boolean>(false);
 
   // ─── Error signals ────────────────────────────────────────────────────────
@@ -97,6 +95,7 @@ export class StressComponent {
 
   // ─── Retry ────────────────────────────────────────────────────────────────
   onRetryLoad(): void {
+    this.isLoading.set(true);
     this.loadError.set(null);
     this.retryCount.update((n) => n + 1);
     this.loadInitialStressData();

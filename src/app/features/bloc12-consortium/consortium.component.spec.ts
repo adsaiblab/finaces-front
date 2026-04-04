@@ -8,6 +8,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ConsortiumScorecardOutput } from '../../core/models/consortium.model';
 
@@ -27,9 +28,9 @@ describe('ConsortiumComponent', () => {
   let fixture: ComponentFixture<ConsortiumComponent>;
 
   const mockCaseContext = { caseId: () => 'case-abc' };
-  const mockCaseService = { getCaseDetail: vi.fn().mockReturnValue(of(null)) };
+  const mockCaseService = { getCaseDetail: vi.fn().mockReturnValue(of(null).pipe(delay(0))) };
   const mockConsortiumService = {
-    getConsortium: vi.fn().mockReturnValue(of(MOCK_CONSORTIUM)),
+    getConsortium: vi.fn().mockReturnValue(of(MOCK_CONSORTIUM).pipe(delay(0))),
     addMember: vi.fn(),
     updateMember: vi.fn(),
     removeMember: vi.fn(),
@@ -37,9 +38,9 @@ describe('ConsortiumComponent', () => {
   };
 
   beforeEach(async () => {
-    vi.stubGlobal('requestAnimationFrame', (cb: Function) => cb());
-    mockCaseService.getCaseDetail.mockReturnValue(of(null));
-    mockConsortiumService.getConsortium.mockReturnValue(of(MOCK_CONSORTIUM));
+    vi.stubGlobal('requestAnimationFrame', (cb: Function) => setTimeout(cb, 0));
+    mockCaseService.getCaseDetail.mockReturnValue(of(null).pipe(delay(0)));
+    mockConsortiumService.getConsortium.mockReturnValue(of(MOCK_CONSORTIUM).pipe(delay(0)));
 
     await TestBed.configureTestingModule({
       imports: [ConsortiumComponent, NoopAnimationsModule],
@@ -68,6 +69,7 @@ describe('ConsortiumComponent', () => {
   });
 
   it('should set loadError when consortium API fails', async () => {
+    component.isLoading.set(false);
     component.loadError.set('Impossible de charger les données du consortium.');
     fixture.detectChanges();
     await fixture.whenStable();

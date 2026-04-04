@@ -74,7 +74,7 @@ export class ConsortiumComponent {
 
   currentCase = signal<EvaluationCaseDetailOut | null>(null);
   currentConsortium = signal<ConsortiumScorecardOutput | null>(null);
-  isLoading = signal<boolean>(true);
+  isLoading = signal<boolean>(false);
   isCalculating = signal<boolean>(false);
   isEditingShares = signal<boolean>(false);
 
@@ -111,7 +111,15 @@ export class ConsortiumComponent {
 
   detailedCombinedPillars = computed(() => {
     const mems = this.currentConsortium()?.members || [];
-    if (mems.length === 0) return {};
+    if (mems.length === 0) {
+      return {
+        liquidity: { score: 0, label: 'N/A' },
+        solvency: { score: 0, label: 'N/A' },
+        profitability: { score: 0, label: 'N/A' },
+        capacity: { score: 0, label: 'N/A' },
+        quality: { score: 0, label: 'N/A' },
+      } as Record<string, { score: number; label: string }>;
+    }
     const combinedFinalScore = this.currentConsortium()?.combined_scorecard?.final_score || 0;
     const generateCombinedPillar = (offset: number) => {
       const score = Math.max(1, Math.min(5, combinedFinalScore + offset));
@@ -139,6 +147,7 @@ export class ConsortiumComponent {
   }
 
   public onRetryLoad(): void {
+    this.isLoading.set(true);
     this.loadError.set(null);
     this.retryCount.update(n => n + 1);
     this.loadData();

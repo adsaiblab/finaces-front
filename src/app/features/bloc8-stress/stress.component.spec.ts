@@ -3,6 +3,7 @@ import { StressComponent } from './stress.component';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { StressService } from '../../core/services/stress.service';
 import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
@@ -34,16 +35,16 @@ describe('StressComponent', () => {
   let fixture: ComponentFixture<StressComponent>;
 
   const mockStressService = {
-    getStressTests: vi.fn().mockReturnValue(of(MOCK_STRESS_DATA)),
-    runCustomStressTest: vi.fn().mockReturnValue(of(MOCK_STRESS_DATA)),
+    getStressTests: vi.fn().mockReturnValue(of(MOCK_STRESS_DATA).pipe(delay(0))),
+    runCustomStressTest: vi.fn().mockReturnValue(of(MOCK_STRESS_DATA).pipe(delay(0))),
   };
 
   const mockCaseContext = { caseId: () => 'case-123' };
 
   beforeEach(async () => {
-    vi.stubGlobal('requestAnimationFrame', (cb: Function) => cb());
-    mockStressService.getStressTests.mockReturnValue(of(MOCK_STRESS_DATA));
-    mockStressService.runCustomStressTest.mockReturnValue(of(MOCK_STRESS_DATA));
+    vi.stubGlobal('requestAnimationFrame', (cb: Function) => setTimeout(cb, 0));
+    mockStressService.getStressTests.mockReturnValue(of(MOCK_STRESS_DATA).pipe(delay(0)));
+    mockStressService.runCustomStressTest.mockReturnValue(of(MOCK_STRESS_DATA).pipe(delay(0)));
 
     await TestBed.configureTestingModule({
       imports: [StressComponent, NoopAnimationsModule],

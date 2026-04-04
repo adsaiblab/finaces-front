@@ -1,0 +1,248 @@
+
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/adsa/Documents/aDSa.DEV/FinaCES/finaces-front[39m
+
+ [32m✓[39m src/app/features/admin-ia/services/admin-ia.service.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 817[2mms[22m[39m
+     [33m[2m✓[22m[39m should return mock dashboard data [33m 805[2mms[22m[39m
+ [31m❯[39m src/app/features/bloc12-consortium/consortium.component.spec.ts [2m([22m[2m11 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 375[2mms[22m[39m
+     [32m✓[39m should create[32m 198[2mms[22m[39m
+     [32m✓[39m should have loadError null par défaut[32m 21[2mms[22m[39m
+[31m     [31m×[31m should set loadError when consortium API fails[39m[32m 27[2mms[22m[39m
+     [32m✓[39m should reset loadError and increment retryCount on onRetryLoad()[32m 19[2mms[22m[39m
+[31m     [31m×[31m should compute hasNoMembers false when members are loaded[39m[32m 15[2mms[22m[39m
+[31m     [31m×[31m should compute hasNoMembers true when consortium has empty members[39m[32m 12[2mms[22m[39m
+[31m     [31m×[31m should show empty-state "Aucun membre" when hasNoMembers is true[39m[32m 31[2mms[22m[39m
+     [32m✓[39m should compute totalParticipation = 100 for mock data[32m 14[2mms[22m[39m
+[31m     [31m×[31m should show participation warning when total !== 100[39m[32m 12[2mms[22m[39m
+     [32m✓[39m should show skeleton while isLoading is true[32m 13[2mms[22m[39m
+[31m     [31m×[31m should hide skeleton after loading completes[39m[32m 10[2mms[22m[39m
+[90mstderr[2m | src/app/features/bloc6-ia/ia.component.spec.ts[2m > [22m[2mIaComponent[2m > [22m[2mdevrait appeler loadMockData si getPrediction echoue (mode non-prod)
+[22m[39m[IA] Backend indisponible — mode mock active
+
+[90mstderr[2m | src/app/features/bloc6-ia/ia.component.spec.ts[2m > [22m[2mIaComponent[2m > [22m[2mdevrait réinitialiser isPredictionLoading et isModelLoading même en cas d'erreur
+[22m[39m[IA] Backend indisponible — mode mock active
+
+ [32m✓[39m src/app/features/bloc6-ia/ia.component.spec.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 1041[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait créer le composant et charger la prédiction au démarrage [33m 353[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/cases-list/cases-list.component.spec.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 1030[2mms[22m[39m
+       [33m[2m✓[22m[39m should create Evaluation Hub [33m 427[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc1b-gate/gate.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 521[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait créer le composant [33m 357[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/case-create/case-create.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 782[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait créer le composant [33m 441[2mms[22m[39m
+ [31m❯[39m src/app/features/bloc8-stress/stress.component.spec.ts [2m([22m[2m22 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 390[2mms[22m[39m
+     [32m✓[39m should create and load data on init[32m 115[2mms[22m[39m
+     [32m✓[39m should trigger simulation via runCustomStressTest[32m 16[2mms[22m[39m
+     [32m✓[39m loadError() devrait etre null par defaut[32m 9[2mms[22m[39m
+     [32m✓[39m simulationError() devrait etre null par defaut[32m 7[2mms[22m[39m
+     [32m✓[39m retryCount() devrait etre 0 par defaut[32m 12[2mms[22m[39m
+     [32m✓[39m activeTab() devrait etre CONTRACT par defaut[32m 5[2mms[22m[39m
+     [32m✓[39m loadError peut etre positionne a "server" (ErrorCode)[32m 4[2mms[22m[39m
+     [32m✓[39m onRetryLoad() devrait reinitialiser loadError et incrementer retryCount[32m 19[2mms[22m[39m
+     [32m✓[39m simulationError peut etre positionne a "server"[32m 34[2mms[22m[39m
+     [32m✓[39m simulationError peut etre efface[32m 18[2mms[22m[39m
+     [32m✓[39m runSimulation() vide simulationError au debut[32m 8[2mms[22m[39m
+     [32m✓[39m hasNoData devrait etre false quand stressData est defini[32m 10[2mms[22m[39m
+     [32m✓[39m hasNoData devrait etre true quand loading=false, pas d'erreur, pas de donnees[32m 4[2mms[22m[39m
+     [32m✓[39m setTab("MACRO") devrait changer activeTab a MACRO[32m 40[2mms[22m[39m
+     [32m✓[39m setTab("SHOCK") devrait changer activeTab a SHOCK[32m 19[2mms[22m[39m
+     [32m✓[39m setTab("CONTRACT") depuis SHOCK devrait revenir a CONTRACT[32m 3[2mms[22m[39m
+     [32m✓[39m devrait afficher le skeleton (stress-loading-spinner) quand isLoading = true[32m 3[2mms[22m[39m
+[31m     [31m×[31m devrait masquer le skeleton apres chargement[39m[32m 31[2mms[22m[39m
+[31m     [31m×[31m les 3 boutons de tabs devraient etre dans le DOM quand le contenu est charge[39m[32m 3[2mms[22m[39m
+[31m     [31m×[31m stress-contract-panel visible quand activeTab = CONTRACT[39m[32m 16[2mms[22m[39m
+[31m     [31m×[31m stress-macro-panel visible quand activeTab = MACRO[39m[32m 7[2mms[22m[39m
+[31m     [31m×[31m stress-shock-panel visible quand activeTab = SHOCK[39m[32m 4[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc7-tension/tension.component.spec.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 1181[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 506[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc1b-gate/components/decision-column/decision-column.component.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 269[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc3-normalization/components/comparative-table/comparative-table.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 415[2mms[22m[39m
+[90mstderr[2m | src/app/features/bloc1b-gate/components/checklist-column/checklist-column.component.spec.ts[2m > [22m[2mChecklistColumnComponent[2m > [22m[2mdevrait calculer 0% si aucun document nest uploadé
+[22m[39mNG0956: The configured tracking expression (track by identity) caused re-creation of the entire collection of size 3. This is an expensive operation requiring destruction and subsequent creation of DOM nodes, directives, components etc. Please review the "track expression" and make sure that it uniquely identifies items in a collection. Find more at https://v21.angular.dev/errors/NG0956
+
+ [32m✓[39m src/app/features/bloc7-tension/components/pillar-tension-table/pillar-tension-table.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 117[2mms[22m[39m
+[90mstderr[2m | src/app/features/bloc1b-gate/components/checklist-column/checklist-column.component.spec.ts[2m > [22m[2mChecklistColumnComponent[2m > [22m[2mdevrait calculer correctement la progression avec des documents valides
+[22m[39mNG0956: The configured tracking expression (track by identity) caused re-creation of the entire collection of size 3. This is an expensive operation requiring destruction and subsequent creation of DOM nodes, directives, components etc. Please review the "track expression" and make sure that it uniquely identifies items in a collection. Find more at https://v21.angular.dev/errors/NG0956
+
+ [32m✓[39m src/app/features/bloc5-scoring-mcc/components/override-zone/override-zone.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 349[2mms[22m[39m
+[90mstderr[2m | src/app/features/bloc1b-gate/components/checklist-column/checklist-column.component.spec.ts[2m > [22m[2mChecklistColumnComponent[2m > [22m[2mdevrait ignorer les documents en statut REJECTED dans la progression
+[22m[39mNG0956: The configured tracking expression (track by identity) caused re-creation of the entire collection of size 3. This is an expensive operation requiring destruction and subsequent creation of DOM nodes, directives, components etc. Please review the "track expression" and make sure that it uniquely identifies items in a collection. Find more at https://v21.angular.dev/errors/NG0956
+
+ [32m✓[39m src/app/features/bloc1b-gate/components/checklist-column/checklist-column.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 221[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc1b-gate/components/document-upload-dialog/document-upload-dialog.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 460[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/expert.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 250[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/molecules/finaces-pillar-row/finaces-pillar-row.component.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 599[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 330[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc4-ratios/bloc4-ratios.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 279[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc0-dashboard/components/recent-cases-table/recent-cases-table.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 187[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc1b-gate/components/documents-column/documents-column.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 284[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc3-normalization/normalization.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 272[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc8-stress/components/scenario-results/scenario-results.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 252[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/organisms/finaces-what-if/finaces-what-if.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 244[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc0-dashboard/components/convergence-chart/convergence-chart.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 260[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc5-scoring-mcc/scoring-mcc.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 256[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc0-dashboard/components/active-tensions-card/active-tensions-card.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc4-ratios/components/ratio-group-card/ratio-group-card.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 184[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component.spec.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 129[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc10-rapport/rapport.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 203[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/case-create/steps/step1-market-info/step1-market-info.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 222[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc8-stress/components/milestone-timeline/milestone-timeline.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 304[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/components/add-condition-dialog/add-condition-dialog.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 226[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc0-dashboard/dashboard.component.spec.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 3821[2mms[22m[39m
+     [33m[2m✓[22m[39m devrait creer le composant dashboard [33m 556[2mms[22m[39m
+     [33m[2m✓[22m[39m isTensionsLoading() devrait etre false meme quand getActiveTensionCases echoue [33m 320[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc7-tension/components/analyst-decision/analyst-decision.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 337[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/components/risk-override/risk-override.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 143[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component.spec.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 190[2mms[22m[39m
+[90mstderr[2m | src/app/shared/components/organisms/finaces-convergence-chart/finaces-convergence-chart.component.spec.ts[2m > [22m[2mFinacesConvergenceChartComponent[2m > [22m[2mwith data[2m > [22m[2mshould create
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+[90mstderr[2m | src/app/shared/components/organisms/finaces-convergence-chart/finaces-convergence-chart.component.spec.ts[2m > [22m[2mFinacesConvergenceChartComponent[2m > [22m[2mwith data[2m > [22m[2mshould render chart with correct epoch labels
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+ [32m✓[39m src/app/features/bloc7-tension/components/tension-comparison/tension-comparison.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 131[2mms[22m[39m
+[90mstderr[2m | src/app/shared/components/organisms/finaces-convergence-chart/finaces-convergence-chart.component.spec.ts[2m > [22m[2mFinacesConvergenceChartComponent[2m > [22m[2mwith data[2m > [22m[2mshould render two datasets (train_loss and val_loss)
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+[90mstderr[2m | src/app/shared/components/organisms/finaces-convergence-chart/finaces-convergence-chart.component.spec.ts[2m > [22m[2mFinacesConvergenceChartComponent[2m > [22m[2mwith data[2m > [22m[2mshould clean up chart on component destroy
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+ [32m✓[39m src/app/shared/components/organisms/finaces-convergence-chart/finaces-convergence-chart.component.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc8-stress/components/stress-parameters/stress-parameters.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 140[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/case-create/steps/step2-bidder/step2-bidder.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 190[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc0-dashboard/components/kpi-row/kpi-row.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 168[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc12-consortium/components/consortium-member-dialog/consortium-member-dialog.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 233[2mms[22m[39m
+[90mstderr[2m | src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.spec.ts[2m > [22m[2mFinacesStressChartComponent[2m > [22m[2mshould create
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+[90mstderr[2m | src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.spec.ts[2m > [22m[2mFinacesStressChartComponent[2m > [22m[2mshould format labels as M(month_number)
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+ [32m✓[39m src/app/shared/components/molecules/finaces-inline-error/finaces-inline-error.component.spec.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 230[2mms[22m[39m
+ [32m✓[39m src/app/features/admin-ia/admin-ia.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 231[2mms[22m[39m
+[90mstderr[2m | src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.spec.ts[2m > [22m[2mFinacesStressChartComponent[2m > [22m[2mshould display stress results badges when status is provided
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+[90mstderr[2m | src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.spec.ts[2m > [22m[2mFinacesStressChartComponent[2m > [22m[2mshould clean up chart on component destroy
+[22m[39mFailed to create chart: can't acquire context from the given item
+
+ [32m✓[39m src/app/shared/components/organisms/finaces-stress-chart/finaces-stress-chart.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 126[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc12-consortium/components/consortium-member-accordion/consortium-member-accordion.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 126[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc2-financials/components/tab-income-statement/tab-income-statement.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 138[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/components/qualitative-notes/qualitative-notes.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 184[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 58[2mms[22m[39m
+ [32m✓[39m src/app/core/layout/app-layout/app-layout.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 117[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/components/validation-decision/validation-decision.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 55[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/components/decision-recap/decision-recap.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 115[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc2-financials/components/tab-balance-sheet-assets/tab-balance-sheet-assets.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 138[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc5-scoring-mcc/components/pillar-detail-card/pillar-detail-card.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 85[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc4-ratios/components/coherence-alerts/coherence-alerts.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 120[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc9-expert/components/mcc-conditions/mcc-conditions.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 98[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc2-financials/components/tab-balance-sheet-liabilities/tab-balance-sheet-liabilities.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 162[2mms[22m[39m
+ [32m✓[39m src/app/features/admin-ia/components/monitoring-alerts/monitoring-alerts.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m src/app/features/admin-ia/components/model-config-dialog/model-config-dialog.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 73[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc3-normalization/components/adjustments-list/adjustments-list.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 125[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc2-financials/components/tab-cash-flow/tab-cash-flow.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 111[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/molecules/finaces-ia-disclaimer/finaces-ia-disclaimer.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 78[2mms[22m[39m
+ [32m✓[39m src/app/features/admin-ia/components/performance-metrics/performance-metrics.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 104[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc5-scoring-mcc/components/recommendations-section/recommendations-section.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 107[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc4-ratios/components/zscore-card/zscore-card.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/case-create/steps/step3-summary/step3-summary.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 74[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc2-financials/components/exercise-selector/exercise-selector.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc7-tension/components/tension-banner/tension-banner.component.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc3-normalization/components/accounting-standard-section/accounting-standard-section.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 70[2mms[22m[39m
+ [32m✓[39m src/app/features/admin-ia/components/feature-importance/feature-importance.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/organisms/finaces-shap-chart/finaces-shap-chart.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 86[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/molecules/finaces-ia-unavailable/finaces-ia-unavailable.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 54[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc10-rapport/components/rapport-metrics/rapport-metrics.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 51[2mms[22m[39m
+ [32m✓[39m src/app/core/services/theme/theme.service.spec.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc10-rapport/components/rapport-grid/rapport-grid.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/molecules/finaces-pilot-mode-banner/finaces-pilot-mode-banner.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 53[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc2-financials/components/balance-check/balance-check.component.spec.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 72[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/case-create/steps/step4-confirmation/step4-confirmation.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m src/app/features/cases/case-create/components/groupement-members/groupement-members.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 64[2mms[22m[39m
+ [32m✓[39m src/app/shared/components/molecules/finaces-empty-state/finaces-empty-state.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m src/app/features/admin-ia/components/model-list/model-list.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 44[2mms[22m[39m
+[90mstderr[2m | src/app/features/bloc5-scoring-mcc/services/scoring-mcc.service.spec.ts[2m > [22m[2mScoringMccService[2m > [22m[2mshould call GET on /score endpoint
+[22m[39m✅ [Scoring MCC] Fetched successfully: {}
+
+[90mstderr[2m | src/app/features/bloc5-scoring-mcc/services/scoring-mcc.service.spec.ts[2m > [22m[2mScoringMccService[2m > [22m[2mshould call POST on /score/override endpoint
+[22m[39m✅ [Scoring MCC] Override applied: {}
+
+ [32m✓[39m src/app/features/bloc5-scoring-mcc/services/scoring-mcc.service.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m src/app/core/services/ia.service.spec.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+[90mstderr[2m | src/app/features/bloc4-ratios/services/ratio-calculation.service.spec.ts[2m > [22m[2mRatioCalculationService[2m > [22m[2mshould call the compute endpoint
+[22m[39m✅ [Ratios] Computed successfully: {}
+
+ [32m✓[39m src/app/features/bloc4-ratios/services/ratio-calculation.service.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/app/app.component.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m src/app/core/services/stress.service.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc7-tension/services/tension-calculator.service.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/app/core/services/bidder.service.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/app/features/bloc10-rapport/services/rapport-export.service.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 11 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/app/features/bloc12-consortium/consortium.component.spec.ts[2m > [22mConsortiumComponent[2m > [22mshould set loadError when consortium API fails
+[31m[1mAssertionError[22m: expected null to be truthy[39m
+
+[32m- Expected:[39m
+true
+
+[31m+ Received:[39m
+null
+
+[36m [2m❯[22m src/app/features/bloc12-consortium/consortium.component.spec.ts:[2m77:21[22m[39m
+    [90m 75|[39m     [34mexpect[39m(component[33m.[39m[34mloadError[39m())[33m.[39mnot[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m 76|[39m     const errorEl = fixture.nativeElement.querySelector('[data-testid=…
+    [90m 77|[39m     [34mexpect[39m(errorEl)[33m.[39m[34mtoBeTruthy[39m()[33m;[39m
+    [90m   |[39m                     [31m^[39m
+    [90m 78|[39m   })[33m;[39m
+    [90m 79|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/app/features/bloc12-consortium/consortium.component.spec.ts[2m > [22mConsortiumComponent[2m > [22mshould compute hasNoMembers false when members are loaded
+[41m[1m FAIL [22m[49m src/app/features/bloc12-consortium/consortium.component.spec.ts[2m > [22mConsortiumComponent[2m > [22mshould compute hasNoMembers true when consortium has empty members
+[41m[1m FAIL [22m[49m src/app/features/bloc12-consortium/consortium.component.spec.ts[2m > [22mConsortiumComponent[2m > [22mshould show empty-state "Aucun membre" when hasNoMembers is true
+[41m[1m FAIL [22m[49m src/app/features/bloc12-consortium/consortium.component.spec.ts[2m > [22mConsortiumComponent[2m > [22mshould show participation warning when total !== 100
+[41m[1m FAIL [22m[49m src/app/features/bloc12-consortium/consortium.component.spec.ts[2m > [22mConsortiumComponent[2m > [22mshould hide skeleton after loading completes
+[31m[1mError[22m: NG0100: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: '0'. Current value: '-1'. Expression location: ConsortiumComponent2 component. Find more at https://v21.angular.dev/errors/NG0100[39m
+[90m [2m❯[22m throwErrorIfNoChangesMode ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors.ts:[2m85:8[22m[39m
+[90m [2m❯[22m throwErrorIfNoChangesMode ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/bindings.ts:[2m68:8[22m[39m
+[90m [2m❯[22m bindingUpdated ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/control_flow.ts:[2m176:6[22m[39m
+[90m [2m❯[22m ConsortiumComponent2_Template ng:/ConsortiumComponent2.js:[2m580:9[22m[39m
+[90m [2m❯[22m templateFn ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/shared.ts:[2m109:4[22m[39m
+[90m [2m❯[22m executeTemplate ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m232:6[22m[39m
+[90m [2m❯[22m refreshView ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m497:4[22m[39m
+[90m [2m❯[22m detectChangesInView ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m445:2[22m[39m
+[90m [2m❯[22m detectChangesInViewIfAttached ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m430:4[22m[39m
+[90m [2m❯[22m detectChangesInComponent ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m526:4[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/app/features/bloc8-stress/stress.component.spec.ts[2m > [22mStressComponent[2m > [22mdevrait masquer le skeleton apres chargement
+[41m[1m FAIL [22m[49m src/app/features/bloc8-stress/stress.component.spec.ts[2m > [22mStressComponent[2m > [22mles 3 boutons de tabs devraient etre dans le DOM quand le contenu est charge
+[41m[1m FAIL [22m[49m src/app/features/bloc8-stress/stress.component.spec.ts[2m > [22mStressComponent[2m > [22mstress-contract-panel visible quand activeTab = CONTRACT
+[41m[1m FAIL [22m[49m src/app/features/bloc8-stress/stress.component.spec.ts[2m > [22mStressComponent[2m > [22mstress-macro-panel visible quand activeTab = MACRO
+[41m[1m FAIL [22m[49m src/app/features/bloc8-stress/stress.component.spec.ts[2m > [22mStressComponent[2m > [22mstress-shock-panel visible quand activeTab = SHOCK
+[31m[1mError[22m: NG0100: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value: '1'. Current value: '-1'. Expression location: StressComponent2 component. Find more at https://v21.angular.dev/errors/NG0100[39m
+[90m [2m❯[22m throwErrorIfNoChangesMode ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors.ts:[2m85:8[22m[39m
+[90m [2m❯[22m throwErrorIfNoChangesMode ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/bindings.ts:[2m68:8[22m[39m
+[90m [2m❯[22m bindingUpdated ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/control_flow.ts:[2m176:6[22m[39m
+[90m [2m❯[22m StressComponent2_Template ng:/StressComponent2.js:[2m319:9[22m[39m
+[90m [2m❯[22m templateFn ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/shared.ts:[2m109:4[22m[39m
+[90m [2m❯[22m executeTemplate ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m232:6[22m[39m
+[90m [2m❯[22m refreshView ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m497:4[22m[39m
+[90m [2m❯[22m detectChangesInView ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m445:2[22m[39m
+[90m [2m❯[22m detectChangesInViewIfAttached ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m430:4[22m[39m
+[90m [2m❯[22m detectChangesInComponent ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/change_detection.ts:[2m526:4[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m87 passed[39m[22m[90m (89)[39m
+[2m      Tests [22m [1m[31m11 failed[39m[22m[2m | [22m[1m[32m320 passed[39m[22m[90m (331)[39m
+[2m   Start at [22m 16:41:24
+[2m   Duration [22m 9.89s[2m (transform 6.25s, setup 20.95s, import 30.57s, tests 21.56s, environment 4.51s)[22m
+
