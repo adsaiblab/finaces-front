@@ -1,11 +1,18 @@
 <div
-  class="w-full bg-error-lighter border border-error-default rounded-lg p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+  class="inline-error-host w-full bg-error-lighter border border-error-default rounded-lg p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+  role="alert"
+  aria-live="polite"
+  [attr.data-testid]="testId() || null"
 >
-  <div class="flex items-center gap-3">
-    <span class="material-icons text-error-dark">error_outline</span>
+  <div class="flex items-start gap-3">
+    <mat-icon
+      class="text-error-dark mt-0.5 flex-shrink-0"
+      aria-hidden="true"
+      [fontIcon]="resolvedIcon()"
+    ></mat-icon>
     <div>
-      <h4 class="text-sm font-bold text-error-dark">Data Retrieval Error</h4>
-      <p class="text-xs text-error-dark">{{ message() }}</p>
+      <h4 class="text-sm font-bold text-error-dark">{{ resolvedTitle() }}</h4>
+      <p class="text-xs text-error-dark opacity-90 mt-0.5">{{ resolvedMessage() }}</p>
     </div>
   </div>
 
@@ -13,20 +20,24 @@
     <button
       type="button"
       class="px-3 py-1.5 text-xs font-bold rounded text-content-secondary hover:bg-surface-hover transition-colors flex-1 sm:flex-none border border-border-default"
+      aria-label="Ignorer cette erreur"
       (click)="onIgnore()"
     >
-      Dismiss
+      Ignorer
     </button>
+
     <button
       type="button"
       class="px-3 py-1.5 text-xs font-bold rounded bg-surface-card text-error-dark border border-error-default hover:bg-error-default hover:text-inverse transition-colors flex items-center justify-center gap-1 flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
-      [disabled]="!canRetry"
+      [attr.disabled]="canRetry() ? null : true"
+      [attr.aria-disabled]="!canRetry()"
+      [attr.aria-label]="'Réessayer (' + retryCount() + '/' + maxRetries() + ')'"
       (click)="onRetry()"
     >
-      <span class="material-icons text-xs">refresh</span>
-      Retry
+      <mat-icon class="text-xs" aria-hidden="true" fontIcon="refresh"></mat-icon>
+      Réessayer
       @if (maxRetries() > 0) {
-        ({{ retryCount() }}/{{ maxRetries() }})
+        <span class="opacity-70">({{ retryCount() }}/{{ maxRetries() }})</span>
       }
     </button>
   </div>
