@@ -1,9 +1,9 @@
 /**
  * e2e/specs/07-tension-stress-expert.spec.ts
- * ─────────────────────────────────────────────────────────────────────────────
+ * ────────────────────────────────────────────────────────────────────────────────
  * Isolation — Blocs 7 Tension / 8 Stress / 9 Expert
  * Session 4 Jour 2 : enrichissement complet des TODO S4
- * ─────────────────────────────────────────────────────────────────────────────
+ * ────────────────────────────────────────────────────────────────────────────────
  */
 import { test, expect } from '../fixtures/auth.fixture';
 import { TensionPage } from '../pages/tension.page';
@@ -13,50 +13,55 @@ import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
 
 const ID = TEST_CASE.id;
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+// ── Mocks ────────────────────────────────────────────────────────────────────────────────
 
+// MOCK_TENSION : tension_label supprimé (champ fantome, absent du backend)
 const MOCK_TENSION = {
-    tension_label: 'MODERATE',
     mcc_score: 3.2,
-    ia_score: 68,
+    ia_score: 72.5,
     delta: 0.52,
     pillars: [
         { pillar: 'LIQUIDITY', mcc_score: 3.5, ia_score: 70, tension: false },
-        { pillar: 'SOLVENCY', mcc_score: 2.8, ia_score: 62, tension: true },
+        { pillar: 'SOLVENCY',  mcc_score: 2.8, ia_score: 62, tension: true },
     ],
 };
 
+// MOCK_STRESS : StressResultSchema complet (tous les champs obligatoires non-Optional)
 const MOCK_STRESS = {
-    stress_results: [
-        {
-            scenario_id: 'stress60d',
-            label: '60-Day Payment Delay',
-            status: 'SOLVENT',
-            cash_impact: -120_000,
-            dscr_impact: -0.15,
-        },
-        {
-            scenario_id: 'stress90d',
-            label: '90-Day Critical Delay',
-            status: 'LIMIT',
-            cash_impact: -280_000,
-            dscr_impact: -0.35,
-        },
-    ],
+    contract_value: 5000000.0,
+    contract_months: 24,
+    annual_ca_avg: 2000000.0,
+    exposition_pct: 0.25,
+    backlog_value: 0.0,
+    bank_guarantee: false,
+    bank_guarantee_amount: 0.0,
+    credit_lines_confirmed: 500000.0,
+    cash_available: 800000.0,
+    working_capital_requirement_estimate: 300000.0,
+    advance_payment_pct: 0.10,
+    payment_milestones: [],
+    stress_60d_result: 'SOLVENT',    // StressDecision enum
+    stress_90d_result: 'SOLVENT',    // StressDecision enum
+    stress_60d_cash_position: 650000.0,
+    stress_90d_cash_position: 500000.0,
+    score_capacity: 3.5,
+    capacity_conclusion: 'Capacité satisfaisante',
+    monthly_flows: [],
+    scenarios_results: {},
+    data_alerts: [],
 };
 
+// MOCK_EXPERT : tension_label supprimé (fantome) — utilisé aussi comme case detail
 const MOCK_EXPERT = {
-    case_id: ID,
+    id: ID,
     bidder_name: TEST_CASE.bidderName,
-    risk_class: 'MODERATE',
-    tension_label: 'MODERATE',
     mcc_score: 3.2,
-    ia_score: 68,
+    ia_score: 72.5,
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // BLOC 7 — TENSION
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 test.describe('Isolation — Bloc 7 Tension', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -95,9 +100,9 @@ test.describe('Isolation — Bloc 7 Tension', () => {
 
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // BLOC 8 — STRESS
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 test.describe('Isolation — Bloc 8 Stress', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -125,16 +130,17 @@ test.describe('Isolation — Bloc 8 Stress', () => {
 
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // BLOC 9 — EXPERT
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 test.describe('Isolation — Bloc 9 Expert', () => {
 
     test.beforeEach(async ({ page }) => {
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_EXPERT) })
         );
-        await page.route(`**/api/v1/experts/${ID}/expert-review**`, route =>
+        // Route réelle confirmée : POST /cases/{case_id}/experts/review
+        await page.route(`**/api/v1/cases/${ID}/experts/review**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ id: 'mock-review-id', case_id: ID }) })
         );
     });
