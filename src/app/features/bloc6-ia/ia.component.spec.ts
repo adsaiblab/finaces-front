@@ -8,7 +8,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 
-// ─── Mocks réutilisables ───────────────────────────────────────────────────
+// ─── Mocks réutilisables ──────────────────────────────────────────────────────
 
 const mockPrediction = {
   id: 'pred-1',
@@ -67,7 +67,7 @@ const mockSimResult = {
 
 const mockCaseContext = { caseId: () => 'case-123' };
 
-// ─── Helper de construction ─────────────────────────────────────────────
+// ─── Helper de construction ────────────────────────────────────────────────────
 
 async function buildComponent(
   serviceOverrides: {
@@ -97,7 +97,7 @@ async function buildComponent(
   return { fixture, component, iaService };
 }
 
-// ─── Suite ───────────────────────────────────────────────────────────────
+// ─── Suite ─────────────────────────────────────────────────────────────────────
 
 describe('IaComponent', () => {
   afterEach(() => {
@@ -166,7 +166,7 @@ describe('IaComponent', () => {
 
   // ─── Gestion d'erreur forkJoin — mode non-production
 
-  it('devrait appeler loadMockData si getPrediction échoue (mode non-prod)', async () => {
+  it("devrait appeler loadMockData si getPrediction echoue (mode non-prod)", async () => {
     const { component } = await buildComponent({
       getPrediction: vi.fn().mockReturnValue(throwError(() => new Error('500'))),
     });
@@ -174,7 +174,7 @@ describe('IaComponent', () => {
     expect(component.predictionError()).toBeNull();
   });
 
-  it('devrait réinitialiser isPredictionLoading et isModelLoading même en cas d'erreur', async () => {
+  it('devrait réinitialiser isPredictionLoading et isModelLoading même en cas d\'erreur', async () => {
     const { component } = await buildComponent({
       getPrediction: vi.fn().mockReturnValue(throwError(() => new Error('500'))),
     });
@@ -260,7 +260,7 @@ describe('IaComponent', () => {
     expect(btn).toBeTruthy();
   });
 
-  it('devrait rendre le bouton « Passer à l’analyse de tension » avec data-testid', async () => {
+  it('devrait rendre le bouton « Passer à l\'analyse de tension » avec data-testid', async () => {
     const { fixture } = await buildComponent();
     fixture.detectChanges();
     const btn = fixture.debugElement.query(By.css('[data-testid="ia-proceed-tension-btn"]'));

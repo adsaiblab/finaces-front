@@ -11,7 +11,12 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: [
+            'playwright.config.ts',
+            'vitest.config.ts',
+          ],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
