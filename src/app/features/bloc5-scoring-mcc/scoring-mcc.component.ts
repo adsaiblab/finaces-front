@@ -6,6 +6,7 @@ import {
   computed,
   inject,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
@@ -55,7 +56,7 @@ import {
   styleUrls: ['./scoring-mcc.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScoringMccComponent {
+export class ScoringMccComponent implements OnInit {
   private readonly caseContext    = inject(CaseContextService);
   private readonly router         = inject(Router);
   private readonly scoringService = inject(ScoringMccService);
@@ -68,11 +69,11 @@ export class ScoringMccComponent {
   readonly isLoading   = signal<boolean>(true);
   readonly isOverriding = signal<boolean>(false);
 
-  // ─── Error signals (remplacent l'ancien signal error: string|null) ───
+  // ─── Error signals ───────────────────────────────────────────────────────
   readonly loadError  = signal<ErrorCode | null>(null);
   readonly retryCount = signal<number>(0);
 
-  // ─── Computed signals ──────────────────────────────────────────────
+  // ─── Computed signals ────────────────────────────────────────────────────
   readonly hasNoPillars = computed(
     () => !this.isLoading() && !this.loadError() && (this.scoringData()?.pillars?.length ?? 0) === 0,
   );
@@ -98,7 +99,7 @@ export class ScoringMccComponent {
     this.loadScoring();
   }
 
-  // ─── Chargement ──────────────────────────────────────────────
+  // ─── Chargement ──────────────────────────────────────────────────────────
   private loadScoring(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
@@ -126,14 +127,14 @@ export class ScoringMccComponent {
       });
   }
 
-  // ─── Retry (appelé par FinacesInlineErrorComponent) ────────────────────────
+  // ─── Retry ───────────────────────────────────────────────────────────────
   onRetryLoad(): void {
     this.retryCount.update(n => n + 1);
     this.loadError.set(null);
     this.loadScoring();
   }
 
-  // ─── Override ─────────────────────────────────────────────────
+  // ─── Override ────────────────────────────────────────────────────────────
   public handleOverride(payload: ScoreOverridePayload): void {
     this.isOverriding.set(true);
     this.scoringService
@@ -159,13 +160,13 @@ export class ScoringMccComponent {
                   global_score: payload.new_score,
                   status: 'OVERRIDDEN',
                   override: {
-                    original_score:     currentData.global_score,
-                    new_score:          payload.new_score,
+                    original_score:      currentData.global_score,
+                    new_score:           payload.new_score,
                     original_risk_class: currentData.risk_class,
-                    new_risk_class:     'ADJUSTED',
-                    reason:             payload.reason,
-                    author:             'Analyste senior',
-                    timestamp:          new Date().toISOString(),
+                    new_risk_class:      'ADJUSTED',
+                    reason:              payload.reason,
+                    author:              'Analyste senior',
+                    timestamp:           new Date().toISOString(),
                   },
                 });
               }
