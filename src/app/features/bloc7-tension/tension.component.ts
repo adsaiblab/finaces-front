@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Router } from '@angular/router';
@@ -15,6 +21,11 @@ import { IaService } from '../../core/services/ia.service';
 import { TensionCalculatorService } from './services/tension-calculator.service';
 
 import { TensionAnalysisResult, AnalystDecisionPayload } from '../../core/models/tension.model';
+import {
+  FinacesSkeletonLoaderComponent,
+  FinacesInlineErrorComponent,
+  ErrorCode,
+} from '../../shared/components';
 
 import {
   TensionBannerComponent,
@@ -31,6 +42,8 @@ import {
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    FinacesSkeletonLoaderComponent,
+    FinacesInlineErrorComponent,
     TensionBannerComponent,
     TensionComparisonComponent,
     PillarTensionTableComponent,
@@ -42,52 +55,71 @@ import {
 })
 export class TensionComponent {
   private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private scoringService = inject(ScoringMccService);
-  private iaService = inject(IaService);
-  private tensionCalc = inject(TensionCalculatorService);
-  private snackBar = inject(MatSnackBar);
+  private readonly router      = inject(Router);
+  private readonly scoringService = inject(ScoringMccService);
+  private readonly iaService      = inject(IaService);
+  private readonly tensionCalc    = inject(TensionCalculatorService);
+  private readonly snackBar       = inject(MatSnackBar);
+  private readonly destroyRef     = inject(DestroyRef);
 
-  public caseId = signal<string>('');
-  private readonly destroyRef = inject(DestroyRef);
+  readonly caseId = signal<string>('');
 
-  public tensionData = signal<TensionAnalysisResult | null>(null);
-  public isLoading = signal<boolean>(true);
-  public isSubmitting = signal<boolean>(false);
-  public error = signal<string | null>(null);
+  readonly tensionData   = signal<TensionAnalysisResult | null>(null);
+  readonly isLoading     = signal<boolean>(true);
+  readonly isSubmitting  = signal<boolean>(false);
+
+  // ─── Error signals ──────────────────────────────────────────────────────────
+  /** Erreur de chargement forkJoin (MCC + IA) */
+  readonly loadError   = signal<ErrorCode | null>(null);
+  /** Erreur de soumission de la décision analyste */
+  readonly submitError = signal<ErrorCode | null>(null);
+  /** Compteur retry — transmis à FinacesInlineError */
+  readonly retryCount  = signal<number>(0);
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
     this.loadTensionAnalysis();
   }
 
+  // ─── Retry handler ────────────────────────────────────────────────────────────
+  onRetryLoad(): void {
+    this.loadError.set(null);
+    this.retryCount.update((n) => n + 1);
+    this.loadTensionAnalysis();
+  }
+
+  // ─── Chargement forkJoin MCC + IA ─────────────────────────────────────────────
   private loadTensionAnalysis(): void {
     this.isLoading.set(true);
+    this.loadError.set(null);
 
     forkJoin({
       mcc: this.scoringService.getScoring(this.caseId()).pipe(catchError(() => of(null))),
-      ia: this.iaService.getPrediction(this.caseId()).pipe(catchError(() => of(null))),
+      ia:  this.iaService.getPrediction(this.caseId()).pipe(catchError(() => of(null))),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        // Dans une vraie application, on vérifierait si MCC et IA sont dispos.
-        // Pour le prototype, si ça échoue, on mock.
-        if (!data.mcc || !data.ia) {
-          if (!environment.production) {
-            console.warn('Data incomplete, falling back to mock Tension Data');
+      .subscribe({
+        next: (data) => {
+          if (!data.mcc || !data.ia) {
+            if (!environment.production) {
+              console.warn('Data incomplete, falling back to mock Tension Data');
+            }
+            this.loadMockTension();
+            return;
           }
-          this.loadMockTension();
-          return;
-        }
-
-        const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia as any);
-        this.tensionData.set(result);
-        this.isLoading.set(false);
+          const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia as any);
+          this.tensionData.set(result);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.loadError.set('server');
+          this.isLoading.set(false);
+        },
       });
   }
 
   private loadMockTension(): void {
-    const mockResponse = {
+    const mockResponse: TensionAnalysisResult = {
       level: 'SEVERE' as any,
       direction: 'UP',
       delta_score: 1.2,
@@ -95,21 +127,9 @@ export class TensionComponent {
       ia_class: 'LOW',
       class_divergence: true,
       pillars_comparison: [
-        {
-          pillar_name: 'Liquidity',
-          mcc_score: 3.0,
-          ia_impact: 4.2,
-          delta: 1.2,
-          is_divergent: true,
-        },
-        { pillar_name: 'Solvency', mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
-        {
-          pillar_name: 'Profitability',
-          mcc_score: 4.0,
-          ia_impact: 4.0,
-          delta: 0,
-          is_divergent: false,
-        },
+        { pillar_name: 'Liquidity',    mcc_score: 3.0, ia_impact: 4.2, delta: 1.2, is_divergent: true },
+        { pillar_name: 'Solvency',     mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
+        { pillar_name: 'Profitability', mcc_score: 4.0, ia_impact: 4.0, delta: 0.0, is_divergent: false },
       ],
       system_recommendation: 'Critical divergence detected. Deep investigation strongly advised.',
       requires_justification: true,
@@ -118,35 +138,41 @@ export class TensionComponent {
     of(mockResponse)
       .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
       .subscribe((data) => {
-        this.tensionData.set(data as any);
+        this.tensionData.set(data);
         this.isLoading.set(false);
       });
   }
 
-  public handleDecision(payload: AnalystDecisionPayload): void {
+  // ─── Décision analyste ───────────────────────────────────────────────────────────
+  handleDecision(payload: AnalystDecisionPayload): void {
     this.isSubmitting.set(true);
-    // Simulation de la sauvegarde de la décision
+    this.submitError.set(null);
+
     of(null)
       .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.isSubmitting.set(false);
-        this.snackBar.open('Analyst decision recorded successfully.', 'OK', {
-          duration: 3000,
-          panelClass: 'snack-success',
-        });
-
-        if (payload.decision === 'INVESTIGATE') {
-          this.router.navigate(['/cases', this.caseId(), 'stress']);
-        } else if (payload.decision === 'EXPERT_REVIEW') {
-          this.router.navigate(['/cases', this.caseId(), 'expert']);
-        } else {
-          this.router.navigate(['/cases', this.caseId(), 'rapport']);
-        }
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.snackBar.open('Décision analyste enregistrée.', 'OK', {
+            duration: 3000,
+            panelClass: 'snack-success',
+          });
+          if (payload.decision === 'INVESTIGATE') {
+            this.router.navigate(['/cases', this.caseId(), 'stress']);
+          } else if (payload.decision === 'EXPERT_REVIEW') {
+            this.router.navigate(['/cases', this.caseId(), 'expert']);
+          } else {
+            this.router.navigate(['/cases', this.caseId(), 'rapport']);
+          }
+        },
+        error: () => {
+          this.submitError.set('server');
+          this.isSubmitting.set(false);
+        },
       });
   }
 
-  public navigateBack(): void {
-    // Retour vers IA
+  navigateBack(): void {
     this.router.navigate(['/cases', this.caseId(), 'ia']);
   }
 }
