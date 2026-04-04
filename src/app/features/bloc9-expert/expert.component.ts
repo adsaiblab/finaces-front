@@ -16,6 +16,7 @@ import {
   OverrideRecommendation,
 } from '../../core/models/expert.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DecisionRecapComponent } from './components/decision-recap/decision-recap.component';
 import { QualitativeNotesComponent } from './components/qualitative-notes/qualitative-notes.component';
 import { RiskOverrideComponent } from './components/risk-override/risk-override.component';
@@ -24,6 +25,7 @@ import { MccConditionsComponent } from './components/mcc-conditions/mcc-conditio
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/finaces-skeleton-loader/finaces-skeleton-loader.component';
 
 @Component({
   selector: 'app-expert-review',
@@ -39,6 +41,8 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
+    FinacesSkeletonLoaderComponent,
   ],
   templateUrl: './expert.component.html',
   styleUrls: ['./expert.component.scss'],
@@ -73,12 +77,12 @@ export class ExpertComponent {
     dynamic_analysis_comment: ['', Validators.required],
     mitigating_factors: [''],
     risk_factors: [''],
-    override_recommendation: [OverrideRecommendation.NONE], // Map to Risk Override
+    override_recommendation: [OverrideRecommendation.NONE],
 
     // --- PART 2 : ConclusionUpdate ---
     conclusion_text: ['', Validators.required],
-    final_recommendation: ['', Validators.required], // Map to Validation Decision
-    rejection_reason: [''], // Temporary field for UI routing, merged into conclusion_text if needed
+    final_recommendation: ['', Validators.required],
+    rejection_reason: [''],
   });
 
   ngOnInit(): void {
@@ -115,7 +119,6 @@ export class ExpertComponent {
 
     const formVal = this.reviewForm.value;
 
-    // 1. Construit le Payload strict pour la Revue
     const reviewPayload: ExpertReviewInputSchema = {
       liquidity_comment: formVal.liquidity_comment || '',
       solvability_comment: formVal.solvability_comment || '',
@@ -139,7 +142,6 @@ export class ExpertComponent {
           : formVal.override_recommendation || undefined,
     };
 
-    // 2. Construit le Payload strict pour la Conclusion
     const conclusionPayload: ConclusionUpdate = {
       conclusion_text: formVal.conclusion_text || '',
       final_recommendation: formVal.final_recommendation || '',
