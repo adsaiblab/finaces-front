@@ -1,68 +1,120 @@
-<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28" data-testid="stress-root">
+<div class="stress-host" data-testid="stress-root">
+
   @if (isLoading()) {
-  <div class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
-    data-testid="stress-loading-spinner">
-    <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-    <p class="text-[color:var(--color-content-secondary)] font-medium">
-      Loading Cash Flow Stress Tests...
-    </p>
-  </div>
+    <div class="stress-skeleton" data-testid="stress-loading-spinner" aria-busy="true" aria-label="Chargement des tests de stress...">
+      <div class="skeleton skeleton-header"></div>
+      <div class="stress-skeleton-body">
+        <div class="stress-skeleton-panel">
+          <div class="skeleton skeleton-block" style="height:180px"></div>
+          <div class="skeleton skeleton-block" style="height:220px"></div>
+        </div>
+        <div class="stress-skeleton-results">
+          <div class="skeleton skeleton-block" style="height:80px"></div>
+          <div class="skeleton skeleton-block" style="height:80px"></div>
+          <div class="skeleton skeleton-block" style="height:80px"></div>
+        </div>
+      </div>
+    </div>
   }
 
-  <header
-    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6"
-    data-testid="stress-header">
-    <div>
-      <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
-        <mat-icon class="text-[color:var(--color-primary)]">query_stats</mat-icon>
-        Cash Flow Stress Testing
-      </h1>
-      <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-        Case #{{ caseId() }} — Evaluate contractual resilience and liquidity risks under delayed
-        payment scenarios.
-      </p>
+  @if (!isLoading() && loadError()) {
+    <div class="stress-error-wrapper" data-testid="stress-load-error">
+      <finaces-inline-error
+        [message]="loadError()!"
+        [retryLabel]="'Réessayer'"
+        (retry)="onRetryLoad()"
+      ></finaces-inline-error>
     </div>
+  }
 
-    <button mat-flat-button color="primary" (click)="runSimulation()" [disabled]="isSimulating()"
-      class="finaces-primary-btn" data-testid="stress-run-simulation-btn">
-      @if (isSimulating()) {
-      <mat-spinner diameter="20" class="inline-block"></mat-spinner>
-      } @else {
-      <mat-icon>play_arrow</mat-icon>
+  @if (!isLoading() && !loadError()) {
+    <div class="stress-content animate-fade-in" data-testid="stress-content">
+
+      <header class="stress-header" data-testid="stress-header">
+        <div class="stress-header-title">
+          <h1>
+            <mat-icon aria-hidden="true">query_stats</mat-icon>
+            Test de résilience de trésorerie
+          </h1>
+          <p class="stress-subtitle">
+            Dossier {{ caseId() }} — Évaluez la résilience contractuelle et les risques de liquidité
+            en cas de retard de paiement.
+          </p>
+        </div>
+
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="runSimulation()"
+          [disabled]="isSimulating()"
+          class="finaces-primary-btn"
+          data-testid="stress-run-simulation-btn"
+          [attr.aria-label]="isSimulating() ? 'Simulation en cours…' : 'Lancer la simulation de stress'"
+        >
+          @if (isSimulating()) {
+            <mat-spinner diameter="20" aria-hidden="true"></mat-spinner>
+            <span>Simulation en cours…</span>
+          } @else {
+            <mat-icon aria-hidden="true">play_arrow</mat-icon>
+            <span>Lancer la simulation</span>
+          }
+        </button>
+      </header>
+
+      @if (isSimulationError()) {
+        <div class="stress-simulation-error" data-testid="stress-simulation-error">
+          <finaces-inline-error
+            message="La simulation a échoué. Vérifiez les paramètres et réessayez."
+          ></finaces-inline-error>
+        </div>
       }
 
-      @if (isSimulating()) {
-      <span>Simulating...</span>
-      } @else {
-      <span>Run Simulation</span>
+      @if (hasNoData()) {
+        <div class="stress-empty-state" data-testid="stress-empty-state" role="status">
+          <mat-icon aria-hidden="true">query_stats</mat-icon>
+          <p class="stress-empty-title">Aucun test de stress disponible</p>
+          <p class="stress-empty-subtitle">Lancez une simulation pour voir les résultats de résilience.</p>
+        </div>
       }
-    </button>
-  </header>
 
-  <main class="flex flex-col xl:flex-row gap-6 flex-1 items-stretch" data-testid="stress-main-content">
-    <div class="flex flex-col gap-6 w-full xl:w-1/3" data-testid="stress-params-panel">
-      <app-stress-parameters (paramsChange)="updateParams($event)"></app-stress-parameters>
-      <app-milestone-timeline (milestonesChange)="updateMilestones($event)"></app-milestone-timeline>
+      @if (!hasNoData() && stressData()) {
+        <main class="stress-main" data-testid="stress-main-content">
+          <div class="stress-params-panel" data-testid="stress-params-panel">
+            <app-stress-parameters (paramsChange)="updateParams($event)"></app-stress-parameters>
+            <app-milestone-timeline (milestonesChange)="updateMilestones($event)"></app-milestone-timeline>
+          </div>
+
+          <div class="stress-results-panel" data-testid="stress-results-panel">
+            <app-scenario-results [scenarios]="stressData()?.scenarios || []"></app-scenario-results>
+          </div>
+        </main>
+      }
+
+      <div class="stress-footer" data-testid="stress-footer" role="navigation" aria-label="Navigation entre blocs">
+        <button
+          mat-button
+          (click)="navigateBack()"
+          data-testid="stress-back-btn"
+          aria-label="Retour à l’analyse de tension"
+        >
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+          Retour à l’analyse de tension
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="proceedToExpert()"
+          class="finaces-primary-btn"
+          data-testid="stress-proceed-expert-btn"
+          aria-label="Passer à l’avis expert"
+        >
+          <span>Passer à l’avis expert</span>
+          <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+        </button>
+      </div>
+
     </div>
+  }
 
-    <div class="w-full xl:w-2/3" data-testid="stress-results-panel">
-      <app-scenario-results [scenarios]="stressData()?.scenarios || []"></app-scenario-results>
-    </div>
-  </main>
-
-  <div
-    class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
-    <button mat-button (click)="navigateBack()"
-      class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
-      data-testid="stress-back-btn">
-      <mat-icon>arrow_back</mat-icon>
-      Back to Tension Analysis
-    </button>
-
-    <button mat-flat-button color="primary" (click)="proceedToExpert()" class="finaces-primary-btn px-8"
-      data-testid="stress-proceed-expert-btn">
-      <span>Proceed to Expert Review</span>
-      <mat-icon class="ml-2">arrow_forward</mat-icon>
-    </button>
-  </div>
 </div>
