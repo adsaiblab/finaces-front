@@ -13,6 +13,8 @@ const ID = TEST_CASE.id;
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
+// tension_label supprimé (champ fantôme, 0 occurrence backend)
+// ia_score aligné sur seed + Batch 1 (72.5)
 const MOCK_CASE = {
     id: ID,
     bidder_name: TEST_CASE.bidderName,
@@ -22,25 +24,23 @@ const MOCK_CASE = {
     contract_currency: TEST_CASE.contractCurrency,
     mcc_score: 3.2,
     risk_class: 'MODERATE',
-    tension_label: 'MODERATE',
-    ia_score: 68,
+    ia_score: 72.5,
 };
 
+// Structure réelle de build_full_report() — champs confirmés dans report.py
+// status/sections_complete/sections_total sont absents du vrai retour
 const MOCK_REPORT_DRAFT = {
-    id: 'mock-report-id',
+    report_id: 'mock-report-draft-001',
     case_id: ID,
-    status: 'DRAFT',
-    sections_complete: 10,
-    sections_total: 14,
     recommendation: 'FAVORABLE',
-    section_14_conclusion: '<p>This is the mock final conclusion text.</p>',
+    section_14_conclusion: 'Conclusion de test E2E.',
 };
 
 const MOCK_REPORT_FINAL = {
-    ...MOCK_REPORT_DRAFT,
-    status: 'FINAL',
-    sections_complete: 14,
-    sections_total: 14,
+    report_id: 'mock-report-final-001',
+    case_id: ID,
+    recommendation: 'FAVORABLE',
+    section_14_conclusion: 'Conclusion de test E2E — version finale.',
 };
 
 const MOCK_AUDIT_TRAIL = [
@@ -180,17 +180,24 @@ test.describe('Rapport — Rapport DRAFT généré', () => {
             req.url().includes(`${ID}/report/build`) || req.url().includes(`${ID}/report`)
         );
         await rapportPage.clickGenerate();
-        // L'appel doit être déclenché
         const req = await buildPromise;
         expect(req).toBeTruthy();
     });
 
     test('Rapport — le clic Export PDF déclenche l\'appel API /export/pdf', async ({ page }) => {
-        await page.route(`**/api/v1/export/${ID}/export/pdf**`, route =>
+        // Route réelle confirmée : POST /cases/{id}/export/pdf
+        await page.route(`**/api/v1/cases/${ID}/export/pdf**`, route =>
             route.fulfill({
                 status: 200,
-                contentType: 'application/pdf',
-                body: Buffer.from('%PDF-1.4 mock content'),
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    status: 'ok',
+                    format: 'pdf',
+                    case_id: ID,
+                    report_id: 'mock-report-draft-001',
+                    file_path: '/tmp/mock.pdf',
+                    download_url: `/api/v1/cases/${ID}/export/pdf/download`,
+                }),
             })
         );
         const rapportPage = new RapportPage(page);
@@ -206,11 +213,19 @@ test.describe('Rapport — Rapport DRAFT généré', () => {
     });
 
     test('Rapport — le clic Export Word déclenche l\'appel API /export/word', async ({ page }) => {
-        await page.route(`**/api/v1/export/${ID}/export/word**`, route =>
+        // Route réelle confirmée : POST /cases/{id}/export/word
+        await page.route(`**/api/v1/cases/${ID}/export/word**`, route =>
             route.fulfill({
                 status: 200,
-                contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                body: Buffer.from('PK mock docx content'),
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    status: 'ok',
+                    format: 'docx',
+                    case_id: ID,
+                    report_id: 'mock-report-draft-001',
+                    file_path: '/tmp/mock.docx',
+                    download_url: `/api/v1/cases/${ID}/export/word/download`,
+                }),
             })
         );
         const rapportPage = new RapportPage(page);

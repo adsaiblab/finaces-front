@@ -1,9 +1,7 @@
 // e2e/specs/11-error-cases.spec.ts
 // Session 4 — Jour 4 : Cas d'erreur
-// CORRIGÉ v7 : URLs réelles ConsortiumService = /api/v1/cases/${ID}/consortium*
-//   getConsortium      → GET  /api/v1/cases/${ID}/consortium
-//   calculateConsortium → POST /api/v1/cases/${ID}/consortium/calculate
-// Mock case-detail strict par endsWith pour éviter de matcher les sous-routes
+// CORRIGÉ v8 : MOCK_CASE_BASE aligné sur CaseOut réel + mocks inline
+//   Batch 1 (scoring/IA) + Batch 3 (stress) + ExportResultSchema
 
 import { test, expect } from '../fixtures/auth.fixture';
 import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
@@ -26,11 +24,8 @@ async function mockApi401(page: any, urlPattern: string) {
 }
 
 // Mock /api/v1/cases/${ID} STRICT : ne pas intercepter les sous-routes
-// (/consortium, /consortium/calculate, /stress, etc.)
-// On compare la fin de l'URL : doit se terminer exactement par /cases/${ID}
 async function mockCaseDetail(page: any, caseId: string, body: object) {
     await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => {
-        // sous-route (/consortium, /stress...) → laisser passer
         return route.continue();
     });
     await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
@@ -38,18 +33,23 @@ async function mockCaseDetail(page: any, caseId: string, body: object) {
     );
 }
 
+// MOCK_CASE_BASE — aligné sur CaseOut réel :
+// - risk_class supprimé (fantôme sur CaseOut)
+// - tension_label supprimé (fantôme global, 0 occurrence backend)
+// - contract_currency MAD→USD (alignement seed)
+// - mcc_score 72→3.2 (scale 0-5)
+// - ia_score 68→72.5 (alignement Batch 1)
+// - case_type STANDARD→SINGLE (valeur enum CaseType valide)
 const MOCK_CASE_BASE = {
     id: ID,
     bidder_name: 'E2E Error Test',
     sector: 'BTP',
     contract_value: 5000000,
-    contract_currency: 'MAD',
-    case_type: 'STANDARD',
+    contract_currency: 'USD',
+    case_type: 'SINGLE',
     status: 'IN_PROGRESS',
-    risk_class: 'B',
-    mcc_score: 72,
-    ia_score: 68,
-    tension_label: 'LOW',
+    mcc_score: 3.2,
+    ia_score: 72.5,
     fiscal_year: 2023,
 };
 
@@ -222,19 +222,32 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
     });
 
     test('POST /recommendation 500 → formulaire override reste accessible', async ({ page }) => {
+        // Mock aligné sur ScoringResultSchema réel (Batch 1)
         await page.route(`**/api/v1/cases/${ID}/score**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
-                    case_id: ID, global_score: 72.5, risk_class: 'B',
-                    status: 'COMPUTED',
+                    case_id: ID,
+                    global_score: 3.2,
+                    final_risk_class: 'MODERATE',
+                    system_calculated_score: 3.2,
+                    system_risk_class: 'MODERATE',
+                    base_risk_class: 'MODERATE',
+                    is_overridden: false,
+                    risk_profile: 'BALANCED',
                     pillars: [
-                        { id: 'p1', name: 'Liquidity',     score: 70, weight: 0.2, sub_ratios: [] },
-                        { id: 'p2', name: 'Solvency',      score: 75, weight: 0.2, sub_ratios: [] },
-                        { id: 'p3', name: 'Profitability', score: 68, weight: 0.2, sub_ratios: [] },
-                        { id: 'p4', name: 'Capacity',      score: 72, weight: 0.2, sub_ratios: [] },
-                        { id: 'p5', name: 'Quality',       score: 78, weight: 0.2, sub_ratios: [] },
+                        { id: 'liquidity',     name: 'Liquidity',     score: 3.0, weight: 0.2, sub_ratios: [] },
+                        { id: 'solvency',      name: 'Solvency',      score: 3.0, weight: 0.2, sub_ratios: [] },
+                        { id: 'profitability', name: 'Profitability', score: 3.0, weight: 0.2, sub_ratios: [] },
+                        { id: 'capacity',      name: 'Capacity',      score: 3.0, weight: 0.2, sub_ratios: [] },
+                        { id: 'quality',       name: 'Quality',       score: 3.0, weight: 0.2, sub_ratios: [] },
                     ],
-                    recommendations: [], cross_analysis_alerts: [], override: null
+                    smart_recommendations: [],
+                    cross_analysis_alerts: [],
+                    overrides_applied: [],
+                    trends_summary: {},
+                    synergy_index: null,
+                    synergy_bonus: null,
+                    computed_at: '2026-01-01T00:00:00Z',
                 })
             })
         );
@@ -259,16 +272,17 @@ test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
     });
 
     test('POST /ia/simulate 500 → what-if placeholder toujours visible', async ({ page }) => {
+        // Mock aligné sur IAPredictionResult réel (Batch 1)
         await page.route(`**/ia/predict/${ID}**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
-                    case_id: ID, predicted_score: 71.2, confidence: 0.85,
-                    predicted_risk_class: 'B',
-                    model_version: 'FinaCES-v2.1.0',
-                    model_performance: { accuracy: 0.89, f1_score: 0.87 },
-                    confidence_interval: { lower: 68.0, upper: 74.5 },
-                    shap_values: { features: [] },
-                    prediction_date: '2026-01-01T00:00:00Z'
+                    case_id: ID,
+                    ia_score: 72.5,
+                    ia_risk_class: 'MODERATE',
+                    model_version: 'e2e-stub-v1.0',
+                    predicted_at: '2026-01-01T00:00:00Z',
+                    threshold_info: {},
+                    explanations: null,
                 })
             })
         );
@@ -299,13 +313,32 @@ test.describe('Erreur — Bloc 8 Stress API 500', () => {
 
     test('POST /stress/run 500 → composant reste stable', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/stress/run`);
+        // Mock GET stress aligné sur StressResultSchema réel (Batch 3) — champs minimaux
         await page.route(`**/api/v1/cases/${ID}/stress**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({
                     status: 200, contentType: 'application/json', body: JSON.stringify({
-                        scenario_name: 'BASE', stress_score: 65.0,
-                        risk_class_stressed: 'C', delta_score: -7.5,
-                        scenarios: [], parameters: {}
+                        contract_value: 5000000.0,
+                        contract_months: 24,
+                        annual_ca_avg: 2000000.0,
+                        exposition_pct: 0.25,
+                        backlog_value: 0.0,
+                        bank_guarantee: false,
+                        bank_guarantee_amount: 0.0,
+                        credit_lines_confirmed: 500000.0,
+                        cash_available: 800000.0,
+                        working_capital_requirement_estimate: 300000.0,
+                        advance_payment_pct: 0.10,
+                        payment_milestones: [],
+                        stress_60d_result: 'SOLVENT',
+                        stress_90d_result: 'SOLVENT',
+                        stress_60d_cash_position: 650000.0,
+                        stress_90d_cash_position: 500000.0,
+                        score_capacity: 3.2,
+                        capacity_conclusion: 'Capacité satisfaisante',
+                        monthly_flows: [],
+                        scenarios_results: {},
+                        data_alerts: [],
                     })
                 });
             return route.continue();
@@ -370,16 +403,18 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /export/pdf 500 → composant reste stable', async ({ page }) => {
+        // Mock GET report aligné sur build_full_report() réel
         await page.route(`**/api/v1/cases/${ID}/report**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
-                    report_id: 'rpt-err-001', case_id: ID, status: 'DRAFT',
-                    sections_complete: 10, sections_total: 14,
+                    report_id: 'rpt-err-001',
+                    case_id: ID,
                     recommendation: 'FAVORABLE',
-                    generated_at: '2026-01-01T00:00:00Z'
+                    section_14_conclusion: 'Conclusion E2E.',
                 })
             })
         );
+        // Route réelle confirmée : POST /cases/{id}/export/pdf
         await mockApi500(page, `/cases/${ID}/export/pdf`);
         await page.goto(`/cases/${ID}/rapport`);
         await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -392,16 +427,18 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /export/word 500 → composant reste stable', async ({ page }) => {
+        // Mock GET report aligné sur build_full_report() réel
         await page.route(`**/api/v1/cases/${ID}/report**`, route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
-                    report_id: 'rpt-err-002', case_id: ID, status: 'DRAFT',
-                    sections_complete: 10, sections_total: 14,
+                    report_id: 'rpt-err-002',
+                    case_id: ID,
                     recommendation: 'DEFAVORABLE',
-                    generated_at: '2026-01-01T00:00:00Z'
+                    section_14_conclusion: 'Conclusion E2E défavorable.',
                 })
             })
         );
+        // Route réelle confirmée : POST /cases/{id}/export/word
         await mockApi500(page, `/cases/${ID}/export/word`);
         await page.goto(`/cases/${ID}/rapport`);
         await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -416,25 +453,11 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // I — Bloc 12 Consortium : API 500
-//
-// FIX v7 : URLs réelles confirmées dans consortium.service.ts :
-//   getConsortium       → GET  /api/v1/cases/${ID}/consortium
-//   calculateConsortium → POST /api/v1/cases/${ID}/consortium/calculate
-//
-// Problème de collision résolu avec mockCaseDetail() :
-//   → route **/api/v1/cases/${ID}/**  → continue() (laisse passer sous-routes)
-//   → route **/api/v1/cases/${ID}    → 200 CONSORTIUM (exact)
-//
-// Handler consortium unique sur **/api/v1/cases/${ID}/consortium** :
-//   GET  → 200 MOCK_CONSORTIUM_DATA
-//   POST (calculate) → 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 12 Consortium API 500', () => {
 
     test('GET /consortium 500 → catchError actif : spinner absent, consortium-root visible', async ({ page }) => {
-        // mock case-detail STRICT : sous-routes → continue()
         await mockCaseDetail(page, ID, { ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' });
-        // GET /consortium → 500 → catchError → EMPTY → isLoading false
         await page.route(`**/api/v1/cases/${ID}/consortium**`, (route: any) =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
@@ -444,9 +467,7 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
     });
 
     test('POST /consortium/aggregate 500 → composant reste stable', async ({ page }) => {
-        // mock case-detail STRICT
         await mockCaseDetail(page, ID, { ...MOCK_CASE_BASE, case_type: 'CONSORTIUM' });
-        // GET /consortium → 200, POST /consortium/calculate → 500
         await page.route(`**/api/v1/cases/${ID}/consortium**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({
@@ -454,7 +475,6 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
                     contentType: 'application/json',
                     body: JSON.stringify(MOCK_CONSORTIUM_DATA),
                 });
-            // POST calculate → 500
             return route.fulfill({
                 status: 500,
                 contentType: 'application/json',
@@ -464,8 +484,6 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
         await page.goto(`/cases/${ID}/consortium`);
         await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        // consortium-recalculate-btn visible uniquement si currentConsortium() non-null
-        // MOCK_CONSORTIUM_DATA → members 60+40=100% → bouton actif
         const forceBtn = page.locator('[data-testid="consortium-recalculate-btn"]');
         await expect(forceBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await forceBtn.click();
