@@ -49,7 +49,12 @@
       </p>
     </div>
 
-    <div class="flex gap-3 flex-wrap" data-testid="rapport-actions-bar">
+    <div
+      class="flex gap-3 flex-wrap"
+      role="navigation"
+      aria-label="Actions et navigation du rapport"
+      data-testid="rapport-actions-bar"
+    >
       <button mat-stroked-button (click)="returnToDashboard()" [disabled]="isExporting() || isBuilding()"
         aria-label="Retour au tableau de bord"
         data-testid="rapport-dashboard-btn">
@@ -93,7 +98,8 @@
   </div>
 
   @if (isBuilding()) {
-  <mat-progress-bar mode="indeterminate" class="mb-6" data-testid="rapport-build-progress"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" class="mb-6" data-testid="rapport-build-progress"
+    aria-label="Génération du rapport en cours" aria-busy="true"></mat-progress-bar>
   }
 
   @if (hasReport()) {
@@ -129,7 +135,7 @@
       <p class="text-gray-600 mt-2">
         Generated on: {{ currentCase()?.updated_at | date: 'medium' }}
       </p>
-      <p class="text-gray-600">Case ID: {{ caseId }}</p>
+      <p class="text-gray-600">Case ID: {{ caseId() }}</p>
       <p class="text-gray-600 mt-4 italic">[CONFIDENTIAL - INTERNAL USE ONLY]</p>
     </div>
 

@@ -12,6 +12,7 @@ import {
   signal,
   computed,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -56,44 +57,44 @@ import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/fi
   styleUrls: ['./rapport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RapportComponent {
-  private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private caseService = inject(CaseService);
-  private reportService = inject(ReportService);
-  private auditService = inject(AuditService);
-  private exportService = inject(RapportExportService);
-  private snackBar = inject(MatSnackBar);
-  private readonly destroyRef = inject(DestroyRef);
+export class RapportComponent implements OnInit {
+  private readonly caseContext   = inject(CaseContextService);
+  private readonly router        = inject(Router);
+  private readonly caseService   = inject(CaseService);
+  private readonly reportService = inject(ReportService);
+  private readonly auditService  = inject(AuditService);
+  private readonly exportService = inject(RapportExportService);
+  private readonly snackBar      = inject(MatSnackBar);
+  private readonly destroyRef    = inject(DestroyRef);
 
   // ─── State ────────────────────────────────────────────────────────
-  caseId = '';
-  currentCase = signal<EvaluationCaseDetailOut | null>(null);
-  report = signal<MCCGradeReportOut | null>(null);
-  auditTrail = signal<AuditEvent[]>([]);
-  isLoading = signal<boolean>(true);
-  isBuilding = signal<boolean>(false);
-  isExporting = signal<boolean>(false);
-  exportFormat = signal<string>('');
-  loadError = signal<boolean>(false);
+  readonly caseId       = signal<string>('');
+  readonly currentCase  = signal<EvaluationCaseDetailOut | null>(null);
+  readonly report       = signal<MCCGradeReportOut | null>(null);
+  readonly auditTrail   = signal<AuditEvent[]>([]);
+  readonly isLoading    = signal<boolean>(true);
+  readonly isBuilding   = signal<boolean>(false);
+  readonly isExporting  = signal<boolean>(false);
+  readonly exportFormat = signal<string>('');
+  readonly loadError    = signal<boolean>(false);
 
   // ─── Computed ────────────────────────────────────────────────────
-  sectionLabels = REPORT_SECTION_LABELS;
+  readonly sectionLabels = REPORT_SECTION_LABELS;
 
-  reportProgress = computed(() => {
+  readonly reportProgress = computed(() => {
     const r = this.report();
     if (!r) return 0;
     return Math.round((r.sections_complete / r.sections_total) * 100);
   });
 
-  hasReport = computed(() => !!this.report());
+  readonly hasReport = computed(() => !!this.report());
 
-  isReportFinal = computed(() => this.report()?.status === 'FINAL');
+  readonly isReportFinal = computed(() => this.report()?.status === 'FINAL');
 
   // ─── Lifecycle ───────────────────────────────────────────────────
   ngOnInit(): void {
-    this.caseId = this.caseContext.caseId();
-    if (!this.caseId) {
+    this.caseId.set(this.caseContext.caseId());
+    if (!this.caseId()) {
       this.router.navigate(['/dashboard']);
       return;
     }
@@ -104,7 +105,7 @@ export class RapportComponent {
   private loadCaseData(): void {
     this.isLoading.set(true);
     this.caseService
-      .getCaseDetail(this.caseId)
+      .getCaseDetail(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: EvaluationCaseDetailOut) => {
@@ -122,7 +123,7 @@ export class RapportComponent {
 
   private loadExistingReport(): void {
     this.reportService
-      .getReport(this.caseId)
+      .getReport(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (report) => {
@@ -140,7 +141,7 @@ export class RapportComponent {
   /** T43: Load audit trail for this case */
   private loadAuditTrail(): void {
     this.auditService
-      .getTrail({ case_id: this.caseId, limit: 100 })
+      .getTrail({ case_id: this.caseId(), limit: 100 })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (events) => this.auditTrail.set(events),
@@ -154,13 +155,13 @@ export class RapportComponent {
   buildReport(): void {
     this.isBuilding.set(true);
     this.reportService
-      .buildReport(this.caseId)
+      .buildReport(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (report) => {
           this.report.set(report);
           this.isBuilding.set(false);
-          this.loadAuditTrail(); // Refresh audit trail after build
+          this.loadAuditTrail();
           this.snackBar.open(
             `Report generated: ${report.sections_complete}/${report.sections_total} sections complete.`,
             'Close',
@@ -180,7 +181,7 @@ export class RapportComponent {
     const r = this.report();
     if (!r) return;
     this.reportService
-      .finalizeReport(this.caseId, r.report_id)
+      .finalizeReport(this.caseId(), r.report_id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -201,7 +202,7 @@ export class RapportComponent {
     this.isExporting.set(true);
     this.exportFormat.set('PDF');
     this.exportService
-      .exportToPdf(this.caseId)
+      .exportToPdf(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -222,7 +223,7 @@ export class RapportComponent {
     this.isExporting.set(true);
     this.exportFormat.set('Word');
     this.exportService
-      .exportToWord(this.caseId)
+      .exportToWord(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -242,14 +243,14 @@ export class RapportComponent {
   /** T43: Export audit trail as CSV */
   exportAuditCsv(): void {
     this.auditService
-      .exportCsv(this.caseId)
+      .exportCsv(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `audit_trail_${this.caseId.substring(0, 8)}.csv`;
+          link.download = `audit_trail_${this.caseId().substring(0, 8)}.csv`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
