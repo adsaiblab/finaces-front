@@ -67,9 +67,10 @@ describe('ConsortiumComponent', () => {
     expect(component.loadError()).toBeNull();
   });
 
-  it('should set loadError when consortium API fails', () => {
+  it('should set loadError when consortium API fails', async () => {
     component.loadError.set('Impossible de charger les données du consortium.');
     fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.loadError()).not.toBeNull();
     const errorEl = fixture.nativeElement.querySelector('[data-testid="consortium-load-error"]');
     expect(errorEl).toBeTruthy();
@@ -83,27 +84,30 @@ describe('ConsortiumComponent', () => {
     expect(component.retryCount()).toBe(before + 1);
   });
 
-  it('should compute hasNoMembers false when members are loaded', () => {
+  it('should compute hasNoMembers false when members are loaded', async () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.currentConsortium.set(MOCK_CONSORTIUM);
     fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.hasNoMembers()).toBe(false);
   });
 
-  it('should compute hasNoMembers true when consortium has empty members', () => {
+  it('should compute hasNoMembers true when consortium has empty members', async () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.currentConsortium.set({ ...MOCK_CONSORTIUM, members: [] });
     fixture.detectChanges();
+    await fixture.whenStable();
     expect(component.hasNoMembers()).toBe(true);
   });
 
-  it('should show empty-state "Aucun membre" when hasNoMembers is true', () => {
+  it('should show empty-state "Aucun membre" when hasNoMembers is true', async () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.currentConsortium.set({ ...MOCK_CONSORTIUM, members: [] });
     fixture.detectChanges();
+    await fixture.whenStable();
     const emptyEl = fixture.nativeElement.querySelector('[data-testid="consortium-no-members"]');
     expect(emptyEl).toBeTruthy();
     expect(emptyEl.textContent).toContain('Aucun membre');
@@ -114,7 +118,7 @@ describe('ConsortiumComponent', () => {
     expect(component.totalParticipation()).toBe(100);
   });
 
-  it('should show participation warning when total !== 100', () => {
+  it('should show participation warning when total !== 100', async () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.currentConsortium.set({
@@ -125,20 +129,23 @@ describe('ConsortiumComponent', () => {
       ],
     });
     fixture.detectChanges();
+    await fixture.whenStable();
     const warnEl = fixture.nativeElement.querySelector('[data-testid="consortium-participation-error"]');
     expect(warnEl).toBeTruthy();
   });
 
-  it('should show skeleton while isLoading is true', () => {
+  it('should show skeleton while isLoading is true', async () => {
     component.isLoading.set(true);
     fixture.detectChanges();
+    await fixture.whenStable();
     const skEl = fixture.nativeElement.querySelector('[data-testid="consortium-loading-spinner"]');
     expect(skEl).toBeTruthy();
   });
 
-  it('should hide skeleton after loading completes', () => {
+  it('should hide skeleton after loading completes', async () => {
     component.isLoading.set(false);
     fixture.detectChanges();
+    await fixture.whenStable();
     const skEl = fixture.nativeElement.querySelector('[data-testid="consortium-loading-spinner"]');
     expect(skEl).toBeFalsy();
   });
