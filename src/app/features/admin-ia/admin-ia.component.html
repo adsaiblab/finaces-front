@@ -61,7 +61,7 @@
         Impossible de récupérer les données du moteur ML. Vérifiez que le backend IA est opérationnel.
       </p>
       <button mat-stroked-button color="primary"
-        (click)="ngOnInit()"
+        (click)="onRetryLoad()"
         aria-label="Réessayer la connexion au backend IA"
         data-testid="admin-ia-retry-btn">
         <span class="material-icons mr-1 text-sm" aria-hidden="true">refresh</span> Réessayer

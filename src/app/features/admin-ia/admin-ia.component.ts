@@ -29,17 +29,21 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminIaComponent implements OnInit {
-  private readonly iaService = inject(AdminIaService);
-  private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly iaService   = inject(AdminIaService);
+  private readonly dialog      = inject(MatDialog);
+  private readonly snackBar    = inject(MatSnackBar);
+  private readonly destroyRef  = inject(DestroyRef);
 
-  dashboardData = signal<IaDashboardData | null>(null);
-  convergenceData = signal<ConvergenceDataPoint[]>([]);
-  isLoading = signal<boolean>(true);
-  loadError = signal<boolean>(false);
+  readonly dashboardData   = signal<IaDashboardData | null>(null);
+  readonly convergenceData = signal<ConvergenceDataPoint[]>([]);
+  readonly isLoading       = signal<boolean>(true);
+  readonly loadError       = signal<boolean>(false);
 
   ngOnInit(): void {
+    this.loadDashboard();
+  }
+
+  public onRetryLoad(): void {
     this.loadDashboard();
   }
 
