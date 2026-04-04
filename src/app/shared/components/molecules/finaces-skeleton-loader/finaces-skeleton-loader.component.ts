@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input } from '@angular/core';
 
-export type SkeletonVariant = 'card' | 'table' | 'chart' | 'gauge';
+export type SkeletonVariant = 'card' | 'table' | 'chart' | 'gauge' | 'kpi' | 'form' | 'list' | 'double';
 
 @Component({
   selector: 'finaces-skeleton-loader',
@@ -11,10 +11,8 @@ export type SkeletonVariant = 'card' | 'table' | 'chart' | 'gauge';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinacesSkeletonLoaderComponent {
-  variant = input<SkeletonVariant>('card');
-  rows = input<number>(3); // For table variant
+  readonly variant = input<SkeletonVariant>('card');
+  readonly rows = input<number>(3);
 
-  get iterableRows(): number[] {
-    return Array(this.rows()).fill(0);
-  }
+  readonly iterableRows = computed<number[]>(() => Array(this.rows()).fill(0));
 }
