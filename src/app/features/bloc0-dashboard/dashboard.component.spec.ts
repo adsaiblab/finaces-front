@@ -59,6 +59,8 @@ describe('DashboardComponent', () => {
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    // Attendre que les async pipes souscrivent et que tap()/catchError() mettent à jour les signals
+    await fixture.whenStable();
   }
 
   beforeEach(async () => {
@@ -75,7 +77,7 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('devrait initialiser tous les signals d’erreur à null', () => {
+  it('devrait initialiser tous les signals d'erreur à null', () => {
     expect(component.statsError()).toBeNull();
     expect(component.casesError()).toBeNull();
     expect(component.tensionsError()).toBeNull();
@@ -91,7 +93,7 @@ describe('DashboardComponent', () => {
 
   // ─── Loading signals ──────────────────────────────────────────────────────────
   it('isKpiLoading() devrait être false après émission du stream stats', () => {
-    // of() émet de manière synchrone — tap() résout le signal immédiatement
+    // whenStable() a attendu que le tap() du async pipe résolve le signal
     expect(component.isKpiLoading()).toBe(false);
   });
 
@@ -121,7 +123,7 @@ describe('DashboardComponent', () => {
     expect(component.tensionsLoaded()).toEqual([]);
   });
 
-  it('tensionsEmpty() devrait être true quand tensions = [] et pas d’erreur', () => {
+  it('tensionsEmpty() devrait être true quand tensions = [] et pas d'erreur', () => {
     expect(component.tensionsEmpty()).toBe(true);
   });
 
@@ -223,7 +225,7 @@ describe('DashboardComponent', () => {
   });
 
   it('devrait afficher l\'empty-state tensions quand la liste est vide', () => {
-    // isTensionsLoading() = false (stream émis), tensionsLoaded() = [] → tensionsEmpty() = true
+    // isTensionsLoading() = false (whenStable résolu), tensionsLoaded() = [] → tensionsEmpty() = true
     fixture.detectChanges();
     const emptyState = fixture.debugElement.query(By.css('[data-testid="dashboard-tensions-empty"]'));
     expect(emptyState).toBeTruthy();
