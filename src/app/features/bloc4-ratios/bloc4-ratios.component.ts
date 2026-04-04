@@ -14,6 +14,11 @@ import { RatioCalculationService } from './services/ratio-calculation.service';
 import { environment } from '../../../environments/environment';
 import { CaseService } from '../../core/services/case.service';
 import { RatioSetGrouped } from '../../core/models/ratio.model';
+import {
+  FinacesSkeletonLoaderComponent,
+  FinacesInlineErrorComponent,
+  FinacesEmptyStateComponent,
+} from '../../shared/components';
 
 import {
   CoherenceAlertsComponent,
@@ -29,6 +34,9 @@ import {
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    FinacesSkeletonLoaderComponent,
+    FinacesInlineErrorComponent,
+    FinacesEmptyStateComponent,
     CoherenceAlertsComponent,
     RatioGroupCardComponent,
     ZscoreCardComponent,
@@ -61,7 +69,7 @@ export class Bloc4RatiosComponent {
     this.loadRatios();
   }
 
-  private loadRatios(): void {
+  public loadRatios(): void {
     this.isLoading.set(true);
     this.error.set(null);
 
