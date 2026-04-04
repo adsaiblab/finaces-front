@@ -1,5 +1,12 @@
-import { AsyncPipe, NgClass, DOCUMENT } from '@angular/common';
-import { Component, ChangeDetectionStrategy, inject, DestroyRef, signal } from '@angular/core';
+import { NgClass, DOCUMENT } from '@angular/common';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  DestroyRef,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Router } from '@angular/router';
@@ -8,8 +15,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Observable, BehaviorSubject, timer, of } from 'rxjs';
-import { switchMap, shareReplay, catchError, tap, filter, delay } from 'rxjs/operators';
+import { Subject, interval, of } from 'rxjs';
+import { switchMap, shareReplay, catchError, tap, filter, delay, startWith } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 import { CaseService } from '../../core/services/case.service';
@@ -35,42 +42,35 @@ import { ConfirmDialogComponent } from '../../shared/components/molecules/confir
     ChecklistColumnComponent,
     DocumentsColumnComponent,
     DecisionColumnComponent,
-    AsyncPipe,
     NgClass,
   ],
   templateUrl: './gate.component.html',
   styleUrl: './gate.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GateComponent {
+export class GateComponent implements OnInit {
   private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private caseService = inject(CaseService);
-  private documentService = inject(DocumentService);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
-
+  private readonly router = inject(Router);
+  private readonly caseService = inject(CaseService);
+  private readonly documentService = inject(DocumentService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
-  private manualRefresh$ = new BehaviorSubject<void>(undefined);
 
-  caseId = signal<string>('');
-  case$!: Observable<EvaluationCaseDetailOut>;
-  documents$!: Observable<GateDocumentOut[]>;
+  private readonly manualRefresh$ = new Subject<void>();
 
-  // State signals pour loading / erreur
-  loadError = signal<boolean>(false);
-  isLoading$ = new BehaviorSubject<boolean>(true);
+  readonly caseId = signal<string>('');
 
-  // State subjects pour la décision
-  private decisionSubject = new BehaviorSubject<GateDecisionSchema | null>(null);
-  decision$ = this.decisionSubject.asObservable();
-
-  private isEvaluatingSubject = new BehaviorSubject<boolean>(false);
-  isEvaluating$ = this.isEvaluatingSubject.asObservable();
+  // State signals
+  readonly isLoading = signal<boolean>(true);
+  readonly loadError = signal<string | null>(null);
+  readonly currentCase = signal<EvaluationCaseDetailOut | null>(null);
+  readonly documents = signal<GateDocumentOut[]>([]);
+  readonly decision = signal<GateDecisionSchema | null>(null);
+  readonly isEvaluating = signal<boolean>(false);
 
   ngOnInit(): void {
-    // L'ID '/cases/:id' se trouve dans les paramètres de la route parente (CaseWorkspace)
     this.caseId.set(this.caseContext.caseId());
 
     if (!this.caseId()) {
@@ -78,7 +78,11 @@ export class GateComponent {
       return;
     }
 
-    // 1. Fetch Case Details
+    this._loadCase();
+    this._setupDocumentPolling();
+  }
+
+  private _loadCase(): void {
     const mockCase = {
       id: this.caseId(),
       name: 'Dossier de Simulation',
@@ -99,30 +103,38 @@ export class GateComponent {
       ? of(mockCase).pipe(delay(400))
       : this.caseService.getCaseDetail(this.caseId());
 
-    this.case$ = caseReq$.pipe(
-      tap(() => this.isLoading$.next(false)),
-      catchError((err) => {
-        this.isLoading$.next(false);
-        this.loadError.set(true);
-        this.snackBar.open('Case not strictly found on server.', 'Close', { duration: 3000 });
-        throw err;
-      }),
-      shareReplay(1),
-    );
-    // Lancer le chargement de façon eager
-    this.case$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    caseReq$
+      .pipe(
+        shareReplay(1),
+        tap((c) => {
+          this.currentCase.set(c);
+          this.isLoading.set(false);
+        }),
+        catchError((err) => {
+          this.isLoading.set(false);
+          this.loadError.set('Impossible de charger le dossier. Veuillez réessayer.');
+          this.snackBar.open('Case not found on server.', 'Close', { duration: 3000 });
+          throw err;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
 
-    // 2. Setup Document Polling (Toutes les 2s + rafraîchissement manuel)
-    this.documents$ = this.manualRefresh$.pipe(
-      switchMap(() => timer(0, 2000)),
-      switchMap(() =>
-        this.documentService.getGateDocuments(this.caseId()).pipe(
-          catchError(() => of([])), // Sécurité si erreur réseau
+  private _setupDocumentPolling(): void {
+    this.manualRefresh$
+      .pipe(
+        startWith(undefined as void),
+        switchMap(() => interval(2000).pipe(startWith(0))),
+        switchMap(() =>
+          this.documentService.getGateDocuments(this.caseId()).pipe(
+            catchError(() => of([] as GateDocumentOut[])),
+          ),
         ),
-      ),
-      takeUntilDestroyed(this.destroyRef),
-      shareReplay(1),
-    );
+        tap((docs) => this.documents.set(docs)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   // --- ACTIONS COLONNE 2 (DOCUMENTS) ---
@@ -156,7 +168,7 @@ export class GateComponent {
             duration: 3000,
             panelClass: 'snack-success',
           });
-          this.manualRefresh$.next(); // Force refresh
+          this.manualRefresh$.next();
         },
         error: () => {
           this.snackBar.open("Erreur lors de l'upload", 'Fermer', {
@@ -209,15 +221,14 @@ export class GateComponent {
   }
 
   onViewDetails(doc: GateDocumentOut): void {
-    // Optionnel: Ouvrir un dialog de détails en Read-Only
     this.snackBar.open(`Détails du document: ${doc.file_name}`, 'Fermer', { duration: 2000 });
   }
 
   // --- ACTIONS COLONNE 3 (DECISION) ---
 
   onEvaluateGate(): void {
-    this.isEvaluatingSubject.next(true);
-    this.decisionSubject.next(null);
+    this.isEvaluating.set(true);
+    this.decision.set(null);
 
     const evaluate$ = environment.features.mockData
       ? of({
@@ -247,7 +258,7 @@ export class GateComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
-          this.isEvaluatingSubject.next(false);
+          this.isEvaluating.set(false);
           this.snackBar.open('Evaluation failed: backend error.', 'Close', {
             duration: 4000,
             panelClass: 'snack-error',
@@ -256,9 +267,9 @@ export class GateComponent {
         }),
       )
       .subscribe({
-        next: (decision) => {
-          this.decisionSubject.next(decision);
-          this.isEvaluatingSubject.next(false);
+        next: (d) => {
+          this.decision.set(d);
+          this.isEvaluating.set(false);
         },
       });
   }
@@ -289,7 +300,6 @@ export class GateComponent {
   }
 
   onCorrectDocuments(): void {
-    // Logique pour scroller ou focus la zone d'upload
     this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
     this.snackBar.open('Veuillez uploader les documents manquants.', 'Fermer', { duration: 3000 });
   }

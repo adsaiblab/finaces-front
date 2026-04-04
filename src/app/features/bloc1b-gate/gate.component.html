@@ -1,4 +1,4 @@
-@if (isLoading$ | async) {
+@if (isLoading()) {
   <!-- SKELETON LOADER -->
   <div class="gate-layout" aria-busy="true" aria-label="Chargement du document gate">
     <div class="gate-header skeleton-card">
@@ -16,12 +16,12 @@
   <div class="gate-empty-state" role="alert">
     <mat-icon aria-hidden="true">error_outline</mat-icon>
     <h2>Impossible de charger le dossier</h2>
-    <p>Une erreur serveur est survenue. Réessayez ou revenez au tableau de bord.</p>
+    <p>{{ loadError() }}</p>
     <button mat-flat-button color="primary" (click)="onGoToDashboard()" aria-label="Retour au tableau de bord">
       Tableau de bord
     </button>
   </div>
-} @else if (case$ | async; as caseData) {
+} @else if (currentCase(); as caseData) {
   <div class="gate-layout" data-testid="gate-root">
     <header class="gate-header">
       <div class="header-content">
@@ -45,20 +45,20 @@
 
     <main class="gate-grid">
       <section class="col-checklist" aria-label="Checklist documents">
-        @if ((documents$ | async)?.length === 0) {
+        @if (documents().length === 0) {
           <div class="gate-empty-state gate-empty-state--inline">
             <mat-icon aria-hidden="true">folder_open</mat-icon>
             <p>Aucun document reçu pour ce dossier.</p>
             <span class="empty-hint">Uploadez les documents requis dans la colonne centrale.</span>
           </div>
         } @else {
-          <app-checklist-column [documents]="(documents$ | async) || []" />
+          <app-checklist-column [documents]="documents()" />
         }
       </section>
 
       <section class="col-documents" aria-label="Gestion des documents">
         <app-documents-column
-          [documents]="(documents$ | async) || []"
+          [documents]="documents()"
           (fileDropped)="onFileDropped($event)"
           (deleteDocument)="onDeleteDocument($event)"
           (downloadDocument)="onDownloadDocument($event)"
@@ -68,8 +68,8 @@
 
       <section class="col-decision" aria-label="Décision Gate">
         <app-decision-column
-          [decision]="decision$ | async"
-          [isEvaluating]="(isEvaluating$ | async) || false"
+          [decision]="decision()"
+          [isEvaluating]="isEvaluating()"
           (evaluate)="onEvaluateGate()"
           (sealGate)="onSealGate()"
           (goToFinancials)="onGoToFinancials()"
