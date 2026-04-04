@@ -11,12 +11,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Router } from '@angular/router';
 import { CaseContextService } from '../../core/services/case-context.service';
-import { FormBuilder, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ConsortiumService } from '../../core/services/consortium.service';
 import { CaseService } from '../../core/services/case.service';
@@ -31,6 +33,7 @@ import { ConfirmDialogComponent } from '../../shared/components/molecules/confir
 import { ConsortiumMemberAccordionComponent } from './components/consortium-member-accordion/consortium-member-accordion.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
+import { FinacesInlineErrorComponent } from '../../shared/components/atoms/finaces-inline-error/finaces-inline-error.component';
 import { catchError, of, delay, finalize, EMPTY } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -41,11 +44,14 @@ import { environment } from '../../../environments/environment';
     ReactiveFormsModule,
     MatButtonModule,
     MatDialogModule,
+    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     ConsortiumMemberAccordionComponent,
     FinacesScoreGaugeComponent,
     FinacesRiskBadgeComponent,
+    FinacesInlineErrorComponent,
     MatSnackBarModule,
     DecimalPipe,
   ],
@@ -56,11 +62,11 @@ import { environment } from '../../../environments/environment';
 export class ConsortiumComponent {
   private readonly caseContext = inject(CaseContextService);
   private readonly router = inject(Router);
-  private caseService = inject(CaseService);
-  private consortiumService = inject(ConsortiumService);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
-  private fb = inject(FormBuilder);
+  private readonly caseService = inject(CaseService);
+  private readonly consortiumService = inject(ConsortiumService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
   caseId = '';
@@ -71,11 +77,23 @@ export class ConsortiumComponent {
   isCalculating = signal<boolean>(false);
   isEditingShares = signal<boolean>(false);
 
+  /** Erreur de chargement initial (null = pas d’erreur) */
+  loadError = signal<string | null>(null);
+  /** Compteur de tentatives — incrémenté à chaque onRetryLoad() */
+  retryCount = signal<number>(0);
+
   totalParticipation = computed(() => {
     const data = this.currentConsortium();
     if (!data || !data.members) return 0;
     return data.members.reduce((sum, m) => sum + m.participation_pct, 0);
   });
+
+  /** Vrai quand le chargement est terminé, sans erreur, sans membres */
+  hasNoMembers = computed(() =>
+    !this.isLoading() &&
+    !this.loadError() &&
+    (this.currentConsortium()?.members?.length ?? 0) === 0,
+  );
 
   leaderMember = computed(() => {
     return this.currentConsortium()?.members?.find((m) => m.role === 'LEADER') || null;
@@ -119,20 +137,26 @@ export class ConsortiumComponent {
     this.loadData();
   }
 
+  public onRetryLoad(): void {
+    this.loadError.set(null);
+    this.retryCount.update(n => n + 1);
+    this.loadData();
+  }
+
   private loadData(): void {
     this.isLoading.set(true);
+    this.loadError.set(null);
     this.caseService
       .getCaseDetail(this.caseId)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => {
-          this.snackBar.open('Error loading case', 'Close');
+          this.snackBar.open('Erreur de chargement du dossier', 'Fermer');
           return of(null);
         }),
       )
       .subscribe((c: EvaluationCaseDetailOut | null) => {
         this.currentCase.set(c);
-        // Always load consortium even if case detail failed
         this.loadConsortium();
       });
   }
@@ -176,8 +200,8 @@ export class ConsortiumComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => {
+          this.loadError.set('Impossible de charger les données du consortium. Vérifiez votre connexion.');
           this.isLoading.set(false);
-          this.snackBar.open('Erreur de chargement du consortium (backend)', 'Close');
           return EMPTY;
         }),
       )
@@ -205,11 +229,11 @@ export class ConsortiumComponent {
             next: (res) => {
               this.currentConsortium.set(res);
               this.isLoading.set(false);
-              this.snackBar.open('Member updated successfully', 'Close', { duration: 3000 });
+              this.snackBar.open('Membre mis à jour avec succès', 'Fermer', { duration: 3000 });
             },
             error: () => {
               this.isLoading.set(false);
-              this.snackBar.open('Error updating member', 'Close', { duration: 3000 });
+              this.snackBar.open('Erreur lors de la mise à jour du membre', 'Fermer', { duration: 3000 });
             },
           });
         }
@@ -218,7 +242,7 @@ export class ConsortiumComponent {
 
   saveSharesInline(editedShares: Record<string, number>): void {
     if (this.totalParticipation() !== 100) {
-      this.snackBar.open('Total shares must be 100%', 'Close');
+      this.snackBar.open('Le total des parts doit être égal à 100 %', 'Fermer');
       return;
     }
     this.isLoading.set(true);
@@ -247,7 +271,7 @@ export class ConsortiumComponent {
 
   removeMember(memberId: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { message: 'Are you sure you want to remove this member?' },
+      data: { message: 'Confirmer la suppression de ce membre ?' },
     });
     dialogRef
       .afterClosed()
@@ -265,7 +289,7 @@ export class ConsortiumComponent {
               },
               error: () => {
                 this.isLoading.set(false);
-                this.snackBar.open('Error removing member', 'Close', { duration: 3000 });
+                this.snackBar.open('Erreur lors de la suppression du membre', 'Fermer', { duration: 3000 });
               },
             });
         }
@@ -274,7 +298,7 @@ export class ConsortiumComponent {
 
   recalculateScore(): void {
     if (this.totalParticipation() !== 100) {
-      this.snackBar.open('Participation must equal exactly 100%', 'Close', { duration: 3000 });
+      this.snackBar.open('La participation doit être exactement de 100 %', 'Fermer', { duration: 3000 });
       return;
     }
     this.isCalculating.set(true);
@@ -285,11 +309,11 @@ export class ConsortiumComponent {
         next: (res) => {
           this.currentConsortium.set(res);
           this.isCalculating.set(false);
-          this.snackBar.open('Scores recalculated successfully', 'Close', { duration: 3000 });
+          this.snackBar.open('Scores recalculés avec succès', 'Fermer', { duration: 3000 });
         },
         error: () => {
           this.isCalculating.set(false);
-          this.snackBar.open('Calculation failed', 'Close', { duration: 3000 });
+          this.snackBar.open('Erreur de calcul', 'Fermer', { duration: 3000 });
         },
       });
   }
