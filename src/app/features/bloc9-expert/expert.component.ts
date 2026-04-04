@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, DestroyRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, DestroyRef, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -48,46 +48,42 @@ import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/fi
   styleUrls: ['./expert.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExpertComponent {
-  private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private caseService = inject(CaseService);
-  private expertService = inject(ExpertService);
-  private fb = inject(FormBuilder);
-  private snackBar = inject(MatSnackBar);
-  private readonly destroyRef = inject(DestroyRef);
+export class ExpertComponent implements OnInit {
+  private readonly caseContext   = inject(CaseContextService);
+  private readonly router        = inject(Router);
+  private readonly caseService   = inject(CaseService);
+  private readonly expertService = inject(ExpertService);
+  private readonly fb            = inject(FormBuilder);
+  private readonly snackBar      = inject(MatSnackBar);
+  private readonly destroyRef    = inject(DestroyRef);
 
-  caseId = '';
+  readonly caseId      = signal<string>('');
+  readonly currentCase = signal<EvaluationCaseDetailOut | null>(null);
+  readonly isLoading   = signal<boolean>(true);
+  readonly isSubmitting = signal<boolean>(false);
+  readonly isSubmitted  = signal<boolean>(false);
+  readonly conditions   = signal<MccCondition[]>([]);
 
-  currentCase = signal<EvaluationCaseDetailOut | null>(null);
-  isLoading = signal<boolean>(true);
-  isSubmitting = signal<boolean>(false);
-  isSubmitted = signal<boolean>(false);
-
-  conditions = signal<MccCondition[]>([]);
-
-  // Le FormGroup reflète EXACTEMENT les 2 schémas API combinés
-  reviewForm = this.fb.group({
+  readonly reviewForm = this.fb.group({
     // --- PART 1 : ExpertReviewInputSchema ---
-    liquidity_comment: ['', Validators.required],
-    solvability_comment: ['', Validators.required],
-    profitability_comment: ['', Validators.required],
-    capacity_comment: ['', Validators.required],
-    quality_comment: ['', Validators.required],
+    liquidity_comment:        ['', Validators.required],
+    solvability_comment:      ['', Validators.required],
+    profitability_comment:    ['', Validators.required],
+    capacity_comment:         ['', Validators.required],
+    quality_comment:          ['', Validators.required],
     dynamic_analysis_comment: ['', Validators.required],
-    mitigating_factors: [''],
-    risk_factors: [''],
-    override_recommendation: [OverrideRecommendation.NONE],
-
+    mitigating_factors:       [''],
+    risk_factors:             [''],
+    override_recommendation:  [OverrideRecommendation.NONE],
     // --- PART 2 : ConclusionUpdate ---
-    conclusion_text: ['', Validators.required],
+    conclusion_text:      ['', Validators.required],
     final_recommendation: ['', Validators.required],
-    rejection_reason: [''],
+    rejection_reason:     [''],
   });
 
   ngOnInit(): void {
-    this.caseId = this.caseContext.caseId();
-    if (!this.caseId) {
+    this.caseId.set(this.caseContext.caseId());
+    if (!this.caseId()) {
       this.router.navigate(['/dashboard']);
       return;
     }
@@ -97,7 +93,7 @@ export class ExpertComponent {
   private loadCaseData(): void {
     this.isLoading.set(true);
     this.caseService
-      .getCaseDetail(this.caseId)
+      .getCaseDetail(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: EvaluationCaseDetailOut) => {
@@ -120,11 +116,11 @@ export class ExpertComponent {
     const formVal = this.reviewForm.value;
 
     const reviewPayload: ExpertReviewInputSchema = {
-      liquidity_comment: formVal.liquidity_comment || '',
-      solvability_comment: formVal.solvability_comment || '',
-      profitability_comment: formVal.profitability_comment || '',
-      capacity_comment: formVal.capacity_comment || '',
-      quality_comment: formVal.quality_comment || '',
+      liquidity_comment:        formVal.liquidity_comment || '',
+      solvability_comment:      formVal.solvability_comment || '',
+      profitability_comment:    formVal.profitability_comment || '',
+      capacity_comment:         formVal.capacity_comment || '',
+      quality_comment:          formVal.quality_comment || '',
       dynamic_analysis_comment: formVal.dynamic_analysis_comment || '',
       mitigating_factors: formVal.mitigating_factors
         ? Array.isArray(formVal.mitigating_factors)
@@ -143,16 +139,16 @@ export class ExpertComponent {
     };
 
     const conclusionPayload: ConclusionUpdate = {
-      conclusion_text: formVal.conclusion_text || '',
+      conclusion_text:      formVal.conclusion_text || '',
       final_recommendation: formVal.final_recommendation || '',
-      conditional_factors: this.conditions().map((c) => `[${c.type}] ${c.description}`),
+      conditional_factors:  this.conditions().map((c) => `[${c.type}] ${c.description}`),
     };
 
     this.isSubmitting.set(true);
 
     const submission$ = environment.features.mockData
-      ? of({ id: 'mock-review-id', case_id: this.caseId } as unknown).pipe(delay(1500))
-      : this.expertService.submitExpertReview(this.caseId, reviewPayload);
+      ? of({ id: 'mock-review-id', case_id: this.caseId() } as unknown).pipe(delay(1500))
+      : this.expertService.submitExpertReview(this.caseId(), reviewPayload);
 
     submission$
       .pipe(
@@ -176,7 +172,7 @@ export class ExpertComponent {
             : 'Review submitted successfully';
 
           this.expertService
-            .submitConclusion(this.caseId, conclusionPayload)
+            .submitConclusion(this.caseId(), conclusionPayload)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
               next: () => this.snackBar.open(msg, 'Close', { duration: 3000 }),
@@ -193,10 +189,10 @@ export class ExpertComponent {
   }
 
   closeCase(): void {
-    this.router.navigate(['/cases', this.caseId, 'rapport']);
+    this.router.navigate(['/cases', this.caseId(), 'rapport']);
   }
 
   goBack(): void {
-    this.router.navigate(['/cases', this.caseId, 'stress']);
+    this.router.navigate(['/cases', this.caseId(), 'stress']);
   }
 }

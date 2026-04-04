@@ -1,4 +1,4 @@
-<!-- ─── Skeleton ───────────────────────────────────────────────────────────── -->
+<!-- ─── Skeleton ──────────────────────────────────────────────────────────────────────────── -->
 @if (isLoading()) {
   <finaces-skeleton-loader
     variant="form"
@@ -8,7 +8,7 @@
   />
 }
 
-<!-- ─── Contenu principal ──────────────────────────────────────────────────── -->
+<!-- ─── Contenu principal ──────────────────────────────────────────────────────────────────────── -->
 @if (!isLoading()) {
   <div class="w-full h-full p-6" data-testid="expert-root">
 
@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <!-- ─── Empty-state : revue déjà soumise ────────────────────────────────── -->
+    <!-- ─── Empty-state : revue déjà soumise ──────────────────────────────────────── -->
     @if (isSubmitted()) {
       <div
         class="expert-submitted-banner"
@@ -45,8 +45,8 @@
         <div class="expert-submitted-body">
           <p class="expert-submitted-title">Revue soumise avec succès</p>
           <p class="expert-submitted-hint">
-            La revue expert est verrouillée. Utilisez « Edit Review » pour la modifier,
-            ou « Close Case » pour passer au rapport final.
+            La revue expert est verrouillée. Utilisez « Edit Review » pour la modifier,
+            ou « Close Case » pour passer au rapport final.
           </p>
         </div>
         <button
@@ -133,6 +133,8 @@
 
       <div
         class="flex flex-col sm:flex-row items-center justify-between border-t border-border-default pt-6 pb-12 gap-4"
+        role="navigation"
+        aria-label="Actions et navigation du dossier"
         data-testid="expert-actions-bar"
       >
         <button
