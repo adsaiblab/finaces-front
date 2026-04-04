@@ -2,3 +2,36 @@
   display: block;
   width: 100%;
 }
+
+// ─── Animation shimmer tokenisée — s'adapte automatiquement au dark mode ──
+// Utilise --color-surface-offset / --color-surface-dynamic définis dans le design system global
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-line,
+.skeleton-circle {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-offset, #e8e6e1) 25%,
+    var(--color-surface-dynamic, #dedad4) 50%,
+    var(--color-surface-offset, #e8e6e1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: var(--color-surface-offset, #e8e6e1);
+  }
+}
+
+.skeleton-host {
+  // Garantit que les enfants s'adaptent à la largeur disponible
+  min-width: 0;
+}
