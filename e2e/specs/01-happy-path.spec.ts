@@ -9,191 +9,217 @@ import { ExpertPage } from '../pages/expert.page';
 import { RapportPage } from '../pages/rapport.page';
 import { TEST_CASE } from '../fixtures/test-data';
 
-// ─── CONSTANTES DE TEST ───────────────────────────────────────────────────
+// ─── CONSTANTES DE TEST ─────────────────────────────────────────────────────
 const TEST_CASE_ID = TEST_CASE.id;
 
-// ─── MOCK PAYLOADS ──────────────────────────────────────────────────────────────────────────
+// ─── MOCK PAYLOADS ──────────────────────────────────────────────────────────────────────────────
 
-// Bloc 3 — FinancialStatementNormalizedSchema (financial.model.ts)
-const MOCK_NORMALIZATION = {
-    statement_id: 'mock-stmt-e2e-001',
-    fiscal_year: 2023,
-    normalized_revenue: 8500000,
-    normalized_ebitda: 4000000,
-    normalized_net_income: 2850000,
-    normalized_working_capital: 1500000,
-    normalized_cash_flow: 500000,
-    adjustments: [
+// Bloc 3 — List[FinancialStatementNormalized]
+// Champs réels : id, fiscal_year, revenue, ebitda, net_income,
+//               operating_cash_flow, adjustments_count
+// Supprimés : normalized_*, confidence_score, normalization_date,
+//              source_standard, applied_standard, working_capital
+const MOCK_NORMALIZATION = [
+    {
+        id: 'mock-norm-2022',
+        fiscal_year: 2022,
+        revenue: 1800000.0,
+        ebitda: 360000.0,
+        net_income: 216000.0,
+        operating_cash_flow: 270000.0,
+        adjustments_count: 2,
+    },
+    {
+        id: 'mock-norm-2023',
+        fiscal_year: 2023,
+        revenue: 2000000.0,
+        ebitda: 400000.0,
+        net_income: 240000.0,
+        operating_cash_flow: 300000.0,
+        adjustments_count: 3,
+    },
+];
+
+// Bloc 4 — List[RatioSetSchema] (champs plats — PAS RatioSetEnrichedOut groupé)
+// Route : POST /cases/{id}/ratios/compute → response_model=List[RatioSetSchema]
+// Renommés : wcr → working_capital_requirement
+//             cf_capacity_margin → cash_flow_capacity_margin_pct
+// Supprimé : structure groupée liquidity{}/solvency{}/profitability{}/capacity{}/z_score{}
+const MOCK_RATIOS = [
+    {
+        id: 'mock-ratio-2022',
+        case_id: TEST_CASE_ID,
+        fiscal_year: 2022,
+        normalized_statement_id: 'mock-norm-2022',
+        current_ratio: 1.8,
+        quick_ratio: 1.2,
+        cash_ratio: 0.4,
+        working_capital_requirement: 150000.0,
+        cash_flow_capacity_margin_pct: 0.15,
+        debt_to_equity: 0.9,
+        net_margin: 0.12,
+        ebitda_margin: 0.20,
+        z_score_altman: 2.8,
+        z_score_zone: 'GREY',
+        coherence_alerts_json: [],
+    },
+    {
+        id: 'mock-ratio-2023',
+        case_id: TEST_CASE_ID,
+        fiscal_year: 2023,
+        normalized_statement_id: 'mock-norm-2023',
+        current_ratio: 2.1,
+        quick_ratio: 1.5,
+        cash_ratio: 0.6,
+        working_capital_requirement: 180000.0,
+        cash_flow_capacity_margin_pct: 0.18,
+        debt_to_equity: 0.8,
+        net_margin: 0.14,
+        ebitda_margin: 0.22,
+        z_score_altman: 3.1,
+        z_score_zone: 'SAFE',
+        coherence_alerts_json: [],
+    },
+];
+
+// Bloc 5 — ScorecardOutputSchema
+// Scores 0–5 (pas 0–100), labels InterpretationLabel, RiskClass réels
+// Supprimés : scorecard_id, ia_score, tension_level, expert_comment,
+//              version, fiscal_year, risk_class (→ final_risk_class),
+//              liquidity_score etc. (→ dans pillars[])
+const MOCK_SCORING = {
+    system_calculated_score: 3.2,
+    system_risk_class: 'MODERATE',
+    global_score: 3.2,
+    base_risk_class: 'MODERATE',
+    final_risk_class: 'MODERATE',
+    is_overridden: false,
+    override_rationale: null,
+    risk_profile: 'BALANCED',
+    risk_description: 'Profil équilibré',
+    synergy_index: null,
+    synergy_bonus: null,
+    cross_analysis_alerts: [],
+    trends_summary: {},
+    smart_recommendations: ['Surveiller la trésorerie'],
+    overrides_applied: [],
+    computed_at: '2024-01-15T10:00:00Z',
+    pillars: [
         {
-            line_item: 'EBITDA',
-            original_value: 3500000,
-            adjusted_value: 4000000,
-            reason: 'Added back depreciation and amortization',
-            confidence: 98,
+            id: 'liquidity',
+            name: 'Liquidité',
+            score: 3,
+            weight: 0.25,
+            trend: [2.8, 3.0, 3.2],
+            signals: ['Ratio courant satisfaisant'],
+            detailText: 'Liquidité correcte',
+        },
+        {
+            id: 'solvency',
+            name: 'Solvabilité',
+            score: 3,
+            weight: 0.25,
+            trend: [2.5, 2.8, 3.0],
+            signals: ['Endettement maîtrisé'],
+            detailText: 'Solvabilité correcte',
+        },
+        {
+            id: 'profitability',
+            name: 'Rentabilité',
+            score: 3,
+            weight: 0.20,
+            trend: [2.9, 3.1, 3.3],
+            signals: ['Marge nette positive'],
+            detailText: 'Rentabilité satisfaisante',
+        },
+        {
+            id: 'capacity',
+            name: 'Capacité',
+            score: 3,
+            weight: 0.20,
+            trend: [3.0, 3.2, 3.4],
+            signals: ['Cash-flow positif'],
+            detailText: 'Capacité correcte',
+        },
+        {
+            id: 'quality',
+            name: 'Qualité',
+            score: 4,
+            weight: 0.10,
+            trend: [3.5, 3.8, 4.0],
+            signals: ['Données auditées'],
+            detailText: 'Qualité des données élevée',
         },
     ],
-    confidence_score: 92,
-    normalization_date: '2023-12-31T00:00:00Z',
-    source_standard: 'LOCAL',
-    applied_standard: 'IFRS',
 };
 
-// Bloc 4 — RatioSetGrouped (ratio.model.ts)
-const MOCK_RATIO_VALUE = {
-    current: 1.5,
-    trend: [1.2, 1.3, 1.5],
-    benchmark_min: 1.0,
-    benchmark_max: 2.5,
-    status: 'GREEN',
-    unit: 'ratio',
-    variation_pct: 15.4,
-};
-
-const MOCK_RATIOS = {
-    case_id: TEST_CASE_ID,
-    fiscal_year: 2023,
-    liquidity: {
-        current_ratio: MOCK_RATIO_VALUE,
-        quick_ratio: MOCK_RATIO_VALUE,
-        cash_ratio: MOCK_RATIO_VALUE,
-        working_capital: { ...MOCK_RATIO_VALUE, unit: 'currency' },
-        wcr: { ...MOCK_RATIO_VALUE, unit: 'currency' },
-        wcr_pct_revenue: { ...MOCK_RATIO_VALUE, unit: '%' },
-        dso_days: { ...MOCK_RATIO_VALUE, unit: 'days' },
-        dpo_days: { ...MOCK_RATIO_VALUE, unit: 'days' },
-        dio_days: { ...MOCK_RATIO_VALUE, unit: 'days' },
-        cash_conversion_cycle: { ...MOCK_RATIO_VALUE, unit: 'days' },
-    },
-    solvency: {
-        debt_to_equity: MOCK_RATIO_VALUE,
-        financial_autonomy: { ...MOCK_RATIO_VALUE, unit: '%' },
-        gearing: MOCK_RATIO_VALUE,
-        interest_coverage: MOCK_RATIO_VALUE,
-        debt_repayment_years: { ...MOCK_RATIO_VALUE, unit: 'days' },
-        negative_equity: { ...MOCK_RATIO_VALUE, unit: 'binary' },
-    },
-    profitability: {
-        net_margin: { ...MOCK_RATIO_VALUE, unit: '%' },
-        ebitda_margin: { ...MOCK_RATIO_VALUE, unit: '%' },
-        operating_margin: { ...MOCK_RATIO_VALUE, unit: '%' },
-        roa: { ...MOCK_RATIO_VALUE, unit: '%' },
-        roe: { ...MOCK_RATIO_VALUE, unit: '%' },
-    },
-    capacity: {
-        cash_flow_capacity: { ...MOCK_RATIO_VALUE, unit: 'currency' },
-        cf_capacity_margin: { ...MOCK_RATIO_VALUE, unit: '%' },
-        operating_cash_flow: { ...MOCK_RATIO_VALUE, unit: 'currency' },
-    },
-    z_score: {
-        z_score_altman: { ...MOCK_RATIO_VALUE, current: 3.5 },
-        z_score_zone: 'SAFE',
-        formula_breakdown: { x1: 0.12, x2: 0.34, x3: 0.21, x4: 0.65 },
-    },
-    coherence_alerts: [],
-    coherence_status: 'CLEAN',
-    calculation_date: '2023-12-31T00:00:00Z',
-    normalization_source: 'IFRS',
-    sector_code: 'BTP',
-};
-
-// Bloc 5 — ScorecardOutputSchema (scoring.model.ts)
-const MOCK_PILLAR_DETAIL = {
-    pillar_name: 'Liquidity',
-    score: 72,
-    label: 'GOOD',
-    ratios_used: ['current_ratio', 'quick_ratio'],
-    comment: 'Solid liquidity position',
-};
-
-const MOCK_SCORING = {
-    case_id: TEST_CASE_ID,
-    scorecard_id: 'mock-scorecard-e2e-001',
-    fiscal_year: 2023,
-    liquidity_score: 72,
-    liquidity_label: 'GOOD',
-    liquidity_detail: MOCK_PILLAR_DETAIL,
-    solvency_score: 68,
-    solvency_label: 'FAIR',
-    solvency_detail: { ...MOCK_PILLAR_DETAIL, pillar_name: 'Solvency' },
-    profitability_score: 75,
-    profitability_label: 'GOOD',
-    profitability_detail: { ...MOCK_PILLAR_DETAIL, pillar_name: 'Profitability' },
-    capacity_score: 70,
-    capacity_label: 'GOOD',
-    capacity_detail: { ...MOCK_PILLAR_DETAIL, pillar_name: 'Capacity' },
-    quality_score: 74,
-    quality_label: 'GOOD',
-    quality_detail: { ...MOCK_PILLAR_DETAIL, pillar_name: 'Quality' },
-    global_score: 72,
-    risk_class: 'B',
-    risk_profile: 'MODERATE',
-    ia_score: 68,
-    tension_level: 'NONE',
-    tension_comment: null,
-    expert_comment: null,
-    expert_reviewed_at: null,
-    expert_reviewed_by: null,
-    created_at: '2023-12-31T00:00:00Z',
-    computed_at: '2023-12-31T00:00:00Z',
-    version: 'v1.0',
-    overrides: [],
-};
-
-// Bloc 6 — IAPredictionOut (ia.model.ts)
-// GET /ia/predict/:caseId
+// Bloc 6 — IAPredictionResult
+// Supprimés : id (fantôme), ia_trend, confidence_level
+// Corrigés : ia_risk_class LOW/MODERATE/HIGH/CRITICAL, model_version ajouté,
+//             threshold_info={} (dict vide), explanations=null
 const MOCK_IA_PREDICTION = {
-    id: 'mock-ia-pred-e2e-001',
     case_id: TEST_CASE_ID,
-    ia_score: 68,
-    ia_risk_class: 'B',
+    ia_score: 72.5,
     ia_probability_default: 0.18,
-    threshold_info: 'Threshold: 0.35 — Below threshold (low risk)',
-    predicted_at: '2023-12-31T00:00:00Z',
-    explanations: {
-        top_features: [
-            {
-                feature_name: 'current_ratio',
-                feature_value: 1.5,
-                shap_value: 0.12,
-                impact: 0.08,
-                direction: 'POSITIVE',
-                magnitude: 'MODERATE',
-            },
-        ],
-        explanation_method: 'SHAP',
-        base_value: 0.22,
-    },
+    ia_risk_class: 'MODERATE',
+    model_version: 'e2e-stub-v1.0',
+    predicted_at: '2024-01-15T10:00:00Z',
+    explanations: null,
+    threshold_info: {},
 };
 
-// GET /ia/models/active — IAModelInfo (ia.model.ts)
+// GET /ia/models/active
+// Corrigé : name → model_name, métriques dans metrics{}
 const MOCK_IA_MODEL = {
     id: 'mock-model-e2e-001',
-    name: 'FinaCES XGBoost v2.1',
-    version: 'v2.1',
-    is_active: true,
-    auc_roc: 0.89,
-    accuracy: 0.85,
-    f1_score: 0.82,
-    confidence_interval: { lower: 0.84, upper: 0.94 },
-    trained_at: '2023-10-01T00:00:00Z',
+    model_name: 'XGBoost Risk Classifier',
+    version: 'e2e-stub-v1.0',
+    metrics: {
+        auc_roc: 0.89,
+        accuracy: 0.85,
+        f1_score: 0.82,
+    },
+    created_at: '2024-01-01T00:00:00Z',
 };
 
 // Bloc 7 — Tension : PAS de mock API nécessaire.
 // La tension est calculée localement par TensionCalculatorService
 // à partir des données MCC (scoring) et IA déjà en mémoire.
 
-// Bloc 8 — Stress
-const MOCK_STRESS = {
-    case_id: TEST_CASE_ID,
-    scenarios: [],
-    status: 'COMPUTED',
+// Bloc 8 — Stress — List[StressResultSchema] (objet unique par appel contractuel)
+// Route : GET /cases/{id}/stress → retourne StressResultSchema (pas List brute)
+// StressDecision : SOLVENT / LIMIT / INSOLVENT
+const MOCK_STRESS: Record<string, unknown> = {
+    contract_value: 5000000,
+    contract_months: 24,
+    annual_ca_avg: 10000000,
+    exposition_pct: 0.5,
+    backlog_value: 0,
+    bank_guarantee: false,
+    bank_guarantee_amount: 0,
+    credit_lines_confirmed: 0,
+    cash_available: 1500000,
+    working_capital_requirement_estimate: 800000,
+    advance_payment_pct: 0.1,
+    payment_milestones: [],
+    stress_60d_result: 'SOLVENT',
+    stress_90d_result: 'SOLVENT',
+    stress_60d_cash_position: 700000,
+    stress_90d_cash_position: 550000,
+    score_capacity: 3.5,
+    capacity_conclusion: 'Capacité financière suffisante',
+    monthly_flows: [],
+    scenarios_results: {},
+    data_alerts: [],
 };
 
 // Bloc 9 — Expert
+// Le composant ne fait PAS de GET /expert au ngOnInit —
+// MOCK_EXPERT conservé uniquement pour usage futur (ex. Bloc 9 assertions POST)
 const MOCK_EXPERT = {
     case_id: TEST_CASE_ID,
     expert_opinion: '',
-    recommendation: 'FAVORABLE',
+    recommendation: 'ACCEPT',
     status: 'PENDING',
 };
 
@@ -201,10 +227,10 @@ const MOCK_EXPERT = {
 const MOCK_RAPPORT = {
     case_id: TEST_CASE_ID,
     report_url: '/reports/mock-e2e.pdf',
-    status: 'GENERATED',
+    status: 'DRAFT',
     sections_complete: 14,
     sections_total: 14,
-    recommendation: 'FAVORABLE',
+    recommendation: 'ACCEPT',
 };
 
 // Bloc 0 — Case Base
@@ -213,74 +239,20 @@ const MOCK_CASE_BASE = {
     bidder_name: 'E2E Test Company',
     sector: 'BTP',
     contract_value: 5000000,
-    contract_currency: 'MAD',
-    case_type: 'STANDARD',
-    status: 'IN_PROGRESS',
-    risk_class: 'B',
-    mcc_score: 72,
-    ia_score: 68,
-    tension_label: 'LOW',
+    contract_currency: 'USD',
+    case_type: 'SINGLE',
+    status: 'SCORING_DONE',
+    final_risk_class: 'MODERATE',
+    global_score: 3.2,
+    ia_score: 72.5,
     fiscal_year: 2023,
 };
 
-// ─── HELPER : Setup de tous les mocks API ───────────────────────────────────────────────
-async function setupApiMocks(page: any, caseId: string) {
-    // ── 0. Wildcard sécurité EN PREMIER ────────────────────────────────────
-    await page.route(`**/api/v1/cases/${caseId}/**`, (route: any) => route.continue());
-
-    // ── 1. Mocks spécifiques EN DERNIER (priorité maximale) ──────────────────────
-
-    // Bloc 3 — Normalization
-    await page.route(`**/api/v1/cases/${caseId}/normalized-financials`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
-    );
-
-    // Bloc 4 — Ratios
-    await page.route(`**/api/v1/cases/${caseId}/ratios/compute`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RATIOS) })
-    );
-
-    // Bloc 5 — Scoring MCC
-    await page.route(`**/api/v1/cases/${caseId}/score`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING) })
-    );
-
-    // Bloc 6 — IA Prediction (forkJoin de 2 appels)
-    await page.route(`**/api/v1/ia/predict/${caseId}`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_PREDICTION) })
-    );
-    await page.route(`**/api/v1/ia/models/active`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_MODEL) })
-    );
-
-    // Bloc 8 — Stress Test
-    await page.route(`**/api/v1/cases/${caseId}/stress`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_STRESS) })
-    );
-
-    // Bloc 9 — Expert Opinion
-    await page.route(`**/api/v1/cases/${caseId}/expert**`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_EXPERT) })
-    );
-
-    // Bloc 10 — Rapport Final
-    await page.route(`**/api/v1/cases/${caseId}/report**`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RAPPORT) })
-    );
-
-    // Données de base du dossier EN DERNIER — exact match, priorité maximale
-    await page.route(`**/api/v1/cases/${caseId}`, (route: any) =>
-        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
-    );
-}
-
-// ─── SUITE HAPPY PATH ───────────────────────────────────────────────────────────────
-test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
+// ─── SUITE HAPPY PATH ──────────────────────────────────────────────────────────────────────────────
+test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3↑10)', () => {
 
     test('Bloc 3 — Normalization : la page se charge et affiche le badge NORMALIZED', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const normalizationPage = new NormalizationPage(page);
-        // Register BEFORE goto to avoid race condition
         const normResp = page.waitForResponse(
             (r: any) => r.url().includes('normalized-financials') && r.status() === 200
         );
@@ -290,7 +262,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 4 — Ratios : la page se charge et affiche le contenu principal', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const ratiosPage = new RatiosPage(page);
         const ratiosResp = page.waitForResponse(
             (r: any) => r.url().includes('ratios/compute') && r.status() === 200
@@ -301,7 +272,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 5 — Scoring MCC : la page se charge et affiche le score global', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const scoringPage = new ScoringPage(page);
         const scoreResp = page.waitForResponse(
             (r: any) => r.url().includes('/score') && r.status() === 200
@@ -312,7 +282,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 6 — IA Prediction : la page se charge et affiche la carte de score prédit', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const iaPage = new IaPage(page);
         const iaResp = page.waitForResponse(
             (r: any) => r.url().includes('ia/predict') && r.status() === 200
@@ -323,7 +292,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 7 — Tension : le composant racine est visible', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const tensionPage = new TensionPage(page);
         await page.goto(`/cases/${TEST_CASE_ID}/tension`);
         await tensionPage.expectPageLoaded();
@@ -331,7 +299,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 8 — Stress Test : le composant racine est visible', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const stressPage = new StressPage(page);
         await page.goto(`/cases/${TEST_CASE_ID}/stress`);
         await stressPage.expectPageLoaded();
@@ -339,7 +306,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 9 — Expert Opinion : le composant racine est visible', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const expertPage = new ExpertPage(page);
         await page.goto(`/cases/${TEST_CASE_ID}/expert`);
         await expertPage.expectPageLoaded();
@@ -347,7 +313,6 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
     });
 
     test('Bloc 10 — Rapport Final : le composant racine est visible', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
         const rapportPage = new RapportPage(page);
         await page.goto(`/cases/${TEST_CASE_ID}/rapport`);
         await rapportPage.expectPageLoaded();
@@ -355,17 +320,14 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3→10)', () => {
         await rapportPage.expectGenerateBtnVisible();
     });
 
-    test('Navigation chain — Scoring vers IA via bouton Proceed (avec mock)', async ({ page }) => {
-        await setupApiMocks(page, TEST_CASE_ID);
+    test('Navigation chain — Scoring vers IA via bouton Proceed', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
         const iaPage = new IaPage(page);
-        // Pre-register score response before goto
         const scoreResp = page.waitForResponse(
             (r: any) => r.url().includes('/score') && r.status() === 200
         );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await scoringPage.expectScoringDisplayed(scoreResp);
-        // Pre-register IA response before click (click triggers navigation + new HTTP calls)
         const iaResp = page.waitForResponse(
             (r: any) => r.url().includes('ia/predict') && r.status() === 200
         );
