@@ -1,25 +1,44 @@
 <div class="w-full h-full flex flex-col p-6 bg-default" data-testid="cases-list-root">
-  <!-- Header Stratégique -->
+  <!-- En-tête -->
   <div class="flex items-center justify-between mb-6">
     <div>
       <h1 class="text-2xl font-bold text-primary flex items-center gap-3">
-        <span class="material-icons text-primary">account_balance</span>
-        Evaluation Hub
+        <span class="material-icons text-primary" aria-hidden="true">account_balance</span>
+        Tableau de bord évaluation
       </h1>
       <p class="text-sm text-secondary mt-1">
-        Resume active workflows or inspect completed evaluation phases.
+        Reprenez les dossiers actifs ou consultez les phases d’évaluation complétées.
       </p>
     </div>
-    <button mat-flat-button color="primary" routerLink="/cases/new" data-testid="cases-list-new-case-btn">
-      <span class="material-icons text-sm mr-2">add</span> New Request
+    <button
+      mat-flat-button
+      color="primary"
+      routerLink="/cases/new"
+      data-testid="cases-list-new-case-btn"
+      aria-label="Créer un nouveau dossier"
+    >
+      <span class="material-icons text-sm mr-2" aria-hidden="true">add</span>
+      Nouveau dossier
     </button>
   </div>
+
+  <!-- Erreur API -->
+  @if (loadError()) {
+    <div class="mb-4" data-testid="cases-list-error">
+      <finaces-inline-error
+        [errorCode]="loadError()!"
+        [retryCount]="retryCount()"
+        [maxRetries]="3"
+        (retry)="onRetryLoad()"
+      ></finaces-inline-error>
+    </div>
+  }
 
   <!-- Filtres et Recherche -->
   <div
     class="bg-card rounded-t-xl border border-strong border-b-0 p-4 flex flex-wrap items-center justify-between gap-4"
   >
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtres de dossiers">
       <button
         class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
         [class]="
@@ -28,8 +47,10 @@
             : 'bg-sidebar-active-bg text-secondary hover:text-primary'
         "
         (click)="setFilterMode('ALL')"
+        aria-label="Afficher tous les dossiers"
+        [attr.aria-pressed]="filterMode() === 'ALL'"
       >
-        All Workloads
+        Tous les dossiers
       </button>
       <button
         class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
@@ -39,8 +60,10 @@
             : 'bg-sidebar-active-bg text-secondary hover:text-primary'
         "
         (click)="setFilterMode('PENDING_GATE')"
+        aria-label="Filtrer : Revue documentaire en attente"
+        [attr.aria-pressed]="filterMode() === 'PENDING_GATE'"
       >
-        Pending Gate
+        Revue en attente
       </button>
       <button
         class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
@@ -50,8 +73,10 @@
             : 'bg-sidebar-active-bg text-secondary hover:text-primary'
         "
         (click)="setFilterMode('REQUIRE_ATTENTION')"
+        aria-label="Filtrer : Dossiers nécessitant une attention"
+        [attr.aria-pressed]="filterMode() === 'REQUIRE_ATTENTION'"
       >
-        Require Attention
+        Action requise
       </button>
       <button
         class="px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
@@ -61,68 +86,89 @@
             : 'bg-sidebar-active-bg text-secondary hover:text-primary'
         "
         (click)="setFilterMode('READY_REPORT')"
+        aria-label="Filtrer : Dossiers prêts pour le rapport"
+        [attr.aria-pressed]="filterMode() === 'READY_REPORT'"
       >
-        Ready for Report
+        Prêt pour rapport
       </button>
     </div>
     <div class="relative w-full sm:w-64">
-      <span class="material-icons absolute left-3 top-2.5 text-disabled text-[18px]">search</span>
+      <span class="material-icons absolute left-3 top-2.5 text-disabled text-[18px]" aria-hidden="true">search</span>
       <input
         type="text"
-        placeholder="Search entity or ID..."
+        placeholder="Rechercher entité ou identifiant…"
         class="w-full bg-sidebar-active-bg border border-strong rounded-md py-2 pl-9 pr-3 text-sm text-primary focus:outline-none focus:border-primary transition-colors"
         [ngModel]="searchQuery()"
         (input)="updateSearch($event)"
         data-testid="cases-list-search-input"
+        aria-label="Rechercher un dossier par nom ou identifiant"
       />
     </div>
   </div>
 
-  <!-- Data Grid Matrix -->
+  <!-- Grille de dossiers -->
   <div
-    class="flex-grow bg-card rounded-b-xl shadow-md border border-strong overflow-hidden flex flex-col relative w-full overflow-x-auto"
+    class="flex-grow bg-card rounded-b-xl shadow-md border border-strong overflow-hidden flex flex-col relative w-full"
   >
     @if (isLoading()) {
       <div class="p-4">
         <finaces-skeleton-loader variant="table" [rows]="5"></finaces-skeleton-loader>
       </div>
+    } @else if (hasNoCasesAtAll()) {
+      <!-- État vide réel : aucun dossier en base -->
+      <div class="flex-grow flex items-center justify-center p-8" data-testid="cases-list-empty-all">
+        <finaces-empty-state
+          icon="folder_open"
+          title="Aucun dossier pour le moment"
+          description="Vous n’avez pas encore de dossier d’évaluation. Créez votre premier dossier pour démarrer."
+          ctaText="Créer un dossier"
+          ctaColor="primary"
+          (ctaClick)="router.navigate(['/cases/new'])"
+        ></finaces-empty-state>
+      </div>
     } @else {
       @if (filteredCases().length === 0) {
-        <div class="flex-grow flex items-center justify-center p-8">
+        <!-- État vide filtre : aucun résultat pour le filtre/recherche actif -->
+        <div class="flex-grow flex items-center justify-center p-8" data-testid="cases-list-empty-filter">
           <finaces-empty-state
             icon="filter_list_off"
-            title="No workflows found"
-            description="There are no evaluation cases matching the current filters."
-            ctaText="Clear Filters"
+            title="Aucun dossier trouvé"
+            description="Aucun dossier ne correspond aux filtres actifs. Effacez les filtres pour afficher tous les dossiers."
+            ctaText="Effacer les filtres"
             ctaColor="accent"
             (ctaClick)="setFilterMode('ALL'); searchQuery.set('')"
           ></finaces-empty-state>
         </div>
       } @else {
-        <div class="overflow-x-auto flex-grow w-full">
-          <table class="w-full text-left border-collapse min-w-[1000px] table-fixed" data-testid="cases-list-table">
+        <div class="table-scroll-wrapper overflow-x-auto flex-grow w-full">
+          <table
+            class="w-full text-left border-collapse min-w-[1000px] table-fixed"
+            data-testid="cases-list-table"
+            aria-label="Liste des dossiers d’évaluation"
+          >
             <thead
               class="bg-sidebar-active-bg sticky top-0 z-10 border-b-2 border-strong shadow-sm"
             >
               <tr class="text-secondary text-[11px] font-bold uppercase tracking-wider">
-                <th class="py-3 px-4 w-1/4">Evaluation Case (Entity)</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]">
-                  Documentary Gate
+                <th class="py-3 px-4 w-1/4" scope="col">Dossier d’évaluation (entité)</th>
+                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">
+                  Revue documentaire
                 </th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Financials</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Scoring / IA</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Expert Review</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]">Final Report</th>
+                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Financiers</th>
+                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Scoring / IA</th>
+                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Avis expert</th>
+                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Rapport final</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-strong">
               @for (caseItem of filteredCases(); track caseItem) {
                 <tr class="hover:bg-sidebar-active-bg transition-colors group" data-testid="cases-list-row">
-                  <!-- Couloir de gauche : Infos Dossier -->
+                  <!-- Colonne dossier -->
                   <td class="py-4 px-4 align-middle">
                     <div class="flex items-center gap-3">
                       <div
                         class="w-8 h-8 rounded-full bg-primary bg-opacity-10 text-primary flex items-center justify-center font-bold text-xs shrink-0"
+                        aria-hidden="true"
                       >
                         {{ caseItem.assignee.substring(0, 1) }}
                       </div>
@@ -139,7 +185,7 @@
                       </div>
                     </div>
                   </td>
-                  <!-- Les 5 Portes d'Evaluation -->
+                  <!-- Les 5 étapes -->
                   @for (step of caseItem.steps; track step) {
                     <td
                       class="py-4 px-3 align-middle text-center border-l border-strong bg-default bg-opacity-30"
@@ -148,20 +194,22 @@
                         <button
                           mat-icon-button
                           (click)="goToStep(caseItem.id, step)"
-                          [matTooltip]="'Review ' + step.name"
-                          class="!text-success opacity-80 hover:opacity-100 transition-all"
+                          [matTooltip]="'Consulter : ' + step.name"
+                          [attr.aria-label]="'Consulter ' + step.name + ' pour ' + caseItem.bidder_name"
+                          class="!text-success opacity-80 hover:opacity-100 transition-all step-btn"
                         >
-                          <span class="material-icons">check_circle</span>
+                          <span class="material-icons" aria-hidden="true">check_circle</span>
                         </button>
                       } @else if (step.status === 'ACTIVE') {
                         <div class="flex flex-col items-center gap-1">
                           <button
                             mat-stroked-button
                             color="primary"
-                            class="!rounded-md border-primary text-primary"
+                            class="!rounded-md border-primary text-primary step-btn"
                             (click)="goToStep(caseItem.id, step)"
+                            [attr.aria-label]="'Reprendre ' + step.name + ' pour ' + caseItem.bidder_name"
                           >
-                            <span class="font-bold">Resume</span>
+                            <span class="font-bold">Reprendre</span>
                           </button>
                         </div>
                       } @else {
@@ -170,8 +218,10 @@
                         >
                           <span
                             class="material-icons text-xl"
-                            [matTooltip]="'Locked: Complete previous steps'"
-                            >lock</span
+                            [matTooltip]="'Étape verrouillée : complétez les étapes précédentes'"
+                            [attr.aria-label]="step.name + ' : verrouillé'"
+                            role="img"
+                          >lock</span
                           >
                         </div>
                       }
@@ -187,18 +237,22 @@
 
     <div
       class="bg-default border-t border-strong px-4 py-3 flex justify-between items-center text-xs text-disabled"
+      aria-live="polite"
+      aria-atomic="true"
     >
       @if (!isLoading()) {
-        <span>Tracking {{ filteredCases().length }} of {{ cases().length }} workflows.</span>
+        <span>{{ filteredCases().length }} dossier(s) affiché(s) sur {{ cases().length }} au total.</span>
       } @else {
-        <span>Synchronizing workflows...</span>
+        <span>Synchronisation des dossiers en cours…</span>
       }
       <span class="flex items-center gap-1">
         <span
           class="w-2 h-2 rounded-full cursor-help transition-colors"
           [ngClass]="isLoading() ? 'bg-warning animate-pulse' : 'bg-success'"
+          [attr.aria-label]="isLoading() ? 'Chargement en cours' : 'Données à jour'"
+          role="status"
         ></span>
-        Process Control Matrix Active
+        Matrice de contrôle active
       </span>
     </div>
   </div>
