@@ -4,13 +4,20 @@
     class="consortium-skeleton"
     aria-busy="true"
     aria-label="Chargement du consortium…"
+    role="status"
   >
     <div class="skeleton skeleton-header"></div>
     <div class="consortium-skeleton-grid">
-      <div class="skeleton skeleton-block" style="height:140px"></div>
-      <div class="skeleton skeleton-block" style="height:140px"></div>
-      <div class="skeleton skeleton-block" style="height:280px; grid-column: span 2"></div>
-      <div class="skeleton skeleton-block" style="height:80px"></div>
+      <!-- Score consolidé -->
+      <div class="skeleton skeleton-block" style="height:160px"></div>
+      <!-- Piliers (span 2 sur desktop) -->
+      <div class="skeleton skeleton-block" style="height:160px"></div>
+      <div class="skeleton skeleton-block" style="height:160px"></div>
+      <!-- Tableau membres (span 2 sur desktop) -->
+      <div class="skeleton skeleton-block" style="height:220px"></div>
+      <div class="skeleton skeleton-block" style="height:220px"></div>
+      <!-- Synergie -->
+      <div class="skeleton skeleton-block" style="height:120px"></div>
     </div>
   </div>
 }
@@ -66,7 +73,7 @@
             <mat-icon aria-hidden="true">warning</mat-icon>
             <p>
               La participation doit être exactement de 100 % pour continuer.
-              Total actuel : {{ totalParticipation() }} %.
+              Total actuel : <strong>{{ totalParticipation() }} %</strong>.
             </p>
           </div>
         }
@@ -103,10 +110,10 @@
 
         <!-- Piliers agrégés -->
         <section class="consortium-card consortium-card--pillars">
-          <h3 class="consortium-card-title">
+          <h2 class="consortium-card-title">
             <mat-icon aria-hidden="true">bar_chart</mat-icon>
             Piliers structurels agrégés
-          </h3>
+          </h2>
           <p class="consortium-simulated-note">
             Agrégation simulée en attente du mapping backend par pilier.
           </p>
@@ -117,10 +124,10 @@
             ) {
               <div class="consortium-pillar-item">
                 <span class="consortium-pillar-label">{{
-                  pillarKey === 'liquidity' ? 'Liquidité' :
-                  pillarKey === 'solvency' ? 'Solvabilité' :
+                  pillarKey === 'liquidity'     ? 'Liquidité'   :
+                  pillarKey === 'solvency'      ? 'Solvabilité' :
                   pillarKey === 'profitability' ? 'Rentabilité' :
-                  pillarKey === 'capacity' ? 'Capacité' : 'Qualité'
+                  pillarKey === 'capacity'      ? 'Capacité'    : 'Qualité'
                 }}</span>
                 <div class="consortium-pillar-row">
                   <span class="consortium-pillar-score">{{
@@ -141,7 +148,7 @@
         <!-- Tableau des membres -->
         <section class="consortium-card consortium-card--members print:hidden">
           <div class="consortium-members-header">
-            <h3 class="consortium-card-title">Parts et scores des membres</h3>
+            <h2 class="consortium-card-title">Parts et scores des membres</h2>
             <div class="consortium-members-actions">
               <button
                 data-testid="consortium-add-member-btn"
@@ -202,12 +209,18 @@
           }
 
           @if (!hasNoMembers()) {
-            <div class="table-scroll-container" role="region" aria-label="Tableau des membres du consortium">
+            <div
+              class="table-scroll-container"
+              role="region"
+              aria-label="Tableau des membres du consortium"
+            >
               <table class="consortium-table">
                 <thead>
                   <tr>
-                    <th scope="col">Référence membre</th>
+                    <th scope="col">Membre</th>
+                    <th scope="col">Rôle</th>
                     <th scope="col" class="text-center">Score</th>
+                    <th scope="col" class="text-center">Risque</th>
                     <th scope="col" class="text-right">Part %</th>
                     <th scope="col" class="text-right">Actions</th>
                   </tr>
@@ -216,7 +229,35 @@
                   @for (member of currentConsortium()?.members; track member.member_id) {
                     <tr>
                       <td class="font-medium">{{ member.member_name }}</td>
+
+                      <!-- Colonne Rôle : badge LEADER / MEMBER -->
+                      <td>
+                        <span
+                          class="consortium-role-badge"
+                          [class.consortium-role-badge--leader]="member.role === 'LEADER'"
+                          [class.consortium-role-badge--member]="member.role !== 'LEADER'"
+                          [attr.aria-label]="member.role === 'LEADER' ? 'Chef de file' : 'Membre'"
+                        >
+                          <mat-icon aria-hidden="true" style="font-size:0.8rem;width:0.8rem;height:0.8rem;">{{
+                            member.role === 'LEADER' ? 'star' : 'person'
+                          }}</mat-icon>
+                          {{ member.role === 'LEADER' ? 'Chef de file' : 'Membre' }}
+                        </span>
+                      </td>
+
+                      <!-- Colonne Score -->
                       <td class="text-center font-bold">{{ member.score | number: '1.1-1' }}</td>
+
+                      <!-- Colonne Classe de risque -->
+                      <td class="text-center">
+                        <finaces-risk-badge
+                          [riskClass]="$any(member.risk_class) || 'MODERATE'"
+                          [size]="'sm'"
+                          [showLabel]="true"
+                        ></finaces-risk-badge>
+                      </td>
+
+                      <!-- Colonne Part% -->
                       <td class="text-right">
                         @if (isEditingShares()) {
                           <mat-form-field
@@ -235,10 +276,20 @@
                             <span matSuffix class="text-xs">%</span>
                           </mat-form-field>
                         } @else {
-                          <span class="font-bold text-lg">{{ member.participation_pct }} %</span>
+                          <span class="font-bold" style="font-size:1rem;">{{ member.participation_pct }} %</span>
                         }
                       </td>
+
+                      <!-- Colonne Actions -->
                       <td class="text-right">
+                        <button
+                          mat-icon-button
+                          (click)="openMemberDialog(member)"
+                          [disabled]="isEditingShares()"
+                          [attr.aria-label]="'Modifier ' + member.member_name"
+                        >
+                          <mat-icon aria-hidden="true">edit</mat-icon>
+                        </button>
                         <button
                           mat-icon-button
                           (click)="removeMember(member.member_id)"
@@ -252,6 +303,23 @@
                   }
                 </tbody>
               </table>
+            </div>
+
+            <!-- Total participation avec indicateur visuel -->
+            <div
+              class="consortium-participation-total"
+              [class.consortium-participation-total--ok]="totalParticipation() === 100"
+              [class.consortium-participation-total--error]="totalParticipation() !== 100"
+              role="status"
+              [attr.aria-label]="'Total des parts : ' + totalParticipation() + ' %'"
+            >
+              <mat-icon aria-hidden="true" style="font-size:1rem;width:1rem;height:1rem;">{{
+                totalParticipation() === 100 ? 'check_circle' : 'error'
+              }}</mat-icon>
+              Total : <strong>{{ totalParticipation() }} %</strong>
+              @if (totalParticipation() !== 100) {
+                <span style="font-weight:400;">&mdash; doit être exactement 100 %</span>
+              }
             </div>
           }
         </section>
@@ -267,7 +335,7 @@
 
         <!-- Détail accordions membres -->
         <section class="consortium-card consortium-card--accordions">
-          <h3 class="consortium-card-title print:text-xl">Détail par membre (Backend en attente)</h3>
+          <h2 class="consortium-card-title print:text-xl">Détail par membre (Backend en attente)</h2>
           @for (member of currentConsortium()?.members; track member.member_id) {
             <app-consortium-member-accordion
               [member]="member"
@@ -285,6 +353,7 @@
         class="consortium-footer print:hidden"
         role="navigation"
         aria-label="Actions du consortium"
+        [attr.aria-busy]="isCalculating()"
       >
         <button
           data-testid="consortium-recalculate-btn"
