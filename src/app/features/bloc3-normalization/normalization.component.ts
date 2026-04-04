@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
@@ -39,21 +39,20 @@ import {
   styleUrls: ['./normalization.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NormalizationComponent {
+export class NormalizationComponent implements OnInit {
   private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private caseService = inject(CaseService);
-  private snackBar = inject(MatSnackBar);
-
-  public caseId = signal<string>('');
+  private readonly router = inject(Router);
+  private readonly caseService = inject(CaseService);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
 
-  public normalizedData = signal<FinancialStatementNormalizedSchema | null>(null);
-  public isLoading = signal<boolean>(true);
-  public isComputingRatios = signal<boolean>(false);
-  public isRecalculating = signal<boolean>(false);
-  public loadError = signal<boolean>(false);
+  public readonly caseId = signal<string>('');
+  public readonly normalizedData = signal<FinancialStatementNormalizedSchema | null>(null);
+  public readonly isLoading = signal<boolean>(true);
+  public readonly isComputingRatios = signal<boolean>(false);
+  public readonly isRecalculating = signal<boolean>(false);
+  public readonly loadError = signal<boolean>(false);
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
@@ -72,7 +71,6 @@ export class NormalizationComponent {
           this.isLoading.set(false);
         },
         error: () => {
-          // On API error (including 500): show error state
           this.normalizedData.set(null);
           this.isLoading.set(false);
           this.loadError.set(true);

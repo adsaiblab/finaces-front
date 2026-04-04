@@ -22,7 +22,7 @@
         Erreur de chargement
       </h2>
       <p class="text-sm text-[color:var(--color-content-secondary)] max-w-xs">
-        Les données de normalisation n'ont pas pu être récupérées. Vérifiez que les financières ont bien été saisies.
+        Les données de normalisation n’ont pas pu être récupérées. Vérifiez que les financières ont bien été saisies.
       </p>
       <button mat-stroked-button color="primary" (click)="navigateBackToFinancials()"
         aria-label="Retour aux financières">
@@ -66,6 +66,7 @@
         }
         <button mat-stroked-button color="primary"
           [disabled]="isRecalculating() || isLoading()"
+          [attr.aria-busy]="isRecalculating()"
           (click)="recalculate()"
           aria-label="Recalculer la normalisation"
           data-testid="normalization-recalculate-btn">
@@ -83,14 +84,14 @@
     @if (!normalizedData()) {
       <div class="flex flex-col items-center justify-center gap-4 text-center py-16"
         data-testid="normalization-empty-state">
-        <span class="material-icons text-5xl text-[color:var(--color-content-tertiary)]" aria-hidden="true">
+        <span class="material-icons text-5xl text-[color:var(--color-content-disabled)]" aria-hidden="true">
           calculate
         </span>
         <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
           Aucune donnée normalisée
         </h2>
         <p class="text-sm text-[color:var(--color-content-secondary)] max-w-xs">
-          Les financières n'ont pas encore été normalisées.
+          Les financières n’ont pas encore été normalisées.
           Cliquez sur <strong>Recalculate</strong> pour lancer la normalisation.
         </p>
       </div>
@@ -130,6 +131,7 @@
 
     <button mat-flat-button color="primary"
       [disabled]="isComputingRatios() || isLoading() || !normalizedData()"
+      [attr.aria-busy]="isComputingRatios()"
       (click)="computeRatios()"
       aria-label="Calculer les ratios financiers"
       class="finaces-primary-btn px-8"
