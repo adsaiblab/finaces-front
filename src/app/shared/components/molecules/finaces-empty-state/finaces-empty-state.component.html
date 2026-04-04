@@ -1,9 +1,16 @@
 <div
   class="empty-state-host flex flex-col items-center justify-center p-8 md:p-12 text-center bg-surface-default border border-dashed border-border-strong rounded-xl"
+  [attr.data-testid]="testId() || null"
+  role="status"
+  [attr.aria-label]="title()"
 >
   <!-- Icône avec animation pulse subtile -->
   <div class="empty-icon-wrapper w-20 h-20 bg-surface-hover rounded-full flex items-center justify-center mb-5 md:w-24 md:h-24">
-    <span class="material-icons text-content-tertiary text-4xl md:text-5xl">{{ icon() }}</span>
+    <mat-icon
+      class="text-content-tertiary"
+      aria-hidden="true"
+      [fontIcon]="resolvedIcon()"
+    ></mat-icon>
   </div>
 
   <h3 class="empty-title text-xl font-bold text-content-primary mb-2">{{ title() }}</h3>
