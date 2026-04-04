@@ -3,3 +3,98 @@
   width: 100%;
   height: 100%;
 }
+
+/* ============================================================
+   Scroll horizontal mobile — hint visuel en fondu droite
+   ============================================================ */
+.table-scroll-wrapper {
+  position: relative;
+
+  /* Fondu droite indiquant le scroll possible */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--space-10, 2.5rem); /* 40px */
+    background: linear-gradient(
+      to left,
+      var(--color-surface, #fff),
+      transparent
+    );
+    pointer-events: none;
+    /* Masqué dès que le parent est assez large pour la table */
+    opacity: 1;
+    transition: opacity 200ms ease;
+  }
+
+  /* Sur grands écrans (1000px+) la table ne déborde plus */
+  @media (min-width: 1000px) {
+    &::after {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+/* ============================================================
+   Touch-targets — mat-icon-button et boutons étapes
+   ============================================================ */
+.step-btn {
+  min-width: 44px  !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ============================================================
+   Responsive — affichage mobile < 640px
+   ============================================================ */
+@media (max-width: 639px) {
+  /* Réduit le padding extérieur du conteneur racine */
+  :host > div {
+    padding: var(--space-4, 1rem);
+  }
+
+  /* En-tête : titre + bouton en colonne */
+  .flex.items-center.justify-between.mb-6 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4, 1rem);
+
+    button[mat-flat-button] {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Barre de filtres : scroll horizontal natif sur mobile */
+  .flex.flex-wrap.items-center.gap-2[role='group'] {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-2, 0.5rem);
+    -webkit-overflow-scrolling: touch;
+
+    /* Masque la scrollbar sur webkit */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    button {
+      white-space: nowrap;
+      flex-shrink: 0;
+      /* Touch-target minimum */
+      min-height: 44px;
+      padding-top: var(--space-2, 0.5rem);
+      padding-bottom: var(--space-2, 0.5rem);
+    }
+  }
+
+  /* Champ de recherche pleine largeur (déjà géré par w-full sm:w-64
+     mais on force au cas où) */
+  input[type='text'] {
+    width: 100%;
+  }
+}
