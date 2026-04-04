@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  computed,
+} from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -51,25 +57,45 @@ export class DashboardComponent {
   private readonly caseService = inject(CaseService);
   readonly UI_LABELS = UI_LABELS;
 
-  // ─── Error state signals ─────────────────────────────────────────────
-  readonly statsError   = signal<ErrorCode | null>(null);
-  readonly casesError   = signal<ErrorCode | null>(null);
-  readonly tensionsError = signal<ErrorCode | null>(null);
-  readonly chartError   = signal<ErrorCode | null>(null);
+  // ─── Loading signals (granulaires — 1 par stream) ────────────────────
+  readonly isKpiLoading      = signal<boolean>(true);
+  readonly isCasesLoading    = signal<boolean>(true);
+  readonly isTensionsLoading = signal<boolean>(true);
+  readonly isChartLoading    = signal<boolean>(true);
 
-  // ─── Retry counter signals (pour FinacesInlineErrorComponent) ─────────────
+  // ─── Error state signals ─────────────────────────────────────────────
+  readonly statsError    = signal<ErrorCode | null>(null);
+  readonly casesError    = signal<ErrorCode | null>(null);
+  readonly tensionsError = signal<ErrorCode | null>(null);
+  readonly chartError    = signal<ErrorCode | null>(null);
+
+  // ─── Retry counter signals ────────────────────────────────────────────
   readonly statsRetryCount    = signal<number>(0);
   readonly casesRetryCount    = signal<number>(0);
   readonly tensionsRetryCount = signal<number>(0);
   readonly chartRetryCount    = signal<number>(0);
 
-  // ─── Data streams ─────────────────────────────────────────────────
+  // ─── Computed : tensions empty-state ─────────────────────────────────
+  // true quand le stream a répondu, sans erreur, et sans données
+  readonly tensionsLoaded = signal<TensionAlertOut[]>([]);
+  readonly hasTensionsData = computed(
+    () => !this.isTensionsLoading() && !this.tensionsError() && this.tensionsLoaded().length > 0,
+  );
+  readonly tensionsEmpty = computed(
+    () => !this.isTensionsLoading() && !this.tensionsError() && this.tensionsLoaded().length === 0,
+  );
+
+  // ─── Data streams ─────────────────────────────────────────────────────
   readonly stats$: Observable<DashboardStatsOut | null> = this.caseService
     .getDashboardStats()
     .pipe(
-      tap(() => this.statsError.set(null)),
+      tap(() => {
+        this.statsError.set(null);
+        this.isKpiLoading.set(false);
+      }),
       catchError(() => {
         this.statsError.set('server');
+        this.isKpiLoading.set(false);
         return of(null);
       }),
     );
@@ -77,9 +103,13 @@ export class DashboardComponent {
   readonly recentCases$: Observable<EvaluationCaseDetailOut[]> = this.caseService
     .getRecentCases(5)
     .pipe(
-      tap(() => this.casesError.set(null)),
+      tap(() => {
+        this.casesError.set(null);
+        this.isCasesLoading.set(false);
+      }),
       catchError(() => {
         this.casesError.set('server');
+        this.isCasesLoading.set(false);
         return of([]);
       }),
     );
@@ -87,9 +117,14 @@ export class DashboardComponent {
   readonly tensions$: Observable<TensionAlertOut[]> = this.caseService
     .getActiveTensionCases()
     .pipe(
-      tap(() => this.tensionsError.set(null)),
+      tap((data) => {
+        this.tensionsError.set(null);
+        this.isTensionsLoading.set(false);
+        this.tensionsLoaded.set(data);
+      }),
       catchError(() => {
         this.tensionsError.set('server');
+        this.isTensionsLoading.set(false);
         return of([]);
       }),
     );
@@ -97,19 +132,32 @@ export class DashboardComponent {
   readonly chartData$: Observable<ConvergenceChartOut | null> = this.caseService
     .getConvergenceChart(30)
     .pipe(
-      tap(() => this.chartError.set(null)),
+      tap(() => {
+        this.chartError.set(null);
+        this.isChartLoading.set(false);
+      }),
       catchError(() => {
         this.chartError.set('server');
+        this.isChartLoading.set(false);
         return of(null);
       }),
     );
 
-  // ─── Retry handlers ───────────────────────────────────────────────
-  // Note: un vrai retry nécessite une logique de re-subscription.
-  // Ces handlers incrémentent le compteur pour le composant InlineError
-  // et réinitialisent le signal d'erreur pour déclencher un nouveau rendu.
-  onRetryStats():    void { this.statsRetryCount.update(n => n + 1);    this.statsError.set(null); }
-  onRetryCases():    void { this.casesRetryCount.update(n => n + 1);    this.casesError.set(null); }
-  onRetryTensions(): void { this.tensionsRetryCount.update(n => n + 1); this.tensionsError.set(null); }
-  onRetryChart():    void { this.chartRetryCount.update(n => n + 1);    this.chartError.set(null); }
+  // ─── Retry handlers ───────────────────────────────────────────────────
+  onRetryStats(): void {
+    this.statsRetryCount.update((n) => n + 1);
+    this.statsError.set(null);
+  }
+  onRetryCases(): void {
+    this.casesRetryCount.update((n) => n + 1);
+    this.casesError.set(null);
+  }
+  onRetryTensions(): void {
+    this.tensionsRetryCount.update((n) => n + 1);
+    this.tensionsError.set(null);
+  }
+  onRetryChart(): void {
+    this.chartRetryCount.update((n) => n + 1);
+    this.chartError.set(null);
+  }
 }
