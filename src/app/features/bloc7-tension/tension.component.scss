@@ -1,4 +1,111 @@
+// ────────────────────────────────────────────────────────────────────
+// Bloc 7 — Tension MCC / IA
+// Règles : 0 rgba hardcodé, 0 valeur pixel arbitraire, tokens CSS partout
+// touch-targets 44px, responsive mobile-first
+// ────────────────────────────────────────────────────────────────────
+
 :host {
   display: block;
   height: 100%;
+}
+
+// ─── Conteneur racine ─────────────────────────────────────────────────────────────
+.tension-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-4);
+  padding-bottom: calc(var(--space-16) + var(--space-12)); // laisse de la place pour la barre fixe
+  width: 100%;
+  height: 100%;
+
+  @media (min-width: 768px)  { padding: var(--space-6); padding-bottom: calc(var(--space-16) + var(--space-8)); }
+  @media (min-width: 1024px) { padding: var(--space-8); padding-bottom: calc(var(--space-16) + var(--space-8)); }
+}
+
+// ─── En-tête ─────────────────────────────────────────────────────────────────────
+.tension-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border-default);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.tension-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-content-primary);
+  margin: 0;
+
+  mat-icon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+}
+
+.tension-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-content-secondary);
+  margin: var(--space-1) 0 0 0;
+}
+
+// ─── Contenu principal ────────────────────────────────────────────────────────────
+.tension-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  flex: 1;
+}
+
+// ─── Barre de navigation fixe (bas) ────────────────────────────────────────────
+// Offset sidebar géré par --sidebar-width (défini dans le layout principal)
+// — 0 sur mobile, 256px sur desktop. Remplace md:left-64 Tailwind.
+.tension-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  // Offset sidebar sur desktop :
+  @media (min-width: 768px) {
+    left: var(--sidebar-width, 256px);
+  }
+  background-color: var(--color-surface-card);
+  border-top: 1px solid var(--color-border-default);
+  // 0 rgba hardcodé — shadow via token
+  box-shadow: var(--shadow-md);
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+
+  @media (min-width: 1024px) {
+    padding: var(--space-4) var(--space-12);
+  }
+}
+
+// ─── Bouton retour ───────────────────────────────────────────────────────────────────
+.tension-back-btn {
+  min-height: 44px;   // touch-target WCAG
+  min-width:  44px;
+  color: var(--color-content-secondary);
+
+  &:hover { color: var(--color-content-primary); }
+}
+
+// ─── Label décision en attente ─────────────────────────────────────────────────────
+.tension-decision-pending {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-content-secondary);
 }
