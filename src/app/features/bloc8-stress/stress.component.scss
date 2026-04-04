@@ -1,30 +1,35 @@
+// ─────────────────────────────────────────────────────────────────────
+// Bloc 8 — Stress Test
+// Règles : 0 rgba hardcodé, tokens CSS partout, touch-target 44px
+// ─────────────────────────────────────────────────────────────────────
+
 :host {
   display: block;
   height: 100%;
 }
 
-/* ─── Layout principal ─────────────────────────────────────────── */
+// ─── Conteneur racine ────────────────────────────────────────────────────
 .stress-host {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 1.5rem;
-  gap: 1.5rem;
-  padding-bottom: 5rem; // espace pour le footer sticky
+  padding: var(--space-4);
+  gap: var(--space-6);
+  // Laisse de la place pour le footer sticky
+  padding-bottom: calc(var(--space-16) + var(--space-8));
 
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
+  @media (min-width: 768px)  { padding: var(--space-6); padding-bottom: calc(var(--space-16) + var(--space-8)); }
+  @media (min-width: 1024px) { padding: var(--space-8); padding-bottom: calc(var(--space-16) + var(--space-8)); }
 }
 
-/* ─── Header ───────────────────────────────────────────────────── */
+// ─── En-tête ──────────────────────────────────────────────────────────────────
 .stress-header {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
   border-bottom: 1px solid var(--color-border-default);
-  padding-bottom: 1.5rem;
+  padding-bottom: var(--space-6);
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -35,24 +40,79 @@
   h1 {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 1.25rem;
+    gap: var(--space-3);
+    font-size: var(--text-xl);
     font-weight: 600;
     color: var(--color-content-primary);
+    margin: 0;
   }
 
   .stress-subtitle {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--color-content-secondary);
-    margin-top: 0.25rem;
+    margin-top: var(--space-1);
   }
 }
 
-/* ─── Main layout ──────────────────────────────────────────────── */
+// ─── Toggle CONTRACT / MACRO / SHOCK ────────────────────────────────────
+.stress-tab-bar {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-1);
+  overflow-x: auto; // scroll horizontal sur mobile si l'espace manque
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-1); // évite que la scrollbar coupe le focus ring
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.stress-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  min-height: 44px; // touch-target WCAG
+  min-width: 44px;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-content-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  cursor: pointer;
+  transition: color var(--transition-interactive),
+              background var(--transition-interactive),
+              border-color var(--transition-interactive);
+
+  &:hover:not(.stress-tab--active) {
+    background: var(--color-surface-offset);
+    color: var(--color-content-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  mat-icon {
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+}
+
+.stress-tab--active {
+  color: var(--color-primary);
+  background: var(--color-primary-highlight);
+  border-bottom-color: var(--color-primary);
+}
+
+// ─── Layout principal ────────────────────────────────────────────────────
 .stress-main {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-6);
   flex: 1;
 
   @media (min-width: 1280px) {
@@ -61,99 +121,107 @@
   }
 }
 
-.stress-params-panel {
+.stress-tab-panel {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-6);
   width: 100%;
 
   @media (min-width: 1280px) {
-    width: 33.333%;
+    flex-direction: row;
+    align-items: flex-start;
   }
+}
+
+.stress-params-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+
+  @media (min-width: 1280px) { width: 33.333%; }
 }
 
 .stress-results-panel {
   width: 100%;
 
-  @media (min-width: 1280px) {
-    width: 66.666%;
-  }
+  @media (min-width: 1280px) { width: 66.666%; }
 }
 
-/* ─── Footer sticky ───────────────────────────────────────────── */
+// ─── Footer sticky ──────────────────────────────────────────────────────
+// Offset sidebar géré par --sidebar-width (défini dans le shell layout)
+// 0 rgba hardcodé : shadow via token
 .stress-footer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+
+  @media (min-width: 1024px) {
+    left: var(--sidebar-width, 256px);
+    padding: var(--space-4) var(--space-12);
+  }
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: var(--space-4) var(--space-6);
   background: var(--color-surface-card);
   border-top: 1px solid var(--color-border-default);
-  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md); // remplace rgba(0,0,0,0.05)
   z-index: 20;
 
-  @media (min-width: 1024px) {
-    left: 16rem; // offset sidebar desktop
-    padding: 1rem 3rem;
-  }
-
-  // Touch-targets 44px minimum
   button {
     min-height: 44px;
     min-width: 44px;
   }
 }
 
-/* ─── Bouton primaire ─────────────────────────────────────────── */
+// ─── Bouton primaire ─────────────────────────────────────────────────────
 .finaces-primary-btn {
   background-color: var(--color-primary);
   color: var(--color-content-inverse);
 
-  &:hover:not([disabled]) {
-    filter: brightness(1.1);
-  }
+  &:hover:not([disabled]) { filter: brightness(1.1); }
 }
 
-/* ─── Error wrapper ───────────────────────────────────────────── */
+// ─── Error wrappers ─────────────────────────────────────────────────────
 .stress-error-wrapper,
 .stress-simulation-error {
-  padding: 1rem 0;
+  padding: var(--space-4) 0;
 }
 
-/* ─── Empty state ─────────────────────────────────────────────── */
+// ─── État vide ───────────────────────────────────────────────────────────
 .stress-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 1rem;
-  gap: 0.75rem;
+  padding: var(--space-16) var(--space-4);
+  gap: var(--space-3);
   color: var(--color-content-secondary);
   text-align: center;
 
   mat-icon {
-    font-size: 3rem;
-    width: 3rem;
-    height: 3rem;
+    font-size: var(--space-12);
+    width: var(--space-12);
+    height: var(--space-12);
     color: var(--color-content-tertiary);
   }
 
   .stress-empty-title {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--color-content-primary);
   }
 
   .stress-empty-subtitle {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     max-width: 36ch;
   }
 }
 
-/* ─── Skeleton loader ─────────────────────────────────────────── */
+// ─── Skeleton loader ───────────────────────────────────────────────────
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
@@ -162,66 +230,53 @@
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-surface-offset, #f0f0f0) 25%,
-    var(--color-surface-dynamic, #e8e8e8) 50%,
-    var(--color-surface-offset, #f0f0f0) 75%
+    var(--color-surface-offset)  25%,
+    var(--color-surface-dynamic) 50%,
+    var(--color-surface-offset)  75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
 
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
+  @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 
 .skeleton-header {
-  height: 64px;
+  height: var(--space-16);
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 }
 
 .skeleton-block {
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 
 .stress-skeleton {
-  padding: 1.5rem;
-
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
+  padding: var(--space-4);
+  @media (min-width: 768px) { padding: var(--space-8); }
 }
 
 .stress-skeleton-body {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
 
-  @media (min-width: 1280px) {
-    flex-direction: row;
-  }
+  @media (min-width: 1280px) { flex-direction: row; }
 }
 
 .stress-skeleton-panel {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
   width: 100%;
-
-  @media (min-width: 1280px) {
-    width: 33%;
-  }
+  @media (min-width: 1280px) { width: 33%; }
 }
 
 .stress-skeleton-results {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
   width: 100%;
-
-  @media (min-width: 1280px) {
-    width: 67%;
-  }
+  @media (min-width: 1280px) { width: 67%; }
 }
