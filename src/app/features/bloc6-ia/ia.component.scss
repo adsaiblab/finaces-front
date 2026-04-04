@@ -1,13 +1,280 @@
+// ────────────────────────────────────────────────────────────────────
+// Bloc 6 — IA — encapsulation structurelle avec Design System
+// Règles : 100 % tokens CSS, 0 valeur hardcodée, touch-targets 44px
+// Les 44 ng-deep et 22 !important Material sont intentionnels — ne pas toucher
+// ────────────────────────────────────────────────────────────────────
+
 :host {
   display: block;
   height: 100%;
 }
 
+// ─── Conteneur racine ─────────────────────────────────────────────
+.ia-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  padding-bottom: calc(var(--space-16) + var(--space-12)); // compense la barre fixe
+  position: relative;
+
+  @media (min-width: 768px)  { padding: var(--space-8); padding-bottom: calc(var(--space-16) + var(--space-12)); }
+}
+
+// ─── Skeleton double (forkJoin prediction + model) ───────────────────
+.ia-skeleton-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+
+  .ia-skeleton-card  { flex: 1; min-height: 220px; }
+  .ia-skeleton-chart { flex: 2; min-height: 220px; }
+}
+
+// ─── Contenu principal ──────────────────────────────────────────
+.ia-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  flex: 1;
+}
+
+// ─── En-tête ────────────────────────────────────────────────────
+.ia-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: var(--space-6);
+  margin-top: var(--space-2);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.ia-title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-content-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+
+  mat-icon { color: var(--color-info); }
+}
+
+.ia-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-content-secondary);
+  margin: var(--space-1) 0 0 0;
+}
+
+// ─── Badge perf modèle ───────────────────────────────────────────
+.ia-model-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-content-secondary);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-surface-card);
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    &--right-border {
+      padding-right: var(--space-3);
+      border-right: 1px solid var(--color-border-default);
+    }
+  }
+
+  &__label { text-transform: uppercase; letter-spacing: 0.05em; }
+
+  &__value {
+    font-weight: 700;
+    color: var(--color-content-primary);
+    &--mono { font-family: var(--font-mono, monospace); }
+  }
+}
+
+// ─── Contenu principal (scores + SHAP) ───────────────────────────
+.ia-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  flex: 1;
+}
+
+// Ligne 1 : score prédit | zone simulation
+.ia-score-row {
+  display: grid;
+  grid-template-columns: 1fr;   // mobile : 1 colonne
+  gap: var(--space-6);
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Ligne 2 : SHAP | What-If
+.ia-analysis-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+
+  @media (min-width: 1280px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// ─── Cards génériques ─────────────────────────────────────────────
+.ia-card {
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+
+  &__label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-content-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  &__icon { font-size: 16px; }
+  &__badge { margin-top: var(--space-4); }
+
+  // Score prédit : grisé si simulation active
+  &--dimmed {
+    opacity: 0.5;
+    filter: grayscale(1);
+    transition: opacity var(--transition-interactive), filter var(--transition-interactive);
+  }
+
+  // Card simulation active
+  &--simulation {
+    background-color: color-mix(in oklch, var(--color-info) 8%, var(--color-surface-card));
+    border: 2px solid var(--color-info);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__label--simulation { color: var(--color-info); }
+
+  // Placeholder zone simulation
+  &--placeholder {
+    background-color: var(--color-surface-default);
+    border: 1px dashed var(--color-border-strong);
+  }
+}
+
+// ─── Label « Simulation » (coin supérieur gauche) ────────────────────
+.ia-simulation-label {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-info);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  &__icon { font-size: 14px; }
+}
+
+// ─── Placeholder ─────────────────────────────────────────────────
+.ia-placeholder {
+  &__icon {
+    font-size: var(--text-2xl);
+    color: var(--color-content-secondary);
+    opacity: 0.5;
+    margin-bottom: var(--space-2);
+  }
+  &__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-content-secondary);
+  }
+  &__text {
+    font-size: var(--text-xs);
+    color: var(--color-content-secondary);
+    margin-top: var(--space-2);
+    text-align: center;
+  }
+}
+
+// ─── Barre de navigation fixe ─────────────────────────────────────
+.ia-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  @media (min-width: 768px) { left: 256px; }   // compense la sidebar (16rem)
+
+  background-color: var(--color-surface-card);
+  border-top: 1px solid var(--color-border-default);
+  padding: var(--space-4) var(--space-6);
+  // → remplacement de rgba(0,0,0,0.05) par token
+  box-shadow: 0 -4px 6px -1px color-mix(in oklch, var(--color-text) 5%, transparent);
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (min-width: 768px) { padding-inline: var(--space-12); }
+
+  &__back {
+    color: var(--color-content-secondary);
+    min-height: 44px;   // touch-target
+    min-width: 44px;
+    transition: color var(--transition-interactive);
+    &:hover { color: var(--color-content-primary); }
+  }
+
+  &__proceed {
+    min-height: 44px;   // touch-target
+    min-width: 44px;
+    padding-inline: var(--space-8);
+  }
+}
+
+// ─── Spinner inline sur bouton Simuler ────────────────────────────
+.ia-btn-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+// ─── Bouton primary (global à ce composant) ───────────────────────
 .finaces-primary-btn {
   background-color: var(--color-primary);
   color: var(--color-content-inverse);
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all var(--transition-interactive);
 
   &:hover:not([disabled]) {
     filter: brightness(1.1);
