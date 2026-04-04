@@ -5,7 +5,316 @@
   position: relative;
 }
 
-// Ensure the inline input looks clean inside the table
+/* ─── Layout principal ─────────────────────────────────────────── */
+.consortium-host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.5rem;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+/* ─── En-tête ───────────────────────────────────────────────────── */
+.consortium-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.consortium-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-content-primary);
+}
+
+.consortium-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-content-secondary);
+  margin-top: 0.25rem;
+}
+
+.consortium-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.consortium-jv-badge {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-surface-default);
+}
+
+/* ─── Alertes ─────────────────────────────────────────────────────── */
+.consortium-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.consortium-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+
+  &--error {
+    background: var(--color-error-lighter, #fef2f2);
+    border-left: 4px solid var(--color-error-default);
+    color: var(--color-error-dark);
+  }
+}
+
+/* ─── Grille de cartes ──────────────────────────────────────────── */
+.consortium-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.consortium-card {
+  background: var(--color-surface-card);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border-default);
+  padding: 1.5rem;
+
+  &--center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &--pillars {
+    @media (min-width: 1024px) {
+      grid-column: span 2;
+    }
+  }
+
+  &--members {
+    @media (min-width: 1024px) {
+      grid-column: span 2;
+    }
+  }
+
+  &--synergy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &--accordions {
+    @media (min-width: 1024px) {
+      grid-column: span 3;
+    }
+  }
+}
+
+.consortium-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-content-primary);
+  margin-bottom: 1rem;
+}
+
+.consortium-big-score {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-content-primary);
+  margin-bottom: 0.75rem;
+}
+
+.consortium-label-secondary {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-content-secondary);
+}
+
+.consortium-simulated-note {
+  font-size: 0.75rem;
+  color: var(--color-content-tertiary);
+  font-style: italic;
+  background: var(--color-surface-disabled);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+/* ─── Piliers ─────────────────────────────────────────────────────── */
+.consortium-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.consortium-pillar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.75rem;
+  background: var(--color-surface-hover);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-default);
+}
+
+.consortium-pillar-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-content-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.consortium-pillar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.consortium-pillar-score {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+/* ─── Tableau des membres ──────────────────────────────────────── */
+.consortium-members-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.consortium-members-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  // Touch-targets 44px minimum
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Scroll horizontal sur mobile avec hint visuel */
+.table-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+
+  // Gradient hint à droite indiquant qu’il y a plus de contenu
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 2rem;
+    background: linear-gradient(to right, transparent, var(--color-surface-card));
+    pointer-events: none;
+
+    @media (min-width: 640px) {
+      display: none;
+    }
+  }
+}
+
+.consortium-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 480px; // force scroll sur mobile
+
+  thead tr {
+    border-bottom: 2px solid var(--color-border-default);
+
+    th {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-content-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: left;
+
+      &.text-center { text-align: center; }
+      &.text-right  { text-align: right; }
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--color-border-default);
+    transition: background 180ms ease;
+
+    &:hover {
+      background: var(--color-surface-hover);
+    }
+
+    td {
+      padding: 0.75rem 0.5rem;
+      color: var(--color-content-primary);
+
+      &.text-center { text-align: center; }
+      &.text-right  { text-align: right; }
+      &.font-medium { font-weight: 500; }
+      &.font-bold   { font-weight: 700; }
+
+      // Touch-target pour les boutons icon dans les cellules
+      button[mat-icon-button] {
+        min-height: 44px;
+        min-width: 44px;
+      }
+
+      .text-error {
+        color: var(--color-error-default);
+      }
+    }
+  }
+}
+
+/* Inline edit — intentionnel via ng-deep */
 ::ng-deep table .inline-edit-field .mat-mdc-form-field-wrapper {
   padding-bottom: 0 !important;
 }
@@ -17,5 +326,157 @@
     height: 24px;
     padding-top: 0;
     padding-bottom: 0;
+  }
+}
+
+/* ─── Synergie ─────────────────────────────────────────────────────── */
+.consortium-synergy-icon {
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-success-default);
+  margin-bottom: 0.75rem;
+}
+
+.consortium-synergy-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-content-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.consortium-synergy-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-success-default);
+  background: var(--color-success-lighter);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+/* ─── Empty states ───────────────────────────────────────────────── */
+.consortium-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  gap: 0.75rem;
+  text-align: center;
+
+  mat-icon {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-content-tertiary);
+  }
+
+  button {
+    min-height: 44px;
+    margin-top: 0.5rem;
+  }
+}
+
+.consortium-empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-content-primary);
+}
+
+.consortium-empty-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-content-secondary);
+  max-width: 36ch;
+}
+
+.consortium-not-initialized {
+  padding: 3rem 1rem;
+  color: var(--color-content-secondary);
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────── */
+.consortium-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border-default);
+  padding-top: 1.5rem;
+  margin-top: 0.5rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  button {
+    min-height: 44px;
+    width: 100%;
+
+    @media (min-width: 640px) {
+      width: auto;
+    }
+  }
+}
+
+/* ─── Error wrapper ───────────────────────────────────────────── */
+.consortium-error-wrapper {
+  padding: 1.5rem;
+}
+
+/* ─── Skeleton loader ─────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-offset, #f0f0f0) 25%,
+    var(--color-surface-dynamic, #e8e8e8) 50%,
+    var(--color-surface-offset, #f0f0f0) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.skeleton-header {
+  height: 56px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-block {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.consortium-skeleton {
+  padding: 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+.consortium-skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
