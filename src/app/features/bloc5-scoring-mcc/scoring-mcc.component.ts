@@ -22,6 +22,7 @@ import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finace
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import {
   FinacesInlineErrorComponent,
+  FinacesSkeletonLoaderComponent,
   ErrorCode,
 } from '../../shared/components';
 import { ScoringMccService } from './services/scoring-mcc.service';
@@ -47,6 +48,7 @@ import {
     FinacesScoreGaugeComponent,
     FinacesRiskBadgeComponent,
     FinacesInlineErrorComponent,
+    FinacesSkeletonLoaderComponent,
     NgClass,
   ],
   templateUrl: './scoring-mcc.component.html',
@@ -60,7 +62,7 @@ export class ScoringMccComponent {
   private readonly snackBar       = inject(MatSnackBar);
   private readonly destroyRef     = inject(DestroyRef);
 
-  // ─── State signals ────────────────────────────────────────────────
+  // ─── State signals ──────────────────────────────────────────────────────
   readonly caseId      = signal<string>('');
   readonly scoringData = signal<ScoringMccSchema | null>(null);
   readonly isLoading   = signal<boolean>(true);
@@ -70,7 +72,7 @@ export class ScoringMccComponent {
   readonly loadError  = signal<ErrorCode | null>(null);
   readonly retryCount = signal<number>(0);
 
-  // ─── Computed signals ────────────────────────────────────────
+  // ─── Computed signals ──────────────────────────────────────────────
   readonly hasNoPillars = computed(
     () => !this.isLoading() && !this.loadError() && (this.scoringData()?.pillars?.length ?? 0) === 0,
   );
@@ -96,7 +98,7 @@ export class ScoringMccComponent {
     this.loadScoring();
   }
 
-  // ─── Chargement ────────────────────────────────────────────────
+  // ─── Chargement ──────────────────────────────────────────────
   private loadScoring(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
@@ -124,14 +126,14 @@ export class ScoringMccComponent {
       });
   }
 
-  // ─── Retry (appelé par FinacesInlineErrorComponent) ─────────────────────
+  // ─── Retry (appelé par FinacesInlineErrorComponent) ────────────────────────
   onRetryLoad(): void {
     this.retryCount.update(n => n + 1);
     this.loadError.set(null);
     this.loadScoring();
   }
 
-  // ─── Override ──────────────────────────────────────────────────
+  // ─── Override ─────────────────────────────────────────────────
   public handleOverride(payload: ScoreOverridePayload): void {
     this.isOverriding.set(true);
     this.scoringService
