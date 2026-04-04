@@ -5,6 +5,7 @@ import { delay } from 'rxjs/operators';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -28,6 +29,7 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
   imports: [
     MatIconModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTabsModule,
     ExerciseSelectorComponent,
@@ -44,25 +46,23 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
 })
 export class FinancialsComponent {
   private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  public caseId = signal<string>('');
+  public readonly caseId = signal<string>('');
 
-  // ✅ Le signal de routage interne pour piloter notre nouvelle Sidebar latérale
-  public activeTab = signal<'assets' | 'liabilities' | 'pnl' | 'cashflow' | 'others'>('assets');
+  public readonly activeTab = signal<'assets' | 'liabilities' | 'pnl' | 'cashflow' | 'others'>('assets');
 
-  public availableYears = signal<number[]>([2023, 2022, 2021]);
-  public currentExercise = signal<number>(2023);
-  public isSubmitting = signal<boolean>(false);
+  public readonly availableYears = signal<number[]>([2023, 2022, 2021]);
+  public readonly currentExercise = signal<number>(2023);
+  public readonly isSubmitting = signal<boolean>(false);
 
   // Signaux pour le Balance Check
-  public currentAssetsTotal = signal<number>(0);
-  public currentLiabilitiesTotal = signal<number>(0);
+  public readonly currentAssetsTotal = signal<number>(0);
+  public readonly currentLiabilitiesTotal = signal<number>(0);
 
   constructor() {
-    // Résolution robuste du caseId
     this.caseId.set(this.caseContext.caseId());
   }
 
@@ -94,7 +94,6 @@ export class FinancialsComponent {
     this.isSubmitting.set(true);
     this.snackBar.open('Normalisation en cours...', '', { duration: 2000 });
 
-    // Prototype Enterprise-Grade (Simulation sans backend)
     of(null)
       .pipe(delay(1500), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
