@@ -73,12 +73,31 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
+  border: 1px solid transparent;
   font-size: 0.875rem;
 
+  /* Suppression du border-left coloré (anti-pattern) —
+     différenciation via background + border + icône */
   &--error {
-    background: var(--color-error-lighter, #fef2f2);
-    border-left: 4px solid var(--color-error-default);
-    color: var(--color-error-dark);
+    background: var(--color-error-highlight);
+    border-color: oklch(from var(--color-error-default) l c h / 0.35);
+    color: var(--color-error-dark, var(--color-error-default));
+
+    mat-icon {
+      color: var(--color-error-default);
+      flex-shrink: 0;
+    }
+  }
+
+  &--warning {
+    background: var(--color-warning-highlight);
+    border-color: oklch(from var(--color-warning-default) l c h / 0.35);
+    color: var(--color-warning-dark, var(--color-warning-default));
+
+    mat-icon {
+      color: var(--color-warning-default);
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -100,7 +119,8 @@
 .consortium-card {
   background: var(--color-surface-card);
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  /* rgba hardcodé remplacé par token OKLCH adaptatif dark/light */
+  box-shadow: 0 1px 3px oklch(from var(--color-text) l c h / 0.08);
   border: 1px solid var(--color-border-default);
   padding: 1.5rem;
 
@@ -231,7 +251,6 @@
   flex-wrap: wrap;
   gap: 0.75rem;
 
-  // Touch-targets 44px minimum
   button {
     min-height: 44px;
     min-width: 44px;
@@ -244,7 +263,6 @@
   -webkit-overflow-scrolling: touch;
   position: relative;
 
-  // Gradient hint à droite indiquant qu’il y a plus de contenu
   &::after {
     content: '';
     position: absolute;
@@ -265,7 +283,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
-  min-width: 480px; // force scroll sur mobile
+  min-width: 560px; /* élargi pour les nouvelles colonnes role + risk */
 
   thead tr {
     border-bottom: 2px solid var(--color-border-default);
@@ -301,7 +319,6 @@
       &.font-medium { font-weight: 500; }
       &.font-bold   { font-weight: 700; }
 
-      // Touch-target pour les boutons icon dans les cellules
       button[mat-icon-button] {
         min-height: 44px;
         min-width: 44px;
@@ -311,6 +328,57 @@
         color: var(--color-error-default);
       }
     }
+  }
+}
+
+/* Badge rôle dans le tableau */
+.consortium-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &--leader {
+    background: var(--color-primary-highlight);
+    color: var(--color-primary-active);
+    border: 1px solid oklch(from var(--color-primary) l c h / 0.3);
+  }
+
+  &--member {
+    background: var(--color-surface-offset);
+    color: var(--color-content-secondary);
+    border: 1px solid var(--color-border-default);
+  }
+}
+
+/* Total participation — highlight si ≠ 100 */
+.consortium-participation-total {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  border: 1px solid transparent;
+
+  &--ok {
+    background: var(--color-success-highlight, var(--color-surface-hover));
+    color: var(--color-success-dark, var(--color-success-default));
+    border-color: oklch(from var(--color-success-default) l c h / 0.3);
+  }
+
+  &--error {
+    background: var(--color-error-highlight);
+    color: var(--color-error-dark, var(--color-error-default));
+    border-color: oklch(from var(--color-error-default) l c h / 0.3);
   }
 }
 
@@ -450,7 +518,7 @@
 
 .skeleton-header {
   height: 56px;
-  width: 100%;
+  width: 60%;
   margin-bottom: 1.5rem;
 }
 
@@ -467,6 +535,10 @@
   }
 }
 
+/* Grille skeleton représentative des vraies sections :
+   [score consolidé] [piliers agrégés]
+   [tableau membres (span 2)]
+   [synergie] */
 .consortium-skeleton-grid {
   display: grid;
   grid-template-columns: 1fr;
