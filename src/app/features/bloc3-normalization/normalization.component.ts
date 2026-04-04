@@ -51,6 +51,7 @@ export class NormalizationComponent {
   public isLoading = signal<boolean>(true);
   public isComputingRatios = signal<boolean>(false);
   public isRecalculating = signal<boolean>(false);
+  public loadError = signal<boolean>(false);
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
@@ -69,9 +70,10 @@ export class NormalizationComponent {
           this.isLoading.set(false);
         },
         error: () => {
-          // On API error (including 500): show empty state, no mock data
+          // On API error (including 500): show error state
           this.normalizedData.set(null);
           this.isLoading.set(false);
+          this.loadError.set(true);
         },
       });
   }

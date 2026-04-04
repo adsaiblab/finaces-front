@@ -1,13 +1,26 @@
-:host {
-  display: block;
-  width: 100%;
-  height: 100%;
+:host { display: block; height: 100%; }
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skel {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-offset) 25%,
+    var(--color-surface-dynamic) 50%,
+    var(--color-surface-offset) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: var(--color-surface-offset);
+  }
 }
 
-@media print {
-  // Ensure background colors print correctly
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+button, [role="button"] { min-height: 44px; }
+
+@media (max-width: 768px) {
+  .w-full.h-full.p-6 { padding: 1rem; }
 }

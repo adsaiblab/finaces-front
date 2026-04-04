@@ -58,6 +58,10 @@ export class GateComponent {
   case$!: Observable<EvaluationCaseDetailOut>;
   documents$!: Observable<GateDocumentOut[]>;
 
+  // State signals pour loading / erreur
+  loadError = signal<boolean>(false);
+  isLoading$ = new BehaviorSubject<boolean>(true);
+
   // State subjects pour la décision
   private decisionSubject = new BehaviorSubject<GateDecisionSchema | null>(null);
   decision$ = this.decisionSubject.asObservable();
@@ -96,12 +100,17 @@ export class GateComponent {
       : this.caseService.getCaseDetail(this.caseId());
 
     this.case$ = caseReq$.pipe(
+      tap(() => this.isLoading$.next(false)),
       catchError((err) => {
+        this.isLoading$.next(false);
+        this.loadError.set(true);
         this.snackBar.open('Case not strictly found on server.', 'Close', { duration: 3000 });
         throw err;
       }),
       shareReplay(1),
     );
+    // Lancer le chargement de façon eager
+    this.case$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     // 2. Setup Document Polling (Toutes les 2s + rafraîchissement manuel)
     this.documents$ = this.manualRefresh$.pipe(

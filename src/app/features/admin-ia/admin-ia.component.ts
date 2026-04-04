@@ -37,6 +37,7 @@ export class AdminIaComponent implements OnInit {
   dashboardData = signal<IaDashboardData | null>(null);
   convergenceData = signal<ConvergenceDataPoint[]>([]);
   isLoading = signal<boolean>(true);
+  loadError = signal<boolean>(false);
 
   ngOnInit(): void {
     this.loadDashboard();
@@ -44,6 +45,7 @@ export class AdminIaComponent implements OnInit {
 
   private loadDashboard(): void {
     this.isLoading.set(true);
+    this.loadError.set(false);
     this.iaService
       .getDashboardData()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -58,6 +60,7 @@ export class AdminIaComponent implements OnInit {
         },
         error: () => {
           this.isLoading.set(false);
+          this.loadError.set(true);
           this.snackBar.open('Error connecting to ML Ops backend.', 'Close', { duration: 3000 });
         },
       });

@@ -121,3 +121,67 @@
     }
   }
 }
+
+/* ── Shimmer animation ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skel {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-offset) 25%,
+    var(--color-surface-dynamic) 50%,
+    var(--color-surface-offset) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm, 4px);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: var(--color-surface-offset);
+  }
+}
+
+.skeleton-card { padding: 1.25rem 1.5rem; }
+.skel-title  { height: 1.5rem; width: 40%; margin-bottom: 0.5rem; }
+.skel-badge  { height: 1.75rem; width: 6rem; }
+.skel-col    { display: flex; flex-direction: column; gap: 0.75rem; }
+.skel-block  { height: 240px; border-radius: var(--radius-md, 6px); }
+
+/* ── États vides ── */
+.gate-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--color-content-secondary);
+  gap: 0.75rem;
+
+  mat-icon { font-size: 3rem; width: 3rem; height: 3rem; color: var(--color-content-tertiary); }
+  h2 { font-size: 1.25rem; font-weight: 600; color: var(--color-content-primary); }
+  p  { max-width: 36ch; }
+  .empty-hint { font-size: 0.875rem; color: var(--color-content-tertiary); }
+
+  &--inline {
+    padding: 2rem 1rem;
+    background: var(--color-surface-card);
+    border: 1px dashed var(--color-border-default);
+    border-radius: var(--radius-lg, 8px);
+    height: 100%;
+  }
+}
+
+/* ── Touch targets ── */
+button, [role="button"] { min-height: 44px; min-width: 44px; }
+
+/* ── Mobile responsive — padding fluides ── */
+@media (max-width: 768px) {
+  .gate-layout { padding: 1rem; gap: 1rem; }
+  .gate-header { padding: 1rem; }
+  .page-title  { font-size: 1.125rem; }
+}

@@ -1,31 +1,72 @@
-@if (case$ | async; as caseData) {
+@if (isLoading$ | async) {
+  <!-- SKELETON LOADER -->
+  <div class="gate-layout" aria-busy="true" aria-label="Chargement du document gate">
+    <div class="gate-header skeleton-card">
+      <div class="skel skel-title"></div>
+      <div class="skel skel-badge"></div>
+    </div>
+    <div class="gate-grid">
+      <div class="skel-col"><div class="skel skel-block"></div></div>
+      <div class="skel-col"><div class="skel skel-block"></div></div>
+      <div class="skel-col"><div class="skel skel-block"></div></div>
+    </div>
+  </div>
+} @else if (loadError()) {
+  <!-- ÉTAT ERREUR -->
+  <div class="gate-empty-state" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <h2>Impossible de charger le dossier</h2>
+    <p>Une erreur serveur est survenue. Réessayez ou revenez au tableau de bord.</p>
+    <button mat-flat-button color="primary" (click)="onGoToDashboard()" aria-label="Retour au tableau de bord">
+      Tableau de bord
+    </button>
+  </div>
+} @else if (case$ | async; as caseData) {
   <div class="gate-layout" data-testid="gate-root">
     <header class="gate-header">
       <div class="header-content">
         <div class="title-group">
           <h1 class="page-title">Document Gate — {{ caseData.bidder_name }}</h1>
-          <div class="breadcrumb">Cases &gt; {{ caseData.name }} &gt; Document Gate</div>
+          <div class="breadcrumb" aria-label="Fil d'Ariane">
+            Cases &gt; {{ caseData.name }} &gt; Document Gate
+          </div>
         </div>
         <div class="status-group">
-          <span class="status-badge" [ngClass]="caseData.status.toLowerCase()">{{ caseData.status }}</span>
+          <span
+            class="status-badge"
+            [ngClass]="caseData.status.toLowerCase()"
+            role="status"
+            [attr.aria-label]="'Statut : ' + caseData.status">
+            {{ caseData.status }}
+          </span>
         </div>
       </div>
     </header>
+
     <main class="gate-grid">
-      <section class="col-checklist">
-        <app-checklist-column [documents]="(documents$ | async) || []"> </app-checklist-column>
+      <section class="col-checklist" aria-label="Checklist documents">
+        @if ((documents$ | async)?.length === 0) {
+          <div class="gate-empty-state gate-empty-state--inline">
+            <mat-icon aria-hidden="true">folder_open</mat-icon>
+            <p>Aucun document reçu pour ce dossier.</p>
+            <span class="empty-hint">Uploadez les documents requis dans la colonne centrale.</span>
+          </div>
+        } @else {
+          <app-checklist-column [documents]="(documents$ | async) || []" />
+        }
       </section>
-      <section class="col-documents">
+
+      <section class="col-documents" aria-label="Gestion des documents">
         <app-documents-column
           [documents]="(documents$ | async) || []"
           (fileDropped)="onFileDropped($event)"
           (deleteDocument)="onDeleteDocument($event)"
           (downloadDocument)="onDownloadDocument($event)"
           (viewDetails)="onViewDetails($event)"
-        >
-        </app-documents-column>
+        />
       </section>
-      <section class="col-decision">
+
+      <section class="col-decision" aria-label="Décision Gate">
         <app-decision-column
           [decision]="decision$ | async"
           [isEvaluating]="(isEvaluating$ | async) || false"
@@ -34,8 +75,7 @@
           (goToFinancials)="onGoToFinancials()"
           (correctDocuments)="onCorrectDocuments()"
           (goToDashboard)="onGoToDashboard()"
-        >
-        </app-decision-column>
+        />
       </section>
     </main>
   </div>

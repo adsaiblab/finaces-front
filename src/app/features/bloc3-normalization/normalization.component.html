@@ -1,100 +1,151 @@
 <div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-24"
   data-testid="normalization-root">
+
+  <!-- ── SKELETON ── -->
   @if (isLoading()) {
-  <div class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
-    data-testid="normalization-loading-spinner">
-    <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-    <p class="text-[color:var(--color-content-secondary)] font-medium">
-      Loading normalized financial data...
-    </p>
-  </div>
+    <div class="absolute inset-0 flex flex-col gap-4 p-6 md:p-8 bg-[color:var(--color-surface-default)] z-10"
+      aria-busy="true" aria-label="Chargement de la normalisation" data-testid="normalization-loading-spinner">
+      <!-- Header skeleton -->
+      <div class="skel" style="height:2rem;width:35%;border-radius:6px"></div>
+      <div class="skel" style="height:1rem;width:55%;border-radius:4px"></div>
+      <div class="skel" style="height:1px;width:100%;border-radius:0;margin:0.5rem 0"></div>
+      <!-- Content skeleton -->
+      <div class="skel" style="height:120px;border-radius:8px"></div>
+      <div class="skel" style="height:200px;border-radius:8px"></div>
+      <div class="skel" style="height:160px;border-radius:8px"></div>
+    </div>
   }
 
-  <header
-    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
-    <div>
-      <div class="flex items-center gap-3 mb-1">
-        <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
-          IFRS Normalization
-        </h1>
-        @if (normalizedData()) {
-        <span
-          class="px-3 py-1 rounded-full bg-[color:var(--color-success)] bg-opacity-10 text-[color:var(--color-success)] text-xs font-bold flex items-center gap-1 border border-[color:var(--color-success)] border-opacity-20"
-          data-testid="normalization-status-badge">
-          <mat-icon class="text-[14px] w-[14px] h-[14px]">check_circle</mat-icon>
-          NORMALIZED
-        </span>
-        }
-      </div>
-      <p class="text-[color:var(--color-content-secondary)] text-sm">
-        Case #{{ caseId() }} — Review the accounting restatements applied by the system.
+  <!-- ── ERREUR ── -->
+  @if (!isLoading() && loadError()) {
+    <div class="flex flex-col items-center justify-center h-full gap-4 text-center py-16"
+      role="alert" data-testid="normalization-error-state">
+      <span class="material-icons text-5xl text-[color:var(--color-error)]" aria-hidden="true">
+        error_outline
+      </span>
+      <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
+        Erreur de chargement
+      </h2>
+      <p class="text-sm text-[color:var(--color-content-secondary)] max-w-xs">
+        Les données de normalisation n'ont pas pu être récupérées. Vérifiez que les financières ont bien été saisies.
       </p>
-    </div>
-
-    <div class="flex items-center gap-4">
-      @if (normalizedData(); as data) {
-      <div
-        class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
-        data-testid="normalization-fiscal-year-display">
-        Fiscal Year:
-        <span class="font-bold text-[color:var(--color-content-primary)]">{{
-          data.fiscal_year
-          }}</span>
-      </div>
-      }
-
-      <button mat-stroked-button color="primary" [disabled]="isRecalculating() || isLoading()" (click)="recalculate()"
-        data-testid="normalization-recalculate-btn">
-        @if (!isRecalculating()) {
-        <mat-icon>refresh</mat-icon>
-        }
-        @if (isRecalculating()) {
-        <mat-spinner diameter="20" class="mr-2"></mat-spinner>
-        }
-        Recalculate
+      <button mat-stroked-button color="primary" (click)="navigateBackToFinancials()"
+        aria-label="Retour aux financières">
+        <mat-icon>arrow_back</mat-icon> Retour aux Financières
       </button>
     </div>
-  </header>
-
-  @if (normalizedData(); as data) {
-  <main class="flex flex-col gap-8 flex-1">
-    <app-accounting-standard-section [data]="data" />
-
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
-          Comparative Statement
-        </h2>
-        <span class="text-sm text-[color:var(--color-content-secondary)]">Raw Data vs IFRS Norms</span>
-      </div>
-      <app-comparative-table [data]="data" (rowClick)="scrollToAdjustments()" />
-    </div>
-
-    <div id="adjustments-section" class="scroll-mt-6" data-testid="normalization-adjustments-section">
-      <app-adjustments-list [adjustments]="data.adjustments" />
-    </div>
-  </main>
   }
 
+  <!-- ── CONTENU PRINCIPAL ── -->
+  @if (!isLoading() && !loadError()) {
+    <header
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
+      <div>
+        <div class="flex items-center gap-3 mb-1">
+          <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)]">
+            IFRS Normalization
+          </h1>
+          @if (normalizedData()) {
+            <span
+              class="px-3 py-1 rounded-full bg-[color:var(--color-success)] bg-opacity-10 text-[color:var(--color-success)] text-xs font-bold flex items-center gap-1 border border-[color:var(--color-success)] border-opacity-20"
+              role="status" aria-label="Statut : normalisé"
+              data-testid="normalization-status-badge">
+              <mat-icon class="text-[14px] w-[14px] h-[14px]" aria-hidden="true">check_circle</mat-icon>
+              NORMALIZED
+            </span>
+          }
+        </div>
+        <p class="text-[color:var(--color-content-secondary)] text-sm">
+          Case #{{ caseId() }} — Review the accounting restatements applied by the system.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        @if (normalizedData(); as data) {
+          <div
+            class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
+            data-testid="normalization-fiscal-year-display">
+            Fiscal Year:
+            <span class="font-bold text-[color:var(--color-content-primary)]">{{ data.fiscal_year }}</span>
+          </div>
+        }
+        <button mat-stroked-button color="primary"
+          [disabled]="isRecalculating() || isLoading()"
+          (click)="recalculate()"
+          aria-label="Recalculer la normalisation"
+          data-testid="normalization-recalculate-btn">
+          @if (isRecalculating()) {
+            <mat-spinner diameter="20" class="mr-2" />
+          } @else {
+            <mat-icon aria-hidden="true">refresh</mat-icon>
+          }
+          Recalculate
+        </button>
+      </div>
+    </header>
+
+    <!-- ── ÉTAT VIDE ── -->
+    @if (!normalizedData()) {
+      <div class="flex flex-col items-center justify-center gap-4 text-center py-16"
+        data-testid="normalization-empty-state">
+        <span class="material-icons text-5xl text-[color:var(--color-content-tertiary)]" aria-hidden="true">
+          calculate
+        </span>
+        <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
+          Aucune donnée normalisée
+        </h2>
+        <p class="text-sm text-[color:var(--color-content-secondary)] max-w-xs">
+          Les financières n'ont pas encore été normalisées.
+          Cliquez sur <strong>Recalculate</strong> pour lancer la normalisation.
+        </p>
+      </div>
+    }
+
+    <!-- ── DATA ── -->
+    @if (normalizedData(); as data) {
+      <main class="flex flex-col gap-8 flex-1">
+        <app-accounting-standard-section [data]="data" />
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">
+              Comparative Statement
+            </h2>
+            <span class="text-sm text-[color:var(--color-content-secondary)]">Raw Data vs IFRS Norms</span>
+          </div>
+          <app-comparative-table [data]="data" (rowClick)="scrollToAdjustments()" />
+        </div>
+        <div id="adjustments-section" class="scroll-mt-6" data-testid="normalization-adjustments-section">
+          <app-adjustments-list [adjustments]="data.adjustments" />
+        </div>
+      </main>
+    }
+  }
+
+  <!-- ── FOOTER (toujours visible) ── -->
   <div
     class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
-    <button mat-button (click)="navigateBackToFinancials()"
+    <button mat-button
+      (click)="navigateBackToFinancials()"
       class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
+      aria-label="Retour aux financières"
       data-testid="normalization-back-btn">
-      <mat-icon>arrow_back</mat-icon>
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
       Back to Financials
     </button>
 
-    <button mat-flat-button color="primary" [disabled]="isComputingRatios() || isLoading() || !normalizedData()" (click)="computeRatios()"
-      class="finaces-primary-btn px-8" data-testid="normalization-compute-ratios-btn">
+    <button mat-flat-button color="primary"
+      [disabled]="isComputingRatios() || isLoading() || !normalizedData()"
+      (click)="computeRatios()"
+      aria-label="Calculer les ratios financiers"
+      class="finaces-primary-btn px-8"
+      data-testid="normalization-compute-ratios-btn">
       @if (isComputingRatios()) {
-      <mat-spinner diameter="20" class="mr-2"></mat-spinner>
-      }
-      @if (!isComputingRatios()) {
-      <span>Compute Financial Ratios</span>
-      }
-      @if (!isComputingRatios()) {
-      <mat-icon class="ml-2">navigate_next</mat-icon>
+        <mat-spinner diameter="20" class="mr-2" />
+      } @else {
+        <ng-container>
+          <span>Compute Financial Ratios</span>
+          <mat-icon class="ml-2" aria-hidden="true">navigate_next</mat-icon>
+        </ng-container>
       }
     </button>
   </div>

@@ -1,1 +1,0 @@
-import{Z as t,ua as s}from"./chunk-R2QXGGQJ.js";var o=class e{_caseId=s("");caseId=this._caseId.asReadonly();setCaseId(a){this._caseId.set(a)}static \u0275fac=function(r){return new(r||e)};static \u0275prov=t({token:e,factory:e.\u0275fac,providedIn:"root"})};export{o as a};

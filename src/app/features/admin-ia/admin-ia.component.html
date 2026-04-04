@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between mb-6">
     <div>
       <h1 data-testid="admin-ia-header" class="text-2xl font-bold text-content-primary flex items-center gap-3">
-        <span class="material-icons text-primary-default">psychology</span>
+        <span class="material-icons text-primary-default" aria-hidden="true">psychology</span>
         AI / ML Operations Center
       </h1>
       <p class="text-sm text-content-secondary mt-1">
@@ -20,7 +20,7 @@
     data-testid="admin-ia-disclaimer-banner"
     class="mb-6 bg-info-lighter border-l-4 border-info-default p-4 rounded text-sm text-info-dark flex items-center gap-3"
   >
-    <span class="material-icons">info</span>
+    <span class="material-icons" aria-hidden="true">info</span>
     <p>
       <strong>Disclaimer :</strong> Le scoring IA est un outil d'aide à la décision, non
       décisionnel. Le score MCC reste l'unique source d'approbation. Ce tableau de bord sert
@@ -28,11 +28,61 @@
     </p>
   </div>
 
-  @if (!isLoading() && dashboardData()) {
+  <!-- ── SKELETON LOADER ── -->
+  @if (isLoading()) {
+    <div
+      data-testid="admin-ia-loading-spinner"
+      class="absolute inset-0 bg-surface-background/80 flex flex-col gap-4 p-6 z-50"
+      aria-busy="true" aria-label="Chargement du tableau de bord IA"
+    >
+      <!-- Models table skeleton -->
+      <div class="skel" style="height:2rem;width:40%;border-radius:6px"></div>
+      <div class="skel" style="height:200px;border-radius:8px"></div>
+      <!-- Metrics skeleton -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div class="skel" style="height:180px;border-radius:8px"></div>
+        <div class="skel xl:col-span-2" style="height:180px;border-radius:8px"></div>
+      </div>
+      <!-- Alerts skeleton -->
+      <div class="skel" style="height:120px;border-radius:8px"></div>
+    </div>
+  }
+
+  <!-- ── ÉTAT ERREUR ── -->
+  @if (!isLoading() && loadError()) {
+    <div
+      data-testid="admin-ia-error-state"
+      class="flex flex-col items-center justify-center h-96 gap-4 text-center py-16"
+      role="alert"
+    >
+      <span class="material-icons text-5xl text-content-tertiary" aria-hidden="true">cloud_off</span>
+      <h2 class="text-xl font-semibold text-content-primary">Connexion MLOps impossible</h2>
+      <p class="text-sm text-content-secondary max-w-xs">
+        Impossible de récupérer les données du moteur ML. Vérifiez que le backend IA est opérationnel.
+      </p>
+      <button mat-stroked-button color="primary"
+        (click)="ngOnInit()"
+        aria-label="Réessayer la connexion au backend IA"
+        data-testid="admin-ia-retry-btn">
+        <span class="material-icons mr-1 text-sm" aria-hidden="true">refresh</span> Réessayer
+      </button>
+    </div>
+  }
+
+  <!-- ── CONTENU DASHBOARD ── -->
+  @if (!isLoading() && !loadError() && dashboardData()) {
     <div data-testid="admin-ia-dashboard-grid" class="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <div class="xl:col-span-3">
-        <app-model-list [models]="dashboardData()!.models" (viewConfig)="openModelConfig($event)">
-        </app-model-list>
+        @if (dashboardData()!.models.length === 0) {
+          <div class="flex flex-col items-center justify-center gap-3 py-12 text-center"
+            data-testid="admin-ia-empty-models">
+            <span class="material-icons text-4xl text-content-tertiary" aria-hidden="true">smart_toy</span>
+            <p class="text-content-secondary text-sm">Aucun modèle IA enregistré dans le système.</p>
+          </div>
+        } @else {
+          <app-model-list [models]="dashboardData()!.models" (viewConfig)="openModelConfig($event)">
+          </app-model-list>
+        }
       </div>
 
       <div class="xl:col-span-1 h-full">
@@ -50,16 +100,6 @@
       <div class="xl:col-span-3">
         <app-monitoring-alerts [alerts]="dashboardData()!.alerts"></app-monitoring-alerts>
       </div>
-    </div>
-  }
-
-  @if (isLoading()) {
-    <div
-      data-testid="admin-ia-loading-spinner"
-      class="absolute inset-0 bg-surface-background/80 flex flex-col justify-center items-center z-50"
-    >
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>
-      <p class="text-content-secondary font-medium">Connecting to MLOps Engine...</p>
     </div>
   }
 </div>

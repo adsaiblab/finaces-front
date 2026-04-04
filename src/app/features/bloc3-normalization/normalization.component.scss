@@ -1,22 +1,37 @@
-:host {
-  display: block;
-  height: 100%;
+:host { display: block; height: 100%; }
+
+/* Shimmer — même pattern que Gate */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skel {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-offset) 25%,
+    var(--color-surface-dynamic) 50%,
+    var(--color-surface-offset) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: var(--color-surface-offset);
+  }
 }
 
 .finaces-primary-btn {
   background-color: var(--color-primary);
   color: var(--color-content-inverse);
   font-weight: 500;
+  min-height: 44px;
   transition: all 0.2s ease;
-
   &:hover:not([disabled]) {
     filter: brightness(1.1);
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
   }
-
-  &[disabled] {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
+  &[disabled] { opacity: 0.7; cursor: not-allowed; }
 }
+
+button, [role="button"] { min-height: 44px; }

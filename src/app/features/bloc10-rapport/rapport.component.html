@@ -3,6 +3,21 @@
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
 @if (!isLoading()) {
+@if (loadError()) {
+  <div class="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-12"
+    role="alert" data-testid="rapport-error-state">
+    <span class="material-icons text-5xl text-content-tertiary" aria-hidden="true">description</span>
+    <h2 class="text-xl font-semibold text-content-primary">Rapport indisponible</h2>
+    <p class="text-sm text-content-secondary max-w-xs">
+      Impossible de charger les données du dossier. Vérifiez votre connexion ou revenez au tableau de bord.
+    </p>
+    <button mat-flat-button color="primary" (click)="returnToDashboard()"
+      aria-label="Retour au tableau de bord">
+      Tableau de bord
+    </button>
+  </div>
+}
+@if (!loadError()) {
 <div class="w-full h-full p-6 bg-surface-background print:bg-surface-card print:p-0" data-testid="rapport-root">
 
   <!-- ─── Header Bar ──────────────────────────────────────── -->
@@ -24,8 +39,9 @@
 
     <div class="flex gap-3 flex-wrap" data-testid="rapport-actions-bar">
       <button mat-stroked-button (click)="returnToDashboard()" [disabled]="isExporting() || isBuilding()"
+        aria-label="Retour au tableau de bord"
         data-testid="rapport-dashboard-btn">
-        <span class="material-icons mr-1 text-sm">arrow_back</span> Dashboard
+        <span class="material-icons mr-1 text-sm" aria-hidden="true">arrow_back</span> Dashboard
       </button>
 
       <!-- T41: Generate Report button -->
@@ -419,9 +435,10 @@
       <h2 class="text-xl font-bold text-content-primary">
         <span class="material-icons align-middle mr-2">history</span>Audit Trail
       </h2>
-      <button mat-stroked-button (click)="exportAuditCsv()" matTooltip="Download CSV"
+      <button mat-stroked-button (click)="exportAuditCsv()" matTooltip="Télécharger la piste d'audit au format CSV"
+        aria-label="Exporter la piste d'audit en CSV"
         data-testid="rapport-audit-export-csv-btn">
-        <span class="material-icons mr-1 text-sm">download</span> Export CSV
+        <span class="material-icons mr-1 text-sm" aria-hidden="true">download</span> Export CSV
       </button>
     </div>
     <div class="border border-border-default rounded-lg overflow-hidden" data-testid="rapport-audit-trail-list">
@@ -458,11 +475,28 @@
   }
 </div>
 }
+}
 
-<!-- ─── Loading State ──────────────────────────────────── -->
 @if (isLoading()) {
-<div class="w-full h-full flex flex-col justify-center items-center" data-testid="rapport-loading-spinner">
-  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>
-  <p class="text-content-secondary">Loading Report Data...</p>
-</div>
+  <!-- SKELETON RAPPORT -->
+  <div class="w-full h-full flex flex-col gap-6 p-6"
+    aria-busy="true" aria-label="Chargement du rapport" data-testid="rapport-loading-spinner">
+    <!-- Header skeleton -->
+    <div class="flex justify-between items-start gap-4">
+      <div class="flex flex-col gap-2" style="flex:1">
+        <div class="skel" style="height:2rem;width:40%;border-radius:6px"></div>
+        <div class="skel" style="height:1rem;width:60%;border-radius:4px"></div>
+      </div>
+      <div class="flex gap-3">
+        <div class="skel" style="height:40px;width:100px;border-radius:6px"></div>
+        <div class="skel" style="height:40px;width:130px;border-radius:6px"></div>
+      </div>
+    </div>
+    <!-- Sections skeleton -->
+    <div class="skel" style="height:2rem;width:55%;border-radius:6px;margin-top:1rem"></div>
+    <div class="skel" style="height:120px;border-radius:8px"></div>
+    <div class="skel" style="height:2rem;width:45%;border-radius:6px;margin-top:0.5rem"></div>
+    <div class="skel" style="height:200px;border-radius:8px"></div>
+    <div class="skel" style="height:160px;border-radius:8px"></div>
+  </div>
 }

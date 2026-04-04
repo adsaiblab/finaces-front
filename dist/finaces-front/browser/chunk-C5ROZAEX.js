@@ -1,1 +1,0 @@
-import{Mb as n,Nb as o,kb as i,kc as a}from"./chunk-R2QXGGQJ.js";var c=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=i({type:t,selectors:[["app-recevabilite"]],decls:2,vars:0,template:function(e,m){e&1&&(n(0,"h2"),a(1,"Bloc 1A : Recevabilit\xE9"),o())},encapsulation:2,changeDetection:0})};export{c as RecevabiliteComponent};

@@ -73,6 +73,7 @@ export class RapportComponent {
   isBuilding = signal<boolean>(false);
   isExporting = signal<boolean>(false);
   exportFormat = signal<string>('');
+  loadError = signal<boolean>(false);
 
   // ─── Computed ────────────────────────────────────────────
   sectionLabels = REPORT_SECTION_LABELS;
@@ -111,6 +112,7 @@ export class RapportComponent {
         },
         error: () => {
           this.isLoading.set(false);
+          this.loadError.set(true);
           this.snackBar.open('Error loading case data.', 'Close', { duration: 3000 });
         },
       });
