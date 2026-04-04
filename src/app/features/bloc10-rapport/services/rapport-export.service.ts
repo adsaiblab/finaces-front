@@ -5,7 +5,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, switchMap, tap } from 'rxjs';
 import { ReportService } from '../../../core/services/report.service';
-import { ExportResult } from '../../../core/models/report.model';
 
 @Injectable({
   providedIn: 'root',

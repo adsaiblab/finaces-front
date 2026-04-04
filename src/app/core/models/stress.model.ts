@@ -1,4 +1,3 @@
-import { StressMode } from './enums';
 
 // ============================================================================
 // Existing schemas (contract / legacy)

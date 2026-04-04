@@ -21,7 +21,7 @@ export class RatioCalculationService {
     return this.http
       .post<RatioSetGrouped>(`${this.apiUrl}/${caseId}/ratios/compute`, {}, { params })
       .pipe(
-        tap((result) => console.log('✅ [Ratios] Computed successfully:', result)),
+        tap((result) => console.warn('✅ [Ratios] Computed successfully:', result)),
         catchError((err) => {
           console.error('❌ [Ratios] Calculation error:', err);
           return throwError(

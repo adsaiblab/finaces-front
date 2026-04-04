@@ -28,12 +28,13 @@ import {
   ConsortiumMemberCreate,
 } from '../../core/models/consortium.model';
 import { EvaluationCaseDetailOut } from '../../core/models/case.model';
+import { PillarLabel } from '../../core/models/enums';
 import { ConsortiumMemberDialogComponent } from './components/consortium-member-dialog/consortium-member-dialog.component';
 import { ConfirmDialogComponent } from '../../shared/components/molecules/confirm-dialog/confirm-dialog.component';
 import { ConsortiumMemberAccordionComponent } from './components/consortium-member-accordion/consortium-member-accordion.component';
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
-import { FinacesInlineErrorComponent } from '../../shared/components/atoms/finaces-inline-error/finaces-inline-error.component';
+import { FinacesInlineErrorComponent } from '../../shared/components/molecules/finaces-inline-error/finaces-inline-error.component';
 import { catchError, of, delay, finalize, EMPTY } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -114,9 +115,9 @@ export class ConsortiumComponent {
     const combinedFinalScore = this.currentConsortium()?.combined_scorecard?.final_score || 0;
     const generateCombinedPillar = (offset: number) => {
       const score = Math.max(1, Math.min(5, combinedFinalScore + offset));
-      let label: any = 'MODERATE';
-      if (score >= 4) label = 'STRONG';
-      if (score < 2) label = 'WEAK';
+      let label: PillarLabel = PillarLabel.MODERATE;
+      if (score >= 4) label = PillarLabel.STRONG;
+      if (score < 2) label = PillarLabel.WEAK;
       return { score, label };
     };
     return {
@@ -240,7 +241,7 @@ export class ConsortiumComponent {
       });
   }
 
-  saveSharesInline(editedShares: Record<string, number>): void {
+  saveSharesInline(_editedShares: Record<string, number>): void {
     if (this.totalParticipation() !== 100) {
       this.snackBar.open('Le total des parts doit être égal à 100 %', 'Fermer');
       return;

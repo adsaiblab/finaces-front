@@ -8,7 +8,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Observable, BehaviorSubject, Subject, timer, of } from 'rxjs';
+import { Observable, BehaviorSubject, timer, of } from 'rxjs';
 import { switchMap, shareReplay, catchError, tap, filter, delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
@@ -88,7 +88,7 @@ export class GateComponent {
       contract_value: 1500000,
       contract_currency: 'EUR',
       contract_months: 24,
-      case_type: 'SINGLE' as any,
+      case_type: 'SINGLE' as EvaluationCaseDetailOut['case_type'],
       status: 'PENDING_GATE' as any,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

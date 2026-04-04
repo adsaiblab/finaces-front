@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { forkJoin, catchError, of, delay } from 'rxjs';
+import { forkJoin, of, delay } from 'rxjs';
 
 import { RatioCalculationService } from './services/ratio-calculation.service';
 import { environment } from '../../../environments/environment';
@@ -73,7 +73,7 @@ export class Bloc4RatiosComponent {
           this.ratioSet.set(data);
           this.isLoading.set(false);
         },
-        error: (err) => {
+        error: (_err) => {
           if (!environment.production) {
             console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
           }

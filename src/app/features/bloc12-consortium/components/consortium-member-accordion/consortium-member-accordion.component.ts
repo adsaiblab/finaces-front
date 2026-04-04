@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
 
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ConsortiumMember } from '../../../../core/models/consortium.model';
+import { PillarLabel } from '../../../../core/models/enums';
 import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { FinacesScoreGaugeComponent } from '../../../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { UiDetailedPillarScore, UiMemberDetailedScoring } from '../../consortium-ui.model';
@@ -39,12 +40,12 @@ export class ConsortiumMemberAccordionComponent {
     const memScore = mem.score || 0;
 
     // Simple deterministic mocks based on member ID and global score
-    const generatePillar = (name: string, weight: number): UiDetailedPillarScore => {
+    const generatePillar = (name: string, _weight: number): UiDetailedPillarScore => {
       // Mock score variance based on original score +/- some factor
       const score = Math.max(1, Math.min(5, memScore + (mem.member_id.charCodeAt(0) % 3) - 1));
-      let label: any = 'MODERATE';
-      if (score >= 4) label = 'STRONG';
-      if (score < 2) label = 'WEAK';
+      let label: PillarLabel = PillarLabel.MODERATE;
+      if (score >= 4) label = PillarLabel.STRONG;
+      if (score < 2) label = PillarLabel.WEAK;
 
       return {
         name,

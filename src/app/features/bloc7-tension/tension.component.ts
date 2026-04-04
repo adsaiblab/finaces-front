@@ -21,6 +21,8 @@ import { IaService } from '../../core/services/ia.service';
 import { TensionCalculatorService } from './services/tension-calculator.service';
 
 import { TensionAnalysisResult, AnalystDecisionPayload } from '../../core/models/tension.model';
+import { IAPredictionResult } from '../../core/models/ia.model';
+import { TensionLevel, ScoringMccSchema } from '../../core/models/scoring.model';
 import {
   FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
@@ -107,7 +109,7 @@ export class TensionComponent {
             this.loadMockTension();
             return;
           }
-          const result = this.tensionCalc.calculateTension(data.mcc as any, data.ia as any);
+          const result = this.tensionCalc.calculateTension(data.mcc as ScoringMccSchema, data.ia as unknown as IAPredictionResult);
           this.tensionData.set(result);
           this.isLoading.set(false);
         },
@@ -120,7 +122,7 @@ export class TensionComponent {
 
   private loadMockTension(): void {
     const mockResponse: TensionAnalysisResult = {
-      level: 'SEVERE' as any,
+      level: TensionLevel.SEVERE,
       direction: 'UP',
       delta_score: 1.2,
       mcc_class: 'MODERATE',

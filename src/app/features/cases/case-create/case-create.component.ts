@@ -10,7 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { CaseService } from '../../../core/services/case.service';
-import { CaseType, CaseStatus } from '../../../core/models/case.model';
+import { CaseType } from '../../../core/models/case.model';
 
 import { Step1MarketInfoComponent } from './steps/step1-market-info/step1-market-info.component';
 import { Step2BidderComponent } from './steps/step2-bidder/step2-bidder.component';
@@ -121,7 +121,7 @@ export class CaseCreateComponent {
     // MOCK PROPRE "ENTERPRISE-GRADE" (Prototypage UI)
     // Bypass l'API pour éviter les fausses erreurs et console polluée
     // ---------------------------------------------------------
-    console.log('✅ [MOCK] Payload formaté prêt pour le backend :', payload);
+    console.warn('✅ [MOCK] Payload formaté prêt pour le backend :', payload);
     this.snackBar.open('Mode Prototype : Dossier simulé avec succès', 'Fermer', {
       duration: 2000,
       panelClass: 'snack-success',

@@ -14,7 +14,7 @@ export class ScoringMccService {
 
   public getScoring(caseId: string): Observable<ScoringMccSchema> {
     return this.http.get<ScoringMccSchema>(`${this.apiUrl}/${caseId}/score`).pipe(
-      tap((result) => console.log('✅ [Scoring MCC] Fetched successfully:', result)),
+      tap((result) => console.warn('✅ [Scoring MCC] Fetched successfully:', result)),
       catchError((err) => {
         console.error('❌ [Scoring MCC] Fetch error:', err);
         return throwError(() => err);
@@ -29,7 +29,7 @@ export class ScoringMccService {
     return this.http
       .post<ScoringMccSchema>(`${this.apiUrl}/${caseId}/score/override`, payload)
       .pipe(
-        tap((result) => console.log('✅ [Scoring MCC] Override applied:', result)),
+        tap((result) => console.warn('✅ [Scoring MCC] Override applied:', result)),
         catchError((err) => {
           console.error('❌ [Scoring MCC] Override error:', err);
           return throwError(() => err);

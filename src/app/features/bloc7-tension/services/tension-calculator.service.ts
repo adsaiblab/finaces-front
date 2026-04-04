@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ScoringMccSchema, TensionLevel } from '../../../core/models/scoring.model';
+import { ScoringMccSchema, TensionLevel, PillarScore } from '../../../core/models/scoring.model';
 import { IAPredictionResult } from '../../../core/models/ia.model';
 import {
   TensionAnalysisResult,
@@ -50,7 +50,7 @@ export class TensionCalculatorService {
     }
 
     // 5. Build Pillar Comparisons (Simplified heuristic mapping for UX display)
-    const pillarsComparison: PillarComparison[] = mccData.pillars.map((p: any) => {
+    const pillarsComparison: PillarComparison[] = mccData.pillars.map((p: PillarScore) => {
       // Pseudo-random mapping based on SHAP could be done here,
       // but for UI consistency, we calculate a mock IA impact based on global delta.
       const mockIaImpact = parseFloat((p.score + delta * (p.weight / 100)).toFixed(2));

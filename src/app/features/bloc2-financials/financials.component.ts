@@ -78,7 +78,7 @@ export class FinancialsComponent {
     this.currentLiabilitiesTotal.set(event.total);
   }
 
-  public onPnlUpdate(event: {
+  public onPnlUpdate(_event: {
     netIncome: number;
     ebitda: number;
     data: FinancialStatementRawOut;
@@ -86,7 +86,7 @@ export class FinancialsComponent {
     // KPI Updates
   }
 
-  public onCashFlowUpdate(event: { netCashFlow: number; data: FinancialStatementRawOut }): void {
+  public onCashFlowUpdate(_event: { netCashFlow: number; data: FinancialStatementRawOut }): void {
     // KPI Updates
   }
 

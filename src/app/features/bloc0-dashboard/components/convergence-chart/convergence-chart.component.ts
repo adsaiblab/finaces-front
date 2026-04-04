@@ -58,7 +58,7 @@ export class ConvergenceChartComponent implements OnDestroy {
     effect(() => {
       const data = this.chartData();
       const canvas = this.canvasRef();
-      const isDark = this.themeService.isDarkMode(); // triggers reactivity on theme change
+      const _isDark = this.themeService.isDarkMode(); // triggers reactivity on theme change
       if (this.isBrowser && data && canvas) {
         if (this.chartInstance) {
           this.chartInstance.destroy();
@@ -78,7 +78,7 @@ export class ConvergenceChartComponent implements OnDestroy {
       try {
         const val = getComputedStyle(document.documentElement).getPropertyValue(name);
         return val && typeof val === 'string' && val.trim() !== '' ? val.trim() : fallback;
-      } catch (e) {
+      } catch (_e) {
         return fallback;
       }
     };

@@ -5,12 +5,10 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   CaseCreate,
-  CaseStatus,
   EvaluationCaseOut,
   EvaluationCaseDetailOut,
   CaseStatusResponse,
   StatusTransition,
-  BidderOut,
   DashboardStatsOut,
   ConvergenceChartOut,
   TensionAlertOut,

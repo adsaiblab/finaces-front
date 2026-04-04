@@ -60,4 +60,22 @@ export default [
   {
     ignores: ['dist/', 'node_modules/', '.angular/', 'src/test-setup.js'],
   },
+
+  // ── Test & E2E overrides ──────────────────────────────────
+  // Mocks in tests don't need the same strict typing as production code.
+  {
+    files: ['**/*.spec.ts', 'e2e/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+
+  // ── E2E global-setup: intentional console logs for CI debugging ──
+  {
+    files: ['e2e/global-setup.ts', 'e2e/global-teardown.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
 ];

@@ -14,7 +14,7 @@ export class CurrencyFormatPipe implements PipeTransform {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(value);
-    } catch (e) {
+    } catch (_e) {
       return `${value.toLocaleString(locale)} ${currency}`;
     }
   }

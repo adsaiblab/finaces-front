@@ -149,7 +149,7 @@ export class ExpertComponent {
     this.isSubmitting.set(true);
 
     const submission$ = environment.features.mockData
-      ? of({ id: 'mock-review-id', case_id: this.caseId } as any).pipe(delay(1500))
+      ? of({ id: 'mock-review-id', case_id: this.caseId } as unknown).pipe(delay(1500))
       : this.expertService.submitExpertReview(this.caseId, reviewPayload);
 
     submission$

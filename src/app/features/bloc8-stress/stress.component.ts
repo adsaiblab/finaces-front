@@ -18,7 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { StressService } from '../../core/services/stress.service';
-import { StressTestResponse, StressParameters, Milestone } from '../../core/models/stress.model';
+import { StressTestResponse, StressParameters, Milestone, StressScenarioInputSchema, StressScenarioResult } from '../../core/models/stress.model';
 import {
   FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
@@ -185,7 +185,7 @@ export class StressComponent {
     this.simulationError.set(null);
 
     this.stressService
-      .runCustomStressTest(this.caseId(), payload as any)
+      .runCustomStressTest(this.caseId(), payload as unknown as StressScenarioInputSchema)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: unknown) => {
@@ -202,7 +202,7 @@ export class StressComponent {
               if (current) {
                 this.stressData.set({
                   ...current,
-                  scenarios: current.scenarios.map((s: any) => ({
+                  scenarios: current.scenarios.map((s: StressScenarioResult) => ({
                     ...s,
                     min_cash_balance: s.min_cash_balance + 20_000,
                     cash_curve: s.cash_curve.map((c: number) => c + 20_000),
