@@ -19,11 +19,11 @@ const MOCK_STRESS_DATA = {
   },
   scenarios: [
     {
-      scenario_name: 'Référence',
+      scenario_name: 'Reference',
       description: 'Standard',
       min_cash_balance: 120000,
       months_in_negative: 0,
-      status: 'RESILIENT',
+      status: 'RESILIENT' as const,
       cash_curve: [],
     },
   ],
@@ -64,7 +64,7 @@ describe('StressComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  // ─── Création & init ────────────────────────────────────────────────
+  // --- Creation & init ---
   it('should create and load data on init', () => {
     expect(component).toBeTruthy();
     expect(mockStressService.getStressTests).toHaveBeenCalledWith('case-123');
@@ -75,30 +75,30 @@ describe('StressComponent', () => {
     expect(mockStressService.runCustomStressTest).toHaveBeenCalled();
   });
 
-  // ─── État initial des signals ──────────────────────────────────────────────
-  it('loadError() devrait être null par défaut', () => {
+  // --- Etat initial des signals ---
+  it('loadError() devrait etre null par defaut', () => {
     expect(component.loadError()).toBeNull();
   });
 
-  it('simulationError() devrait être null par défaut', () => {
+  it('simulationError() devrait etre null par defaut', () => {
     expect(component.simulationError()).toBeNull();
   });
 
-  it('retryCount() devrait être 0 par défaut', () => {
+  it('retryCount() devrait etre 0 par defaut', () => {
     expect(component.retryCount()).toBe(0);
   });
 
-  it('activeTab() devrait être CONTRACT par défaut', () => {
+  it('activeTab() devrait etre CONTRACT par defaut', () => {
     expect(component.activeTab()).toBe('CONTRACT');
   });
 
-  // ─── loadError (ErrorCode) ─────────────────────────────────────────────
-  it('loadError peut être positionné à "server" (ErrorCode)', () => {
+  // --- loadError (ErrorCode) ---
+  it('loadError peut etre positionne a "server" (ErrorCode)', () => {
     component.loadError.set('server');
     expect(component.loadError()).toBe('server');
   });
 
-  it('onRetryLoad() devrait réinitialiser loadError et incrémenter retryCount', () => {
+  it('onRetryLoad() devrait reinitialiser loadError et incrementer retryCount', () => {
     component.loadError.set('server');
     const before = component.retryCount();
     component.onRetryLoad();
@@ -106,57 +106,57 @@ describe('StressComponent', () => {
     expect(component.retryCount()).toBe(before + 1);
   });
 
-  // ─── simulationError (ErrorCode) ─────────────────────────────────────────
-  it('simulationError peut être positionné à "server"', () => {
+  // --- simulationError (ErrorCode) ---
+  it('simulationError peut etre positionne a "server"', () => {
     component.simulationError.set('server');
     expect(component.simulationError()).toBe('server');
   });
 
-  it('simulationError peut être effacé', () => {
+  it('simulationError peut etre efface', () => {
     component.simulationError.set('server');
     component.simulationError.set(null);
     expect(component.simulationError()).toBeNull();
   });
 
-  it('runSimulation() vide simulationError au début', () => {
+  it('runSimulation() vide simulationError au debut', () => {
     component.simulationError.set('server');
     component.runSimulation();
     expect(component.simulationError()).toBeNull();
   });
 
-  // ─── hasNoData computed ───────────────────────────────────────────────
-  it('hasNoData devrait être false quand stressData est défini', () => {
+  // --- hasNoData computed ---
+  it('hasNoData devrait etre false quand stressData est defini', () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.stressData.set(MOCK_STRESS_DATA);
     expect(component.hasNoData()).toBe(false);
   });
 
-  it('hasNoData devrait être true quand loading=false, pas d\'erreur, pas de données', () => {
+  it("hasNoData devrait etre true quand loading=false, pas d'erreur, pas de donnees", () => {
     component.isLoading.set(false);
     component.loadError.set(null);
     component.stressData.set(null);
     expect(component.hasNoData()).toBe(true);
   });
 
-  // ─── Toggle setTab() ──────────────────────────────────────────────────
-  it('setTab("MACRO") devrait changer activeTab à MACRO', () => {
+  // --- Toggle setTab() ---
+  it('setTab("MACRO") devrait changer activeTab a MACRO', () => {
     component.setTab('MACRO');
     expect(component.activeTab()).toBe('MACRO');
   });
 
-  it('setTab("SHOCK") devrait changer activeTab à SHOCK', () => {
+  it('setTab("SHOCK") devrait changer activeTab a SHOCK', () => {
     component.setTab('SHOCK');
     expect(component.activeTab()).toBe('SHOCK');
   });
 
-  it('setTab("CONTRACT") depuis SHOCK devrait revenir à CONTRACT', () => {
+  it('setTab("CONTRACT") depuis SHOCK devrait revenir a CONTRACT', () => {
     component.setTab('SHOCK');
     component.setTab('CONTRACT');
     expect(component.activeTab()).toBe('CONTRACT');
   });
 
-  // ─── Rendu template ────────────────────────────────────────────────────────
+  // --- Rendu template ---
   it('devrait afficher le skeleton (stress-loading-spinner) quand isLoading = true', async () => {
     component.isLoading.set(true);
     fixture.detectChanges();
@@ -165,7 +165,7 @@ describe('StressComponent', () => {
     expect(el).toBeTruthy();
   });
 
-  it('devrait masquer le skeleton après chargement', async () => {
+  it('devrait masquer le skeleton apres chargement', async () => {
     component.isLoading.set(false);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -173,7 +173,7 @@ describe('StressComponent', () => {
     expect(el).toBeFalsy();
   });
 
-  it('les 3 boutons de tabs devraient être dans le DOM quand le contenu est chargé', async () => {
+  it('les 3 boutons de tabs devraient etre dans le DOM quand le contenu est charge', async () => {
     component.isLoading.set(false);
     component.stressData.set(MOCK_STRESS_DATA);
     fixture.detectChanges();

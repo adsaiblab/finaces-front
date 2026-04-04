@@ -1,15 +1,15 @@
 <div class="tension-root" data-testid="tension-root">
 
-  <!-- ─── Skeleton — remplacement du mat-spinner overlay ────────────────────────── -->
+  <!-- Skeleton — remplacement du mat-spinner overlay -->
   @if (isLoading()) {
     <finaces-skeleton-loader
-      variant="detail"
+      variant="card"
       data-testid="tension-skeleton"
-      aria-label="Analyse de divergence MCC / IA en cours"
+      aria-label="Analyse de divergence MCC / IA en cours"
     />
   }
 
-  <!-- ─── Erreur de chargement forkJoin ──────────────────────────────────────────── -->
+  <!-- Erreur de chargement forkJoin -->
   @if (loadError() && !isLoading()) {
     <finaces-inline-error
       [errorCode]="loadError()!"
@@ -20,22 +20,22 @@
     />
   }
 
-  <!-- ─── En-tête (toujours visible sauf pendant le loading) ─────────────────────── -->
+  <!-- En-tête (toujours visible sauf pendant le loading) -->
   @if (!isLoading()) {
     <header class="tension-header" data-testid="tension-header">
       <div>
         <h1 class="tension-title">
           <mat-icon aria-hidden="true">compare_arrows</mat-icon>
-          Analyse de Tension MCC / IA
+          Analyse de Tension MCC / IA
         </h1>
         <p class="tension-subtitle">
-          Dossier #{{ caseId() }} — Divergences entre le score MCC officiel et le challenger IA.
+          Dossier #{{ caseId() }} — Divergences entre le score MCC officiel et le challenger IA.
         </p>
       </div>
     </header>
   }
 
-  <!-- ─── Contenu principal ───────────────────────────────────────────────────────── -->
+  <!-- Contenu principal -->
   @if (tensionData(); as data) {
     <main class="tension-content" data-testid="tension-main-content">
 
@@ -62,7 +62,7 @@
         data-testid="tension-pillars-table"
       />
 
-      <!-- Erreur de soumission décision analyste -->
+      <!-- Erreur de soumission decision analyste -->
       @if (submitError()) {
         <finaces-inline-error
           [errorCode]="submitError()!"
@@ -80,7 +80,7 @@
 
     </main>
 
-    <!-- ─── Barre de navigation bas ───────────────────────────────────────────── -->
+    <!-- Barre de navigation bas -->
     <div class="tension-bottom-bar" data-testid="tension-bottom-bar">
       <button
         mat-button
@@ -90,7 +90,7 @@
         aria-label="Retour vers l'analyse IA"
       >
         <mat-icon aria-hidden="true">arrow_back</mat-icon>
-        Retour au Modèle IA
+        Retour au Modele IA
       </button>
 
       <span
@@ -98,7 +98,7 @@
         data-testid="tension-decision-pending-label"
         aria-live="polite"
       >
-        Décision en attente.
+        Decision en attente.
       </span>
     </div>
   }
