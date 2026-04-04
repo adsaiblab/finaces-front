@@ -6,6 +6,7 @@ import {
   signal,
   computed,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -62,64 +63,59 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./consortium.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConsortiumComponent {
-  private readonly caseContext = inject(CaseContextService);
-  private readonly router = inject(Router);
-  private readonly caseService = inject(CaseService);
-  private readonly consortiumService = inject(ConsortiumService);
-  private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly fb = inject(FormBuilder);
-  private readonly destroyRef = inject(DestroyRef);
+export class ConsortiumComponent implements OnInit {
+  private readonly caseContext        = inject(CaseContextService);
+  private readonly router             = inject(Router);
+  private readonly caseService        = inject(CaseService);
+  private readonly consortiumService  = inject(ConsortiumService);
+  private readonly dialog             = inject(MatDialog);
+  private readonly snackBar           = inject(MatSnackBar);
+  private readonly fb                 = inject(FormBuilder);
+  private readonly destroyRef         = inject(DestroyRef);
 
-  caseId = '';
+  readonly caseId             = signal<string>('');
+  readonly currentCase        = signal<EvaluationCaseDetailOut | null>(null);
+  readonly currentConsortium  = signal<ConsortiumScorecardOutput | null>(null);
+  readonly isLoading          = signal<boolean>(false);
+  readonly isCalculating      = signal<boolean>(false);
+  readonly isEditingShares    = signal<boolean>(false);
+  readonly loadError          = signal<string | null>(null);
+  readonly retryCount         = signal<number>(0);
 
-  currentCase = signal<EvaluationCaseDetailOut | null>(null);
-  currentConsortium = signal<ConsortiumScorecardOutput | null>(null);
-  isLoading = signal<boolean>(false);
-  isCalculating = signal<boolean>(false);
-  isEditingShares = signal<boolean>(false);
-
-  /** Erreur de chargement initial (null = pas d'erreur) */
-  loadError = signal<string | null>(null);
-  /** Compteur de tentatives — incrémenté à chaque onRetryLoad() */
-  retryCount = signal<number>(0);
-
-  totalParticipation = computed(() => {
+  readonly totalParticipation = computed(() => {
     const data = this.currentConsortium();
     if (!data || !data.members) return 0;
     return data.members.reduce((sum, m) => sum + m.participation_pct, 0);
   });
 
-  /** Vrai quand le chargement est terminé, sans erreur, sans membres */
-  hasNoMembers = computed(() =>
+  readonly hasNoMembers = computed(() =>
     !this.isLoading() &&
     !this.loadError() &&
     (this.currentConsortium()?.members?.length ?? 0) === 0,
   );
 
-  leaderMember = computed(() => {
+  readonly leaderMember = computed(() => {
     return this.currentConsortium()?.members?.find((m) => m.role === 'LEADER') || null;
   });
 
-  isLeaderBlocking = computed(() => {
+  readonly isLeaderBlocking = computed(() => {
     const leader = this.leaderMember();
     return !!(leader && leader.score !== undefined && leader.score < 1.5);
   });
 
-  weakLinkMemberId = computed(() => {
+  readonly weakLinkMemberId = computed(() => {
     return this.currentConsortium()?.weakest_member_id || null;
   });
 
-  detailedCombinedPillars = computed(() => {
+  readonly detailedCombinedPillars = computed(() => {
     const mems = this.currentConsortium()?.members || [];
     if (mems.length === 0) {
       return {
-        liquidity: { score: 0, label: 'N/A' },
-        solvency: { score: 0, label: 'N/A' },
+        liquidity:     { score: 0, label: 'N/A' },
+        solvency:      { score: 0, label: 'N/A' },
         profitability: { score: 0, label: 'N/A' },
-        capacity: { score: 0, label: 'N/A' },
-        quality: { score: 0, label: 'N/A' },
+        capacity:      { score: 0, label: 'N/A' },
+        quality:       { score: 0, label: 'N/A' },
       } as Record<string, { score: number; label: string }>;
     }
     const combinedFinalScore = this.currentConsortium()?.combined_scorecard?.final_score || 0;
@@ -127,21 +123,21 @@ export class ConsortiumComponent {
       const score = Math.max(1, Math.min(5, combinedFinalScore + offset));
       let label: PillarLabel = PillarLabel.MODERATE;
       if (score >= 4) label = PillarLabel.STRONG;
-      if (score < 2) label = PillarLabel.WEAK;
+      if (score < 2)  label = PillarLabel.WEAK;
       return { score, label };
     };
     return {
-      liquidity: generateCombinedPillar(0.3),
-      solvency: generateCombinedPillar(-0.2),
+      liquidity:     generateCombinedPillar(0.3),
+      solvency:      generateCombinedPillar(-0.2),
       profitability: generateCombinedPillar(0.1),
-      capacity: generateCombinedPillar(-0.4),
-      quality: generateCombinedPillar(0.5),
+      capacity:      generateCombinedPillar(-0.4),
+      quality:       generateCombinedPillar(0.5),
     } as Record<string, { score: number; label: string }>;
   });
 
   ngOnInit(): void {
-    this.caseId = this.caseContext.caseId();
-    if (!this.caseId) {
+    this.caseId.set(this.caseContext.caseId());
+    if (!this.caseId()) {
       this.router.navigate(['/dashboard']);
       return;
     }
@@ -159,7 +155,7 @@ export class ConsortiumComponent {
     this.isLoading.set(true);
     this.loadError.set(null);
     this.caseService
-      .getCaseDetail(this.caseId)
+      .getCaseDetail(this.caseId())
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => {
@@ -206,7 +202,7 @@ export class ConsortiumComponent {
 
     const req$ = environment.features.mockData
       ? of(MOCK_CONSORTIUM).pipe(delay(800))
-      : this.consortiumService.getConsortium(this.caseId);
+      : this.consortiumService.getConsortium(this.caseId());
 
     req$
       .pipe(
@@ -235,8 +231,8 @@ export class ConsortiumComponent {
         if (result) {
           this.isLoading.set(true);
           const req$ = member
-            ? this.consortiumService.updateMember(this.caseId, member.member_id, result)
-            : this.consortiumService.addMember(this.caseId, result);
+            ? this.consortiumService.updateMember(this.caseId(), member.member_id, result)
+            : this.consortiumService.addMember(this.caseId(), result);
           req$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (res) => {
               this.currentConsortium.set(res);
@@ -254,7 +250,7 @@ export class ConsortiumComponent {
 
   saveSharesInline(_editedShares: Record<string, number>): void {
     if (this.totalParticipation() !== 100) {
-      this.snackBar.open('Le total des parts doit être égal à 100 %', 'Fermer');
+      this.snackBar.open('Le total des parts doit être égal à 100 %', 'Fermer');
       return;
     }
     this.isLoading.set(true);
@@ -283,7 +279,7 @@ export class ConsortiumComponent {
 
   removeMember(memberId: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { message: 'Confirmer la suppression de ce membre ?' },
+      data: { message: 'Confirmer la suppression de ce membre ?' },
     });
     dialogRef
       .afterClosed()
@@ -292,7 +288,7 @@ export class ConsortiumComponent {
         if (confirmed) {
           this.isLoading.set(true);
           this.consortiumService
-            .removeMember(this.caseId, memberId)
+            .removeMember(this.caseId(), memberId)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
               next: (res) => {
@@ -310,12 +306,12 @@ export class ConsortiumComponent {
 
   recalculateScore(): void {
     if (this.totalParticipation() !== 100) {
-      this.snackBar.open('La participation doit être exactement de 100 %', 'Fermer', { duration: 3000 });
+      this.snackBar.open('La participation doit être exactement de 100 %', 'Fermer', { duration: 3000 });
       return;
     }
     this.isCalculating.set(true);
     this.consortiumService
-      .calculateConsortium(this.caseId)
+      .calculateConsortium(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -331,10 +327,10 @@ export class ConsortiumComponent {
   }
 
   continueToStress(): void {
-    this.navigateTo(['/cases', this.caseId, 'stress']);
+    this.navigateTo(['/cases', this.caseId(), 'stress']);
   }
 
-  protected navigateTo(path: string[]): void {
+  private navigateTo(path: string[]): void {
     this.router.navigate(path);
   }
 }

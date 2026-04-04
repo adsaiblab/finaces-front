@@ -35,7 +35,7 @@
         </span>
         <button
           mat-stroked-button
-          (click)="navigateTo(['/cases', caseId, 'dashboard'])"
+          (click)="navigateTo(['/cases', caseId(), 'dashboard'])"
           aria-label="Retour au tableau de bord"
         >
           <mat-icon aria-hidden="true">arrow_back</mat-icon>
@@ -56,8 +56,8 @@
           >
             <mat-icon aria-hidden="true">warning</mat-icon>
             <p>
-              La participation doit être exactement de 100 % pour continuer.
-              Total actuel : <strong>{{ totalParticipation() }} %</strong>.
+              La participation doit être exactement de 100 % pour continuer.
+              Total actuel : <strong>{{ totalParticipation() }} %</strong>.
             </p>
           </div>
         }
@@ -205,7 +205,7 @@
                     <th scope="col">Rôle</th>
                     <th scope="col" class="text-center">Score</th>
                     <th scope="col" class="text-center">Risque</th>
-                    <th scope="col" class="text-right">Part %</th>
+                    <th scope="col" class="text-right">Part %</th>
                     <th scope="col" class="text-right">Actions</th>
                   </tr>
                 </thead>
@@ -260,7 +260,7 @@
                             <span matSuffix class="text-xs">%</span>
                           </mat-form-field>
                         } @else {
-                          <span class="font-bold" style="font-size:1rem;">{{ member.participation_pct }} %</span>
+                          <span class="font-bold" style="font-size:1rem;">{{ member.participation_pct }} %</span>
                         }
                       </td>
 
@@ -295,14 +295,14 @@
               [class.consortium-participation-total--ok]="totalParticipation() === 100"
               [class.consortium-participation-total--error]="totalParticipation() !== 100"
               role="status"
-              [attr.aria-label]="'Total des parts : ' + totalParticipation() + ' %'"
+              [attr.aria-label]="'Total des parts : ' + totalParticipation() + ' %'"
             >
               <mat-icon aria-hidden="true" style="font-size:1rem;width:1rem;height:1rem;">{{
                 totalParticipation() === 100 ? 'check_circle' : 'error'
               }}</mat-icon>
-              Total : <strong>{{ totalParticipation() }} %</strong>
+              Total : <strong>{{ totalParticipation() }} %</strong>
               @if (totalParticipation() !== 100) {
-                <span style="font-weight:400;">&mdash; doit être exactement 100 %</span>
+                <span style="font-weight:400;">&mdash; doit être exactement 100 %</span>
               }
             </div>
           }
