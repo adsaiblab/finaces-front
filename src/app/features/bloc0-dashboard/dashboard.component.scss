@@ -12,7 +12,7 @@
   @media (min-width: 1024px) { padding: var(--space-8); }
 }
 
-// ─── En-tête ───────────────────────────────────────────────────────────
+// ─── En-tête ───────────────────────────────────────────────────────────────────
 .dashboard-header {
   display: flex;
   flex-direction: column;
@@ -42,12 +42,13 @@
   }
 }
 
-// ─── Grille centrale (mobile-first : 1 colonne) ───────────────────────
+// ─── Grille centrale (mobile-first : 1 colonne) ───────────────────────────────────
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;           // mobile : 1 colonne
   gap: var(--space-6);
   margin-bottom: var(--space-8);
+  align-items: start;                   // tensions card ne s'allonge pas pour matcher la table
 
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
@@ -58,13 +59,16 @@
   }
 }
 
-// ─── Section graphe ───────────────────────────────────────────────────
+// ─── Section graphe ───────────────────────────────────────────────────────────────
 .chart-section {
   width: 100%;
   margin-bottom: var(--space-8);
+  // Réserve l'espace pendant le chargement — évite le layout-shift (CLS)
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
 }
 
-// ─── Bouton "Nouveau dossier" — touch-target 44px + tokens ───────────────
+// ─── Bouton "Nouveau dossier" — touch-target 44px + tokens ───────────────────────
 .btn-new-case {
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-6);
