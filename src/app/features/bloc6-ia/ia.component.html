@@ -1,134 +1,164 @@
-<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28" data-testid="ia-root">
+<div class="ia-root" data-testid="ia-root">
+
+  <!-- ─── SKELETON DOUBLE : affiché pendant le forkJoin (prediction + model) ─── -->
   @if (isLoading()) {
-  <div class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
-    data-testid="ia-loading-spinner">
-    <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-    <p class="text-[color:var(--color-content-secondary)] font-medium">
-      Running AI Prediction Model...
-    </p>
-  </div>
+    <div class="ia-skeleton-wrapper" data-testid="ia-loading-skeleton" aria-busy="true" aria-label="Chargement de l'analyse IA">
+      <finaces-skeleton-loader variant="card"  class="ia-skeleton-card" />
+      <finaces-skeleton-loader variant="chart" class="ia-skeleton-chart" />
+    </div>
   }
 
-  <app-finaces-ia-disclaimer variant="banner" [dismissible]="false" [pilotMode]="false"
-    data-testid="ia-disclaimer-banner"></app-finaces-ia-disclaimer>
-
-  <header
-    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6 mt-2">
-    <div>
-      <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
-        <mat-icon class="text-[color:var(--color-info)]">psychology</mat-icon>
-        AI Prediction Analysis
-      </h1>
-      <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-        Case #{{ caseId() }} — Machine Learning probabilistic evaluation (Model:
-        {{ predictionData()?.model_version || 'Unknown' }}).
-      </p>
-    </div>
-
-    @if (predictionData(); as data) {
-    <div
-      class="flex items-center gap-3 text-xs text-[color:var(--color-content-secondary)] border border-[color:var(--color-border-default)] bg-[color:var(--color-surface-card)] p-2 rounded-lg"
-      data-testid="ia-model-performance-badge">
-      <div class="flex flex-col pr-3 border-r border-[color:var(--color-border-default)]">
-        <span class="uppercase tracking-wider">Accuracy</span>
-        <span class="font-bold text-[color:var(--color-content-primary)]">{{
-          data.model_performance.accuracy | percent
-          }}</span>
-      </div>
-      <div class="flex flex-col pl-1">
-        <span class="uppercase tracking-wider">Confidence Interval</span>
-        <span class="font-mono text-[color:var(--color-content-primary)]">[{{ data.confidence_interval.lower | number:
-          '1.1-2' }} -
-          {{ data.confidence_interval.upper | number: '1.1-2' }}]</span>
-      </div>
-    </div>
-    }
-  </header>
-
-  @if (error()) {
-  <div
-    class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center"
-    data-testid="ia-error-banner">
-    <span>{{ error() }}</span>
-    <button mat-button (click)="error.set(null)">Close</button>
-  </div>
+  <!-- ─── ERREUR forkJoin (prediction ou model indisponible) ──────────── -->
+  @if (predictionError()) {
+    <finaces-inline-error
+      [errorCode]="predictionError()!"
+      [retryCount]="retryCount()"
+      testId="ia-prediction-error"
+      (retry)="onRetry()"
+      (ignore)="predictionError.set(null)"
+    />
   }
 
-  @if (predictionData(); as data) {
-  <main class="flex flex-col gap-8 flex-1" data-testid="ia-main-content">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-      <div
-        class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm relative overflow-hidden"
-        data-testid="ia-predicted-score-card"
-        [ngClass]="{ 'opacity-50 grayscale transition-all': simulationScore() !== null }">
-        <h3
-          class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4 flex items-center gap-2">
-          <mat-icon class="text-[16px]">memory</mat-icon> Predicted AI Score
-        </h3>
-        <finaces-score-gauge [score]="data.predicted_score"></finaces-score-gauge>
-        <finaces-risk-badge [riskClass]="$any(data.predicted_risk_class)" class="mt-4"></finaces-risk-badge>
-      </div>
+  <!-- ─── CONTENU PRINCIPAL (données chargées) ─────────────────────── -->
+  @if (!isLoading() && !predictionError()) {
+    <div class="ia-content" data-testid="ia-content-wrapper">
 
-      @if (simulationScore() !== null) {
-      <div
-        class="bg-[color:var(--color-info)] bg-opacity-10 border-2 border-[color:var(--color-info)] rounded-xl p-6 flex flex-col items-center justify-center shadow-md relative animate-fade-in"
-        data-testid="ia-simulation-card">
-        <div
-          class="absolute top-3 left-3 flex items-center gap-1 text-[color:var(--color-info)] text-xs font-bold uppercase">
-          <mat-icon class="text-[14px]">science</mat-icon> Simulation
+      <!-- Disclaimer -->
+      <app-finaces-ia-disclaimer
+        variant="banner"
+        [dismissible]="false"
+        [pilotMode]="false"
+        data-testid="ia-disclaimer-banner"
+      />
+
+      <!-- En-tête -->
+      <header class="ia-header" data-testid="ia-header">
+        <div>
+          <h1 class="ia-title">
+            <mat-icon aria-hidden="true">psychology</mat-icon>
+            Analyse de prédiction IA
+          </h1>
+          <p class="ia-subtitle">
+            Dossier n°{{ caseId() }} — Évaluation probabiliste par apprentissage automatique
+            (Modèle : {{ predictionData()?.model_version || 'Inconnu' }}).
+          </p>
         </div>
-        <h3 class="text-sm font-bold text-[color:var(--color-info)] uppercase tracking-wider mb-4">
-          What-If Projected Score
-        </h3>
-        <finaces-score-gauge [score]="simulationScore()!"></finaces-score-gauge>
-        <finaces-risk-badge [riskClass]="$any(simulationClass()!)" class="mt-4"></finaces-risk-badge>
-      </div>
-      } @else {
-      <div
-        class="bg-[color:var(--color-surface-default)] border border-dashed border-[color:var(--color-border-strong)] rounded-xl p-6 flex flex-col items-center justify-center text-center"
-        data-testid="ia-simulation-placeholder">
-        <mat-icon class="text-4xl text-[color:var(--color-content-secondary)] mb-2 opacity-50">auto_graph</mat-icon>
-        <h3 class="text-sm font-semibold text-[color:var(--color-content-secondary)]">
-          Simulation Area
-        </h3>
-        <p class="text-xs text-[color:var(--color-content-secondary)] mt-2">
-          Adjust features below to see projected outcomes here.
-        </p>
-      </div>
+
+        @if (predictionData(); as data) {
+          <div class="ia-model-badge" data-testid="ia-model-performance-badge">
+            <div class="ia-model-badge__item ia-model-badge__item--right-border">
+              <span class="ia-model-badge__label">Précision</span>
+              <span class="ia-model-badge__value">{{ data.model_performance.accuracy | percent }}</span>
+            </div>
+            <div class="ia-model-badge__item">
+              <span class="ia-model-badge__label">Intervalle de confiance</span>
+              <span class="ia-model-badge__value ia-model-badge__value--mono">
+                [{{ data.confidence_interval.lower | number:'1.1-2' }} – {{ data.confidence_interval.upper | number:'1.1-2' }}]
+              </span>
+            </div>
+          </div>
+        }
+      </header>
+
+      <!-- Contenu principal -->
+      @if (predictionData(); as data) {
+        <main class="ia-main" data-testid="ia-main-content">
+
+          <!-- Ligne 1 : Score prédit + Zone simulation -->
+          <div class="ia-score-row">
+
+            <!-- Score prédit -->
+            <div
+              class="ia-card ia-card--score"
+              data-testid="ia-predicted-score-card"
+              [ngClass]="{ 'ia-card--dimmed': simulationScore() !== null }"
+            >
+              <h3 class="ia-card__label">
+                <mat-icon aria-hidden="true" class="ia-card__icon">memory</mat-icon>
+                Score IA prédit
+              </h3>
+              <finaces-score-gauge [score]="data.predicted_score" />
+              <finaces-risk-badge [riskClass]="$any(data.predicted_risk_class)" class="ia-card__badge" />
+            </div>
+
+            <!-- Zone simulation -->
+            @if (simulationScore() !== null) {
+              <div class="ia-card ia-card--simulation" data-testid="ia-simulation-card">
+                <span class="ia-simulation-label">
+                  <mat-icon aria-hidden="true" class="ia-simulation-label__icon">science</mat-icon>
+                  Simulation
+                </span>
+                <h3 class="ia-card__label ia-card__label--simulation">Score projeté (What-If)</h3>
+                <finaces-score-gauge [score]="simulationScore()!" />
+                <finaces-risk-badge [riskClass]="$any(simulationClass()!)" class="ia-card__badge" />
+              </div>
+            } @else {
+              <div class="ia-card ia-card--placeholder" data-testid="ia-simulation-placeholder">
+                <mat-icon aria-hidden="true" class="ia-placeholder__icon">auto_graph</mat-icon>
+                <h3 class="ia-placeholder__title">Zone de simulation</h3>
+                <p class="ia-placeholder__text">
+                  Ajustez les variables ci-dessous pour visualiser les projections ici.
+                </p>
+              </div>
+            }
+          </div>
+
+          <!-- Ligne 2 : SHAP + What-If -->
+          <div class="ia-analysis-row">
+            <div class="ia-card ia-card--chart" data-testid="ia-shap-chart-card">
+              <app-finaces-shap-chart
+                [features]="data.shap_values.features"
+                [maxFeatures]="8"
+                [showValues]="true"
+              />
+            </div>
+
+            <div data-testid="ia-whatif-card">
+              <app-finaces-what-if
+                [features]="data.shap_values.features"
+                [isSimulating]="isSimulating()"
+                (simulate)="onSimulate($event)"
+                (reset)="onResetSimulation()"
+              />
+            </div>
+          </div>
+
+        </main>
       }
-    </div>
 
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-      <div
-        class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 shadow-sm flex flex-col"
-        data-testid="ia-shap-chart-card">
-        <app-finaces-shap-chart [features]="data.shap_values.features" [maxFeatures]="8" [showValues]="true"
-          class="flex-1">
-        </app-finaces-shap-chart>
+      <!-- Barre de navigation fixe en bas -->
+      <div class="ia-nav-bar" role="navigation" aria-label="Navigation entre étapes">
+        <button
+          mat-button
+          class="ia-nav-bar__back"
+          (click)="navigateBack()"
+          aria-label="Retour au scoring MCC"
+          data-testid="ia-back-btn"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          Retour au scoring MCC
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="finaces-primary-btn ia-nav-bar__proceed"
+          (click)="proceedToTension()"
+          [disabled]="isSimulating()"
+          aria-label="Passer à l'analyse de tension"
+          data-testid="ia-proceed-tension-btn"
+        >
+          @if (isSimulating()) {
+            <!-- Spinner pendant la simulation -->
+            <mat-spinner diameter="18" class="ia-btn-spinner" aria-hidden="true" />
+          } @else {
+            <span>Passer à l'analyse de tension</span>
+            <mat-icon aria-hidden="true">compare_arrows</mat-icon>
+          }
+        </button>
       </div>
 
-      <div data-testid="ia-whatif-card">
-        <app-finaces-what-if [features]="data.shap_values.features" [isSimulating]="isSimulating()"
-          (simulate)="onSimulate($event)" (reset)="onResetSimulation()">
-        </app-finaces-what-if>
-      </div>
     </div>
-  </main>
-
-  <div
-    class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
-    <button mat-button (click)="navigateBack()"
-      class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
-      data-testid="ia-back-btn">
-      <mat-icon>arrow_back</mat-icon>
-      Back to MCC Scoring
-    </button>
-
-    <button mat-flat-button color="primary" (click)="proceedToTension()" class="finaces-primary-btn px-8"
-      data-testid="ia-proceed-tension-btn">
-      <span>Proceed to Tension Analysis</span>
-      <mat-icon class="ml-2">compare_arrows</mat-icon>
-    </button>
-  </div>
   }
+
 </div>
