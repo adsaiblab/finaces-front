@@ -2,25 +2,12 @@
 
   <!-- ─── Skeleton ──────────────────────────────────────────────────────────── -->
   @if (isLoading()) {
-    <div
-      class="stress-skeleton"
+    <finaces-skeleton-loader
+      variant="form"
+      [rows]="3"
       data-testid="stress-loading-spinner"
-      aria-busy="true"
-      aria-label="Chargement des tests de stress…"
-    >
-      <div class="skeleton skeleton-header"></div>
-      <div class="stress-skeleton-body">
-        <div class="stress-skeleton-panel">
-          <div class="skeleton skeleton-block" style="height:180px"></div>
-          <div class="skeleton skeleton-block" style="height:220px"></div>
-        </div>
-        <div class="stress-skeleton-results">
-          <div class="skeleton skeleton-block" style="height:80px"></div>
-          <div class="skeleton skeleton-block" style="height:80px"></div>
-          <div class="skeleton skeleton-block" style="height:80px"></div>
-        </div>
-      </div>
-    </div>
+      aria-label="Chargement des tests de stress"
+    />
   }
 
   <!-- ─── Erreur de chargement ───────────────────────────────────────────────── -->
@@ -47,7 +34,7 @@
             Test de résilience de trésorerie
           </h1>
           <p class="stress-subtitle">
-            Dossier {{ caseId() }} — Évaluez la résilience contractuelle et les risques de
+            Dossier {{ caseId() }} — Évaluez la résilience contractuelle et les risques de
             liquidité en cas de retard de paiement.
           </p>
         </div>
