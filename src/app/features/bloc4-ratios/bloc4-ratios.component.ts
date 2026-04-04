@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, DestroyRef, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Router } from '@angular/router';
@@ -46,23 +46,20 @@ import {
   styleUrls: ['./bloc4-ratios.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Bloc4RatiosComponent {
+export class Bloc4RatiosComponent implements OnInit {
   private readonly caseContext = inject(CaseContextService);
-  private router = inject(Router);
-  private ratioService = inject(RatioCalculationService);
-  private caseService = inject(CaseService); // Using existing CaseService for mock IA/Scoring endpoints
-  private snackBar = inject(MatSnackBar);
-
-  public caseId = signal<string>('');
+  private readonly router = inject(Router);
+  private readonly ratioService = inject(RatioCalculationService);
+  private readonly caseService = inject(CaseService);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  // State Signals
-  public ratioSet = signal<RatioSetGrouped | null>(null);
-  public isLoading = signal<boolean>(true);
-  public error = signal<string | null>(null);
+  public readonly caseId = signal<string>('');
 
-  // Subflows
-  public scoringInProgress = signal<boolean>(false);
+  public readonly ratioSet = signal<RatioSetGrouped | null>(null);
+  public readonly isLoading = signal<boolean>(true);
+  public readonly error = signal<string | null>(null);
+  public readonly scoringInProgress = signal<boolean>(false);
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
@@ -161,8 +158,6 @@ export class Bloc4RatiosComponent {
   public launchScoringAndPrediction(): void {
     this.scoringInProgress.set(true);
 
-    // Simulation of parallel execution of MCC Scoring + AI Prediction endpoints
-    // In production, these would be actual calls to CaseService
     const mockMccScoreCall = of({ status: 'SUCCESS' }).pipe(delay(2000));
     const mockIaPredictCall = of({ status: 'SUCCESS' }).pipe(delay(2500));
 
