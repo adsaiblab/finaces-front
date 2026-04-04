@@ -1,6 +1,6 @@
 <div class="tension-root" data-testid="tension-root">
 
-  <!-- Skeleton — remplacement du mat-spinner overlay -->
+  <!-- Skeleton -->
   @if (isLoading()) {
     <finaces-skeleton-loader
       variant="card"
@@ -81,16 +81,23 @@
     </main>
 
     <!-- Barre de navigation bas -->
-    <div class="tension-bottom-bar" data-testid="tension-bottom-bar">
+    <div
+      class="tension-bottom-bar"
+      role="navigation"
+      aria-label="Navigation entre étapes"
+      data-testid="tension-bottom-bar"
+    >
       <button
         mat-button
         class="tension-back-btn"
         (click)="navigateBack()"
+        [disabled]="isSubmitting()"
+        [attr.aria-busy]="isSubmitting()"
+        aria-label="Retour vers l’analyse IA"
         data-testid="tension-back-btn"
-        aria-label="Retour vers l'analyse IA"
       >
         <mat-icon aria-hidden="true">arrow_back</mat-icon>
-        Retour au Modele IA
+        Retour au Modèle IA
       </button>
 
       <span
@@ -98,7 +105,7 @@
         data-testid="tension-decision-pending-label"
         aria-live="polite"
       >
-        Decision en attente.
+        Décision en attente.
       </span>
     </div>
   }

@@ -4,6 +4,7 @@ import {
   signal,
   inject,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -55,9 +56,9 @@ import {
   styleUrls: ['./tension.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TensionComponent {
-  private readonly caseContext = inject(CaseContextService);
-  private readonly router      = inject(Router);
+export class TensionComponent implements OnInit {
+  private readonly caseContext    = inject(CaseContextService);
+  private readonly router         = inject(Router);
   private readonly scoringService = inject(ScoringMccService);
   private readonly iaService      = inject(IaService);
   private readonly tensionCalc    = inject(TensionCalculatorService);
@@ -66,16 +67,12 @@ export class TensionComponent {
 
   readonly caseId = signal<string>('');
 
-  readonly tensionData   = signal<TensionAnalysisResult | null>(null);
-  readonly isLoading     = signal<boolean>(true);
-  readonly isSubmitting  = signal<boolean>(false);
+  readonly tensionData  = signal<TensionAnalysisResult | null>(null);
+  readonly isLoading    = signal<boolean>(true);
+  readonly isSubmitting = signal<boolean>(false);
 
-  // ─── Error signals ──────────────────────────────────────────────────────────
-  /** Erreur de chargement forkJoin (MCC + IA) */
   readonly loadError   = signal<ErrorCode | null>(null);
-  /** Erreur de soumission de la décision analyste */
   readonly submitError = signal<ErrorCode | null>(null);
-  /** Compteur retry — transmis à FinacesInlineError */
   readonly retryCount  = signal<number>(0);
 
   ngOnInit(): void {
@@ -83,14 +80,12 @@ export class TensionComponent {
     this.loadTensionAnalysis();
   }
 
-  // ─── Retry handler ────────────────────────────────────────────────────────────
   onRetryLoad(): void {
     this.loadError.set(null);
     this.retryCount.update((n) => n + 1);
     this.loadTensionAnalysis();
   }
 
-  // ─── Chargement forkJoin MCC + IA ─────────────────────────────────────────────
   private loadTensionAnalysis(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
@@ -109,7 +104,10 @@ export class TensionComponent {
             this.loadMockTension();
             return;
           }
-          const result = this.tensionCalc.calculateTension(data.mcc as ScoringMccSchema, data.ia as unknown as IAPredictionResult);
+          const result = this.tensionCalc.calculateTension(
+            data.mcc as ScoringMccSchema,
+            data.ia as unknown as IAPredictionResult,
+          );
           this.tensionData.set(result);
           this.isLoading.set(false);
         },
@@ -129,8 +127,8 @@ export class TensionComponent {
       ia_class: 'LOW',
       class_divergence: true,
       pillars_comparison: [
-        { pillar_name: 'Liquidity',    mcc_score: 3.0, ia_impact: 4.2, delta: 1.2, is_divergent: true },
-        { pillar_name: 'Solvency',     mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
+        { pillar_name: 'Liquidity',     mcc_score: 3.0, ia_impact: 4.2, delta: 1.2, is_divergent: true },
+        { pillar_name: 'Solvency',      mcc_score: 2.5, ia_impact: 3.0, delta: 0.5, is_divergent: true },
         { pillar_name: 'Profitability', mcc_score: 4.0, ia_impact: 4.0, delta: 0.0, is_divergent: false },
       ],
       system_recommendation: 'Critical divergence detected. Deep investigation strongly advised.',
@@ -145,7 +143,6 @@ export class TensionComponent {
       });
   }
 
-  // ─── Décision analyste ───────────────────────────────────────────────────────────
   handleDecision(payload: AnalystDecisionPayload): void {
     this.isSubmitting.set(true);
     this.submitError.set(null);
