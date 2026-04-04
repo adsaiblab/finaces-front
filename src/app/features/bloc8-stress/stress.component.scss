@@ -3,11 +3,225 @@
   height: 100%;
 }
 
+/* ─── Layout principal ─────────────────────────────────────────── */
+.stress-host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  padding-bottom: 5rem; // espace pour le footer sticky
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+/* ─── Header ───────────────────────────────────────────────────── */
+.stress-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: 1.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-content-primary);
+  }
+
+  .stress-subtitle {
+    font-size: 0.875rem;
+    color: var(--color-content-secondary);
+    margin-top: 0.25rem;
+  }
+}
+
+/* ─── Main layout ──────────────────────────────────────────────── */
+.stress-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+
+  @media (min-width: 1280px) {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.stress-params-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+
+  @media (min-width: 1280px) {
+    width: 33.333%;
+  }
+}
+
+.stress-results-panel {
+  width: 100%;
+
+  @media (min-width: 1280px) {
+    width: 66.666%;
+  }
+}
+
+/* ─── Footer sticky ───────────────────────────────────────────── */
+.stress-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--color-surface-card);
+  border-top: 1px solid var(--color-border-default);
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  z-index: 20;
+
+  @media (min-width: 1024px) {
+    left: 16rem; // offset sidebar desktop
+    padding: 1rem 3rem;
+  }
+
+  // Touch-targets 44px minimum
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ─── Bouton primaire ─────────────────────────────────────────── */
 .finaces-primary-btn {
   background-color: var(--color-primary);
   color: var(--color-content-inverse);
 
   &:hover:not([disabled]) {
     filter: brightness(1.1);
+  }
+}
+
+/* ─── Error wrapper ───────────────────────────────────────────── */
+.stress-error-wrapper,
+.stress-simulation-error {
+  padding: 1rem 0;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────── */
+.stress-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  gap: 0.75rem;
+  color: var(--color-content-secondary);
+  text-align: center;
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-content-tertiary);
+  }
+
+  .stress-empty-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-content-primary);
+  }
+
+  .stress-empty-subtitle {
+    font-size: 0.875rem;
+    max-width: 36ch;
+  }
+}
+
+/* ─── Skeleton loader ─────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-offset, #f0f0f0) 25%,
+    var(--color-surface-dynamic, #e8e8e8) 50%,
+    var(--color-surface-offset, #f0f0f0) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.skeleton-header {
+  height: 64px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-block {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.stress-skeleton {
+  padding: 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+.stress-skeleton-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 1280px) {
+    flex-direction: row;
+  }
+}
+
+.stress-skeleton-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+
+  @media (min-width: 1280px) {
+    width: 33%;
+  }
+}
+
+.stress-skeleton-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+
+  @media (min-width: 1280px) {
+    width: 67%;
   }
 }
