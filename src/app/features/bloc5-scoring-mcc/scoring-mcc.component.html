@@ -1,110 +1,161 @@
-<div class="w-full h-full flex flex-col gap-6 p-6 md:p-8 animate-fade-in relative pb-28" data-testid="scoring-root">
+<div class="scoring-host" data-testid="scoring-root">
+
+  <!-- ─── SKELETON : affiché pendant le chargement initial ──────────────── -->
   @if (isLoading()) {
-  <div class="absolute inset-0 flex flex-col items-center justify-center bg-[color:var(--color-surface-default)] z-10"
-    data-testid="scoring-loading-spinner">
-    <mat-spinner diameter="50" class="mb-4"></mat-spinner>
-    <p class="text-[color:var(--color-content-secondary)] font-medium">
-      Aggregating MCC Scoring data...
-    </p>
-  </div>
+    <div class="scoring-skeleton" data-testid="scoring-loading-spinner" aria-busy="true" aria-label="Chargement du scoring MCC">
+      <div class="scoring-skeleton__header skeleton"></div>
+      <div class="scoring-skeleton__grid">
+        <div class="skeleton scoring-skeleton__block"></div>
+        <div class="skeleton scoring-skeleton__block"></div>
+      </div>
+      <div class="skeleton scoring-skeleton__pillars"></div>
+    </div>
   }
 
-  <header
-    class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
-    <div>
-      <h1 class="text-2xl font-semibold text-[color:var(--color-content-primary)] flex items-center gap-3">
-        <mat-icon class="text-[color:var(--color-primary)]">military_tech</mat-icon>
-        MCC Scoring
-      </h1>
-      <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-        Case #{{ caseId() }} — The authoritative risk decision based on validated financial ratios.
-      </p>
+  <!-- ─── ERREUR chargement ─────────────────────────────────────────────── -->
+  @if (loadError() && !isLoading()) {
+    <div class="scoring-error-wrapper" data-testid="scoring-load-error">
+      <finaces-inline-error
+        [errorCode]="loadError()!"
+        [retryCount]="retryCount()"
+        testId="scoring-inline-error"
+        (retry)="onRetryLoad()"
+        (ignore)="loadError.set(null)"
+      />
     </div>
-
-    @if (scoringData(); as data) {
-    <div class="flex items-center gap-3">
-      <span class="px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider" data-testid="scoring-status-badge"
-        [ngClass]="
-            data.status === 'COMPUTED'
-              ? 'bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] text-[color:var(--color-content-secondary)]'
-              : 'bg-[color:var(--color-warning)] bg-opacity-10 text-[color:var(--color-warning)] border border-[color:var(--color-warning)] border-opacity-30'
-          ">
-        {{ data.status === 'COMPUTED' ? 'SYSTEM COMPUTED' : 'MANUALLY OVERRIDDEN' }}
-      </span>
-    </div>
-    }
-  </header>
-
-  @if (error()) {
-  <div
-    class="p-4 bg-[color:var(--color-error)] bg-opacity-10 border border-[color:var(--color-error)] rounded-lg text-[color:var(--color-error)] flex justify-between items-center"
-    data-testid="scoring-error-banner">
-    <span>{{ error() }}</span>
-    <button mat-button (click)="error.set(null)">Close</button>
-  </div>
   }
 
-  @if (scoringData(); as data) {
-  <main class="flex flex-col gap-8 flex-1" data-testid="scoring-main-content">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-      <div
-        class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm"
-        data-testid="scoring-global-score-card">
-        <h3 class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4">
-          Global MCC Score
-        </h3>
-        <finaces-score-gauge [score]="data.global_score"></finaces-score-gauge>
-      </div>
+  <!-- ─── CONTENU PRINCIPAL ─────────────────────────────────────────────── -->
+  @if (!isLoading() && !loadError()) {
+    <div class="scoring-content" data-testid="scoring-main-content">
 
-      <div
-        class="bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-xl p-6 flex flex-col items-center justify-center shadow-sm"
-        data-testid="scoring-risk-class-card">
-        <h3 class="text-sm font-semibold text-[color:var(--color-content-secondary)] uppercase tracking-wider mb-4">
-          Assigned Risk Class
-        </h3>
-        <finaces-risk-badge [riskClass]="$any(data.risk_class)" class="transform scale-125"></finaces-risk-badge>
-      </div>
-    </div>
+      <!-- En-tête -->
+      <header class="scoring-header" data-testid="scoring-header">
+        <div>
+          <h1 class="scoring-title">
+            <mat-icon aria-hidden="true">military_tech</mat-icon>
+            Scoring MCC
+          </h1>
+          <p class="scoring-subtitle">
+            Dossier n°{{ caseId() }} — Décision de risque fondée sur les ratios financiers validés.
+          </p>
+        </div>
 
-    <div>
-      <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)] mb-4 flex items-center gap-2">
-        <mat-icon class="text-[color:var(--color-primary)]">account_balance</mat-icon>
-        Detailed Pillar Analysis
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4"
-        data-testid="scoring-pillars-grid">
-        @for (pillar of data.pillars; track pillar.id) {
-        <app-pillar-detail-card [pillar]="pillar"></app-pillar-detail-card>
+        @if (scoringData(); as data) {
+          <div class="scoring-status-badge" data-testid="scoring-status-badge">
+            <span
+              class="scoring-status-chip"
+              [class.scoring-status-chip--computed]="data.status === 'COMPUTED'"
+              [class.scoring-status-chip--overridden]="data.status === 'OVERRIDDEN'"
+            >
+              {{ data.status === 'COMPUTED' ? 'CALCULÉ AUTOMATIQUEMENT' : 'SURCLASSÉ MANUELLEMENT' }}
+            </span>
+          </div>
         }
+      </header>
+
+      <!-- EMPTY STATE : scoring non encore calculé -->
+      @if (!scoringData() && !isLoading() && !loadError()) {
+        <div class="scoring-empty" data-testid="scoring-no-data">
+          <mat-icon aria-hidden="true">bar_chart</mat-icon>
+          <h3 class="scoring-empty__title">Scoring non calculé</h3>
+          <p class="scoring-empty__text">
+            Les ratios financiers n'ont pas encore été calculés pour ce dossier.
+            Complétez les données financières puis relancez le scoring.
+          </p>
+        </div>
+      }
+
+      <!-- DONNÉES SCORING -->
+      @if (scoringData(); as data) {
+        <main class="scoring-main" data-testid="scoring-data">
+
+          <!-- Score global + Classe de risque -->
+          <div class="scoring-score-row">
+            <div class="scoring-card scoring-card--center" data-testid="scoring-global-score-card">
+              <h3 class="scoring-card__label">Score MCC global</h3>
+              <finaces-score-gauge [score]="data.global_score" />
+            </div>
+
+            <div class="scoring-card scoring-card--center" data-testid="scoring-risk-class-card">
+              <h3 class="scoring-card__label">Classe de risque attribuée</h3>
+              <finaces-risk-badge [riskClass]="$any(data.risk_class)" class="scoring-risk-scale" />
+            </div>
+          </div>
+
+          <!-- Analyse des piliers -->
+          <section aria-labelledby="scoring-pillars-heading">
+            <h2 id="scoring-pillars-heading" class="scoring-section-title">
+              <mat-icon aria-hidden="true">account_balance</mat-icon>
+              Analyse détaillée par pilier
+            </h2>
+
+            @if (data.pillars.length === 0) {
+              <div class="scoring-empty scoring-empty--inline" data-testid="scoring-no-pillars">
+                <mat-icon aria-hidden="true">bar_chart</mat-icon>
+                <p>Aucun pilier disponible pour ce scoring.</p>
+              </div>
+            } @else {
+              <div class="scoring-pillars-grid" data-testid="scoring-pillars-grid">
+                @for (pillar of data.pillars; track pillar.id) {
+                  <app-pillar-detail-card [pillar]="pillar" />
+                }
+              </div>
+            }
+          </section>
+
+          <!-- Recommandations + Override -->
+          <div class="scoring-bottom-row">
+            <app-recommendations-section
+              [recommendations]="data.recommendations"
+              [crossAnalysisAlerts]="data.cross_analysis_alerts"
+            />
+
+            <app-override-zone
+              [originalScore]="data.override ? data.override.original_score : data.global_score"
+              [isOverridden]="data.status === 'OVERRIDDEN'"
+              [overrideDetails]="data.override"
+              [isSubmitting]="isOverriding()"
+              (overrideSubmit)="handleOverride($event)"
+              data-testid="scoring-override-zone"
+            />
+          </div>
+
+        </main>
+      }
+
+      <!-- ─── Barre de navigation fixe ─────────────────────────────────── -->
+      <div class="scoring-nav-bar" role="navigation" aria-label="Navigation entre étapes">
+        <button
+          mat-button
+          class="scoring-nav-bar__back"
+          (click)="navigateBack()"
+          aria-label="Retour aux ratios financiers"
+          data-testid="scoring-back-btn"
+        >
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+          Retour aux ratios
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="finaces-primary-btn scoring-nav-bar__proceed"
+          (click)="proceedNext()"
+          [disabled]="isOverriding()"
+          aria-label="Passer à l'analyse IA"
+          data-testid="scoring-proceed-ia-btn"
+        >
+          @if (isOverriding()) {
+            <mat-spinner diameter="18" aria-hidden="true" />
+          } @else {
+            <span>Passer à l'analyse IA</span>
+            <mat-icon aria-hidden="true">smart_toy</mat-icon>
+          }
+        </button>
       </div>
+
     </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <app-recommendations-section [recommendations]="data.recommendations"
-        [crossAnalysisAlerts]="data.cross_analysis_alerts">
-      </app-recommendations-section>
-
-      <app-override-zone [originalScore]="data.override ? data.override.original_score : data.global_score"
-        [isOverridden]="data.status === 'OVERRIDDEN'" [overrideDetails]="data.override" [isSubmitting]="isOverriding()"
-        (overrideSubmit)="handleOverride($event)" data-testid="scoring-override-zone">
-      </app-override-zone>
-    </div>
-  </main>
-
-  <div
-    class="fixed bottom-0 left-0 right-0 md:left-64 bg-[color:var(--color-surface-card)] border-t border-[color:var(--color-border-default)] p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 flex justify-between items-center px-6 md:px-12">
-    <button mat-button (click)="navigateBack()"
-      class="text-[color:var(--color-content-secondary)] hover:text-[color:var(--color-content-primary)]"
-      data-testid="scoring-back-btn">
-      <mat-icon>arrow_back</mat-icon>
-      Back to Ratios
-    </button>
-
-    <button mat-flat-button color="primary" (click)="proceedNext()" class="finaces-primary-btn px-8"
-      data-testid="scoring-proceed-ia-btn">
-      <span>Proceed to AI Analysis</span>
-      <mat-icon class="ml-2">smart_toy</mat-icon>
-    </button>
-  </div>
   }
+
 </div>
