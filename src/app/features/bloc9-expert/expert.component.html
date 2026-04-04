@@ -1,98 +1,185 @@
-@if (!isLoading()) {
-<div class="w-full h-full p-6" data-testid="expert-root">
-  <div class="flex items-center justify-between mb-8" data-testid="expert-header">
-    <div>
-      <h1 class="text-2xl font-bold text-content-primary flex items-center gap-3">
-        EXPERT REVIEW — {{ currentCase()?.bidder_name }}
-      </h1>
-      <div class="flex items-center gap-3 mt-2">
-        <span class="bg-primary-lighter text-primary-dark px-2 py-1 rounded text-xs font-bold tracking-wider"
-          data-testid="expert-phase-badge">
-          EXPERT REVIEW PHASE
-        </span>
-        <span class="text-sm text-content-secondary">Analyst: Current User</span>
-      </div>
-    </div>
-    <button mat-stroked-button (click)="goBack()" data-testid="expert-back-btn">
-      <span class="material-icons text-sm mr-1">arrow_back</span> Return
-    </button>
-  </div>
-
-  @if (currentCase()) {
-  <app-decision-recap [caseData]="currentCase()!" data-testid="expert-decision-recap"></app-decision-recap>
-  }
-
-  <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" data-testid="expert-review-form">
-    <app-qualitative-notes [parentGroup]="reviewForm" controlName="qualitativeNotes"
-      [tensionLabel]="currentCase()?.tension_label" data-testid="expert-qualitative-notes">
-    </app-qualitative-notes>
-
-    <app-risk-override [parentGroup]="reviewForm" controlName="manualRiskOverride"
-      [currentRiskClass]="currentCase()?.risk_class || 'UNKNOWN'" data-testid="expert-risk-override">
-    </app-risk-override>
-
-    <app-validation-decision [parentGroup]="reviewForm" decisionControlName="final_recommendation"
-      reasonControlName="rejection_reason" data-testid="expert-validation-decision">
-    </app-validation-decision>
-
-    <app-mcc-conditions [conditions]="conditions()" (conditionsChange)="conditions.set($event)"
-      data-testid="expert-mcc-conditions">
-    </app-mcc-conditions>
-
-    <section class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-8"
-      data-testid="expert-conclusion-section">
-      <h2 class="text-xl font-bold text-content-primary mb-2 flex items-center gap-2">
-        <span class="material-icons text-primary-default">summarize</span>
-        Final Conclusion & Synthesis
-      </h2>
-      <p class="text-sm text-content-secondary mb-6">
-        Executive synthesis for the final report. This text will appear in the "Analyst's
-        Conclusion" chapter.
-      </p>
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Final Conclusion</mat-label>
-        <textarea matInput formControlName="conclusion_text" rows="4"
-          placeholder="Write the executive synthesis here..." data-testid="expert-conclusion-textarea"></textarea>
-        @if (reviewForm.get('conclusion_text')?.hasError('required')) {
-        <mat-error>Conclusion is required.</mat-error>
-        }
-        @if (reviewForm.get('conclusion_text')?.hasError('minlength')) {
-        <mat-error>Minimum 100 characters required.</mat-error>
-        }
-        @if (reviewForm.get('conclusion_text')?.hasError('maxlength')) {
-        <mat-error>Maximum 3000 characters allowed.</mat-error>
-        }
-      </mat-form-field>
-    </section>
-
-    <div class="flex flex-col sm:flex-row items-center justify-between border-t border-border-default pt-6 pb-12 gap-4"
-      data-testid="expert-actions-bar">
-      <button mat-stroked-button type="button" (click)="resetForm()" [disabled]="isSubmitting() || !isSubmitted()"
-        data-testid="expert-edit-review-btn">
-        <span class="material-icons mr-1">edit</span> Edit Review
-      </button>
-
-      <div class="flex gap-4 w-full sm:w-auto">
-        <button mat-flat-button color="primary" type="submit"
-          [disabled]="reviewForm.invalid || isSubmitting() || isSubmitted()" class="flex-1 sm:flex-none"
-          data-testid="expert-submit-btn">
-          <span class="material-icons mr-1">send</span>
-          {{ isSubmitting() ? 'Submitting...' : 'Submit Expert Review' }}
-        </button>
-
-        <button mat-flat-button color="accent" type="button" [disabled]="!isSubmitted()" (click)="closeCase()"
-          class="flex-1 sm:flex-none" data-testid="expert-close-case-btn">
-          <span class="material-icons mr-1">lock</span> Close Case &rarr; Final Report
-        </button>
-      </div>
-    </div>
-  </form>
-</div>
+<!-- ─── Skeleton ───────────────────────────────────────────────────────────── -->
+@if (isLoading()) {
+  <finaces-skeleton-loader
+    variant="form"
+    [rows]="4"
+    data-testid="expert-loading-spinner"
+    aria-label="Chargement de la revue expert…"
+  />
 }
 
-@if (isLoading()) {
-<div class="w-full h-full flex flex-col justify-center items-center py-20" data-testid="expert-loading-spinner">
-  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-default mb-4"></div>
-  <p class="text-content-secondary">Loading expert review data...</p>
-</div>
+<!-- ─── Contenu principal ──────────────────────────────────────────────────── -->
+@if (!isLoading()) {
+  <div class="w-full h-full p-6" data-testid="expert-root">
+
+    <!-- En-tête -->
+    <div class="flex items-center justify-between mb-8" data-testid="expert-header">
+      <div>
+        <h1 class="text-2xl font-bold text-content-primary flex items-center gap-3">
+          EXPERT REVIEW — {{ currentCase()?.bidder_name }}
+        </h1>
+        <div class="flex items-center gap-3 mt-2">
+          <span
+            class="bg-primary-lighter text-primary-dark px-2 py-1 rounded text-xs font-bold tracking-wider"
+            data-testid="expert-phase-badge"
+          >
+            EXPERT REVIEW PHASE
+          </span>
+          <span class="text-sm text-content-secondary">Analyst: Current User</span>
+        </div>
+      </div>
+      <button mat-stroked-button (click)="goBack()" data-testid="expert-back-btn" aria-label="Retour au test de stress">
+        <span class="material-icons text-sm mr-1" aria-hidden="true">arrow_back</span> Return
+      </button>
+    </div>
+
+    <!-- ─── Empty-state : revue déjà soumise ────────────────────────────────── -->
+    @if (isSubmitted()) {
+      <div
+        class="expert-submitted-banner"
+        data-testid="expert-submitted-banner"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="material-icons expert-submitted-icon" aria-hidden="true">check_circle</span>
+        <div class="expert-submitted-body">
+          <p class="expert-submitted-title">Revue soumise avec succès</p>
+          <p class="expert-submitted-hint">
+            La revue expert est verrouillée. Utilisez « Edit Review » pour la modifier,
+            ou « Close Case » pour passer au rapport final.
+          </p>
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="closeCase()"
+          class="expert-submitted-cta"
+          data-testid="expert-close-case-btn-banner"
+          aria-label="Passer au rapport final"
+        >
+          <span class="material-icons mr-1" aria-hidden="true">lock</span>
+          Rapport final
+        </button>
+      </div>
+    }
+
+    @if (currentCase()) {
+      <app-decision-recap [caseData]="currentCase()!" data-testid="expert-decision-recap" />
+    }
+
+    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" data-testid="expert-review-form" novalidate>
+      <app-qualitative-notes
+        [parentGroup]="reviewForm"
+        controlName="qualitativeNotes"
+        [tensionLabel]="currentCase()?.tension_label"
+        data-testid="expert-qualitative-notes"
+      />
+
+      <app-risk-override
+        [parentGroup]="reviewForm"
+        controlName="manualRiskOverride"
+        [currentRiskClass]="currentCase()?.risk_class || 'UNKNOWN'"
+        data-testid="expert-risk-override"
+      />
+
+      <app-validation-decision
+        [parentGroup]="reviewForm"
+        decisionControlName="final_recommendation"
+        reasonControlName="rejection_reason"
+        data-testid="expert-validation-decision"
+      />
+
+      <app-mcc-conditions
+        [conditions]="conditions()"
+        (conditionsChange)="conditions.set($event)"
+        data-testid="expert-mcc-conditions"
+      />
+
+      <section
+        class="bg-surface-card rounded-xl shadow-md border border-border-strong p-6 mb-8"
+        data-testid="expert-conclusion-section"
+      >
+        <h2 class="text-xl font-bold text-content-primary mb-2 flex items-center gap-2">
+          <span class="material-icons text-primary-default" aria-hidden="true">summarize</span>
+          Final Conclusion &amp; Synthesis
+        </h2>
+        <p class="text-sm text-content-secondary mb-6">
+          Executive synthesis for the final report. This text will appear in the « Analyst’s
+          Conclusion » chapter.
+        </p>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Final Conclusion</mat-label>
+          <textarea
+            matInput
+            formControlName="conclusion_text"
+            rows="4"
+            placeholder="Write the executive synthesis here..."
+            data-testid="expert-conclusion-textarea"
+            aria-describedby="expert-conclusion-errors"
+          ></textarea>
+          <div id="expert-conclusion-errors" aria-live="polite">
+            @if (reviewForm.get('conclusion_text')?.hasError('required')) {
+              <mat-error>Conclusion is required.</mat-error>
+            }
+            @if (reviewForm.get('conclusion_text')?.hasError('minlength')) {
+              <mat-error>Minimum 100 characters required.</mat-error>
+            }
+            @if (reviewForm.get('conclusion_text')?.hasError('maxlength')) {
+              <mat-error>Maximum 3000 characters allowed.</mat-error>
+            }
+          </div>
+        </mat-form-field>
+      </section>
+
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between border-t border-border-default pt-6 pb-12 gap-4"
+        data-testid="expert-actions-bar"
+      >
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="resetForm()"
+          [disabled]="isSubmitting() || !isSubmitted()"
+          data-testid="expert-edit-review-btn"
+          aria-label="Modifier la revue"
+        >
+          <span class="material-icons mr-1" aria-hidden="true">edit</span> Edit Review
+        </button>
+
+        <div class="flex gap-4 w-full sm:w-auto">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="reviewForm.invalid || isSubmitting() || isSubmitted()"
+            class="flex-1 sm:flex-none"
+            data-testid="expert-submit-btn"
+            [attr.aria-label]="isSubmitting() ? 'Soumission en cours…' : 'Soumettre la revue expert'"
+          >
+            @if (isSubmitting()) {
+              <mat-progress-spinner diameter="18" mode="indeterminate" aria-hidden="true" />
+              <span>Submitting…</span>
+            } @else {
+              <span class="material-icons mr-1" aria-hidden="true">send</span>
+              <span>Submit Expert Review</span>
+            }
+          </button>
+
+          <button
+            mat-flat-button
+            color="accent"
+            type="button"
+            [disabled]="!isSubmitted()"
+            (click)="closeCase()"
+            class="flex-1 sm:flex-none"
+            data-testid="expert-close-case-btn"
+            aria-label="Clôturer le dossier et passer au rapport final"
+          >
+            <span class="material-icons mr-1" aria-hidden="true">lock</span> Close Case &rarr; Final Report
+          </button>
+        </div>
+      </div>
+    </form>
+
+  </div>
 }
