@@ -4,9 +4,9 @@ import { CaseService } from '../../core/services/case.service';
 import { ThemeService } from '../../core/services/theme/theme.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { ConvergenceChartOut } from '../../core/models/dashboard.model';
+import { ConvergenceChartOut, TensionAlertOut } from '../../core/models/dashboard.model';
 import { By } from '@angular/platform-browser';
 
 describe('DashboardComponent', () => {
@@ -16,6 +16,9 @@ describe('DashboardComponent', () => {
 
   const mockStats = { total_cases: 10, pending_cases: 3, approved_cases: 5, rejected_cases: 2 };
   const mockCases = [{ id: 'case-1', company_name: 'ACME', status: 'PENDING' }];
+  const mockTensions: TensionAlertOut[] = [
+    { case_id: 'c1', company_name: 'ACME', tension_level: 'SEVERE', delta_score: 1.2 } as any,
+  ];
 
   const mockConvergenceData: ConvergenceChartOut = {
     dates: ['2026-03-01'],
@@ -26,17 +29,16 @@ describe('DashboardComponent', () => {
     convergence_percentage: 90,
   };
 
-  // ─── Helpers ────────────────────────────────────────────────────
+  // ─── Helpers ────────────────────────────────────────────────────────────────
   async function buildComponent(serviceOverrides?: Partial<typeof mockCaseService>) {
     mockCaseService = {
-      getDashboardStats:      vi.fn().mockReturnValue(of(mockStats)),
-      getRecentCases:         vi.fn().mockReturnValue(of(mockCases)),
-      getConvergenceChart:    vi.fn().mockReturnValue(of(mockConvergenceData)),
-      getActiveTensionCases:  vi.fn().mockReturnValue(of([])),
+      getDashboardStats:     vi.fn().mockReturnValue(of(mockStats)),
+      getRecentCases:        vi.fn().mockReturnValue(of(mockCases)),
+      getConvergenceChart:   vi.fn().mockReturnValue(of(mockConvergenceData)),
+      getActiveTensionCases: vi.fn().mockReturnValue(of([])),
       ...serviceOverrides,
     };
 
-    // CORRECTIF JSDOM
     HTMLCanvasElement.prototype.getContext = vi.fn() as any;
     globalThis.ResizeObserver = class {
       observe() {}
@@ -68,7 +70,7 @@ describe('DashboardComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  // ─── Création de base ─────────────────────────────────────────
+  // ─── Création de base ───────────────────────────────────────────────────────────
   it('devrait créer le composant dashboard', () => {
     expect(component).toBeTruthy();
   });
@@ -87,7 +89,55 @@ describe('DashboardComponent', () => {
     expect(component.chartRetryCount()).toBe(0);
   });
 
-  // ─── Gestion des erreurs API ──────────────────────────────────
+  // ─── Loading signals ──────────────────────────────────────────────────────────
+  it('isKpiLoading() devrait être false après émission du stream stats', () => {
+    // of() émet de manière synchrone — tap() résout le signal immédiatement
+    expect(component.isKpiLoading()).toBe(false);
+  });
+
+  it('isCasesLoading() devrait être false après émission du stream cases', () => {
+    expect(component.isCasesLoading()).toBe(false);
+  });
+
+  it('isTensionsLoading() devrait être false après émission du stream tensions', () => {
+    expect(component.isTensionsLoading()).toBe(false);
+  });
+
+  it('isChartLoading() devrait être false après émission du stream chart', () => {
+    expect(component.isChartLoading()).toBe(false);
+  });
+
+  it('isKpiLoading() reste true si le stream stats ne s\'est pas encore résolu', async () => {
+    TestBed.resetTestingModule();
+    // Subject ne émet pas immédiatement — simule un stream en attente
+    const pendingStats$ = new Subject();
+    await buildComponent({ getDashboardStats: vi.fn().mockReturnValue(pendingStats$) });
+    // Ne pas appeler pendingStats$.next() → signal reste true
+    expect(component.isKpiLoading()).toBe(true);
+  });
+
+  // ─── tensionsLoaded + computed ────────────────────────────────────────────────────
+  it('tensionsLoaded() devrait être vide quand getActiveTensionCases retourne []', () => {
+    expect(component.tensionsLoaded()).toEqual([]);
+  });
+
+  it('tensionsEmpty() devrait être true quand tensions = [] et pas d’erreur', () => {
+    expect(component.tensionsEmpty()).toBe(true);
+  });
+
+  it('hasTensionsData() devrait être false quand tensions = []', () => {
+    expect(component.hasTensionsData()).toBe(false);
+  });
+
+  it('tensionsLoaded() devrait contenir les données reçues', async () => {
+    TestBed.resetTestingModule();
+    await buildComponent({ getActiveTensionCases: vi.fn().mockReturnValue(of(mockTensions)) });
+    expect(component.tensionsLoaded()).toEqual(mockTensions);
+    expect(component.hasTensionsData()).toBe(true);
+    expect(component.tensionsEmpty()).toBe(false);
+  });
+
+  // ─── Gestion des erreurs API ────────────────────────────────────────────────────
   it('devrait positionner statsError="server" lorsque getDashboardStats échoue', async () => {
     TestBed.resetTestingModule();
     await buildComponent({
@@ -120,7 +170,15 @@ describe('DashboardComponent', () => {
     expect(component.chartError()).toBe('server');
   });
 
-  // ─── Handlers retry ───────────────────────────────────────────
+  it('isTensionsLoading() devrait être false même quand getActiveTensionCases échoue', async () => {
+    TestBed.resetTestingModule();
+    await buildComponent({
+      getActiveTensionCases: vi.fn().mockReturnValue(throwError(() => new Error('500'))),
+    });
+    expect(component.isTensionsLoading()).toBe(false);
+  });
+
+  // ─── Handlers retry ────────────────────────────────────────────────────────────
   it('onRetryStats() devrait incrémenter statsRetryCount et vider statsError', () => {
     component.statsError.set('server');
     component.onRetryStats();
@@ -149,9 +207,33 @@ describe('DashboardComponent', () => {
     expect(component.chartError()).toBeNull();
   });
 
-  // ─── Rendu template — bouton new-case ─────────────────────────────
+  // ─── Rendu template ───────────────────────────────────────────────────────────────
   it('devrait afficher le bouton « Nouveau dossier » avec data-testid', () => {
     const btn = fixture.debugElement.query(By.css('[data-testid="dashboard-new-case-btn"]'));
     expect(btn).toBeTruthy();
+  });
+
+  it('devrait afficher le skeleton KPI pendant le chargement (stream en attente)', async () => {
+    TestBed.resetTestingModule();
+    const pendingStats$ = new Subject();
+    await buildComponent({ getDashboardStats: vi.fn().mockReturnValue(pendingStats$) });
+    fixture.detectChanges();
+    const skeleton = fixture.debugElement.query(By.css('[data-testid="dashboard-kpi-skeleton"]'));
+    expect(skeleton).toBeTruthy();
+  });
+
+  it('devrait afficher l\'empty-state tensions quand la liste est vide', () => {
+    // isTensionsLoading() = false (stream émis), tensionsLoaded() = [] → tensionsEmpty() = true
+    fixture.detectChanges();
+    const emptyState = fixture.debugElement.query(By.css('[data-testid="dashboard-tensions-empty"]'));
+    expect(emptyState).toBeTruthy();
+  });
+
+  it('devrait afficher la carte tensions quand des données sont présentes', async () => {
+    TestBed.resetTestingModule();
+    await buildComponent({ getActiveTensionCases: vi.fn().mockReturnValue(of(mockTensions)) });
+    fixture.detectChanges();
+    const card = fixture.debugElement.query(By.css('[data-testid="dashboard-tensions-card"]'));
+    expect(card).toBeTruthy();
   });
 });
