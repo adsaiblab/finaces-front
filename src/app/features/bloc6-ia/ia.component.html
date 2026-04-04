@@ -1,25 +1,45 @@
 <div class="ia-root" data-testid="ia-root">
 
-  <!-- ─── SKELETON DOUBLE : affiché pendant le forkJoin (prediction + model) ─── -->
+  <!-- ─── SKELETON DOUBLE INDÉPENDANT : un par stream du forkJoin ─────────── -->
+  <!-- Chaque skeleton reste actif tant que son stream individuel n'est pas résolu -->
   @if (isLoading()) {
-    <div class="ia-skeleton-wrapper" data-testid="ia-loading-skeleton" aria-busy="true" aria-label="Chargement de l'analyse IA">
-      <finaces-skeleton-loader variant="card"  class="ia-skeleton-card" />
-      <finaces-skeleton-loader variant="chart" class="ia-skeleton-chart" />
+    <div
+      class="ia-skeleton-wrapper"
+      data-testid="ia-loading-skeleton"
+      aria-busy="true"
+      aria-label="Chargement de l'analyse IA"
+    >
+      <!-- Skeleton prediction (stream 1) -->
+      <finaces-skeleton-loader
+        variant="card"
+        class="ia-skeleton-card"
+        [class.ia-skeleton--resolved]="!isPredictionLoading()"
+        data-testid="ia-skeleton-prediction"
+        aria-label="Chargement de la prédiction"
+      />
+      <!-- Skeleton model (stream 2) -->
+      <finaces-skeleton-loader
+        variant="chart"
+        class="ia-skeleton-chart"
+        [class.ia-skeleton--resolved]="!isModelLoading()"
+        data-testid="ia-skeleton-model"
+        aria-label="Chargement des performances du modèle"
+      />
     </div>
   }
 
-  <!-- ─── ERREUR forkJoin (prediction ou model indisponible) ──────────── -->
-  @if (predictionError()) {
+  <!-- ─── ERREUR forkJoin (prediction ou model indisponible) ─────────── -->
+  @if (predictionError() && !isLoading()) {
     <finaces-inline-error
       [errorCode]="predictionError()!"
       [retryCount]="retryCount()"
       testId="ia-prediction-error"
-      (retry)="onRetry()"
+      (retry)="onRetryLoad()"
       (ignore)="predictionError.set(null)"
     />
   }
 
-  <!-- ─── CONTENU PRINCIPAL (données chargées) ─────────────────────── -->
+  <!-- ─── CONTENU PRINCIPAL ──────────────────────────────────────────── -->
   @if (!isLoading() && !predictionError()) {
     <div class="ia-content" data-testid="ia-content-wrapper">
 
@@ -40,7 +60,7 @@
           </h1>
           <p class="ia-subtitle">
             Dossier n°{{ caseId() }} — Évaluation probabiliste par apprentissage automatique
-            (Modèle : {{ predictionData()?.model_version || 'Inconnu' }}).
+            (Modèle : {{ predictionData()?.model_version || 'Inconnu' }}).
           </p>
         </div>
 
@@ -53,21 +73,20 @@
             <div class="ia-model-badge__item">
               <span class="ia-model-badge__label">Intervalle de confiance</span>
               <span class="ia-model-badge__value ia-model-badge__value--mono">
-                [{{ data.confidence_interval.lower | number:'1.1-2' }} – {{ data.confidence_interval.upper | number:'1.1-2' }}]
+                [{{ data.confidence_interval.lower | number:'1.1-2' }} – {{ data.confidence_interval.upper | number:'1.1-2' }}]
               </span>
             </div>
           </div>
         }
       </header>
 
-      <!-- Contenu principal -->
       @if (predictionData(); as data) {
         <main class="ia-main" data-testid="ia-main-content">
 
           <!-- Ligne 1 : Score prédit + Zone simulation -->
           <div class="ia-score-row">
 
-            <!-- Score prédit -->
+            <!-- Score prédit (grisé si simulation active) -->
             <div
               class="ia-card ia-card--score"
               data-testid="ia-predicted-score-card"
@@ -93,6 +112,7 @@
                 <finaces-risk-badge [riskClass]="$any(simulationClass()!)" class="ia-card__badge" />
               </div>
             } @else {
+              <!-- Placeholder (aucune simulation lancée) -->
               <div class="ia-card ia-card--placeholder" data-testid="ia-simulation-placeholder">
                 <mat-icon aria-hidden="true" class="ia-placeholder__icon">auto_graph</mat-icon>
                 <h3 class="ia-placeholder__title">Zone de simulation</h3>
@@ -113,7 +133,19 @@
               />
             </div>
 
-            <div data-testid="ia-whatif-card">
+            <!-- Colonne What-If : formulaire + erreur inline -->
+            <div class="ia-whatif-col" data-testid="ia-whatif-card">
+
+              <!-- Erreur isolée What-If (n'écrase pas le forkJoin) -->
+              @if (whatIfError()) {
+                <finaces-inline-error
+                  [errorCode]="whatIfError()!"
+                  testId="ia-whatif-error"
+                  (retry)="whatIfError.set(null)"
+                  (ignore)="whatIfError.set(null)"
+                />
+              }
+
               <app-finaces-what-if
                 [features]="data.shap_values.features"
                 [isSimulating]="isSimulating()"
@@ -135,7 +167,7 @@
           aria-label="Retour au scoring MCC"
           data-testid="ia-back-btn"
         >
-          <mat-icon>arrow_back</mat-icon>
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
           Retour au scoring MCC
         </button>
 
@@ -149,7 +181,6 @@
           data-testid="ia-proceed-tension-btn"
         >
           @if (isSimulating()) {
-            <!-- Spinner pendant la simulation -->
             <mat-spinner diameter="18" class="ia-btn-spinner" aria-hidden="true" />
           } @else {
             <span>Passer à l'analyse de tension</span>
