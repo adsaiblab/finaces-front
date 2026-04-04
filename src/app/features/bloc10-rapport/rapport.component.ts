@@ -33,6 +33,7 @@ import { AuditEvent } from '../../core/models/audit.model';
 import { RapportGridComponent } from './components';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/finaces-skeleton-loader/finaces-skeleton-loader.component';
 
 @Component({
   selector: 'app-rapport-final',
@@ -46,6 +47,7 @@ import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/fina
     RapportGridComponent,
     FinacesRiskBadgeComponent,
     FinacesTensionBadgeComponent,
+    FinacesSkeletonLoaderComponent,
     MatSnackBarModule,
     DatePipe,
     DecimalPipe,
@@ -64,7 +66,7 @@ export class RapportComponent {
   private snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  // ─── State ───────────────────────────────────────────────
+  // ─── State ────────────────────────────────────────────────────────
   caseId = '';
   currentCase = signal<EvaluationCaseDetailOut | null>(null);
   report = signal<MCCGradeReportOut | null>(null);
@@ -75,7 +77,7 @@ export class RapportComponent {
   exportFormat = signal<string>('');
   loadError = signal<boolean>(false);
 
-  // ─── Computed ────────────────────────────────────────────
+  // ─── Computed ────────────────────────────────────────────────────
   sectionLabels = REPORT_SECTION_LABELS;
 
   reportProgress = computed(() => {
@@ -88,7 +90,7 @@ export class RapportComponent {
 
   isReportFinal = computed(() => this.report()?.status === 'FINAL');
 
-  // ─── Lifecycle ───────────────────────────────────────────
+  // ─── Lifecycle ───────────────────────────────────────────────────
   ngOnInit(): void {
     this.caseId = this.caseContext.caseId();
     if (!this.caseId) {
@@ -98,7 +100,7 @@ export class RapportComponent {
     this.loadCaseData();
   }
 
-  // ─── Data Loading ────────────────────────────────────────
+  // ─── Data Loading ───────────────────────────────────────────────
   private loadCaseData(): void {
     this.isLoading.set(true);
     this.caseService
@@ -148,7 +150,7 @@ export class RapportComponent {
       });
   }
 
-  // ─── T41: Build Report ───────────────────────────────────
+  // ─── T41: Build Report ──────────────────────────────────────────
   buildReport(): void {
     this.isBuilding.set(true);
     this.reportService
@@ -194,7 +196,7 @@ export class RapportComponent {
       });
   }
 
-  // ─── T42: Export ─────────────────────────────────────────
+  // ─── T42: Export ──────────────────────────────────────────────────
   exportPdf(): void {
     this.isExporting.set(true);
     this.exportFormat.set('PDF');
@@ -259,7 +261,7 @@ export class RapportComponent {
       });
   }
 
-  // ─── Navigation ──────────────────────────────────────────
+  // ─── Navigation ───────────────────────────────────────────────────
   returnToDashboard(): void {
     this.router.navigate(['/dashboard']);
   }
