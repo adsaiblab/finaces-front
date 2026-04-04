@@ -5,6 +5,7 @@ import {
   computed,
   inject,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
@@ -20,6 +21,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StressService } from '../../core/services/stress.service';
 import { StressTestResponse, StressParameters, Milestone, StressScenarioInputSchema, StressScenarioResult } from '../../core/models/stress.model';
 import {
+  FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
   ErrorCode,
 } from '../../shared/components';
@@ -41,6 +43,7 @@ export type StressTab = 'CONTRACT' | 'MACRO' | 'SHOCK';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    FinacesSkeletonLoaderComponent,
     FinacesInlineErrorComponent,
     StressParametersComponent,
     MilestoneTimelineComponent,
@@ -50,36 +53,29 @@ export type StressTab = 'CONTRACT' | 'MACRO' | 'SHOCK';
   styleUrls: ['./stress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StressComponent {
-  private readonly caseContext  = inject(CaseContextService);
-  private readonly router       = inject(Router);
+export class StressComponent implements OnInit {
+  private readonly caseContext   = inject(CaseContextService);
+  private readonly router        = inject(Router);
   private readonly stressService = inject(StressService);
   private readonly snackBar      = inject(MatSnackBar);
   private readonly destroyRef    = inject(DestroyRef);
 
   readonly caseId = signal<string>('');
 
-  readonly stressData    = signal<StressTestResponse | null>(null);
-  readonly isLoading     = signal<boolean>(false);
-  readonly isSimulating  = signal<boolean>(false);
+  readonly stressData   = signal<StressTestResponse | null>(null);
+  readonly isLoading    = signal<boolean>(false);
+  readonly isSimulating = signal<boolean>(false);
 
-  // ─── Error signals ────────────────────────────────────────────────────────
-  /** Erreur de chargement initial (null = pas d'erreur) */
-  readonly loadError      = signal<ErrorCode | null>(null);
-  /** Erreur de simulation (null = pas d'erreur) */
+  readonly loadError       = signal<ErrorCode | null>(null);
   readonly simulationError = signal<ErrorCode | null>(null);
-  /** Compteur de tentatives — incrémenté dans onRetryLoad() */
-  readonly retryCount     = signal<number>(0);
+  readonly retryCount      = signal<number>(0);
 
-  // ─── Toggle CONTRACT / MACRO / SHOCK ──────────────────────────────────────
   readonly activeTab = signal<StressTab>('CONTRACT');
 
-  // ─── Computed ─────────────────────────────────────────────────────────────
   readonly hasNoData = computed(
     () => !this.isLoading() && !this.loadError() && !this.stressData()
   );
 
-  // State for user inputs
   readonly currentParams     = signal<Partial<StressParameters>>({});
   readonly currentMilestones = signal<Milestone[]>([]);
 
@@ -88,12 +84,10 @@ export class StressComponent {
     this.loadInitialStressData();
   }
 
-  // ─── Tab toggle ───────────────────────────────────────────────────────────
   setTab(tab: StressTab): void {
     this.activeTab.set(tab);
   }
 
-  // ─── Retry ────────────────────────────────────────────────────────────────
   onRetryLoad(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
@@ -101,7 +95,6 @@ export class StressComponent {
     this.loadInitialStressData();
   }
 
-  // ─── Chargement initial ───────────────────────────────────────────────────
   private loadInitialStressData(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
@@ -127,10 +120,10 @@ export class StressComponent {
           case_id: this.caseId(),
           computed_at: new Date().toISOString(),
           base_parameters: {
-            contract_value: 1_200_000,
-            initial_cash: 250_000,
-            available_credit: 100_000,
-            operating_cash_flow: 45_000,
+            contract_value:      1_200_000,
+            initial_cash:         250_000,
+            available_credit:     100_000,
+            operating_cash_flow:   45_000,
             milestones: [],
           },
           scenarios: [
@@ -164,7 +157,6 @@ export class StressComponent {
       });
   }
 
-  // ─── Mise à jour paramètres ────────────────────────────────────────────────
   updateParams(params: Partial<StressParameters>): void {
     this.currentParams.set(params);
   }
@@ -173,7 +165,6 @@ export class StressComponent {
     this.currentMilestones.set(milestones);
   }
 
-  // ─── Simulation ───────────────────────────────────────────────────────────
   runSimulation(): void {
     const payload: StressParameters = {
       ...(this.currentParams() as StressParameters),
@@ -193,7 +184,6 @@ export class StressComponent {
           this.snackBar.open('Simulation de stress terminée avec succès.', 'OK', { duration: 3000 });
         },
         error: () => {
-          // Fallback demo : ajuste les courbes sans DB write
           of(null)
             .pipe(delay(1000), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
@@ -216,7 +206,6 @@ export class StressComponent {
       });
   }
 
-  // ─── Navigation ───────────────────────────────────────────────────────────
   navigateBack(): void {
     this.router.navigate(['/cases', this.caseId(), 'tension']);
   }
