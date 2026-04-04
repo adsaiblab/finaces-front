@@ -1,7 +1,13 @@
 <div class="stress-host" data-testid="stress-root">
 
+  <!-- ─── Skeleton ──────────────────────────────────────────────────────────── -->
   @if (isLoading()) {
-    <div class="stress-skeleton" data-testid="stress-loading-spinner" aria-busy="true" aria-label="Chargement des tests de stress...">
+    <div
+      class="stress-skeleton"
+      data-testid="stress-loading-spinner"
+      aria-busy="true"
+      aria-label="Chargement des tests de stress…"
+    >
       <div class="skeleton skeleton-header"></div>
       <div class="stress-skeleton-body">
         <div class="stress-skeleton-panel">
@@ -17,19 +23,23 @@
     </div>
   }
 
+  <!-- ─── Erreur de chargement ───────────────────────────────────────────────── -->
   @if (!isLoading() && loadError()) {
     <div class="stress-error-wrapper" data-testid="stress-load-error">
       <finaces-inline-error
-        [message]="loadError()!"
-        [retryLabel]="'Réessayer'"
+        [errorCode]="loadError()!"
+        [retryCount]="retryCount()"
         (retry)="onRetryLoad()"
-      ></finaces-inline-error>
+        (ignore)="loadError.set(null)"
+      />
     </div>
   }
 
+  <!-- ─── Contenu principal ───────────────────────────────────────────────────── -->
   @if (!isLoading() && !loadError()) {
     <div class="stress-content animate-fade-in" data-testid="stress-content">
 
+      <!-- En-tête + bouton run -->
       <header class="stress-header" data-testid="stress-header">
         <div class="stress-header-title">
           <h1>
@@ -37,8 +47,8 @@
             Test de résilience de trésorerie
           </h1>
           <p class="stress-subtitle">
-            Dossier {{ caseId() }} — Évaluez la résilience contractuelle et les risques de liquidité
-            en cas de retard de paiement.
+            Dossier {{ caseId() }} — Évaluez la résilience contractuelle et les risques de
+            liquidité en cas de retard de paiement.
           </p>
         </div>
 
@@ -52,7 +62,7 @@
           [attr.aria-label]="isSimulating() ? 'Simulation en cours…' : 'Lancer la simulation de stress'"
         >
           @if (isSimulating()) {
-            <mat-spinner diameter="20" aria-hidden="true"></mat-spinner>
+            <mat-spinner diameter="20" aria-hidden="true" />
             <span>Simulation en cours…</span>
           } @else {
             <mat-icon aria-hidden="true">play_arrow</mat-icon>
@@ -61,14 +71,60 @@
         </button>
       </header>
 
-      @if (isSimulationError()) {
+      <!-- ─── Toggle CONTRACT / MACRO / SHOCK ─────────────────────────────── -->
+      <div class="stress-tab-bar" role="tablist" aria-label="Mode de simulation" data-testid="stress-tab-bar">
+        <button
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'CONTRACT'"
+          [attr.aria-pressed]="activeTab() === 'CONTRACT'"
+          [class.stress-tab--active]="activeTab() === 'CONTRACT'"
+          class="stress-tab"
+          (click)="setTab('CONTRACT')"
+          data-testid="stress-tab-contract"
+        >
+          <mat-icon aria-hidden="true">assignment</mat-icon>
+          Contrat
+        </button>
+
+        <button
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'MACRO'"
+          [attr.aria-pressed]="activeTab() === 'MACRO'"
+          [class.stress-tab--active]="activeTab() === 'MACRO'"
+          class="stress-tab"
+          (click)="setTab('MACRO')"
+          data-testid="stress-tab-macro"
+        >
+          <mat-icon aria-hidden="true">trending_down</mat-icon>
+          Macro
+        </button>
+
+        <button
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'SHOCK'"
+          [attr.aria-pressed]="activeTab() === 'SHOCK'"
+          [class.stress-tab--active]="activeTab() === 'SHOCK'"
+          class="stress-tab"
+          (click)="setTab('SHOCK')"
+          data-testid="stress-tab-shock"
+        >
+          <mat-icon aria-hidden="true">bolt</mat-icon>
+          Choc
+        </button>
+      </div>
+
+      <!-- Erreur de simulation -->
+      @if (simulationError()) {
         <div class="stress-simulation-error" data-testid="stress-simulation-error">
           <finaces-inline-error
-            message="La simulation a échoué. Vérifiez les paramètres et réessayez."
-          ></finaces-inline-error>
+            [errorCode]="simulationError()!"
+            [retryCount]="0"
+            (ignore)="simulationError.set(null)"
+          />
         </div>
       }
 
+      <!-- État vide -->
       @if (hasNoData()) {
         <div class="stress-empty-state" data-testid="stress-empty-state" role="status">
           <mat-icon aria-hidden="true">query_stats</mat-icon>
@@ -77,28 +133,74 @@
         </div>
       }
 
+      <!-- ─── Panneaux par onglet ───────────────────────────────────────────── -->
       @if (!hasNoData() && stressData()) {
-        <main class="stress-main" data-testid="stress-main-content">
-          <div class="stress-params-panel" data-testid="stress-params-panel">
-            <app-stress-parameters (paramsChange)="updateParams($event)"></app-stress-parameters>
-            <app-milestone-timeline (milestonesChange)="updateMilestones($event)"></app-milestone-timeline>
-          </div>
+        <main
+          class="stress-main"
+          data-testid="stress-main-content"
+          role="tabpanel"
+          aria-live="polite"
+        >
 
-          <div class="stress-results-panel" data-testid="stress-results-panel">
-            <app-scenario-results [scenarios]="stressData()?.scenarios || []"></app-scenario-results>
-          </div>
+          <!-- Onglet CONTRACT (défaut) -->
+          @if (activeTab() === 'CONTRACT') {
+            <div class="stress-tab-panel" data-testid="stress-contract-panel">
+              <div class="stress-params-panel" data-testid="stress-params-panel">
+                <app-stress-parameters (paramsChange)="updateParams($event)" />
+                <app-milestone-timeline (milestonesChange)="updateMilestones($event)" />
+              </div>
+              <div class="stress-results-panel" data-testid="stress-results-panel">
+                <app-scenario-results [scenarios]="stressData()?.scenarios || []" />
+              </div>
+            </div>
+          }
+
+          <!-- Onglet MACRO -->
+          @if (activeTab() === 'MACRO') {
+            <div class="stress-tab-panel stress-macro-panel" data-testid="stress-macro-panel">
+              <div class="stress-empty-state" role="status">
+                <mat-icon aria-hidden="true">trending_down</mat-icon>
+                <p class="stress-empty-title">Analyse macroéconomique</p>
+                <p class="stress-empty-subtitle">
+                  Configurez les paramètres macro (taux, inflation, cycle sectoriel)
+                  pour projeter l'impact sur la trésorerie.
+                </p>
+              </div>
+            </div>
+          }
+
+          <!-- Onglet SHOCK -->
+          @if (activeTab() === 'SHOCK') {
+            <div class="stress-tab-panel stress-shock-panel" data-testid="stress-shock-panel">
+              <div class="stress-empty-state" role="status">
+                <mat-icon aria-hidden="true">bolt</mat-icon>
+                <p class="stress-empty-title">Choc idéosyncratique</p>
+                <p class="stress-empty-subtitle">
+                  Simulez un événement de choc ponctuel (perte client majeur, litige,
+                  rupture supply chain) et visualisez la courbe de récupération.
+                </p>
+              </div>
+            </div>
+          }
+
         </main>
       }
 
-      <div class="stress-footer" data-testid="stress-footer" role="navigation" aria-label="Navigation entre blocs">
+      <!-- ─── Footer navigation ─────────────────────────────────────────────── -->
+      <div
+        class="stress-footer"
+        data-testid="stress-footer"
+        role="navigation"
+        aria-label="Navigation entre blocs"
+      >
         <button
           mat-button
           (click)="navigateBack()"
           data-testid="stress-back-btn"
-          aria-label="Retour à l’analyse de tension"
+          aria-label="Retour à l'analyse de tension"
         >
           <mat-icon aria-hidden="true">arrow_back</mat-icon>
-          Retour à l’analyse de tension
+          Retour à l'analyse de tension
         </button>
 
         <button
@@ -107,9 +209,9 @@
           (click)="proceedToExpert()"
           class="finaces-primary-btn"
           data-testid="stress-proceed-expert-btn"
-          aria-label="Passer à l’avis expert"
+          aria-label="Passer à l'avis expert"
         >
-          <span>Passer à l’avis expert</span>
+          <span>Passer à l'avis expert</span>
           <mat-icon aria-hidden="true">arrow_forward</mat-icon>
         </button>
       </div>
