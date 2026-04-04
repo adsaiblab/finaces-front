@@ -1,6 +1,6 @@
 <div class="dashboard-container">
 
-  <!-- ─── En-tête ──────────────────────────────────────────────────────────────── -->
+  <!-- ─── En-tête ───────────────────────────────────────────────────────────────────── -->
   <div class="dashboard-header">
     <div class="title-wrapper">
       <h1>{{ UI_LABELS.dashboard.title }}</h1>
@@ -19,8 +19,14 @@
     </button>
   </div>
 
-  <!-- ─── KPIs ─────────────────────────────────────────────────────────────────── -->
-  @if (statsError()) {
+  <!-- ─── KPIs ─────────────────────────────────────────────────────────────────────────── -->
+  @if (isKpiLoading()) {
+    <finaces-skeleton-loader
+      variant="kpi"
+      data-testid="dashboard-kpi-skeleton"
+      aria-label="Chargement des indicateurs clés"
+    />
+  } @else if (statsError()) {
     <finaces-inline-error
       [errorCode]="statsError()!"
       [retryCount]="statsRetryCount()"
@@ -29,17 +35,22 @@
       (ignore)="statsError.set(null)"
     />
   } @else if (stats$ | async; as stats) {
-    <app-kpi-row [stats]="stats" />
-  } @else {
-    <finaces-skeleton-loader variant="kpi" data-testid="dashboard-kpi-skeleton" />
+    <app-kpi-row [stats]="stats" data-testid="dashboard-kpi-row" />
   }
 
-  <!-- ─── Grille centrale (dossiers récents + tensions) ───────────────────────── -->
+  <!-- ─── Grille centrale (dossiers récents + tensions) ────────────────────────────────── -->
   <div class="dashboard-grid">
 
     <!-- Dossiers récents -->
     <div class="col-span-2">
-      @if (casesError()) {
+      @if (isCasesLoading()) {
+        <finaces-skeleton-loader
+          variant="list"
+          [rows]="5"
+          data-testid="dashboard-cases-skeleton"
+          aria-label="Chargement des dossiers récents"
+        />
+      } @else if (casesError()) {
         <finaces-inline-error
           [errorCode]="casesError()!"
           [retryCount]="casesRetryCount()"
@@ -55,19 +66,23 @@
             description="Aucun dossier n'a encore été créé. Commencez par créer votre premier dossier."
             ctaText="Créer un dossier"
             testId="dashboard-cases-empty"
-            (ctaClick)="/* routerLink gère la navigation */null"
           />
         } @else {
-          <app-recent-cases-table [cases]="cases" />
+          <app-recent-cases-table [cases]="cases" data-testid="dashboard-cases-table" />
         }
-      } @else {
-        <finaces-skeleton-loader variant="list" [rows]="5" data-testid="dashboard-cases-skeleton" />
       }
     </div>
 
     <!-- Tensions actives -->
     <div>
-      @if (tensionsError()) {
+      @if (isTensionsLoading()) {
+        <finaces-skeleton-loader
+          variant="list"
+          [rows]="3"
+          data-testid="dashboard-tensions-skeleton"
+          aria-label="Chargement des tensions actives"
+        />
+      } @else if (tensionsError()) {
         <finaces-inline-error
           [errorCode]="tensionsError()!"
           [retryCount]="tensionsRetryCount()"
@@ -75,15 +90,31 @@
           (retry)="onRetryTensions()"
           (ignore)="tensionsError.set(null)"
         />
+      } @else if (tensionsEmpty()) {
+        <finaces-empty-state
+          variant="no-items"
+          title="Aucune tension active"
+          description="Tous les dossiers convergent. Aucune divergence MCC / IA détectée."
+          testId="dashboard-tensions-empty"
+        />
       } @else {
-        <app-active-tensions-card [tensions]="(tensions$ | async) || []" />
+        <app-active-tensions-card
+          [tensions]="tensionsLoaded()"
+          data-testid="dashboard-tensions-card"
+        />
       }
     </div>
   </div>
 
-  <!-- ─── Graphe convergence ──────────────────────────────────────────────────── -->
+  <!-- ─── Graphe convergence ─────────────────────────────────────────────────────────────── -->
   <div class="chart-section">
-    @if (chartError()) {
+    @if (isChartLoading()) {
+      <finaces-skeleton-loader
+        variant="chart"
+        data-testid="dashboard-chart-skeleton"
+        aria-label="Chargement du graphe de convergence"
+      />
+    } @else if (chartError()) {
       <finaces-inline-error
         [errorCode]="chartError()!"
         [retryCount]="chartRetryCount()"
@@ -92,9 +123,7 @@
         (ignore)="chartError.set(null)"
       />
     } @else if (chartData$ | async; as chartData) {
-      <app-convergence-chart [chartData]="chartData" />
-    } @else {
-      <finaces-skeleton-loader variant="chart" data-testid="dashboard-chart-skeleton" />
+      <app-convergence-chart [chartData]="chartData" data-testid="dashboard-chart" />
     }
   </div>
 
