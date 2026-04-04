@@ -13,6 +13,13 @@
  *   Pour les tests sans fixture (test.use({ storageState })), on utilise
  *   un addInitScript injecté par playwright.config.ts via
  *   une variable d'env E2E_TOKEN écrite dans .auth/token.txt.
+ *
+ * RÉSOLUTION E2E_CASE_ID :
+ *   Le case_id est un UUID généré dynamiquement par seed_e2e.py.
+ *   Après le login, on appelle GET /cases?search=E2E-TEST-DOSSIER-001
+ *   pour récupérer l'UUID réel et l'assigner à process.env['E2E_CASE_ID'].
+ *   Les fixtures/test-data.ts lisent process.env['E2E_CASE_ID'] en priorité
+ *   avec un UUID fallback si le seed n'a pas été lancé.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -28,7 +35,7 @@ const TOKEN_PATH = path.join(AUTH_DIR, 'token.txt');
 export default async function globalSetup(_config: FullConfig): Promise<void> {
   console.log('\n[global-setup] Starting E2E authentication...');
 
-  // ── 1. Ensure .auth directory exists ──────────────────────────────────────
+  // ── 1. Ensure .auth directory exists ─────────────────────────────────────────
   if (!fs.existsSync(AUTH_DIR)) {
     fs.mkdirSync(AUTH_DIR, { recursive: true });
   }
@@ -64,11 +71,48 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
     throw err;
   }
 
-  // ── 3. Sauvegarder le token brut pour usage par addInitScript ─────────────
+  // ── 2b. Resolve E2E_CASE_ID from backend ───────────────────────────────────
+  // GET /cases?search=... fait un ILIKE — on filtre ensuite sur market_reference exact.
+  // Bloc non-bloquant : si la route échoue, le fallback UUID de test-data.ts s'applique.
+  try {
+    const caseRes = await fetch(
+      `${API_BASE_URL}/cases?search=E2E-TEST-DOSSIER-001`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (caseRes.ok) {
+      const cases = (await caseRes.json()) as Array<{
+        id: string;
+        market_reference: string;
+      }>;
+      // Correspondance exacte pour éviter les faux positifs du ILIKE
+      const targetCase = cases.find(
+        (c) => c.market_reference === 'E2E-TEST-DOSSIER-001'
+      );
+      if (targetCase) {
+        process.env['E2E_CASE_ID'] = targetCase.id;
+        console.log(`[global-setup] ✅ E2E_CASE_ID resolved: ${targetCase.id}`);
+      } else {
+        console.warn(
+          '[global-setup] ⚠️ E2E_CASE_ID not found in /cases response — ' +
+          'using fallback UUID from test-data.ts. ' +
+          'Run scripts/seed_e2e.py first.'
+        );
+      }
+    } else {
+      console.warn(
+        `[global-setup] ⚠️ GET /cases returned HTTP ${caseRes.status} — ` +
+        'E2E_CASE_ID not resolved, falling back to test-data.ts default.'
+      );
+    }
+  } catch (err) {
+    console.warn('[global-setup] ⚠️ Could not resolve E2E_CASE_ID:', err);
+  }
+
+  // ── 3. Sauvegarder le token brut pour usage par addInitScript ────────────────
   fs.writeFileSync(TOKEN_PATH, accessToken, 'utf-8');
   console.log(`[global-setup] ✅ Token saved to: ${TOKEN_PATH}`);
 
-  // ── 4. Lancer un browser headless pour injecter dans sessionStorage ────────
+  // ── 4. Lancer un browser headless pour injecter dans sessionStorage ──────────
   //    storageState ne capture pas sessionStorage → on utilise page.evaluate
   //    pour injecter, puis on sauvegarde localStorage+cookies (storageState
   //    standard) ET on enrichit le JSON avec sessionStorage manuellement.
@@ -93,7 +137,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
   // Sauvegarder le storageState standard (localStorage + cookies)
   await context.storageState({ path: AUTH_STATE_PATH });
 
-  // ── 5. Enrichir le storageState JSON avec sessionStorage ──────────────────
+  // ── 5. Enrichir le storageState JSON avec sessionStorage ────────────────────
   //    On lit le fichier généré, on y ajoute les entries sessionStorage
   //    pour que auth.fixture.ts puisse les rejouer via addInitScript.
   const storageStateRaw = fs.readFileSync(AUTH_STATE_PATH, 'utf-8');
