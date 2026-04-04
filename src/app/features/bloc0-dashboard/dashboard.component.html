@@ -1,32 +1,101 @@
 <div class="dashboard-container">
+
+  <!-- ─── En-tête ──────────────────────────────────────────────────────────────── -->
   <div class="dashboard-header">
     <div class="title-wrapper">
       <h1>{{ UI_LABELS.dashboard.title }}</h1>
       <p>{{ UI_LABELS.dashboard.subtitle }}</p>
     </div>
-
-    <button mat-flat-button color="primary" routerLink="/cases/new" class="btn-new-case" data-testid="dashboard-new-case-btn">
+    <button
+      mat-flat-button
+      color="primary"
+      routerLink="/cases/new"
+      class="btn-new-case"
+      data-testid="dashboard-new-case-btn"
+      aria-label="Créer un nouveau dossier"
+    >
       <mat-icon>add</mat-icon>
       {{ UI_LABELS.dashboard.newCase }}
     </button>
   </div>
 
-  @if (stats$ | async; as stats) {
+  <!-- ─── KPIs ─────────────────────────────────────────────────────────────────── -->
+  @if (statsError()) {
+    <finaces-inline-error
+      [errorCode]="statsError()!"
+      [retryCount]="statsRetryCount()"
+      testId="dashboard-stats-error"
+      (retry)="onRetryStats()"
+      (ignore)="statsError.set(null)"
+    />
+  } @else if (stats$ | async; as stats) {
     <app-kpi-row [stats]="stats" />
   } @else {
-    <finaces-skeleton-loader [rows]="4" />
+    <finaces-skeleton-loader variant="kpi" data-testid="dashboard-kpi-skeleton" />
   }
 
+  <!-- ─── Grille centrale (dossiers récents + tensions) ───────────────────────── -->
   <div class="dashboard-grid">
+
+    <!-- Dossiers récents -->
     <div class="col-span-2">
-      <app-recent-cases-table [cases]="(recentCases$ | async) || []" />
+      @if (casesError()) {
+        <finaces-inline-error
+          [errorCode]="casesError()!"
+          [retryCount]="casesRetryCount()"
+          testId="dashboard-cases-error"
+          (retry)="onRetryCases()"
+          (ignore)="casesError.set(null)"
+        />
+      } @else if (recentCases$ | async; as cases) {
+        @if (cases.length === 0) {
+          <finaces-empty-state
+            variant="no-items"
+            title="Aucun dossier récent"
+            description="Aucun dossier n'a encore été créé. Commencez par créer votre premier dossier."
+            ctaText="Créer un dossier"
+            testId="dashboard-cases-empty"
+            (ctaClick)="/* routerLink gère la navigation */null"
+          />
+        } @else {
+          <app-recent-cases-table [cases]="cases" />
+        }
+      } @else {
+        <finaces-skeleton-loader variant="list" [rows]="5" data-testid="dashboard-cases-skeleton" />
+      }
     </div>
+
+    <!-- Tensions actives -->
     <div>
-      <app-active-tensions-card [tensions]="(tensions$ | async) || []" />
+      @if (tensionsError()) {
+        <finaces-inline-error
+          [errorCode]="tensionsError()!"
+          [retryCount]="tensionsRetryCount()"
+          testId="dashboard-tensions-error"
+          (retry)="onRetryTensions()"
+          (ignore)="tensionsError.set(null)"
+        />
+      } @else {
+        <app-active-tensions-card [tensions]="(tensions$ | async) || []" />
+      }
     </div>
   </div>
 
+  <!-- ─── Graphe convergence ──────────────────────────────────────────────────── -->
   <div class="chart-section">
-    <app-convergence-chart [chartData]="chartData$ | async" />
+    @if (chartError()) {
+      <finaces-inline-error
+        [errorCode]="chartError()!"
+        [retryCount]="chartRetryCount()"
+        testId="dashboard-chart-error"
+        (retry)="onRetryChart()"
+        (ignore)="chartError.set(null)"
+      />
+    } @else if (chartData$ | async; as chartData) {
+      <app-convergence-chart [chartData]="chartData" />
+    } @else {
+      <finaces-skeleton-loader variant="chart" data-testid="dashboard-chart-skeleton" />
+    }
   </div>
+
 </div>
