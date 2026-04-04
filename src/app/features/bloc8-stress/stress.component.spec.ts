@@ -56,6 +56,7 @@ describe('StressComponent', () => {
     fixture   = TestBed.createComponent(StressComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   afterEach(() => {
@@ -63,7 +64,7 @@ describe('StressComponent', () => {
     TestBed.resetTestingModule();
   });
 
-  // ─── Création & init ─────────────────────────────────────────────────────────
+  // ─── Création & init ────────────────────────────────────────────────
   it('should create and load data on init', () => {
     expect(component).toBeTruthy();
     expect(mockStressService.getStressTests).toHaveBeenCalledWith('case-123');
@@ -74,7 +75,7 @@ describe('StressComponent', () => {
     expect(mockStressService.runCustomStressTest).toHaveBeenCalled();
   });
 
-  // ─── État initial des signals ─────────────────────────────────────────────────
+  // ─── État initial des signals ──────────────────────────────────────────────
   it('loadError() devrait être null par défaut', () => {
     expect(component.loadError()).toBeNull();
   });
@@ -91,7 +92,7 @@ describe('StressComponent', () => {
     expect(component.activeTab()).toBe('CONTRACT');
   });
 
-  // ─── loadError (ErrorCode) ───────────────────────────────────────────────
+  // ─── loadError (ErrorCode) ─────────────────────────────────────────────
   it('loadError peut être positionné à "server" (ErrorCode)', () => {
     component.loadError.set('server');
     expect(component.loadError()).toBe('server');
@@ -105,7 +106,7 @@ describe('StressComponent', () => {
     expect(component.retryCount()).toBe(before + 1);
   });
 
-  // ─── simulationError (ErrorCode) ───────────────────────────────────────────
+  // ─── simulationError (ErrorCode) ─────────────────────────────────────────
   it('simulationError peut être positionné à "server"', () => {
     component.simulationError.set('server');
     expect(component.simulationError()).toBe('server');
@@ -123,7 +124,7 @@ describe('StressComponent', () => {
     expect(component.simulationError()).toBeNull();
   });
 
-  // ─── hasNoData computed ───────────────────────────────────────────────────
+  // ─── hasNoData computed ───────────────────────────────────────────────
   it('hasNoData devrait être false quand stressData est défini', () => {
     component.isLoading.set(false);
     component.loadError.set(null);
@@ -138,7 +139,7 @@ describe('StressComponent', () => {
     expect(component.hasNoData()).toBe(true);
   });
 
-  // ─── Toggle setTab() ───────────────────────────────────────────────────────
+  // ─── Toggle setTab() ──────────────────────────────────────────────────
   it('setTab("MACRO") devrait changer activeTab à MACRO', () => {
     component.setTab('MACRO');
     expect(component.activeTab()).toBe('MACRO');
@@ -155,25 +156,28 @@ describe('StressComponent', () => {
     expect(component.activeTab()).toBe('CONTRACT');
   });
 
-  // ─── Rendu template ────────────────────────────────────────────────────────────
-  it('devrait afficher le skeleton (stress-loading-spinner) quand isLoading = true', () => {
+  // ─── Rendu template ────────────────────────────────────────────────────────
+  it('devrait afficher le skeleton (stress-loading-spinner) quand isLoading = true', async () => {
     component.isLoading.set(true);
     fixture.detectChanges();
+    await fixture.whenStable();
     const el = fixture.nativeElement.querySelector('[data-testid="stress-loading-spinner"]');
     expect(el).toBeTruthy();
   });
 
-  it('devrait masquer le skeleton après chargement', () => {
+  it('devrait masquer le skeleton après chargement', async () => {
     component.isLoading.set(false);
     fixture.detectChanges();
+    await fixture.whenStable();
     const el = fixture.nativeElement.querySelector('[data-testid="stress-loading-spinner"]');
     expect(el).toBeFalsy();
   });
 
-  it('les 3 boutons de tabs devraient être dans le DOM quand le contenu est chargé', () => {
+  it('les 3 boutons de tabs devraient être dans le DOM quand le contenu est chargé', async () => {
     component.isLoading.set(false);
     component.stressData.set(MOCK_STRESS_DATA);
     fixture.detectChanges();
+    await fixture.whenStable();
     const contract = fixture.debugElement.query(By.css('[data-testid="stress-tab-contract"]'));
     const macro    = fixture.debugElement.query(By.css('[data-testid="stress-tab-macro"]'));
     const shock    = fixture.debugElement.query(By.css('[data-testid="stress-tab-shock"]'));
@@ -182,29 +186,32 @@ describe('StressComponent', () => {
     expect(shock).toBeTruthy();
   });
 
-  it('stress-contract-panel visible quand activeTab = CONTRACT', () => {
+  it('stress-contract-panel visible quand activeTab = CONTRACT', async () => {
     component.isLoading.set(false);
     component.stressData.set(MOCK_STRESS_DATA);
     component.setTab('CONTRACT');
     fixture.detectChanges();
+    await fixture.whenStable();
     const panel = fixture.debugElement.query(By.css('[data-testid="stress-contract-panel"]'));
     expect(panel).toBeTruthy();
   });
 
-  it('stress-macro-panel visible quand activeTab = MACRO', () => {
+  it('stress-macro-panel visible quand activeTab = MACRO', async () => {
     component.isLoading.set(false);
     component.stressData.set(MOCK_STRESS_DATA);
     component.setTab('MACRO');
     fixture.detectChanges();
+    await fixture.whenStable();
     const panel = fixture.debugElement.query(By.css('[data-testid="stress-macro-panel"]'));
     expect(panel).toBeTruthy();
   });
 
-  it('stress-shock-panel visible quand activeTab = SHOCK', () => {
+  it('stress-shock-panel visible quand activeTab = SHOCK', async () => {
     component.isLoading.set(false);
     component.stressData.set(MOCK_STRESS_DATA);
     component.setTab('SHOCK');
     fixture.detectChanges();
+    await fixture.whenStable();
     const panel = fixture.debugElement.query(By.css('[data-testid="stress-shock-panel"]'));
     expect(panel).toBeTruthy();
   });
