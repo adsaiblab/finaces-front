@@ -34,7 +34,7 @@ import { AuditEvent } from '../../core/models/audit.model';
 import { RapportGridComponent } from './components';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { FinacesTensionBadgeComponent } from '../../shared/components/atoms/finaces-tension-badge/finaces-tension-badge.component';
-import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/finaces-skeleton-loader/finaces-skeleton-loader.component';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component';
 
 @Component({
   selector: 'app-rapport-final',

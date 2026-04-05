@@ -25,7 +25,7 @@ import { MccConditionsComponent } from './components/mcc-conditions/mcc-conditio
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/finaces-skeleton-loader/finaces-skeleton-loader.component';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component';
 
 @Component({
   selector: 'app-expert-review',

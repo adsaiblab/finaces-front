@@ -9,7 +9,7 @@
     />
   } @else if (error()) {
     <finaces-inline-error
-      [errorCode]="error()!"
+      [errorCode]="$any(error())"
       [retryCount]="0"
       testId="ratios-error"
       (retry)="loadRatios()"
@@ -126,7 +126,7 @@
     <finaces-empty-state
       variant="no-items"
       title="Ratios non calculés"
-      description="Les ratios financiers n’ont pas encore été calculés. Retournez à la normalisation et cliquez sur Compute Financial Ratios."
+      description="Les ratios financiers n'ont pas encore été calculés. Retournez à la normalisation et cliquez sur Compute Financial Ratios."
       testId="ratios-empty-state"
     />
   }

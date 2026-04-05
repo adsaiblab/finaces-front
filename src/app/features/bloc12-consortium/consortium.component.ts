@@ -36,7 +36,7 @@ import { ConsortiumMemberAccordionComponent } from './components/consortium-memb
 import { FinacesScoreGaugeComponent } from '../../shared/components/atoms/finaces-score-gauge/finaces-score-gauge.component';
 import { FinacesRiskBadgeComponent } from '../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 import { FinacesInlineErrorComponent } from '../../shared/components/molecules/finaces-inline-error/finaces-inline-error.component';
-import { FinacesSkeletonLoaderComponent } from '../../shared/components/atoms/finaces-skeleton-loader/finaces-skeleton-loader.component';
+import { FinacesSkeletonLoaderComponent } from '../../shared/components/molecules/finaces-skeleton-loader/finaces-skeleton-loader.component';
 import { catchError, of, delay, finalize, EMPTY } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
