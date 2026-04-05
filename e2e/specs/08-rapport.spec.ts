@@ -27,13 +27,27 @@ const MOCK_CASE = {
     ia_score: 72.5,
 };
 
-// Structure réelle de build_full_report() — champs confirmés dans report.py
-// status/sections_complete/sections_total sont absents du vrai retour
+// Champs du vrai backend (build_full_report()) : report_id, case_id,
+// recommendation, section_01..section_14_conclusion.
+//
+// status / sections_complete / sections_total sont ABSENTS du vrai retour
+// backend (gap confirmé — à aligner côté API) mais sont lus directement
+// depuis report() dans rapport.component.ts (SHA b64d51c) :
+//   - reportProgress()  = sections_complete / sections_total * 100
+//   - isReportFinal()   = status === 'FINAL'
+//   - buildReport() snackbar affiche les deux compteurs
+// Sans ces champs : reportProgress() → NaN%, isReportFinal() → false,
+// rapport-finalized-badge jamais rendu → timeouts E2E.
+// TODO(backend): ajouter status/sections_complete/sections_total à ReportSchema.
 const MOCK_REPORT_DRAFT = {
     report_id: 'mock-report-draft-001',
     case_id: ID,
     recommendation: 'FAVORABLE',
     section_14_conclusion: 'Conclusion de test E2E.',
+    // Champs attendus par le composant (gap frontend/backend documenté ci-dessus)
+    status: 'DRAFT',
+    sections_complete: 10,
+    sections_total: 14,
 };
 
 const MOCK_REPORT_FINAL = {
@@ -41,6 +55,11 @@ const MOCK_REPORT_FINAL = {
     case_id: ID,
     recommendation: 'FAVORABLE',
     section_14_conclusion: 'Conclusion de test E2E — version finale.',
+    // status:'FINAL' → isReportFinal() = true → rapport-finalized-badge visible
+    // sections_complete = sections_total → reportProgress() = 100%
+    status: 'FINAL',
+    sections_complete: 14,
+    sections_total: 14,
 };
 
 const MOCK_AUDIT_TRAIL = [
@@ -142,7 +161,7 @@ test.describe('Rapport — Rapport DRAFT généré', () => {
         const rapportPage = new RapportPage(page);
         await page.goto(`/cases/${ID}/rapport`);
         await rapportPage.expectPageLoaded();
-        // 10/14 ≈ 71%
+        // sections_complete:10 / sections_total:14 = 71.4% → affiché '71'
         await rapportPage.expectProgressDisplayed('71');
     });
 
@@ -275,6 +294,7 @@ test.describe('Rapport — Rapport FINAL', () => {
         const rapportPage = new RapportPage(page);
         await page.goto(`/cases/${ID}/rapport`);
         await rapportPage.expectPageLoaded();
+        // sections_complete:14 / sections_total:14 = 100%
         await rapportPage.expectProgressDisplayed('100');
     });
 
