@@ -33,8 +33,12 @@ export class AuthService {
   readonly currentUser = signal<CurrentUser | null>(null);
 
   login(username: string, password: string): Observable<{ access_token: string }> {
+    // Backend attend OAuth2 (application/x-www-form-urlencoded)
+    const body = new URLSearchParams({ username, password }).toString();
     return this.http
-      .post<{ access_token: string }>(`${environment.apiUrl}/auth/token`, { username, password })
+      .post<{ access_token: string }>(`${environment.authUrl}/auth/login`, body, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
       .pipe(tap(({ access_token }) => this.setToken(access_token)));
   }
 
