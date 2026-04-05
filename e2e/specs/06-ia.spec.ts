@@ -5,38 +5,52 @@ import { TEST_CASE, TIMEOUTS, API_ENDPOINTS } from '../fixtures/test-data';
 
 const TEST_CASE_ID = TEST_CASE.id;
 
+// ─── IAPredictionResult (interface legacy consommée par le template) ────────
+// Le composant cast le forkJoin résultat via "as unknown as IAPredictionResult"
+// → le mock doit fournir les champs que le TEMPLATE accède réellement :
+//   - predicted_score, predicted_risk_class, confidence_interval
+//   - model_performance, disclaimer, shap_values.features, feature_importance
 const MOCK_IA = {
-    case_id: TEST_CASE_ID,
-    ia_score: 72.5,
-    ia_probability_default: 0.18,
-    ia_risk_class: 'MODERATE',
-    model_version: 'e2e-stub-v1.0',
-    predicted_at: '2024-01-15T10:00:00Z',
-    explanations: null,
-    threshold_info: {},
-};
-
-const MOCK_MODEL = {
-    id: 'mock-model-e2e-001',
-    model_name: 'XGBoost Risk Classifier',
-    version: 'e2e-stub-v1.0',
-    metrics: {
-        auc_roc: 0.89,
-        accuracy: 0.85,
-        f1_score: 0.82,
+    case_id:              TEST_CASE_ID,
+    model_version:        'e2e-stub-v1.0',
+    prediction_timestamp: '2024-01-15T10:00:00Z',
+    predicted_score:      2.4,
+    predicted_risk_class: 'HIGH',
+    confidence_interval:  { lower: 2.1, upper: 2.7 },
+    model_performance:    { auc_roc: 0.89, accuracy: 0.85, f1_score: 0.82 },
+    disclaimer:           'Ce score est fourni à titre indicatif uniquement.',
+    feature_importance:   [],
+    shap_values: {
+        base_value:         3.0,
+        total_contribution: -0.6,
+        features: [
+            { feature_name: 'Dette / Capitaux propres', feature_value: '4.2',  shap_value:  0.8, direction: 'positive', magnitude: 0.8 },
+            { feature_name: 'Marge EBITDA',             feature_value: '8.4%', shap_value: -0.5, direction: 'negative', magnitude: 0.5 },
+            { feature_name: 'Cash-flow operationnel',   feature_value: '1.2M', shap_value:  0.3, direction: 'positive', magnitude: 0.3 },
+        ],
     },
-    created_at: '2024-01-01T00:00:00Z',
 };
 
+// IAModelInfo — aligné sur l'interface du service ia.service.ts
+const MOCK_MODEL = {
+    id:                  'mock-model-e2e-001',
+    name:                'XGBoost Risk Classifier',
+    version:             'e2e-stub-v1.0',
+    is_active:           true,
+    auc_roc:             0.89,
+    accuracy:            0.85,
+    f1_score:            0.82,
+    confidence_interval: { lower: 0.85, upper: 0.93 },
+    trained_at:          '2024-01-01T00:00:00Z',
+};
+
+// WhatIfResult — aligné sur l'interface réelle (predicted_score_if, predicted_class_if)
 const MOCK_IA_SIMULATION = {
-    case_id: TEST_CASE_ID,
-    ia_score: 58.0,
-    ia_probability_default: 0.09,
-    ia_risk_class: 'LOW',
-    model_version: 'e2e-stub-v1.0',
-    predicted_at: '2024-01-15T10:00:00Z',
-    explanations: null,
-    threshold_info: {},
+    scenario_name:       'e2e-what-if-scenario',
+    predicted_score_if:  3.1,
+    predicted_class_if:  'MODERATE',
+    delta_score:         0.7,
+    feature_impacts:     [],
 };
 
 const MOCK_TENSION_BASE = {

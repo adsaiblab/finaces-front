@@ -5,47 +5,64 @@ import { TEST_CASE, TIMEOUTS, API_ENDPOINTS } from '../fixtures/test-data';
 
 const TEST_CASE_ID = TEST_CASE.id;
 
-const MOCK_NORMALIZATION = [
-    {
-        id: 'mock-norm-2022',
-        fiscal_year: 2022,
-        revenue: 1800000.0,
-        ebitda: 360000.0,
-        net_income: 216000.0,
-        operating_cash_flow: 270000.0,
-        adjustments_count: 2,
-    },
-    {
-        id: 'mock-norm-2023',
-        fiscal_year: 2023,
-        revenue: 2000000.0,
-        ebitda: 400000.0,
-        net_income: 240000.0,
-        operating_cash_flow: 300000.0,
-        adjustments_count: 3,
-    },
-];
+// FinancialStatementNormalizedSchema — objet UNIQUE (pas un tableau)
+const MOCK_NORMALIZATION = {
+    statement_id:               'mock-norm-stmt-2023',
+    fiscal_year:                2023,
+    normalized_revenue:         2_000_000.0,
+    normalized_ebitda:          400_000.0,
+    normalized_net_income:      240_000.0,
+    normalized_working_capital: 160_000.0,
+    normalized_cash_flow:       300_000.0,
+    adjustments: [
+        {
+            line_item:       'Extraordinary Items',
+            original_value:  50_000.0,
+            adjusted_value:  0.0,
+            reason:          'Non-recurring item excluded per IFRS',
+            confidence:      0.95,
+        },
+    ],
+    confidence_score:     0.92,
+    normalization_date:   '2024-01-15T10:00:00Z',
+    source_standard:      'LOCAL',
+    applied_standard:     'IFRS',
+    exchange_rate_used:   1.0,
+    exchange_rate_date:   '2024-01-15',
+};
 
-const MOCK_NORMALIZATION_V2 = [
-    {
-        id: 'mock-norm-2022',
-        fiscal_year: 2022,
-        revenue: 1800000.0,
-        ebitda: 360000.0,
-        net_income: 216000.0,
-        operating_cash_flow: 270000.0,
-        adjustments_count: 2,
-    },
-    {
-        id: 'mock-norm-2023-v2',
-        fiscal_year: 2023,
-        revenue: 2000000.0,
-        ebitda: 420000.0,
-        net_income: 252000.0,
-        operating_cash_flow: 315000.0,
-        adjustments_count: 4,
-    },
-];
+// Version V2 après recalcul (ebitda légèrement différent)
+const MOCK_NORMALIZATION_V2 = {
+    statement_id:               'mock-norm-stmt-2023-v2',
+    fiscal_year:                2023,
+    normalized_revenue:         2_000_000.0,
+    normalized_ebitda:          420_000.0,
+    normalized_net_income:      252_000.0,
+    normalized_working_capital: 165_000.0,
+    normalized_cash_flow:       315_000.0,
+    adjustments: [
+        {
+            line_item:       'Extraordinary Items',
+            original_value:  50_000.0,
+            adjusted_value:  0.0,
+            reason:          'Non-recurring item excluded per IFRS',
+            confidence:      0.95,
+        },
+        {
+            line_item:       'Lease Obligations',
+            original_value:  30_000.0,
+            adjusted_value:  25_000.0,
+            reason:          'IFRS 16 adjustment applied',
+            confidence:      0.88,
+        },
+    ],
+    confidence_score:     0.94,
+    normalization_date:   '2024-01-16T10:00:00Z',
+    source_standard:      'LOCAL',
+    applied_standard:     'IFRS',
+    exchange_rate_used:   1.0,
+    exchange_rate_date:   '2024-01-16',
+};
 
 const MOCK_RATIOS = [
     {

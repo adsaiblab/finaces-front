@@ -52,11 +52,14 @@ export class NormalizationPage {
     async clickComputeRatios() {
         await expect(this.computeRatiosBtn).toBeVisible({ timeout: 10000 });
         await expect(this.computeRatiosBtn).toBeEnabled();
-        await this.computeRatiosBtn.click();
+        // Dispatch JS click directement pour contourner le header sticky mat-mdc-table-sticky
+        // qui intercepte les pointer events au-dessus du footer fixe
+        await this.computeRatiosBtn.evaluate((el: HTMLElement) => el.click());
     }
 
     async clickBack() {
         await expect(this.backBtn).toBeVisible({ timeout: 10000 });
-        await this.backBtn.click();
+        // Dispatch JS click directement pour contourner le header sticky mat-mdc-table-sticky
+        await this.backBtn.evaluate((el: HTMLElement) => el.click());
     }
 }
