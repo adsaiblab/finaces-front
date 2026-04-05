@@ -48,17 +48,17 @@ export const API_ENDPOINTS = {
   gateEvaluate: (id: string) => `${API_BASE_URL}/api/v1/gate/${id}/evaluate`,
 
   // Financials
-  financials: (id: string) => `${API_BASE_URL}/api/v1/financials/${id}`,
-  normalizedFinancials: (id: string) => `${API_BASE_URL}/api/v1/normalization/${id}`,
+  financials: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/financials`,
+  normalizedFinancials: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/normalized-financials`,
 
   // Normalization
-  normalization: (id: string) => `${API_BASE_URL}/api/v1/normalization/${id}`,
+  normalization: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/normalize`,
 
   // Ratios
   ratiosCompute: (id: string) => `${API_BASE_URL}/api/v1/ratios/${id}/compute`,
 
   // Scoring
-  score: (id: string) => `${API_BASE_URL}/api/v1/scoring/${id}/score`,
+  score: (id: string) => `${API_BASE_URL}/api/v1/cases/${id}/score`,
 
   // IA
   iaPredict: (id: string) => `${API_BASE_URL}/api/v1/ia/predict/${id}`,

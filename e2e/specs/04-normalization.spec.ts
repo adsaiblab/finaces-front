@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { NormalizationPage } from '../pages/normalization.page';
 import { RatiosPage } from '../pages/ratios.page';
-import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
+import { TEST_CASE, TIMEOUTS, API_ENDPOINTS } from '../fixtures/test-data';
 
 const TEST_CASE_ID = TEST_CASE.id;
 
@@ -104,7 +104,7 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RATIOS) })
         );
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route =>
+        await page.route(API_ENDPOINTS.normalizedFinancials(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
         );
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
@@ -145,13 +145,13 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
         const normalizationPage = new NormalizationPage(page);
 
         // Mock POST /normalize (declencheur du recalcul)
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalize**`, route =>
+        await page.route(API_ENDPOINTS.normalization(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION_V2) })
         );
 
         // Surcharger le GET normalized-financials pour retourner V2 apres le recalcul
         let getCallCount = 0;
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/normalized-financials**`, route => {
+        await page.route(API_ENDPOINTS.normalizedFinancials(TEST_CASE_ID), route => {
             getCallCount++;
             const body = getCallCount >= 2 ? MOCK_NORMALIZATION_V2 : MOCK_NORMALIZATION;
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });

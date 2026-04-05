@@ -1,0 +1,79 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "Passer au contenu principal" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - complementary [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]: FinaCES
+        - button "Basculer la navigation" [ref=e9] [cursor=pointer]:
+          - img [ref=e10]: menu
+      - navigation "Navigation principale" [ref=e11]:
+        - link "Dashboard" [ref=e12] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e13]: dashboard
+          - generic [ref=e14]: Dashboard
+        - link "Dossiers" [ref=e15] [cursor=pointer]:
+          - /url: /cases
+          - img [ref=e16]: folder_open
+          - generic [ref=e17]: Dossiers
+        - link "ML/AI" [ref=e18] [cursor=pointer]:
+          - /url: /admin-ia
+          - img [ref=e19]: smart_toy
+          - generic [ref=e20]: ML/AI
+      - button "Se déconnecter" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]: logout
+        - generic [ref=e24]: Déconnexion
+    - generic [ref=e25]:
+      - banner [ref=e26]:
+        - navigation "Fil d'ariane" [ref=e27]:
+          - generic [ref=e28]: FinaCES
+          - img [ref=e29]: chevron_right
+          - generic [ref=e30]: Analyse IA
+        - button "Basculer le thème clair/sombre" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]: dark_mode
+      - main [ref=e33]:
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - heading "Espace de travail du dossier" [level=1] [ref=e37]
+            - paragraph [ref=e38]: Navigation inter-blocs à implémenter ici
+          - main [ref=e39]:
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - generic [ref=e44]:
+                  - heading "Analyse de prédiction IA" [level=1] [ref=e45]:
+                    - img [ref=e46]: psychology
+                    - text: Analyse de prédiction IA
+                  - paragraph [ref=e47]: "Dossier n°b7276d75-56ad-41e8-95c7-f8d585ff55d7 — Évaluation probabiliste par apprentissage automatique (Modèle : e2e-stub-v1.0)."
+                - generic [ref=e48]:
+                  - generic [ref=e50]: Précision
+                  - generic [ref=e52]: Intervalle de confiance
+              - main [ref=e53]:
+                - generic [ref=e55]:
+                  - heading "Score IA prédit" [level=3] [ref=e56]:
+                    - img [ref=e57]: memory
+                    - text: Score IA prédit
+                  - img [ref=e60]
+                - generic [ref=e65]:
+                  - generic [ref=e66]:
+                    - generic [ref=e68]: What-If Scenario Simulator
+                    - img [ref=e69]: tune
+                  - generic [ref=e70]:
+                    - paragraph [ref=e71]:
+                      - text: Adjust the top driving features to simulate their impact on the AI predicted score.
+                      - strong [ref=e72]: This does not alter the actual data.
+                    - generic [ref=e73]:
+                      - button "Reset" [ref=e74] [cursor=pointer]:
+                        - generic [ref=e75]: Reset
+                      - button [ref=e78] [cursor=pointer]
+              - navigation "Navigation entre étapes" [ref=e81]:
+                - button "Retour au scoring MCC" [ref=e82] [cursor=pointer]:
+                  - img [ref=e83]: arrow_back
+                  - generic [ref=e84]: Retour au scoring MCC
+                - button "Passer à l'analyse de tension" [ref=e87] [cursor=pointer]:
+                  - generic [ref=e88]:
+                    - text: Passer à l'analyse de tension
+                    - img [ref=e89]: compare_arrows
+```

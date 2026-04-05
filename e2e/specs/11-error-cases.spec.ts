@@ -4,7 +4,7 @@
 //   Batch 1 (scoring/IA) + Batch 3 (stress) + ExportResultSchema
 
 import { test, expect } from '../fixtures/auth.fixture';
-import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
+import { TEST_CASE, TIMEOUTS, API_ENDPOINTS } from '../fixtures/test-data';
 
 const ID = TEST_CASE.id;
 const INVALID_ID = 'not-a-valid-uuid';
@@ -70,19 +70,19 @@ const MOCK_CONSORTIUM_DATA = {
 test.describe('Erreur — 401 JWT Token expiré', () => {
 
     test('Normalization 401 → redirect vers /auth/login', async ({ page }) => {
-        await mockApi401(page, `/cases/${ID}/normalized-financials`);
+        await mockApi401(page, API_ENDPOINTS.normalizedFinancials(ID));
         await page.goto(`/cases/${ID}/normalization`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
     test('Scoring 401 → redirect vers /auth/login', async ({ page }) => {
-        await mockApi401(page, `/api/v1/cases/${ID}/score`);
+        await mockApi401(page, API_ENDPOINTS.score(ID));
         await page.goto(`/cases/${ID}/scoring-mcc`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
 
     test('IA Prediction 401 → redirect vers /auth/login', async ({ page }) => {
-        await mockApi401(page, `/ia/predict/${ID}`);
+        await mockApi401(page, API_ENDPOINTS.iaPredict(ID));
         await page.goto(`/cases/${ID}/ia`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
@@ -164,7 +164,7 @@ test.describe('Erreur — UUID invalide → redirect /dashboard', () => {
 test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 
     test('GET normalized-financials 500 → fallback mock : composant racine visible', async ({ page }) => {
-        await mockApi500(page, `/cases/${ID}/normalized-financials`);
+        await mockApi500(page, API_ENDPOINTS.normalizedFinancials(ID));
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
         );
@@ -173,7 +173,7 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
     });
 
     test('GET normalized-financials 500 → fallback mock actif, compute-ratios-btn visible', async ({ page }) => {
-        await mockApi500(page, `/cases/${ID}/normalized-financials`);
+        await mockApi500(page, API_ENDPOINTS.normalizedFinancials(ID));
         await page.route(`**/api/v1/cases/${ID}`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
         );
@@ -184,7 +184,7 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
     });
 
     test('POST /normalize 500 → fallback snackbar : composant reste stable', async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}/normalized-financials**`, route =>
+        await page.route(API_ENDPOINTS.normalizedFinancials(ID), route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     statement_id: 'mock-err-001', fiscal_year: 2023,
@@ -195,7 +195,7 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
                 })
             })
         );
-        await mockApi500(page, `/cases/${ID}/normalize`);
+        await mockApi500(page, API_ENDPOINTS.normalization(ID));
         await page.goto(`/cases/${ID}/normalization`);
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="normalization-recalculate-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -211,7 +211,7 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 
     test('GET /score 500 → composant racine visible, spinner absent, error-banner visible', async ({ page }) => {
-        await page.route(`**/api/v1/cases/${ID}/score**`, route =>
+        await page.route(API_ENDPOINTS.score(ID), route =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
         await page.goto(`/cases/${ID}/scoring-mcc`);
@@ -223,7 +223,7 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 
     test('POST /recommendation 500 → formulaire override reste accessible', async ({ page }) => {
         // Mock aligné sur ScoringResultSchema réel (Batch 1)
-        await page.route(`**/api/v1/cases/${ID}/score**`, route =>
+        await page.route(API_ENDPOINTS.score(ID), route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     case_id: ID,
@@ -265,7 +265,7 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
 
     test('GET /ia/predict 500 → composant racine visible (fallback mock IA)', async ({ page }) => {
-        await mockApi500(page, `/ia/predict/${ID}`);
+        await mockApi500(page, API_ENDPOINTS.iaPredict(ID));
         await page.goto(`/cases/${ID}/ia`);
         await expect(page.locator('[data-testid="ia-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="ia-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -273,7 +273,7 @@ test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
 
     test('POST /ia/simulate 500 → what-if placeholder toujours visible', async ({ page }) => {
         // Mock aligné sur IAPredictionResult réel (Batch 1)
-        await page.route(`**/ia/predict/${ID}**`, route =>
+        await page.route(API_ENDPOINTS.iaPredict(ID), route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
                     case_id: ID,
@@ -286,7 +286,7 @@ test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
                 })
             })
         );
-        await mockApi500(page, `/ia/cases/${ID}/simulate`);
+        await mockApi500(page, API_ENDPOINTS.iaSimulate(ID));
         await page.goto(`/cases/${ID}/ia`);
         await expect(page.locator('[data-testid="ia-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="ia-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });

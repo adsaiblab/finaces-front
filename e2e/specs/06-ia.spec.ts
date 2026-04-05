@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { IaPage } from '../pages/ia.page';
 import { TensionPage } from '../pages/tension.page';
-import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
+import { TEST_CASE, TIMEOUTS, API_ENDPOINTS } from '../fixtures/test-data';
 
 const TEST_CASE_ID = TEST_CASE.id;
 
@@ -52,7 +52,7 @@ const MOCK_TENSION_BASE = {
 test.describe('Isolation — Bloc 6 IA Prediction', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.route(`**/api/v1/ia/predict/${TEST_CASE_ID}**`, route =>
+        await page.route(API_ENDPOINTS.iaPredict(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA) })
         );
         await page.route(`**/api/v1/ia/models/active**`, route =>
@@ -99,7 +99,7 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
     test('What-if — la simulation retourne un score different et masque le placeholder', async ({ page }) => {
         const iaPage = new IaPage(page);
 
-        await page.route(`**/api/v1/ia/cases/${TEST_CASE_ID}/simulate**`, route =>
+        await page.route(API_ENDPOINTS.iaSimulate(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_SIMULATION) })
         );
 

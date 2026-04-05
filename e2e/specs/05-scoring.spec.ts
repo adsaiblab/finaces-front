@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { ScoringPage } from '../pages/scoring.page';
 import { IaPage } from '../pages/ia.page';
-import { TEST_CASE, TIMEOUTS } from '../fixtures/test-data';
+import { TEST_CASE, TIMEOUTS, API_ENDPOINTS } from '../fixtures/test-data';
 
 const TEST_CASE_ID = TEST_CASE.id;
 
@@ -82,7 +82,7 @@ const MOCK_MODEL = {
 test.describe('Isolation — Bloc 5 Scoring MCC', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/score`, route =>
+        await page.route(API_ENDPOINTS.score(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING) })
         );
     });
@@ -113,7 +113,7 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
     test('Override — la zone override est visible et le mock retourne status OVERRIDE', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
 
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/score/override**`, route =>
+        await page.route(API_ENDPOINTS.score(TEST_CASE_ID) + '?override=true', route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING_OVERRIDE) })
         );
 
@@ -132,8 +132,8 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
     test('Override — le badge MANUALLY OVERRIDDEN est affiche quand override est actif (mock direct)', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
 
-        await page.unroute(`**/api/v1/cases/${TEST_CASE_ID}/score`);
-        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/score`, route =>
+        await page.unroute(API_ENDPOINTS.score(TEST_CASE_ID));
+        await page.route(API_ENDPOINTS.score(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING_OVERRIDE) })
         );
 
@@ -150,7 +150,7 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
     // Navigation Scoring -> IA
     // -----------------------------------------------------------------------
     test('Navigation — le bouton Proceed navigue vers /ia', async ({ page }) => {
-        await page.route(`**/api/v1/ia/predict/${TEST_CASE_ID}**`, route =>
+        await page.route(API_ENDPOINTS.iaPredict(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA) })
         );
         await page.route(`**/api/v1/ia/models/active**`, route =>

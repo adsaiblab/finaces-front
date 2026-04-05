@@ -1,0 +1,195 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "Passer au contenu principal" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - complementary [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]: FinaCES
+        - button "Basculer la navigation" [ref=e9] [cursor=pointer]:
+          - img [ref=e10]: menu
+      - navigation "Navigation principale" [ref=e11]:
+        - link "Dashboard" [ref=e12] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e13]: dashboard
+          - generic [ref=e14]: Dashboard
+        - link "Dossiers" [ref=e15] [cursor=pointer]:
+          - /url: /cases
+          - img [ref=e16]: folder_open
+          - generic [ref=e17]: Dossiers
+        - link "ML/AI" [ref=e18] [cursor=pointer]:
+          - /url: /admin-ia
+          - img [ref=e19]: smart_toy
+          - generic [ref=e20]: ML/AI
+      - button "Se déconnecter" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]: logout
+        - generic [ref=e24]: Déconnexion
+    - generic [ref=e25]:
+      - banner [ref=e26]:
+        - navigation "Fil d'ariane" [ref=e27]:
+          - generic [ref=e28]: FinaCES
+          - img [ref=e29]: chevron_right
+          - generic [ref=e30]: Normalisation
+        - button "Basculer le thème clair/sombre" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]: dark_mode
+      - main [ref=e33]:
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - heading "Espace de travail du dossier" [level=1] [ref=e37]
+            - paragraph [ref=e38]: Navigation inter-blocs à implémenter ici
+          - main [ref=e39]:
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]:
+                  - generic [ref=e44]:
+                    - heading "IFRS Normalization" [level=1] [ref=e45]
+                    - 'status "Statut : normalisé" [ref=e46]':
+                      - img [ref=e47]: check_circle
+                      - text: NORMALIZED
+                  - paragraph [ref=e48]: "Case #b7276d75-56ad-41e8-95c7-f8d585ff55d7 — Review the accounting restatements applied by the system."
+                - generic [ref=e49]:
+                  - generic [ref=e50]: "Fiscal Year:"
+                  - button "Recalculer la normalisation" [ref=e51] [cursor=pointer]:
+                    - img [ref=e52]: refresh
+                    - generic [ref=e53]: Recalculate
+              - main [ref=e56]:
+                - generic [ref=e58]:
+                  - generic [ref=e59]:
+                    - img [ref=e60]: policy
+                    - heading "Accounting Standard" [level=2] [ref=e61]
+                  - generic [ref=e62]:
+                    - generic [ref=e63]:
+                      - generic [ref=e64]: Detected Standard
+                      - generic [ref=e65]: MAROC CNC
+                    - generic [ref=e66]:
+                      - generic [ref=e67]: Applied Standard
+                      - generic [ref=e68]: IFRS
+                    - generic [ref=e69]:
+                      - generic [ref=e70]: Exchange Rate
+                      - generic [ref=e71]: 1 USD = 10.50 (as of )
+                    - generic [ref=e73]: Normalized At
+                    - generic [ref=e74]:
+                      - generic [ref=e75]: Processed By
+                      - generic [ref=e76]:
+                        - img [ref=e77]: computer
+                        - text: SYSTEM
+                - generic [ref=e78]:
+                  - generic [ref=e79]:
+                    - heading "Comparative Statement" [level=2] [ref=e80]
+                    - generic [ref=e81]: Raw Data vs IFRS Norms
+                  - table [ref=e84]:
+                    - rowgroup [ref=e85]:
+                      - row "Financial Item Raw Value Normalized Value Δ Note" [ref=e86]:
+                        - columnheader "Financial Item" [ref=e87]
+                        - columnheader "Raw Value" [ref=e88]
+                        - columnheader "Normalized Value" [ref=e89]
+                        - columnheader "Δ" [ref=e90]
+                        - columnheader "Note" [ref=e91]
+                    - rowgroup [ref=e92]:
+                      - row "CURRENT ASSETS" [ref=e93]:
+                        - cell "CURRENT ASSETS" [ref=e94]
+                        - cell
+                        - cell
+                        - cell [ref=e95]
+                        - cell
+                      - row "Cash & Equivalents $123,456 $123,456 — OK" [ref=e96]:
+                        - cell "Cash & Equivalents" [ref=e97]
+                        - cell "$123,456" [ref=e98]
+                        - cell "$123,456" [ref=e99]
+                        - cell "—" [ref=e100]
+                        - cell "OK" [ref=e101]
+                      - row "Inventory $345,678 $328,194 -5.1% Δ" [ref=e102] [cursor=pointer]:
+                        - cell "Inventory" [ref=e103]
+                        - cell "$345,678" [ref=e104]
+                        - cell "$328,194" [ref=e105]
+                        - cell "-5.1%" [ref=e106]
+                        - cell "Δ" [ref=e107]:
+                          - generic [ref=e108]:
+                            - img [ref=e109]: info
+                            - text: Δ
+                      - row "Total Current Assets $1,160,490 $1,143,006 -1.5%" [ref=e110]:
+                        - cell "Total Current Assets" [ref=e111]
+                        - cell "$1,160,490" [ref=e112]
+                        - cell "$1,143,006" [ref=e113]
+                        - cell "-1.5%" [ref=e114]
+                        - cell [ref=e115]
+                      - row "NON-CURRENT ASSETS" [ref=e116]:
+                        - cell "NON-CURRENT ASSETS" [ref=e117]
+                        - cell
+                        - cell
+                        - cell [ref=e118]
+                        - cell
+                      - row "Other Non-Current Assets $567,890 $612,345 +7.8% Δ" [ref=e119] [cursor=pointer]:
+                        - cell "Other Non-Current Assets" [ref=e120]
+                        - cell "$567,890" [ref=e121]
+                        - cell "$612,345" [ref=e122]
+                        - cell "+7.8%" [ref=e123]
+                        - cell "Δ" [ref=e124]:
+                          - generic [ref=e125]:
+                            - img [ref=e126]: info
+                            - text: Δ
+                      - row "TOTAL ASSETS $4,086,416 $4,208,787 +3.0%" [ref=e127]:
+                        - cell "TOTAL ASSETS" [ref=e128]
+                        - cell "$4,086,416" [ref=e129]
+                        - cell "$4,208,787" [ref=e130]
+                        - cell "+3.0%" [ref=e131]
+                        - cell [ref=e132]
+                      - row "EQUITY" [ref=e133]:
+                        - cell "EQUITY" [ref=e134]
+                        - cell
+                        - cell
+                        - cell [ref=e135]
+                        - cell
+                      - row "Total Equity $1,000,000 $1,050,000 +5.0%" [ref=e136]:
+                        - cell "Total Equity" [ref=e137]
+                        - cell "$1,000,000" [ref=e138]
+                        - cell "$1,050,000" [ref=e139]
+                        - cell "+5.0%" [ref=e140]
+                        - cell [ref=e141]
+                      - row "CURRENT LIABILITIES" [ref=e142]:
+                        - cell "CURRENT LIABILITIES" [ref=e143]
+                        - cell
+                        - cell
+                        - cell [ref=e144]
+                        - cell
+                      - row "Total Current Liabilities $2,600,000 $2,450,000 -5.8%" [ref=e145]:
+                        - cell "Total Current Liabilities" [ref=e146]
+                        - cell "$2,600,000" [ref=e147]
+                        - cell "$2,450,000" [ref=e148]
+                        - cell "-5.8%" [ref=e149]
+                        - cell [ref=e150]
+                      - row "NON-CURRENT LIABILITIES" [ref=e151]:
+                        - cell "NON-CURRENT LIABILITIES" [ref=e152]
+                        - cell
+                        - cell
+                        - cell [ref=e153]
+                        - cell
+                      - row "Long Term Debt $1,200,000 $1,350,000 +12.5% Δ" [ref=e154] [cursor=pointer]:
+                        - cell "Long Term Debt" [ref=e155]
+                        - cell "$1,200,000" [ref=e156]
+                        - cell "$1,350,000" [ref=e157]
+                        - cell "+12.5%" [ref=e158]
+                        - cell "Δ" [ref=e159]:
+                          - generic [ref=e160]:
+                            - img [ref=e161]: info
+                            - text: Δ
+                      - row "TOTAL LIABILITIES & EQUITY $5,100,000 $5,150,000 +1.0%" [ref=e162]:
+                        - cell "TOTAL LIABILITIES & EQUITY" [ref=e163]
+                        - cell "$5,100,000" [ref=e164]
+                        - cell "$5,150,000" [ref=e165]
+                        - cell "+1.0%" [ref=e166]
+                        - cell [ref=e167]
+                - generic [ref=e171]:
+                  - img [ref=e172]: tune
+                  - heading [level=2]
+              - generic [ref=e173]:
+                - button "Retour aux financières" [ref=e174] [cursor=pointer]:
+                  - img [ref=e175]: arrow_back
+                  - generic [ref=e176]: Back to Financials
+                - button "Calculer les ratios financiers" [disabled]:
+                  - generic:
+                    - text: Compute Financial Ratios
+                    - img: navigate_next
+```
