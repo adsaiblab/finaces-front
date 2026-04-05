@@ -1,6 +1,6 @@
 <div class="ia-root" data-testid="ia-root">
 
-  <!-- ─── SKELETON DOUBLE INDÉPENDANT : un par stream du forkJoin ─────────── -->
+  <!-- ─── SKELETON DOUBLE INDÉPENDANT : un par stream du forkJoin ────────────────── -->
   <!-- Chaque skeleton reste actif tant que son stream individuel n'est pas résolu -->
   @if (isLoading()) {
     <div
@@ -28,7 +28,7 @@
     </div>
   }
 
-  <!-- ─── ERREUR forkJoin (prediction ou model indisponible) ─────────── -->
+  <!-- ─── ERREUR forkJoin (prediction ou model indisponible) ─────────────────── -->
   @if (predictionError() && !isLoading()) {
     <finaces-inline-error
       [errorCode]="predictionError()!"
@@ -39,7 +39,7 @@
     />
   }
 
-  <!-- ─── CONTENU PRINCIPAL ──────────────────────────────────────────── -->
+  <!-- ─── CONTENU PRINCIPAL ───────────────────────────────────────────────── -->
   @if (!isLoading() && !predictionError()) {
     <div class="ia-content" data-testid="ia-content-wrapper">
 
@@ -60,7 +60,7 @@
           </h1>
           <p class="ia-subtitle">
             Dossier n°{{ caseId() }} — Évaluation probabiliste par apprentissage automatique
-            (Modèle : {{ predictionData()?.model_version || 'Inconnu' }}).
+            (Modèle : {{ predictionData()?.model_version || 'Inconnu' }}).
           </p>
         </div>
 
@@ -73,7 +73,7 @@
             <div class="ia-model-badge__item">
               <span class="ia-model-badge__label">Intervalle de confiance</span>
               <span class="ia-model-badge__value ia-model-badge__value--mono">
-                [{{ data.confidence_interval.lower | number:'1.1-2' }} – {{ data.confidence_interval.upper | number:'1.1-2' }}]
+                [{{ data.confidence_interval.lower | number:'1.1-2' }} – {{ data.confidence_interval.upper | number:'1.1-2' }}]
               </span>
             </div>
           </div>
@@ -183,8 +183,10 @@
           @if (isSimulating()) {
             <mat-spinner diameter="18" class="ia-btn-spinner" aria-hidden="true" />
           } @else {
-            <span>Passer à l'analyse de tension</span>
-            <mat-icon aria-hidden="true">compare_arrows</mat-icon>
+            <ng-container>
+              <span>Passer à l'analyse de tension</span>
+              <mat-icon aria-hidden="true">compare_arrows</mat-icon>
+            </ng-container>
           }
         </button>
       </div>

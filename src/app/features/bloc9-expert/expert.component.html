@@ -1,4 +1,4 @@
-<!-- ─── Skeleton ──────────────────────────────────────────────────────────────────────────── -->
+<!-- ─── Skeleton ───────────────────────────────────────────────────────────────────────────────── -->
 @if (isLoading()) {
   <finaces-skeleton-loader
     variant="form"
@@ -8,7 +8,7 @@
   />
 }
 
-<!-- ─── Contenu principal ──────────────────────────────────────────────────────────────────────── -->
+<!-- ─── Contenu principal ────────────────────────────────────────────────────────────────────────────────────────── -->
 @if (!isLoading()) {
   <div class="w-full h-full p-6" data-testid="expert-root">
 
@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <!-- ─── Empty-state : revue déjà soumise ──────────────────────────────────────── -->
+    <!-- ─── Empty-state : revue déjà soumise ────────────────────────────────────────────── -->
     @if (isSubmitted()) {
       <div
         class="expert-submitted-banner"
@@ -104,8 +104,8 @@
           Final Conclusion &amp; Synthesis
         </h2>
         <p class="text-sm text-content-secondary mb-6">
-          Executive synthesis for the final report. This text will appear in the « Analyst’s
-          Conclusion » chapter.
+          Executive synthesis for the final report. This text will appear in the « Analyst's
+          Conclusion » chapter.
         </p>
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Final Conclusion</mat-label>
@@ -162,8 +162,10 @@
               <mat-progress-spinner diameter="18" mode="indeterminate" aria-hidden="true" />
               <span>Submitting…</span>
             } @else {
-              <span class="material-icons mr-1" aria-hidden="true">send</span>
-              <span>Submit Expert Review</span>
+              <ng-container>
+                <span class="material-icons mr-1" aria-hidden="true">send</span>
+                <span>Submit Expert Review</span>
+              </ng-container>
             }
           </button>
 

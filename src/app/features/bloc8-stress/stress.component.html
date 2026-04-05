@@ -1,6 +1,6 @@
 <div class="stress-host" data-testid="stress-root">
 
-  <!-- ─── Skeleton ──────────────────────────────────────────────────────────── -->
+  <!-- ─── Skeleton ────────────────────────────────────────────────────────── -->
   @if (isLoading()) {
     <finaces-skeleton-loader
       variant="form"
@@ -10,7 +10,7 @@
     />
   }
 
-  <!-- ─── Erreur de chargement ───────────────────────────────────────────────── -->
+  <!-- ─── Erreur de chargement ──────────────────────────────────────────────────── -->
   @if (!isLoading() && loadError()) {
     <div class="stress-error-wrapper" data-testid="stress-load-error">
       <finaces-inline-error
@@ -22,7 +22,7 @@
     </div>
   }
 
-  <!-- ─── Contenu principal ───────────────────────────────────────────────────── -->
+  <!-- ─── Contenu principal ───────────────────────────────────────────────────────── -->
   @if (!isLoading() && !loadError()) {
     <div class="stress-content animate-fade-in" data-testid="stress-content">
 
@@ -52,13 +52,15 @@
             <mat-spinner diameter="20" aria-hidden="true" />
             <span>Simulation en cours…</span>
           } @else {
-            <mat-icon aria-hidden="true">play_arrow</mat-icon>
-            <span>Lancer la simulation</span>
+            <ng-container>
+              <mat-icon aria-hidden="true">play_arrow</mat-icon>
+              <span>Lancer la simulation</span>
+            </ng-container>
           }
         </button>
       </header>
 
-      <!-- ─── Toggle CONTRACT / MACRO / SHOCK ─────────────────────────────── -->
+      <!-- ─── Toggle CONTRACT / MACRO / SHOCK ───────────────────────────────────── -->
       <div class="stress-tab-bar" role="tablist" aria-label="Mode de simulation" data-testid="stress-tab-bar">
         <button
           role="tab"
@@ -120,7 +122,7 @@
         </div>
       }
 
-      <!-- ─── Panneaux par onglet ───────────────────────────────────────────── -->
+      <!-- ─── Panneaux par onglet ────────────────────────────────────────────────────── -->
       @if (!hasNoData() && stressData()) {
         <main
           class="stress-main"
@@ -173,7 +175,7 @@
         </main>
       }
 
-      <!-- ─── Footer navigation ─────────────────────────────────────────────── -->
+      <!-- ─── Footer navigation ───────────────────────────────────────────────────────── -->
       <div
         class="stress-footer"
         data-testid="stress-footer"
