@@ -1,0 +1,59 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "Passer au contenu principal" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - complementary [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]: FinaCES
+        - button "Basculer la navigation" [ref=e9] [cursor=pointer]:
+          - img [ref=e10]: menu
+      - navigation "Navigation principale" [ref=e11]:
+        - link "Dashboard" [ref=e12] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e13]: dashboard
+          - generic [ref=e14]: Dashboard
+        - link "Dossiers" [ref=e15] [cursor=pointer]:
+          - /url: /cases
+          - img [ref=e16]: folder_open
+          - generic [ref=e17]: Dossiers
+        - link "ML/AI" [ref=e18] [cursor=pointer]:
+          - /url: /admin-ia
+          - img [ref=e19]: smart_toy
+          - generic [ref=e20]: ML/AI
+      - button "Se déconnecter" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]: logout
+        - generic [ref=e24]: Déconnexion
+    - generic [ref=e25]:
+      - banner [ref=e26]:
+        - navigation "Fil d'ariane" [ref=e27]:
+          - generic [ref=e28]: FinaCES
+          - img [ref=e29]: chevron_right
+          - generic [ref=e30]: Normalisation
+        - button "Basculer le thème clair/sombre" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]: dark_mode
+      - main [ref=e33]:
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - heading "Espace de travail du dossier" [level=1] [ref=e37]
+            - paragraph [ref=e38]: Navigation inter-blocs à implémenter ici
+          - main [ref=e39]:
+            - generic [ref=e41]:
+              - alert [ref=e42]:
+                - generic [ref=e43]: error_outline
+                - heading "Erreur de chargement" [level=2] [ref=e44]
+                - paragraph [ref=e45]: Les données de normalisation n’ont pas pu être récupérées. Vérifiez que les financières ont bien été saisies.
+                - button "Retour aux financières" [ref=e46] [cursor=pointer]:
+                  - img [ref=e47]: arrow_back
+                  - generic [ref=e48]: Retour aux Financières
+              - generic [ref=e51]:
+                - button "Retour aux financières" [ref=e52] [cursor=pointer]:
+                  - img [ref=e53]: arrow_back
+                  - generic [ref=e54]: Back to Financials
+                - button "Calculer les ratios financiers" [disabled]:
+                  - generic:
+                    - text: Compute Financial Ratios
+                    - img: navigate_next
+```

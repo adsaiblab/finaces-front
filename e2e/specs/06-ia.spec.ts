@@ -52,40 +52,45 @@ const MOCK_TENSION_BASE = {
 test.describe('Isolation — Bloc 6 IA Prediction', () => {
 
     test.beforeEach(async ({ page }) => {
+        // ÉTAPE 1 — Tous les mocks AVANT goto()
         await page.route(API_ENDPOINTS.iaPredict(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA) })
         );
         await page.route(`**/api/v1/ia/models/active**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_MODEL) })
         );
+        await page.route(API_ENDPOINTS.iaSimulate(TEST_CASE_ID), route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_SIMULATION) })
+        );
+
+        // ÉTAPE 2 — Navigation APRÈS les mocks
+        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
+
+        // ÉTAPE 3 — Attendre stabilisation réseau
+        await page.waitForLoadState('networkidle');
+
+        // ÉTAPE 4 — Attendre le composant racine du bloc (root container) + disclaimer IA (données chargées)
+        await expect(page.getByTestId('ia-root')).toBeVisible({ timeout: TIMEOUTS.navigation });
+        await expect(page.getByTestId('ia-disclaimer-banner')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('La page IA se charge et affiche la carte de score predit', async ({ page }) => {
         const iaPage = new IaPage(page);
-        const iaResp = page.waitForResponse(
-            (r: any) => r.url().includes('ia/predict') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
-        await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed(iaResp);
-        await expect(iaPage.predictedScoreCard).toBeVisible();
+        await expect(iaPage.predictedScoreCard).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('Le disclaimer IA est affiche', async ({ page }) => {
         const iaPage = new IaPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
         await expect(iaPage.disclaimerBanner).toBeVisible();
     });
 
     test('La carte SHAP est visible', async ({ page }) => {
         const iaPage = new IaPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
         await expect(iaPage.shapChartCard).toBeVisible();
     });
 
     test('Le placeholder de simulation est visible (avant simulation)', async ({ page }) => {
         const iaPage = new IaPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
         await expect(iaPage.simulationPlaceholder).toBeVisible();
     });
 
@@ -99,16 +104,7 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
     test('What-if — la simulation retourne un score different et masque le placeholder', async ({ page }) => {
         const iaPage = new IaPage(page);
 
-        await page.route(API_ENDPOINTS.iaSimulate(TEST_CASE_ID), route =>
-            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_SIMULATION) })
-        );
-
-        const iaResp = page.waitForResponse(
-            (r: any) => r.url().includes('ia/predict') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
-        await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed(iaResp);
+        await expect(iaPage.mainContent).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(iaPage.whatIfCard).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -118,13 +114,6 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
     // -----------------------------------------------------------------------
     test('What-if — whatIfCard et simulationPlaceholder coexistent dans le template', async ({ page }) => {
         const iaPage = new IaPage(page);
-
-        const iaResp = page.waitForResponse(
-            (r: any) => r.url().includes('ia/predict') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
-        await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed(iaResp);
 
         // Les deux zones sont visibles en meme temps
         await expect(iaPage.whatIfCard).toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -145,12 +134,7 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
         const iaPage = new IaPage(page);
         const tensionPage = new TensionPage(page);
 
-        const iaResp = page.waitForResponse(
-            (r: any) => r.url().includes('ia/predict') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
-        await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed(iaResp);
+        await expect(iaPage.predictedScoreCard).toBeVisible({ timeout: TIMEOUTS.apiResponse });
 
         await iaPage.clickProceedToTension();
         await expect(page).toHaveURL(
@@ -163,12 +147,7 @@ test.describe('Isolation — Bloc 6 IA Prediction', () => {
     test('Navigation — le bouton Back navigue hors de /ia', async ({ page }) => {
         const iaPage = new IaPage(page);
 
-        const iaResp = page.waitForResponse(
-            (r: any) => r.url().includes('ia/predict') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/ia`);
-        await iaPage.expectPageLoaded();
-        await iaPage.expectPredictionDisplayed(iaResp);
+        await expect(iaPage.predictedScoreCard).toBeVisible({ timeout: TIMEOUTS.apiResponse });
 
         await iaPage.clickBack();
         await expect(page).not.toHaveURL(

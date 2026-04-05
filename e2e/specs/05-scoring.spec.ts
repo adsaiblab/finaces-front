@@ -82,31 +82,35 @@ const MOCK_MODEL = {
 test.describe('Isolation — Bloc 5 Scoring MCC', () => {
 
     test.beforeEach(async ({ page }) => {
+        // ÉTAPE 1 — Tous les mocks AVANT goto()
         await page.route(API_ENDPOINTS.score(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING) })
         );
+
+        // ÉTAPE 2 — Navigation APRÈS les mocks
+        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
+
+        // ÉTAPE 3 — Attendre stabilisation réseau
+        await page.waitForLoadState('networkidle');
+
+        // ÉTAPE 4 — Attendre le composant racine du bloc (root container) + badge de statut (données chargées)
+        await expect(page.getByTestId('scoring-root')).toBeVisible({ timeout: TIMEOUTS.navigation });
+        await expect(page.getByTestId('scoring-status-badge')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('Le Score Global et la Risk Class sont affiches', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
-        const scoreResp = page.waitForResponse(
-            (r: any) => r.url().includes('/score') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
-        await scoringPage.expectScoringDisplayed(scoreResp);
         await expect(scoringPage.globalScoreCard).toBeVisible();
         await expect(scoringPage.riskClassCard).toBeVisible();
     });
 
     test('Le badge de statut SYSTEM COMPUTED est affiche', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await expect(scoringPage.statusBadge).toContainText('SYSTEM COMPUTED');
     });
 
     test('La grille des pilliers est visible', async ({ page }) => {
         const scoringPage = new ScoringPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
         await expect(scoringPage.pillarsGrid).toBeVisible();
     });
 
@@ -117,11 +121,10 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING_OVERRIDE) })
         );
 
-        const scoreResp = page.waitForResponse(
-            (r: any) => r.url().includes('/score') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
-        await scoringPage.expectScoringDisplayed(scoreResp);
+        // Re-navigation nécessaire car on a changé le mock de l'URL avec les params
+        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc?override=true`);
+        await page.waitForLoadState('networkidle');
+
         await expect(scoringPage.overrideZone).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
@@ -137,11 +140,9 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_SCORING_OVERRIDE) })
         );
 
-        const scoreResp = page.waitForResponse(
-            (r: any) => r.url().includes('/score') && r.status() === 200
-        );
         await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
-        await scoringPage.expectScoringDisplayed(scoreResp);
+        await page.waitForLoadState('networkidle');
+
         // Le template affiche "MANUALLY OVERRIDDEN" (valeur exacte du DOM)
         await expect(scoringPage.statusBadge).toContainText('MANUALLY OVERRIDDEN', { timeout: TIMEOUTS.apiResponse });
     });
@@ -159,12 +160,6 @@ test.describe('Isolation — Bloc 5 Scoring MCC', () => {
 
         const scoringPage = new ScoringPage(page);
         const iaPage = new IaPage(page);
-
-        const scoreResp = page.waitForResponse(
-            (r: any) => r.url().includes('/score') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/scoring-mcc`);
-        await scoringPage.expectScoringDisplayed(scoreResp);
 
         const iaResp = page.waitForResponse(
             (r: any) => r.url().includes('ia/predict') && r.status() === 200

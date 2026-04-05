@@ -100,6 +100,7 @@ const MOCK_CASE_BASE = {
 test.describe('Isolation — Bloc 3 Normalization', () => {
 
     test.beforeEach(async ({ page }) => {
+        // ÉTAPE 1 — Tous les mocks AVANT goto()
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/**`, (route: any) => route.continue());
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}/ratios**`, route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RATIOS) })
@@ -107,30 +108,37 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
         await page.route(API_ENDPOINTS.normalizedFinancials(TEST_CASE_ID), route =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
         );
+        await page.route(API_ENDPOINTS.normalization(TEST_CASE_ID), route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_NORMALIZATION) })
+        );
         await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, (route: any) =>
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
         );
+
+        // ÉTAPE 2 — Navigation APRÈS les mocks
+        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
+
+        // ÉTAPE 3 — Attendre stabilisation réseau
+        await page.waitForLoadState('networkidle');
+
+        // ÉTAPE 4 — Attendre le composant racine du bloc (root container) + badge de statut (données chargées)
+        await expect(page.getByTestId('normalization-root')).toBeVisible({ timeout: TIMEOUTS.navigation });
+        await expect(page.getByTestId('normalization-status-badge')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('La page Normalization se charge et affiche le badge NORMALIZED', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
-        const normResp = page.waitForResponse(
-            (r: any) => r.url().includes('normalized-financials') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
-        await normalizationPage.expectPageLoaded();
-        await normalizationPage.expectNormalizedBadgeVisible(normResp);
+        await expect(normalizationPage.statusBadge).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await expect(normalizationPage.statusBadge).toContainText('NORMALIZED');
     });
 
     test('L\'annee fiscale est affichee dans le header', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await expect(normalizationPage.fiscalYearDisplay).toContainText('2023');
     });
 
     test('Le bouton Compute Ratios est present et active', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
         await expect(normalizationPage.computeRatiosBtn).toBeVisible();
         await expect(normalizationPage.computeRatiosBtn).toBeEnabled();
     });
@@ -157,14 +165,6 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
         });
 
-        // Charger la page — 1er GET normalized-financials
-        const firstGet = page.waitForResponse(
-            (r: any) => r.url().includes('normalized-financials') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
-        await normalizationPage.expectPageLoaded();
-        await normalizationPage.expectNormalizedBadgeVisible(firstGet);
-        // recalculateBtn est dans @if(normalizedData()) : attend qu'il soit visible
         await expect(normalizationPage.recalculateBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
 
         // Enregistrer l'attente du 2e GET AVANT le clic
@@ -189,8 +189,6 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
     // -----------------------------------------------------------------------
     test('Navigation — le bouton Back navigue vers /financials', async ({ page }) => {
         const normalizationPage = new NormalizationPage(page);
-        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
-        await normalizationPage.expectPageLoaded();
         await normalizationPage.clickBack();
         await expect(page).toHaveURL(
             new RegExp(`/cases/${TEST_CASE_ID}/financials`),
@@ -209,12 +207,7 @@ test.describe('Isolation — Bloc 3 Normalization', () => {
             route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RATIOS) })
         );
 
-        const normResp = page.waitForResponse(
-            (r: any) => r.url().includes('normalized-financials') && r.status() === 200
-        );
-        await page.goto(`/cases/${TEST_CASE_ID}/normalization`);
-        await normalizationPage.expectPageLoaded();
-        await normalizationPage.expectNormalizedBadgeVisible(normResp);
+        await expect(normalizationPage.statusBadge).toBeVisible({ timeout: TIMEOUTS.apiResponse });
 
         await normalizationPage.clickComputeRatios();
         await expect(page).toHaveURL(
