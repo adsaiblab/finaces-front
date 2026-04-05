@@ -151,6 +151,11 @@ export class ConsortiumComponent implements OnInit {
     this.loadData();
   }
 
+  /** Navigate back to the main dashboard (used by template header button). */
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
   private loadData(): void {
     this.isLoading.set(true);
     this.loadError.set(null);

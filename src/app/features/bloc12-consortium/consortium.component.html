@@ -10,7 +10,7 @@
 @if (!isLoading() && loadError()) {
   <div class="consortium-error-wrapper" data-testid="consortium-load-error">
     <finaces-inline-error
-      [errorCode]="loadError()!"
+      [errorCode]="$any(loadError())"
       (retry)="onRetryLoad()"
     ></finaces-inline-error>
   </div>
@@ -35,7 +35,7 @@
         </span>
         <button
           mat-stroked-button
-          (click)="navigateTo(['/cases', caseId(), 'dashboard'])"
+          (click)="goToDashboard()"
           aria-label="Retour au tableau de bord"
         >
           <mat-icon aria-hidden="true">arrow_back</mat-icon>
