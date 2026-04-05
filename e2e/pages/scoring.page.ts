@@ -48,8 +48,8 @@ export class ScoringPage {
      *   await page.goto(...);
      *   await scoringPage.expectScoringDisplayed(resp);
      */
-    async expectScoringDisplayed(responsePromise: Promise<Response>) {
-        await responsePromise;
+    async expectScoringDisplayed(responsePromise?: Promise<Response>) {
+        if (responsePromise) await responsePromise;
         await expect(this.mainContent).toBeVisible({ timeout: 10000 });
         await expect(this.globalScoreCard).toBeVisible({ timeout: 10000 });
     }

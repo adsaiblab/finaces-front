@@ -53,9 +53,9 @@ export class IaPage {
      *   await page.goto(...);
      *   await iaPage.expectPredictionDisplayed(resp);
      */
-    async expectPredictionDisplayed(responsePromise: Promise<Response>) {
+    async expectPredictionDisplayed(responsePromise?: Promise<Response>) {
         await expect(this.disclaimerBanner).toBeVisible({ timeout: 10000 });
-        await responsePromise;
+        if (responsePromise) await responsePromise;
         await expect(this.mainContent).toBeVisible({ timeout: 10000 });
         await expect(this.predictedScoreCard).toBeVisible({ timeout: 10000 });
     }

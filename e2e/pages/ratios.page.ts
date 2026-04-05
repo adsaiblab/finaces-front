@@ -40,8 +40,8 @@ export class RatiosPage {
      *   await page.goto(...);
      *   await ratiosPage.expectRatiosDisplayed(resp);
      */
-    async expectRatiosDisplayed(responsePromise: Promise<Response>) {
-        await responsePromise;
+    async expectRatiosDisplayed(responsePromise?: Promise<Response>) {
+        if (responsePromise) await responsePromise;
         await expect(this.launchScoringBtn).toBeVisible({ timeout: 10000 });
         await expect(this.mainContent).toBeVisible({ timeout: 10000 });
     }

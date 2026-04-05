@@ -43,8 +43,8 @@ export class NormalizationPage {
      *   await page.goto(...);
      *   await normPage.expectNormalizedBadgeVisible(resp);
      */
-    async expectNormalizedBadgeVisible(responsePromise: Promise<Response>) {
-        await responsePromise;
+    async expectNormalizedBadgeVisible(responsePromise?: Promise<Response>) {
+        if (responsePromise) await responsePromise;
         await expect(this.statusBadge).toBeVisible({ timeout: 10000 });
         await expect(this.statusBadge).toContainText('NORMALIZED');
     }

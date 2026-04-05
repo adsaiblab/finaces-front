@@ -64,6 +64,18 @@ const MOCK_CONSORTIUM_DATA = {
     ],
 };
 
+const MOCK_IA_MODEL = {
+    id:                  'mock-model-err-001',
+    name:                'XGBoost Risk Classifier',
+    version:             'e2e-stub-v1.0',
+    is_active:           true,
+    auc_roc:             0.89,
+    accuracy:            0.85,
+    f1_score:            0.82,
+    confidence_interval: { lower: 0.85, upper: 0.93 },
+    trained_at:          '2024-01-01T00:00:00Z',
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // A — JWT Interceptor : 401 → redirect /auth/login
 // ═══════════════════════════════════════════════════════════════════════════
@@ -184,23 +196,43 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
     });
 
     test('POST /normalize 500 → fallback snackbar : composant reste stable', async ({ page }) => {
+        await page.route(`**/api/v1/cases/${ID}/**`, (route: any) => route.continue());
+        
         await page.route(API_ENDPOINTS.normalizedFinancials(ID), route =>
             route.fulfill({
                 status: 200, contentType: 'application/json', body: JSON.stringify({
-                    statement_id: 'mock-err-001', fiscal_year: 2023,
-                    normalized_revenue: 8500000, normalized_ebitda: 4000000,
-                    normalized_net_income: 2850000, normalized_working_capital: 1500000,
-                    normalized_cash_flow: 500000, adjustments: [],
-                    confidence_score: 90, normalization_date: '2026-01-01T00:00:00Z'
+                    statement_id: 'mock-norm-stmt-2023',
+                    fiscal_year: 2023,
+                    normalized_revenue: 2000000.0,
+                    normalized_ebitda: 400000.0,
+                    normalized_net_income: 240000.0,
+                    normalized_working_capital: 160000.0,
+                    normalized_cash_flow: 300000.0,
+                    adjustments: [],
+                    confidence_score: 0.92,
+                    normalization_date: '2024-01-15T10:00:00Z',
+                    source_standard: 'LOCAL',
+                    applied_standard: 'IFRS',
+                    exchange_rate_used: 1.0,
+                    exchange_rate_date: '2024-01-15'
                 })
             })
         );
-        await mockApi500(page, API_ENDPOINTS.normalization(ID));
+        
+        await page.route(API_ENDPOINTS.normalization(ID), route => 
+            route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Error' }) })
+        );
+        
+        await page.route(`**/api/v1/cases/${ID}`, (route: any) =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
         await page.goto(`/cases/${ID}/normalization`);
-        await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="normalization-recalculate-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await page.locator('[data-testid="normalization-recalculate-btn"]').click();
-        await page.waitForTimeout(1500);
+        await page.waitForLoadState('networkidle');
+        await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible({ timeout: 15000 });
+        const calcBtn = page.locator('[data-testid="normalization-recalculate-btn"]');
+        await expect(calcBtn).toBeVisible({ timeout: 15000 });
+        await calcBtn.evaluate((b) => (b as HTMLElement).click());
+        await expect(page.locator('snack-bar-container, .mat-mdc-snack-bar-container')).toBeVisible({ timeout: 15000 });
         await expect(page.locator('[data-testid="normalization-root"]')).toBeVisible();
     });
 });
@@ -209,15 +241,21 @@ test.describe('Erreur — Bloc 3 Normalization API 500', () => {
 // D — Bloc 5 Scoring : API 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 5 Scoring API 500', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.route(`**/api/v1/cases/${ID}`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
+    });
 
     test('GET /score 500 → composant racine visible, spinner absent, error-banner visible', async ({ page }) => {
         await page.route(API_ENDPOINTS.score(ID), route =>
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
         await page.goto(`/cases/${ID}/scoring-mcc`);
-        await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="scoring-error-banner"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await page.waitForLoadState('networkidle');
+        await expect(page.locator('[data-testid="scoring-root"]')).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('[data-testid="scoring-loading-spinner"]')).not.toBeVisible();
+        await expect(page.locator('[data-testid="scoring-load-error"]')).toBeVisible({ timeout: 15000 });
         await expect(page.locator('[data-testid="scoring-main-content"]')).not.toBeVisible();
     });
 
@@ -263,6 +301,11 @@ test.describe('Erreur — Bloc 5 Scoring API 500', () => {
 // E — Bloc 6 IA Prediction : API 500
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.route(`**/api/v1/cases/${ID}`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) })
+        );
+    });
 
     test('GET /ia/predict 500 → composant racine visible (fallback mock IA)', async ({ page }) => {
         await mockApi500(page, API_ENDPOINTS.iaPredict(ID));
@@ -282,15 +325,25 @@ test.describe('Erreur — Bloc 6 IA Prediction API 500', () => {
                     model_version: 'e2e-stub-v1.0',
                     predicted_at: '2026-01-01T00:00:00Z',
                     threshold_info: {},
-                    explanations: null,
+                    predicted_score: 0.725,
+                    confidence_interval: { lower: 0.70, upper: 0.75 },
+                    model_performance: { auc_roc: 0.85, precision: 0.80, recall: 0.82, f1_score: 0.81, ks_statistic: 0.40 },
+                    features_importance: [],
+                    shap_values: [],
+                    data_quality_score: 0.95,
+                    disclaimer: 'test disclaimer'
                 })
             })
         );
+        await page.route('**/api/v1/ia/models/active**', route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_IA_MODEL) })
+        );
         await mockApi500(page, API_ENDPOINTS.iaSimulate(ID));
         await page.goto(`/cases/${ID}/ia`);
-        await expect(page.locator('[data-testid="ia-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="ia-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="ia-simulation-placeholder"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await page.waitForLoadState('networkidle');
+        await expect(page.locator('[data-testid="ia-root"]')).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('[data-testid="ia-loading-spinner"]')).not.toBeVisible();
+        await expect(page.locator('[data-testid="ia-simulation-placeholder"]')).toBeVisible({ timeout: 15000 });
     });
 });
 
@@ -462,8 +515,9 @@ test.describe('Erreur — Bloc 12 Consortium API 500', () => {
             route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Internal Server Error' }) })
         );
         await page.goto(`/cases/${ID}/consortium`);
-        await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="consortium-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await page.waitForLoadState('networkidle');
+        await expect(page.locator('[data-testid="consortium-load-error"]')).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('[data-testid="consortium-loading-spinner"]')).not.toBeVisible();
     });
 
     test('POST /consortium/aggregate 500 → composant reste stable', async ({ page }) => {
@@ -501,14 +555,14 @@ test.describe('Erreur — Dashboard API 500', () => {
         await mockApi500(page, `/dashboard/stats`);
         await page.goto('/dashboard');
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
-        await expect(page.locator('app-dashboard, [data-testid="dashboard-root"], main')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await expect(page.locator('app-dashboard')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('GET /cases 500 sur dashboard → page reste accessible', async ({ page }) => {
         await mockApi500(page, `/cases`);
         await page.goto('/dashboard');
         await expect(page).toHaveURL(/\/dashboard/, { timeout: TIMEOUTS.navigation });
-        await expect(page.locator('app-dashboard, [data-testid="dashboard-root"], main')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await expect(page.locator('app-dashboard')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 });
 
