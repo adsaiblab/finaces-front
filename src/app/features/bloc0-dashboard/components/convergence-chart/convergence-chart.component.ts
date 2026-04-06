@@ -73,6 +73,10 @@ export class ConvergenceChartComponent implements OnDestroy {
       this.chartInstance.destroy();
     }
 
+    if (!data || !data.dates || data.dates.length === 0) {
+      return; // Early return if no data
+    }
+
     // CORRECTIF JSDOM : Vérification stricte du type avant d'appeler .trim()
     const getCssVar = (name: string, fallback: string): string => {
       try {

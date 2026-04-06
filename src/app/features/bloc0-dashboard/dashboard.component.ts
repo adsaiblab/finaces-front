@@ -152,7 +152,21 @@ export class DashboardComponent implements OnInit {
           this.chartError.set(null);
           this.isChartLoading.set(false);
         }),
-        catchError(() => {
+        catchError((err) => {
+          if (err.status === 404) {
+            // Endpoint pas encore implémenté en backend — fallback local
+            this.chartDataLoaded.set({
+              dates: [],
+              mcc_scores: [],
+              ia_scores: [],
+              divergence_flags: [],
+              correlation: 0,
+              convergence_percentage: 0,
+            });
+            this.chartError.set(null);
+            this.isChartLoading.set(false);
+            return of(null);
+          }
           this.chartError.set('server');
           this.isChartLoading.set(false);
           return of(null);
