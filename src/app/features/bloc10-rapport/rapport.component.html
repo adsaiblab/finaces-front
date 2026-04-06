@@ -148,7 +148,7 @@
     <app-rapport-grid title="1. General Information" icon="business" data-testid="rapport-section-01">
       @if (report()?.section_01_info) {
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_01_info"></div>
+        [innerHTML]="report()!.section_01_info | safeHtml"></div>
       } @else {
       <div class="space-y-4">
         <div>
@@ -178,7 +178,7 @@
     <app-rapport-grid title="2. Purpose &amp; Scope" icon="fact_check" data-testid="rapport-section-02">
       @if (report()?.section_02_objective) {
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_02_objective"></div>
+        [innerHTML]="report()!.section_02_objective | safeHtml"></div>
       } @else {
       <div class="col-span-1 md:col-span-2">
         <div class="flex items-center gap-3 bg-success-lighter border border-success-default p-3 rounded">
@@ -194,7 +194,7 @@
     @if (report()?.section_03_scope) {
     <app-rapport-grid title="3. Scope of Analysis" icon="search" data-testid="rapport-section-03">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_03_scope"></div>
+        [innerHTML]="report()!.section_03_scope | safeHtml"></div>
     </app-rapport-grid>
     }
 
@@ -207,20 +207,20 @@
     @if (report()?.section_04_executive_summary) {
     <app-rapport-grid title="4. Executive Summary" icon="summarize" data-testid="rapport-section-04">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed bg-primary-lighter border border-primary-default p-4 rounded-lg"
-        [innerHTML]="report()!.section_04_executive_summary"></div>
+        [innerHTML]="report()!.section_04_executive_summary | safeHtml"></div>
     </app-rapport-grid>
     }
     @if (report()?.section_05_profile) {
     <app-rapport-grid title="5. Bidder Profile" icon="person" data-testid="rapport-section-05">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_05_profile"></div>
+        [innerHTML]="report()!.section_05_profile | safeHtml"></div>
     </app-rapport-grid>
     }
 
     <app-rapport-grid title="6. Financial Analysis" icon="account_balance" data-testid="rapport-section-06">
       @if (report()?.section_06_analysis) {
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_06_analysis"></div>
+        [innerHTML]="report()!.section_06_analysis | safeHtml"></div>
       } @else {
       <div class="col-span-1 md:col-span-2 text-center py-4 text-content-tertiary italic">
         Financial analysis section will be populated when the report is generated.
@@ -237,26 +237,26 @@
     @if (report()?.section_07_capacity) {
     <app-rapport-grid title="7. Contract Capacity" icon="engineering" data-testid="rapport-section-07">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_07_capacity"></div>
+        [innerHTML]="report()!.section_07_capacity | safeHtml"></div>
     </app-rapport-grid>
     }
     @if (report()?.section_08_red_flags) {
     <app-rapport-grid title="8. Red Flags &amp; Blocking Issues" icon="flag" data-testid="rapport-section-08">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_08_red_flags"></div>
+        [innerHTML]="report()!.section_08_red_flags | safeHtml"></div>
     </app-rapport-grid>
     }
     @if (report()?.section_09_mitigants) {
     <app-rapport-grid title="9. Mitigating Factors" icon="balance" data-testid="rapport-section-09">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_09_mitigants"></div>
+        [innerHTML]="report()!.section_09_mitigants | safeHtml"></div>
     </app-rapport-grid>
     }
 
     <app-rapport-grid title="10. MCC Final Score (Authoritative)" icon="gavel" data-testid="rapport-section-10">
       @if (report()?.section_10_scoring) {
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_10_scoring"></div>
+        [innerHTML]="report()!.section_10_scoring | safeHtml"></div>
       } @else {
       <div class="flex flex-col justify-center items-center p-4 bg-primary-lighter rounded-lg border border-primary-default border-border-default print:bg-surface-hover h-full"
         data-testid="rapport-mcc-score-display">
@@ -307,7 +307,7 @@
     @if (report()?.section_11_assessment) {
     <app-rapport-grid title="11. Risk Assessment" icon="assessment" data-testid="rapport-section-11">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_11_assessment"></div>
+        [innerHTML]="report()!.section_11_assessment | safeHtml"></div>
     </app-rapport-grid>
     }
 
@@ -353,13 +353,13 @@
     @if (report()?.section_12_recommendation) {
     <app-rapport-grid title="12. Recommendation" icon="recommend" data-testid="rapport-section-12">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_12_recommendation"></div>
+        [innerHTML]="report()!.section_12_recommendation | safeHtml"></div>
     </app-rapport-grid>
     }
     @if (report()?.section_13_limitations) {
     <app-rapport-grid title="13. Analysis Limitations" icon="info" data-testid="rapport-section-13">
       <div class="col-span-1 md:col-span-2 whitespace-pre-wrap text-content-secondary leading-relaxed"
-        [innerHTML]="report()!.section_13_limitations"></div>
+        [innerHTML]="report()!.section_13_limitations | safeHtml"></div>
     </app-rapport-grid>
     }
 
@@ -377,7 +377,7 @@
           </div>
         </div>
         <div class="text-sm text-content-primary leading-relaxed whitespace-pre-wrap p-4 bg-surface-default border border-border-default rounded"
-          [innerHTML]="report()!.section_14_conclusion" data-testid="rapport-conclusion-text"></div>
+          [innerHTML]="report()!.section_14_conclusion | safeHtml" data-testid="rapport-conclusion-text"></div>
       </div>
       } @else {
       <div class="col-span-1 md:col-span-2 text-center py-8 text-content-tertiary italic" data-testid="rapport-conclusion-empty">
