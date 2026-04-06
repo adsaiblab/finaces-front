@@ -5,7 +5,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
-import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { jwtInterceptor, xsrfInterceptor } from './core/interceptors';
 import { FinacesTitleStrategy } from './core/strategies/finaces-title.strategy';
 
 export const appConfig: ApplicationConfig = {
@@ -13,10 +13,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
-      withInterceptors([jwtInterceptor]),
-      // XSRF protection (P2-05): Angular reads XSRF-TOKEN cookie set by the backend
-      // and injects it as X-XSRF-TOKEN header on all mutating requests (POST/PUT/PATCH/DELETE).
-      // Cookie name and header name must match the XSRFMiddleware contract in app/main.py.
+      // Execution order: jwt (Bearer + 401 logout) → xsrf (XSRF-TOKEN header on mutations)
+      withInterceptors([jwtInterceptor, xsrfInterceptor]),
+      // Angular reads XSRF-TOKEN cookie set by backend XSRFMiddleware on GET responses
+      // and injects X-XSRF-TOKEN header on all mutating requests (POST/PUT/PATCH/DELETE).
       withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
     ),
     provideAnimations(),
