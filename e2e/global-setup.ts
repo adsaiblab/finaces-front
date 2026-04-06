@@ -48,9 +48,21 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 
   let accessToken: string;
   try {
+    // Step 1 — GET /auth/csrf-token to obtain the XSRF-TOKEN cookie
+    const csrfRes = await fetch(`${API_BASE_URL}/auth/csrf-token`, {
+      method: 'GET',
+    });
+    const csrfCookie = csrfRes.headers.get('set-cookie') ?? '';
+    const xsrfToken = csrfCookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '';
+
+    // Step 2 — POST /auth/login with XSRF token echoed in header
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-XSRF-TOKEN': xsrfToken,
+        'Cookie': `XSRF-TOKEN=${xsrfToken}`,
+      },
       body: formData.toString(),
     });
 
