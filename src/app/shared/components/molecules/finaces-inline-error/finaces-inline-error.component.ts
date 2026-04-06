@@ -54,7 +54,7 @@ export class FinacesInlineErrorComponent {
   readonly ignore = output<void>();
 
   // Resolved metadata: explicit message wins, otherwise use errorCode defaults
-  readonly resolvedMeta = computed(() => ERROR_META[this.errorCode()]);
+  readonly resolvedMeta = computed(() => ERROR_META[this.errorCode()] ?? ERROR_META['generic']);
   readonly resolvedTitle   = computed(() => this.resolvedMeta().title);
   readonly resolvedMessage = computed(() => this.message() || this.resolvedMeta().message);
   readonly resolvedIcon    = computed(() => this.resolvedMeta().icon);

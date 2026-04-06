@@ -101,11 +101,17 @@ describe('GateComponent', () => {
 
   it("devrait lancer l'évaluation et mettre à jour le state", async () => {
     fixture.detectChanges();
+    await fixture.whenStable();
+
     component.onEvaluateGate();
 
-    // Attendre que le Subject soit mis à jour via firstValueFrom
-    const decision = await firstValueFrom(component.decision$);
+    // evaluateGate() mock retourne of({...}) — synchrone après fixture.whenStable()
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     expect(mockCaseService.evaluateGate).toHaveBeenCalledWith('1');
+    // decision est un signal, pas un Observable — on le lit directement
+    const decision = component.decision();
     expect(decision).toBeTruthy();
     expect(decision?.verdict).toBe('PASSED');
   });

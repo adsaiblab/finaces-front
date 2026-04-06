@@ -19,7 +19,7 @@ const MOCK_CONSORTIUM: ConsortiumScorecardOutput = {
   combined_scorecard: { final_score: 3.45, risk_class: 'MODERATE' },
   members: [
     { member_id: 'member-1', member_name: 'Alpha SA', role: 'LEADER', participation_pct: 60, score: 3.8, risk_class: 'LOW', status: 'ACTIVE' },
-    { member_id: 'member-2', member_name: 'Beta Corp', role: 'MEMBER',  participation_pct: 40, score: 2.1, risk_class: 'HIGH', status: 'ACTIVE' },
+    { member_id: 'member-2', member_name: 'Beta Corp', role: 'MEMBER', participation_pct: 40, score: 2.1, risk_class: 'HIGH', status: 'ACTIVE' },
   ],
 } as ConsortiumScorecardOutput;
 
@@ -49,8 +49,8 @@ describe('ConsortiumComponent', () => {
         provideHttpClientTesting(),
         provideRouter([{ path: 'dashboard', children: [] }]),
         { provide: CaseContextService, useValue: mockCaseContext },
-        { provide: CaseService,         useValue: mockCaseService },
-        { provide: ConsortiumService,    useValue: mockConsortiumService },
+        { provide: CaseService, useValue: mockCaseService },
+        { provide: ConsortiumService, useValue: mockConsortiumService },
       ],
     }).compileComponents();
 
