@@ -1,18 +1,19 @@
 # ---- Build Stage ----
-FROM --platform=linux/amd64 node:20-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 # Install dependencies first (layer caching)
 COPY package.json package-lock.json ./
-RUN npm ci
+# Install dependencies — ignore native addon compilation (canvas is devDep for tests only)
+RUN npm ci --ignore-scripts
 
 # Copy code and build
 COPY . .
 RUN npm run build -- --configuration production
 
 # ---- Runtime Stage ----
-FROM --platform=linux/amd64 nginx:alpine
+FROM nginx:alpine
 
 # Remove default nginx setup
 RUN rm -rf /usr/share/nginx/html/* && \
