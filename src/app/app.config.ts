@@ -3,12 +3,25 @@ import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angula
 import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import * as Sentry from '@sentry/angular';
+import { Injectable } from '@angular/core';
 
 import { routes } from './app.routes';
 import { jwtInterceptor, xsrfInterceptor } from './core/interceptors';
 import { FinacesTitleStrategy } from './core/strategies/finaces-title.strategy';
 import { environment } from '../environments/environment';
+
+// Variable locale pour stocker l'instance Sentry une fois chargée dynamiquement
+let sentryRef: any = null;
+
+@Injectable({ providedIn: 'root' })
+export class SentryErrorHandler implements ErrorHandler {
+  handleError(error: any): void {
+    if (sentryRef) {
+      sentryRef.captureException(error);
+    }
+    console.error(error);
+  }
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,25 +29,25 @@ export const appConfig: ApplicationConfig = {
     // Guard: si sentryDsn est vide (dev local, CI) — Sentry reste silencieux.
     {
       provide: APP_INITIALIZER,
-      useFactory: () => () => {
-        if (environment.sentryDsn) {
-          Sentry.init({
-            dsn: environment.sentryDsn,
-            environment: environment.name,
-            integrations: [
-              Sentry.browserTracingIntegration(),
-              Sentry.replayIntegration(),
-            ],
-            tracesSampleRate: 0.1,
-            replaysOnErrorSampleRate: 1.0, // Replay uniquement sur erreur
-            replaysSessionSampleRate: 0,   // Pas de replay systématique
-          });
-        }
+      useFactory: () => async () => {
+        if (!environment.sentryDsn) return;
+        const Sentry = await import('@sentry/angular');
+        sentryRef = Sentry;
+        Sentry.init({
+          dsn: environment.sentryDsn,
+          environment: environment.name,
+          tracesSampleRate: 0.1,
+          replaysOnErrorSampleRate: 1.0,
+          integrations: [
+            Sentry.browserTracingIntegration(),
+            Sentry.replayIntegration(),
+          ],
+        });
       },
       multi: true,
     },
-    // Remplace le ErrorHandler Angular par Sentry (no-op si DSN absent)
-    { provide: ErrorHandler, useValue: Sentry.createErrorHandler() },
+    // Remplace le ErrorHandler Angular par notre handler dynamique
+    { provide: ErrorHandler, useClass: SentryErrorHandler },
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
