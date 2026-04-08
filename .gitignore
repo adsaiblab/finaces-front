@@ -5,3 +5,5 @@ dist/
 # E2E — Ne jamais committer les tokens/credentials
 e2e/.auth/
 e2e/.env.e2e
+playwright-report/
+playwright-results/
