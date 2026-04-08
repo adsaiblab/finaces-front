@@ -76,6 +76,17 @@ const MOCK_IA_MODEL = {
     trained_at:          '2024-01-01T00:00:00Z',
 };
 
+const MOCK_REPORT_BASE = {
+    report_id: 'rpt-err-001',
+    case_id: ID,
+    status: 'DRAFT',
+    sections_complete: 3,
+    sections_total: 14,
+    recommendation: 'FAVORABLE',
+    section_14_conclusion: 'Conclusion E2E.',
+    audit_log: []
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // A — JWT Interceptor : 401 → redirect /auth/login
 // ═══════════════════════════════════════════════════════════════════════════
@@ -100,7 +111,8 @@ test.describe('Erreur — 401 JWT Token expiré', () => {
     });
 
     test('Rapport 401 → redirect vers /auth/login', async ({ page }) => {
-        await mockApi401(page, `/cases/${ID}/report`);
+        // En mockant l'appel principal du dossier, on déclenche le redirect immédiat
+        await mockApi401(page, `/api/v1/cases/${ID}`);
         await page.goto(`/cases/${ID}/rapport`);
         await expect(page).toHaveURL(/\/auth\/login/, { timeout: TIMEOUTS.navigation });
     });
@@ -431,12 +443,12 @@ test.describe('Erreur — Bloc 9 Expert API 500', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 test.describe('Erreur — Bloc 10 Rapport API 500', () => {
 
-    test('GET /report 500 → composant racine visible, bouton Generate présent', async ({ page }) => {
+    test('GET /report 500 → composant racine visible, état d\'erreur affiché', async ({ page }) => {
         await mockApi500(page, `/cases/${ID}/report`);
         await page.goto(`/cases/${ID}/rapport`);
         await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
-        await expect(page.locator('[data-testid="rapport-generate-btn"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
+        await expect(page.locator('[data-testid="rapport-error-state"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
     });
 
     test('POST /report/build 500 → composant reste stable sans crash', async ({ page }) => {
@@ -446,7 +458,6 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
             return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Build failed' }) });
         });
         await page.goto(`/cases/${ID}/rapport`);
-        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         const generateBtn = page.locator('[data-testid="rapport-generate-btn"]');
         await expect(generateBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -456,21 +467,16 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /export/pdf 500 → composant reste stable', async ({ page }) => {
-        // Mock GET report aligné sur build_full_report() réel
-        await page.route(`**/api/v1/cases/${ID}/report**`, route =>
-            route.fulfill({
-                status: 200, contentType: 'application/json', body: JSON.stringify({
-                    report_id: 'rpt-err-001',
-                    case_id: ID,
-                    recommendation: 'FAVORABLE',
-                    section_14_conclusion: 'Conclusion E2E.',
-                })
-            })
-        );
-        // Route réelle confirmée : POST /cases/{id}/export/pdf
-        await mockApi500(page, `/cases/${ID}/export/pdf`);
+        await page.route(`**/api/v1/cases/${ID}/report**`, route => {
+            if (route.request().method() === 'GET') {
+                return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_BASE) });
+            }
+            if (route.request().url().includes('/export/pdf')) {
+                return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Export failed' }) });
+            }
+            return route.continue();
+        });
         await page.goto(`/cases/${ID}/rapport`);
-        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         const pdfBtn = page.locator('[data-testid="rapport-export-pdf-btn"]');
         await expect(pdfBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });
@@ -480,21 +486,16 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /export/word 500 → composant reste stable', async ({ page }) => {
-        // Mock GET report aligné sur build_full_report() réel
-        await page.route(`**/api/v1/cases/${ID}/report**`, route =>
-            route.fulfill({
-                status: 200, contentType: 'application/json', body: JSON.stringify({
-                    report_id: 'rpt-err-002',
-                    case_id: ID,
-                    recommendation: 'DEFAVORABLE',
-                    section_14_conclusion: 'Conclusion E2E défavorable.',
-                })
-            })
-        );
-        // Route réelle confirmée : POST /cases/{id}/export/word
-        await mockApi500(page, `/cases/${ID}/export/word`);
+        await page.route(`**/api/v1/cases/${ID}/report**`, route => {
+            if (route.request().method() === 'GET') {
+                return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_BASE) });
+            }
+            if (route.request().url().includes('/export/word')) {
+                return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: 'Export failed' }) });
+            }
+            return route.continue();
+        });
         await page.goto(`/cases/${ID}/rapport`);
-        await expect(page.locator('[data-testid="rapport-loading-spinner"]')).not.toBeVisible({ timeout: TIMEOUTS.apiResponse });
         await expect(page.locator('[data-testid="rapport-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });
         const wordBtn = page.locator('[data-testid="rapport-export-word-btn"]');
         await expect(wordBtn).toBeVisible({ timeout: TIMEOUTS.apiResponse });

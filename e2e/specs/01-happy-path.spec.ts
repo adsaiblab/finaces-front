@@ -327,6 +327,12 @@ test.describe('Happy Path — FinaCES V1.2 E2E (Blocs 3↑10)', () => {
 
     test('Bloc 10 — Rapport Final : le composant racine est visible', async ({ page }) => {
         const rapportPage = new RapportPage(page);
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}`, async route => {
+            await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_CASE_BASE) });
+        });
+        await page.route(`**/api/v1/cases/${TEST_CASE_ID}/report`, async route => {
+            await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_RAPPORT) });
+        });
         await page.goto(`/cases/${TEST_CASE_ID}/rapport`);
         await rapportPage.expectPageLoaded();
         await rapportPage.expectStructureDisplayed();
