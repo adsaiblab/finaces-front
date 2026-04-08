@@ -603,6 +603,9 @@ test.describe('Erreur — Admin IA API 500', () => {
 test.describe('Erreur — Bloc 1b Gate API 500', () => {
 
     test("POST /gate/evaluate 500 → bouton d'évaluation reste accessible", async ({ page }) => {
+        await page.route(`**/api/v1/cases/${ID}`, route =>
+            route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({...MOCK_CASE_BASE, status: 'PENDING_GATE', gate_decision: null}) })
+        );
         await mockApi500(page, `/cases/${ID}/gate/evaluate`);
         await page.goto(`/cases/${ID}/gate`);
         await expect(page.locator('[data-testid="gate-root"]')).toBeVisible({ timeout: TIMEOUTS.apiResponse });

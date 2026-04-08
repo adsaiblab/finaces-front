@@ -81,20 +81,18 @@
       </button>
       }
 
-      @if (hasReport()) {
-      <button mat-flat-button color="accent" (click)="exportWord()" [disabled]="isExporting() || isBuilding()"
+      <button mat-flat-button color="accent" (click)="exportWord()" [disabled]="!hasReport() || isExporting() || isBuilding()"
         data-testid="rapport-export-word-btn"
         aria-label="Exporter en Word">
         <span class="material-icons mr-1 text-sm" aria-hidden="true">description</span>
         {{ exportFormat() === 'Word' ? 'Exporting...' : 'Export Word' }}
       </button>
-      <button mat-flat-button color="primary" (click)="exportPdf()" [disabled]="isExporting() || isBuilding()"
+      <button mat-flat-button color="primary" (click)="exportPdf()" [disabled]="!hasReport() || isExporting() || isBuilding()"
         data-testid="rapport-export-pdf-btn"
         aria-label="Télécharger le PDF">
         <span class="material-icons mr-1 text-sm" aria-hidden="true">picture_as_pdf</span>
         {{ exportFormat() === 'PDF' ? 'Exporting...' : 'Download PDF' }}
       </button>
-      }
     </div>
   </div>
 
