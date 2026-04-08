@@ -452,6 +452,7 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /report/build 500 → composant reste stable sans crash', async ({ page }) => {
+        await mockCaseDetail(page, ID, MOCK_CASE_BASE);
         await page.route(`**/api/v1/cases/${ID}/report**`, (route: any) => {
             if (route.request().method() === 'GET')
                 return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'Not found' }) });
@@ -467,6 +468,7 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /export/pdf 500 → composant reste stable', async ({ page }) => {
+        await mockCaseDetail(page, ID, MOCK_CASE_BASE);
         await page.route(`**/api/v1/cases/${ID}/report**`, route => {
             if (route.request().method() === 'GET') {
                 return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_BASE) });
@@ -486,6 +488,7 @@ test.describe('Erreur — Bloc 10 Rapport API 500', () => {
     });
 
     test('POST /export/word 500 → composant reste stable', async ({ page }) => {
+        await mockCaseDetail(page, ID, MOCK_CASE_BASE);
         await page.route(`**/api/v1/cases/${ID}/report**`, route => {
             if (route.request().method() === 'GET') {
                 return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_REPORT_BASE) });
