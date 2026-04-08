@@ -1,3 +1,4 @@
+<div data-testid="gate-root" class="w-full h-full">
 @if (isLoading()) {
   <!-- SKELETON LOADER -->
   <div class="gate-layout" aria-busy="true" aria-label="Chargement du document gate">
@@ -22,7 +23,7 @@
     </button>
   </div>
 } @else if (currentCase(); as caseData) {
-  <div class="gate-layout" data-testid="gate-root">
+  <div class="gate-layout">
     <header class="gate-header">
       <div class="header-content">
         <div class="title-group">
@@ -80,3 +81,4 @@
     </main>
   </div>
 }
+</div>
