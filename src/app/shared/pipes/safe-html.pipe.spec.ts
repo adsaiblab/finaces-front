@@ -51,9 +51,9 @@ describe('SafeHtmlPipe', () => {
   it('should sanitize javascript: URIs in href and src attributes (XSS mitigation)', () => {
     const xssPayload = '<a href="javascript:alert(1)">Click me</a>';
     const result = pipe.transform(xssPayload);
-    expect(result).not.toContain('javascript:alert(1)');
-    // Angular DomSanitizer replaces dangerous URIs with unsafe:
-    expect(result).toMatch(/unsafe:/);
+    // DomSanitizer préfixe les URIs dangereuses avec "unsafe:" au lieu de les supprimer
+    expect(result).not.toContain('href="javascript:');   // pas de href javascript: brut
+    expect(result).toMatch(/unsafe:javascript:/);         // préfixe "unsafe:" présent
     expect(result).toContain('Click me');
   });
 });
