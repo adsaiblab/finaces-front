@@ -1,5 +1,5 @@
 <div class="dashboard-container">
-  <div class="dashboard-header mb-8">
+  <div class="dashboard-header">
     <div class="title-wrapper">
       <h1>{{ UI_LABELS.dashboard.title }}</h1>
       <p>{{ UI_LABELS.dashboard.subtitle }}</p>
@@ -17,7 +17,7 @@
     </button>
   </div>
 
-  <div class="mb-8">
+  <div class="kpi-section">
      @if (isKpiLoading()) {
       <finaces-skeleton-loader
         variant="kpi"
@@ -37,7 +37,7 @@
     }
   </div>
 
-  <div class="dashboard-grid mb-8">
+  <div class="dashboard-grid">
     <div class="col-span-2">
       @if (isCasesLoading()) {
         <finaces-skeleton-loader
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <div class="chart-section mb-8">
+  <div class="chart-section">
     @if (isChartLoading()) {
       <finaces-skeleton-loader
         variant="chart"
