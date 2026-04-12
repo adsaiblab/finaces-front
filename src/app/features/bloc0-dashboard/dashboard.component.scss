@@ -10,6 +10,11 @@
 }
 
 // ─── En-tête ───────────────────────────────────────────────────────────────────
+.btn-new-case {
+  flex-shrink: 0;        // Ne se comprime jamais quand le titre est long
+  white-space: nowrap;   // Texte sur une seule ligne (doublon sécurité vs styles.scss)
+}
+
 .dashboard-header {
   display: flex;
   flex-direction: column;
