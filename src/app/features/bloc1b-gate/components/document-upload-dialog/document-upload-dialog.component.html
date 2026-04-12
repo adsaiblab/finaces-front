@@ -36,7 +36,7 @@
       </mat-select>
     </mat-form-field>
 
-    @if (uploadForm.get('reliability_level')?.value === 'AUDITED') {
+    @if (uploadForm.get('reliability_level')?.value === 'HIGH') {
       <mat-form-field appearance="outline">
         <mat-label>Audit firm name</mat-label>
         <input matInput formControlName="auditor_name" placeholder="Ex: PwC, Deloitte..." />
