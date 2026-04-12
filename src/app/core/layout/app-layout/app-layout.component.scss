@@ -42,3 +42,11 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+#main-content {
+  padding-block: var(--space-6);
+  padding-inline: var(--space-4);
+
+  @media (min-width: 768px) {
+    padding-inline: var(--space-8);
+  }
+}

@@ -6,6 +6,7 @@
 .dashboard-container {
   max-width: var(--max-width-content);
   width: 100%;
+  margin: 0 auto;
 }
 
 // ─── En-tête ───────────────────────────────────────────────────────────────────
@@ -64,19 +65,3 @@
   contain-intrinsic-size: 0 400px;
 }
 
-// ─── Bouton "Nouveau dossier" — fix overflow + Material override ───
-// ::ng-deep requis : Angular Material MDC encapsule .mdc-button__label
-// hors du scope du composant — ng-deep est le seul moyen de le cibler
-::ng-deep .btn-new-case {
-  border-radius: var(--radius-md) !important;
-  padding: var(--space-2) var(--space-4) !important;
-  min-height: 44px;
-  min-width: fit-content;
-
-  .mdc-button__label {
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-}

@@ -437,3 +437,10 @@ html[data-theme='dark'] body {
     }
   }
 }
+// Fix Material button overflow — New Case dashboard button
+.btn-new-case .mdc-button__label {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
