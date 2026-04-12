@@ -72,7 +72,7 @@ export class GateComponent implements OnInit {
   readonly isEvaluating = signal<boolean>(false);
 
   ngOnInit(): void {
-    const idFromRoute = this.route.snapshot.paramMap.get('case_id') || '';
+    const idFromRoute = this.route.parent?.snapshot.paramMap.get('id') || '';
     this.caseId.set(idFromRoute || this.caseContext.caseId());
 
     if (!this.caseId()) {
