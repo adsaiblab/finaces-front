@@ -12,7 +12,7 @@ export interface GateDecisionOut {
 export interface GateDocumentOut {
   id: string;
   case_id: string;
-  document_type: DocType;
+  doc_type: DocType;
   reliability_level: ReliabilityLevel;
   status: DocStatus;
   file_name: string;

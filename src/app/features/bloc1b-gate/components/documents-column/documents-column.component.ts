@@ -43,11 +43,11 @@ export class DocumentsColumnComponent {
   readonly viewDetails = output<GateDocumentOut>();
 
   displayedColumns: string[] = [
-    'document_type',
+    'doc_type',
     'fiscal_year',
     'file_size',
     'reliability_level',
-    'integrity_status',
+    'status',
     'actions',
   ];
   

@@ -32,10 +32,10 @@
 
     @if (documents().length > 0) {
       <table mat-table [dataSource]="documents()" class="documents-table">
-        <ng-container matColumnDef="document_type">
+        <ng-container matColumnDef="doc_type">
           <th mat-header-cell *matHeaderCellDef>Document</th>
           <td mat-cell *matCellDef="let doc">
-            <strong class="type-label">{{ doc.document_type }}</strong>
+            <strong class="type-label">{{ doc.doc_type }}</strong>
           </td>
         </ng-container>
         <ng-container matColumnDef="fiscal_year">
@@ -52,14 +52,14 @@
             <span class="reliability-badge">{{ doc.reliability_level }}</span>
           </td>
         </ng-container>
-        <ng-container matColumnDef="integrity_status">
+        <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let doc">
-            <div class="status-cell" [ngClass]="'status-' + doc.integrity_status.toLowerCase()">
+            <div class="status-cell" [ngClass]="'status-' + doc.status.toLowerCase()">
               <mat-icon [matTooltip]="doc.red_flags?.length > 0 ? doc.red_flags.join('\n') : ''">
-                {{ getStatusIcon(doc.integrity_status) }}
+                {{ getStatusIcon(doc.status) }}
               </mat-icon>
-              <span>{{ doc.integrity_status }}</span>
+              <span>{{ doc.status }}</span>
             </div>
           </td>
         </ng-container>
