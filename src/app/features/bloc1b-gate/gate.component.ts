@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -49,6 +49,7 @@ import { ConfirmDialogComponent } from '../../shared/components/molecules/confir
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GateComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
   private readonly caseContext = inject(CaseContextService);
   private readonly router = inject(Router);
   private readonly caseService = inject(CaseService);
@@ -71,7 +72,8 @@ export class GateComponent implements OnInit {
   readonly isEvaluating = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.caseId.set(this.caseContext.caseId());
+    const idFromRoute = this.route.snapshot.paramMap.get('case_id') || '';
+    this.caseId.set(idFromRoute || this.caseContext.caseId());
 
     if (!this.caseId()) {
       this.router.navigate(['/dashboard']);
