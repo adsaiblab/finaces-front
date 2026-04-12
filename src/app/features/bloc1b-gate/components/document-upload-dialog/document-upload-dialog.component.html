@@ -8,12 +8,11 @@
   <form [formGroup]="uploadForm" class="upload-form">
     <mat-form-field appearance="outline">
       <mat-label>Document Type</mat-label>
-      <mat-select formControlName="document_type">
-        <mat-option value="BILAN">Balance Sheet</mat-option>
-        <mat-option value="CPC">CPC</mat-option>
-        <mat-option value="TFT">TFT</mat-option>
-        <mat-option value="ATTESTATION_FISCALE">Tax Certificate</mat-option>
-        <mat-option value="STATUTS">Company Bylaws</mat-option>
+      <mat-select formControlName="doc_type">
+        <mat-option value="FINANCIAL_STATEMENTS">Balance Sheet / CPC / TFT</mat-option>
+        <mat-option value="AUDITOR_OPINION">Auditor Opinion</mat-option>
+        <mat-option value="ANNEXES">Tax Certificate / Bylaws</mat-option>
+        <mat-option value="BANK_REFERENCES">Bank References</mat-option>
         <mat-option value="OTHER">Other</mat-option>
       </mat-select>
     </mat-form-field>
@@ -30,9 +29,9 @@
     <mat-form-field appearance="outline">
       <mat-label>Reliability Level</mat-label>
       <mat-select formControlName="reliability_level">
-        <mat-option value="AUDITED">Audited (Big 4 / Recognized)</mat-option>
-        <mat-option value="REVIEWED">Reviewed (Limited Assurance)</mat-option>
-        <mat-option value="COMPILED">Compiled (Unverified)</mat-option>
+        <mat-option value="HIGH">Audited (Big 4 / Recognized)</mat-option>
+        <mat-option value="MEDIUM">Reviewed (Limited Assurance)</mat-option>
+        <mat-option value="LOW">Compiled (Unverified)</mat-option>
         <mat-option value="UNAUDITED">Unaudited (Self-prepared)</mat-option>
       </mat-select>
     </mat-form-field>

@@ -39,7 +39,7 @@ export class DocumentUploadDialogComponent {
 
   constructor() {
     this.uploadForm = this.fb.group({
-      document_type: ['', Validators.required],
+      doc_type: ['', Validators.required],
       fiscal_year: [this.currentYear - 1, Validators.required],
       reliability_level: ['', Validators.required],
       auditor_name: [''],
@@ -51,7 +51,7 @@ export class DocumentUploadDialogComponent {
       ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((level) => {
         const auditorControl = this.uploadForm.get('auditor_name');
-        if (level === 'AUDITED') {
+        if (level === 'HIGH') { // 'HIGH' correspond à 'AUDITED' dans le nouveau mapping
           auditorControl?.setValidators([Validators.required]);
         } else {
           auditorControl?.clearValidators();
