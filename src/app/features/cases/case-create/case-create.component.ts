@@ -7,8 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { CaseService } from '../../../core/services/case.service';
 import { CaseType } from '../../../core/models/case.model';
 
@@ -117,36 +115,25 @@ export class CaseCreateComponent {
 
     const payload = this.buildPayload();
 
-    // ---------------------------------------------------------
-    // MOCK PROPRE "ENTERPRISE-GRADE" (Prototypage UI)
-    // Bypass l'API pour éviter les fausses erreurs et console polluée
-    // ---------------------------------------------------------
-    console.warn('✅ [MOCK] Payload formaté prêt pour le backend :', payload);
-    this.snackBar.open('Mode Prototype : Dossier simulé avec succès', 'Fermer', {
-      duration: 2000,
-      panelClass: 'snack-success',
-    });
-
-    of(null)
-      .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.isSubmitting.set(false);
-        this.router.navigate(['/cases', '00000000-0000-0000-0000-000000000000', 'gate']);
+    this.caseService.createCase(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: any) => {
+          this.isSubmitting.set(false);
+          this.snackBar.open('Dossier créé avec succès.', 'Fermer', {
+            duration: 3000,
+            panelClass: 'snack-success',
+          });
+          this.router.navigate(['/cases', res.case_id, 'gate']);
+        },
+        error: () => {
+          this.isSubmitting.set(false);
+          this.snackBar.open('Erreur lors de la création du dossier.', 'Fermer', {
+            duration: 5000,
+            panelClass: 'snack-error',
+          });
+        },
       });
-
-    /* == Futur câblage Backend (À DÉCOMMENTER) ==
-        this.caseService.createCase(payload).subscribe({
-            next: (res) => {
-                this.isSubmitting.set(false);
-                this.snackBar.open('Dossier créé avec succès.', 'Fermer', { duration: 3000, panelClass: 'snack-success' });
-                this.router.navigate(['/cases', res.id, 'gate']);
-            },
-            error: () => {
-                this.isSubmitting.set(false);
-                this.snackBar.open('Erreur critique lors de la création du dossier.', 'Fermer', { duration: 5000, panelClass: 'snack-error' });
-            }
-        });
-        */
   }
 
   private buildPayload(): any {
