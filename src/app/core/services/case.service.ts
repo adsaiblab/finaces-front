@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   CaseCreate,
@@ -101,7 +101,18 @@ export class CaseService {
   evaluateGate(caseId: string): Observable<GateDecisionSchema> {
     return this.http
       .post<GateDecisionSchema>(`${this.apiUrl}/${caseId}/gate/evaluate`, null)
-      .pipe(catchError(this.handleError));
+      .pipe(
+        map(result => ({
+          ...result,
+          missing_mandatory: result.missing_mandatory ?? [],
+          missing_optional:  result.missing_optional  ?? [],
+          blocking_reasons:  result.blocking_reasons  ?? [],
+          reserve_flags:     result.reserve_flags      ?? [],
+          documents_received: (result as any).documents_received ?? {},
+          audit_log:         (result as any).audit_log         ?? [],
+        })),
+        catchError(this.handleError)
+      );
   }
 
   patchCaseStatus(

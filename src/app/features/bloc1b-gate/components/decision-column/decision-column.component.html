@@ -2,7 +2,7 @@
   <h3 class="column-title">GATE DECISION</h3>
 
   @if (
-    decision() && (decision()!.blocking_reasons.length > 0 || decision()!.reserve_flags.length > 0)
+    decision() && ((decision()?.blocking_reasons?.length ?? 0) > 0 || (decision()?.reserve_flags?.length ?? 0) > 0)
   ) {
     <div class="flags-banner">
       <div class="banner-header">
@@ -63,31 +63,31 @@
           <ul class="summary-list">
             <li>
               <mat-icon>check_box</mat-icon> Balance Sheets ({{
-                decision()!.documents_received['BILAN']?.length || 0
+                decision()?.documents_received?.['BILAN']?.length ?? 0
               }}
               ex.)
             </li>
             <li>
               <mat-icon>check_box</mat-icon> CPCs ({{
-                decision()!.documents_received['CPC']?.length || 0
+                decision()?.documents_received?.['CPC']?.length ?? 0
               }}
               ex.)
             </li>
             <li>
               <mat-icon>check_box</mat-icon> TFTs ({{
-                decision()!.documents_received['TFT']?.length || 0
+                decision()?.documents_received?.['TFT']?.length ?? 0
               }}
               ex.)
             </li>
             <li>
               <mat-icon>check_box</mat-icon> Tax Certificates ({{
-                decision()!.documents_received['ATTESTATION_FISCALE']?.length || 0
+                decision()?.documents_received?.['ATTESTATION_FISCALE']?.length ?? 0
               }}
               ex.)
             </li>
             <li class="optional">
               <mat-icon>radio_button_unchecked</mat-icon> Company Bylaws ({{
-                decision()!.documents_received['STATUTS']?.length || 0
+                decision()?.documents_received?.['STATUTS']?.length ?? 0
               }}
               ex.)
             </li>
@@ -126,7 +126,7 @@
     </div>
   }
 
-  @if (decision() && decision()!.audit_log.length) {
+  @if (decision() && (decision()?.audit_log?.length ?? 0) > 0) {
     <div class="audit-log">
       <details>
         <summary><mat-icon>history</mat-icon> AUDIT LOG</summary>
