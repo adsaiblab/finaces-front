@@ -100,7 +100,7 @@ export class CaseService {
 
   evaluateGate(caseId: string): Observable<GateDecisionSchema> {
     return this.http
-      .post<GateDecisionSchema>(`${this.apiUrl}/${caseId}/gate/evaluate`, {})
+      .post<GateDecisionSchema>(`${this.apiUrl}/${caseId}/gate/evaluate`, null)
       .pipe(catchError(this.handleError));
   }
 
