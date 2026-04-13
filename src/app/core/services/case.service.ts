@@ -104,8 +104,6 @@ export class CaseService {
       .pipe(
         map(result => ({
           ...result,
-          missing_mandatory: result.missing_mandatory ?? [],
-          missing_optional:  result.missing_optional  ?? [],
           blocking_reasons:  result.blocking_reasons  ?? [],
           reserve_flags:     result.reserve_flags      ?? [],
           documents_received: (result as any).documents_received ?? {},
