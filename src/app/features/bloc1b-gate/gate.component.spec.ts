@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GateComponent } from './gate.component';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { CaseService } from '../../core/services/case.service';
@@ -28,6 +28,15 @@ describe('GateComponent', () => {
   };
   let mockDialog: { open: ReturnType<typeof vi.fn> };
   let mockSnackBar: { open: ReturnType<typeof vi.fn> };
+  const mockActivatedRoute = {
+    snapshot: { paramMap: convertToParamMap({ id: '1' }) },
+    paramMap: of(convertToParamMap({ id: '1' })),
+    params: of({ id: '1' }),
+    parent: {
+      snapshot: { paramMap: convertToParamMap({ id: '1' }) },
+      paramMap: of(convertToParamMap({ id: '1' }))
+    },
+  };
 
   beforeEach(async () => {
     mockRouter = { navigate: vi.fn() };
@@ -70,6 +79,7 @@ describe('GateComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GateComponent, NoopAnimationsModule, RouterTestingModule],
       providers: [
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: CaseContextService, useValue: { caseId: () => '1' } },
         { provide: Router, useValue: mockRouter },
         { provide: CaseService, useValue: mockCaseService },
