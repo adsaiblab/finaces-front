@@ -46,7 +46,7 @@
 
     <main class="gate-grid">
       <section class="col-checklist" aria-label="Checklist documents">
-        @if (documents().length === 0) {
+        @if ((documents()?.length ?? 0) === 0) {
           <div class="gate-empty-state gate-empty-state--inline">
             <mat-icon aria-hidden="true">folder_open</mat-icon>
             <p>Aucun document reçu pour ce dossier.</p>

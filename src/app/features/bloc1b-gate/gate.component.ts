@@ -73,7 +73,8 @@ export class GateComponent implements OnInit {
 
   ngOnInit(): void {
     const idFromRoute = this.route.parent?.snapshot.paramMap.get('id') || '';
-    this.caseId.set(idFromRoute || this.caseContext.caseId());
+    this.caseId.set(idFromRoute);
+    this.caseContext.setCaseId(idFromRoute);
 
     if (!this.caseId()) {
       this.router.navigate(['/dashboard']);

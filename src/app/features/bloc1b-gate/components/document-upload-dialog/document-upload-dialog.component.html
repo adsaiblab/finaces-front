@@ -21,7 +21,7 @@
       <mat-label>Fiscal Year</mat-label>
       <mat-select formControlName="fiscal_year">
         @for (year of years; track year) {
-          <mat-option [value]="year">{{ year }}</mat-option>
+        <mat-option [value]="year">{{ year }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -37,10 +37,10 @@
     </mat-form-field>
 
     @if (uploadForm.get('reliability_level')?.value === 'HIGH') {
-      <mat-form-field appearance="outline">
-        <mat-label>Audit firm name</mat-label>
-        <input matInput formControlName="auditor_name" placeholder="Ex: PwC, Deloitte..." />
-      </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Audit firm name</mat-label>
+      <input matInput formControlName="auditor_name" placeholder="Ex: PwC, Deloitte..." />
+    </mat-form-field>
     }
 
     <mat-form-field appearance="outline">
