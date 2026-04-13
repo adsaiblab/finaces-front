@@ -34,7 +34,7 @@ describe('DocumentUploadDialogComponent', () => {
 
   it('devrait fermer avec la data lors du submit si valide', () => {
     component.uploadForm.patchValue({
-      document_type: 'BILAN',
+      doc_type: 'BILAN',
       fiscal_year: 2023,
       reliability_level: 'UNAUDITED',
     });
@@ -43,7 +43,7 @@ describe('DocumentUploadDialogComponent', () => {
   });
 
   it('devrait rendre auditeur requis si fiabilité est AUDITED', () => {
-    component.uploadForm.patchValue({ reliability_level: 'AUDITED' });
+    component.uploadForm.patchValue({ reliability_level: 'HIGH' });
     fixture.detectChanges();
     const auditorControl = component.uploadForm.get('auditor_name');
     expect(auditorControl?.hasError('required')).toBeTruthy();

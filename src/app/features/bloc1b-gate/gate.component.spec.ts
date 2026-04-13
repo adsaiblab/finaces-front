@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GateComponent } from './gate.component';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { CaseService } from '../../core/services/case.service';
 import { DocumentService } from '../../core/services/document.service';
@@ -69,6 +69,7 @@ describe('GateComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GateComponent, NoopAnimationsModule],
       providers: [
+        provideRouter([]),
         { provide: CaseContextService, useValue: { caseId: () => '1' } },
         { provide: Router, useValue: mockRouter },
         { provide: CaseService, useValue: mockCaseService },
