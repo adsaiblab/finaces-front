@@ -27,7 +27,7 @@ export enum RiskClass {
 }
 
 export enum GateVerdict {
-  OK = 'PASSED',
+  PASSED = 'PASSED',
   RESERVE = 'RESERVE',
   BLOCKING = 'BLOCKING',
 }

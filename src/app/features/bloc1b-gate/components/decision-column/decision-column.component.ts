@@ -25,6 +25,6 @@ export class DecisionColumnComponent {
   readonly correctDocuments = output<void>();
   readonly goToDashboard = output<void>();
 
-  readonly isPassed = computed(() => this.decision()?.verdict === GateVerdict.OK);
+  readonly isPassed = computed(() => this.decision()?.verdict === GateVerdict.PASSED);
   readonly isBlocked = computed(() => this.decision()?.verdict === GateVerdict.BLOCKING);
 }

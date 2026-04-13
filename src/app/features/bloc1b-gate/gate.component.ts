@@ -238,7 +238,7 @@ export class GateComponent implements OnInit {
           id: 'mock-decision-id',
           case_id: this.caseId(),
           is_passed: true,
-          verdict: GateVerdict.OK,
+          verdict: GateVerdict.PASSED,
           reliability_level: 'HIGH',
           reliability_score: 87,
           blocking_reasons: [],

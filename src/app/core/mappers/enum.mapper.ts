@@ -1,7 +1,7 @@
 import { GateVerdict, DocType, RiskClass, CaseStatus } from '../models/enums';
 
 export const GateVerdictDisplay: Record<GateVerdict, string> = {
-  OK: 'Recevable',
+  PASSED: 'Recevable',
   RESERVE: 'Sous réserve',
   BLOCKING: 'Bloquant',
 };
