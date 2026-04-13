@@ -80,7 +80,7 @@ describe('GateComponent', () => {
       imports: [GateComponent, NoopAnimationsModule, RouterTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: CaseContextService, useValue: { caseId: () => '1' } },
+        { provide: CaseContextService, useValue: { caseId: () => '1', setCaseId: vi.fn() } },
         { provide: Router, useValue: mockRouter },
         { provide: CaseService, useValue: mockCaseService },
         { provide: DocumentService, useValue: mockDocumentService },
