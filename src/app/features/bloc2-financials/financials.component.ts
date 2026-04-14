@@ -103,8 +103,12 @@ export class FinancialsComponent implements OnInit {
           const years: number[] = [];
           
           statements.forEach(s => {
-            map.set(s.fiscal_year, FinancialMapper.fromApi(s));
-            years.push(s.fiscal_year);
+            try {
+              map.set(s.fiscal_year, FinancialMapper.fromApi(s));
+              years.push(s.fiscal_year);
+            } catch (e) {
+              console.error(`[Financials] Erreur mapping année ${s.fiscal_year}:`, e);
+            }
           });
 
           // Ensure 2023/2022/2021 presence if not in DB, but prioritize DB years
