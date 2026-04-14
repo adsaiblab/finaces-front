@@ -15,8 +15,10 @@ export interface GateDocumentOut {
   doc_type: DocType;
   reliability_level: ReliabilityLevel;
   status: DocStatus;
-  file_name: string;
+  filename: string;
+  file_size_kb: number;
   uploaded_at: string;
+  red_flags?: string[];
 }
 
 // Legacy types for backward compatibility
@@ -48,6 +50,8 @@ export interface GateDecisionSchema {
   blocking_reasons: string[];
   reserve_flags: string[];
   missing_docs: string[];
+  missing_mandatory?: string[];
+  missing_optional?: string[];
   documents_received: Record<string, number[]>;
   audit_log: AuditLogEntry[];
   evaluated_at: string;

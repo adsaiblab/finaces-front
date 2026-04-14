@@ -224,7 +224,7 @@ export class GateComponent implements OnInit {
   }
 
   onViewDetails(doc: GateDocumentOut): void {
-    this.snackBar.open(`Détails du document: ${doc.file_name}`, 'Fermer', { duration: 2000 });
+    this.snackBar.open(`Détails du document: ${doc.filename}`, 'Fermer', { duration: 2000 });
   }
 
   // --- ACTIONS COLONNE 3 (DECISION) ---

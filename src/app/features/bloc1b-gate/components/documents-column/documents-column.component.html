@@ -44,7 +44,7 @@
         </ng-container>
         <ng-container matColumnDef="file_size">
           <th mat-header-cell *matHeaderCellDef>Size</th>
-          <td mat-cell *matCellDef="let doc">{{ formatBytes(doc.file_size) }}</td>
+          <td mat-cell *matCellDef="let doc">{{ formatBytes((doc.file_size_kb || 0) * 1024) }}</td>
         </ng-container>
         <ng-container matColumnDef="reliability_level">
           <th mat-header-cell *matHeaderCellDef>Reliability</th>
