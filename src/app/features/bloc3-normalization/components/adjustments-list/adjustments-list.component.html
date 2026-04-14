@@ -6,11 +6,11 @@
     <h2
       class="text-xl font-semibold text-[color:var(--color-content-primary)] uppercase tracking-wider text-sm"
     >
-      Applied Adjustments ({{ adjustments().length }})
+      Applied Adjustments ({{ adjustments()?.length ?? 0 }})
     </h2>
   </div>
 
-  @if (adjustments().length === 0) {
+  @if ((adjustments()?.length ?? 0) === 0) {
     <div
       class="flex flex-col items-center justify-center p-8 text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)] rounded-lg border border-dashed border-[color:var(--color-border-strong)]"
     >
@@ -19,7 +19,7 @@
     </div>
   } @else {
     <div class="flex flex-col gap-4">
-      @for (adj of adjustments(); track adj.line_item; let i = $index) {
+      @for (adj of (adjustments() ?? []); track adj.line_item; let i = $index) {
         <div
           class="adjustment-item p-5 rounded-lg border border-[color:var(--color-border-default)] bg-[color:var(--color-surface-default)] transition-colors duration-200 hover:border-[color:var(--color-primary)]"
         >
