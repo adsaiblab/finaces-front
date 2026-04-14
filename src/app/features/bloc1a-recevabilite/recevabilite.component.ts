@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CaseService } from '../../core/services/case.service';
-import { EvaluationCaseDetailOut, CaseStatus } from '../../core/models/case.model';
+import { EvaluationCaseDetailOut } from '../../core/models/case.model';
+import { CaseStatus } from '../../core/models/enums';
 import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
