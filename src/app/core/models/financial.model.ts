@@ -80,6 +80,8 @@ export interface CashFlowStatement {
   investing_cash_flow?: number;
   financing_cash_flow?: number;
   free_cash_flow?: number;
+  capex?: number;
+  beginning_cash?: number;
 }
 
 export interface FinancialStatementNestedCreate {

@@ -147,6 +147,8 @@ export class FinancialMapper {
         investing_cash_flow: forms.cashflow.investingActivities || 0,
         financing_cash_flow: forms.cashflow.financingActivities || 0,
         free_cash_flow: forms.cashflow.freeCashFlow ?? undefined,
+        capex: forms.cashflow.capex || 0,
+        beginning_cash: forms.cashflow.beginningCashBalance || 0,
       }
     };
   }
@@ -208,8 +210,8 @@ export class FinancialMapper {
         investingActivities: (cf as any).investing_cash_flow ?? 0,
         financingActivities: (cf as any).financing_cash_flow ?? 0,
         freeCashFlow: (cf as any).free_cash_flow ?? 0,
-        beginningCashBalance: 0,
-        capex: 0,
+        beginningCashBalance: (cf as any).beginning_cash ?? 0,
+        capex: (cf as any).capex ?? 0,
       },
       others: {
         currency: raw.currency_original || 'MAD',
