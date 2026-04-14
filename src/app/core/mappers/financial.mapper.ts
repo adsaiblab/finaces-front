@@ -62,10 +62,11 @@ export interface CashFlowFormValue {
 }
 
 export interface OthersFormValue {
-  currency_original?: string;
-  exchange_rate_to_usd?: number;
+  currency: string;
+  exchangeRateToUsd?: number;
   referentiel?: string;
-  is_consolidated?: boolean;
+  isConsolidated?: boolean;
+  fiscalYear?: number;
   headcount?: number;
   backlogValue?: number;
   distributedDividends?: number;
@@ -145,7 +146,7 @@ export class FinancialMapper {
         operating_cash_flow: forms.cashflow.operatingActivities || 0,
         investing_cash_flow: forms.cashflow.investingActivities || 0,
         financing_cash_flow: forms.cashflow.financingActivities || 0,
-        free_cash_flow: forms.cashflow.freeCashFlow ?? null,
+        free_cash_flow: forms.cashflow.freeCashFlow ?? undefined,
       }
     };
   }
