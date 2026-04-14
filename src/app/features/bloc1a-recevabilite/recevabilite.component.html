@@ -1,1 +1,81 @@
-<h2>Bloc 1A : Recevabilité</h2>
+<div class="p-6 bg-surface-card rounded-lg shadow-sm border border-border-default">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+      <mat-icon>assignment</mat-icon>
+      Bloc 1A : Recevabilité des documents
+    </h2>
+    <span class="status-badge px-3 py-1 bg-surface-hover text-content-primary rounded-full text-sm font-medium border border-border-default">
+      {{ caseData()?.status }}
+    </span>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center py-12 gap-4">
+      <mat-icon class="animate-spin text-primary">sync</mat-icon>
+      <p class="text-content-secondary">Chargement des données du dossier...</p>
+    </div>
+  } @else if (caseData(); as item) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Référence -->
+      <div class="info-card p-4 bg-surface-default rounded border border-border-default">
+        <label class="text-xs text-content-tertiary uppercase font-bold block mb-1">Référence Marché</label>
+        <div class="text-content-primary font-semibold text-lg">{{ item.market_reference || 'N/A' }}</div>
+      </div>
+
+      <!-- Bidder -->
+      <div class="info-card p-4 bg-surface-default rounded border border-border-default">
+        <label class="text-xs text-content-tertiary uppercase font-bold block mb-1">Soumissionnaire</label>
+        <div class="text-content-primary font-semibold text-lg">{{ item.bidder_name || 'Inconnu' }}</div>
+      </div>
+
+      <!-- Montant -->
+      <div class="info-card p-4 bg-surface-default rounded border border-border-default">
+        <label class="text-xs text-content-tertiary uppercase font-bold block mb-1">Montant du contrat</label>
+        <div class="text-content-primary font-semibold text-lg">
+          {{ item.contract_value | number:'1.0-0' }} {{ item.contract_currency }}
+        </div>
+      </div>
+
+      <!-- Pays/Secteur -->
+      <div class="info-card p-4 bg-surface-default rounded border border-border-default">
+        <label class="text-xs text-content-tertiary uppercase font-bold block mb-1">Localisation / Secteur</label>
+        <div class="text-content-primary">{{ item.country }} — {{ item.sector }}</div>
+      </div>
+
+      <!-- Date de création -->
+      <div class="info-card p-4 bg-surface-default rounded border border-border-default">
+        <label class="text-xs text-content-tertiary uppercase font-bold block mb-1">Date de création</label>
+        <div class="text-content-primary">{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</div>
+      </div>
+    </div>
+
+    @if (item.status === 'DRAFT') {
+      <div class="bg-primary/5 border border-primary/20 rounded-lg p-6 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-primary mb-1">Dossier en brouillon</h3>
+          <p class="text-content-secondary text-sm">Prêt pour l'évaluation de la recevabilité des documents.</p>
+        </div>
+        <button mat-flat-button color="primary" (click)="goToGate()" class="h-12 px-8">
+          <mat-icon class="mr-2">rocket_launch</mat-icon>
+          Démarrer le Gate
+        </button>
+      </div>
+    } @else {
+      <div class="bg-surface-hover rounded-lg p-6 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-content-primary mb-1">Recevabilité en cours/terminée</h3>
+          <p class="text-content-secondary text-sm">Ce dossier a déjà passé l'étape de brouillon.</p>
+        </div>
+        <button mat-stroked-button color="primary" (click)="goToGate()" class="h-12 px-8">
+          <mat-icon class="mr-2">arrow_forward</mat-icon>
+          Accéder au Gate
+        </button>
+      </div>
+    }
+  } @else {
+    <div class="text-center py-12">
+      <mat-icon class="text-content-tertiary text-5xl mb-4">error_outline</mat-icon>
+      <p class="text-content-secondary">Impossible de charger les données du dossier.</p>
+    </div>
+  }
+</div>
