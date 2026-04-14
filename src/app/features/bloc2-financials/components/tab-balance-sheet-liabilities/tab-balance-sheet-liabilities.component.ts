@@ -8,7 +8,6 @@ import {
   computed,
   DestroyRef,
   effect,
-  OnInit,
 } from '@angular/core';
 import { LiabilitiesFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -23,7 +22,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-balance-sheet-liabilities.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabBalanceSheetLiabilitiesComponent implements OnInit {
+export class TabBalanceSheetLiabilitiesComponent {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -31,7 +30,7 @@ export class TabBalanceSheetLiabilitiesComponent implements OnInit {
   public initialData = input<LiabilitiesFormValue | null>(null);
   public liabilitiesDataChange = output<{ total: number; data: any }>();
 
-  // 1. Initialisation du formulaire AVANT le constructeur
+  // 1. Initialisation du formulaire avant le constructeur
   public liabilitiesForm: FormGroup = this.fb.group({
     shareCapital: [0, [Validators.required]],
     reserves: [0, [Validators.required]],
@@ -93,16 +92,15 @@ export class TabBalanceSheetLiabilitiesComponent implements OnInit {
         this.liabilitiesForm.reset({}, { emitEvent: false });
       }
     });
-  }
 
-  ngOnInit(): void {
-    this.liabilitiesForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
-      if (this.liabilitiesForm.valid) {
+    // 4. Émission des changements vers le parent
+    this.liabilitiesForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
         this.liabilitiesDataChange.emit({
           total: this.totalLiabilities(),
           data: val,
         });
-      }
-    });
+      });
   }
 }

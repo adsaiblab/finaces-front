@@ -8,7 +8,6 @@ import {
   computed,
   DestroyRef,
   effect,
-  OnInit,
 } from '@angular/core';
 import { AssetsFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -23,7 +22,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-balance-sheet-assets.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabBalanceSheetAssetsComponent implements OnInit {
+export class TabBalanceSheetAssetsComponent {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -31,7 +30,7 @@ export class TabBalanceSheetAssetsComponent implements OnInit {
   public initialData = input<AssetsFormValue | null>(null);
   public assetsDataChange = output<{ total: number; data: any }>();
 
-  // 1. Initialisation du formulaire AVANT le constructeur
+  // 1. Initialisation du formulaire avant le constructeur
   public assetsForm: FormGroup = this.fb.group({
     intangibleAssets: [0, [Validators.required]],
     tangibleAssets: [0, [Validators.required]],
@@ -73,7 +72,7 @@ export class TabBalanceSheetAssetsComponent implements OnInit {
   });
 
   constructor() {
-    // 3. Effect pour le patchValue/reset, déclaré après les signaux du formulaire
+    // 3. Effect pour le patchValue/reset
     effect(() => {
       const data = this.initialData();
       if (data) {
@@ -82,16 +81,15 @@ export class TabBalanceSheetAssetsComponent implements OnInit {
         this.assetsForm.reset({}, { emitEvent: false });
       }
     });
-  }
 
-  ngOnInit(): void {
-    this.assetsForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
-      if (this.assetsForm.valid) {
+    // 4. Émission des changements vers le parent (Placé dans le constructeur)
+    this.assetsForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
         this.assetsDataChange.emit({
           total: this.totalAssets(),
           data: val,
         });
-      }
-    });
+      });
   }
 }

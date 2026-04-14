@@ -8,7 +8,6 @@ import {
   computed,
   DestroyRef,
   effect,
-  OnInit,
 } from '@angular/core';
 import { PnlFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -23,7 +22,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-income-statement.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabIncomeStatementComponent implements OnInit {
+export class TabIncomeStatementComponent {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -31,7 +30,7 @@ export class TabIncomeStatementComponent implements OnInit {
   public initialData = input<PnlFormValue | null>(null);
   public pnlDataChange = output<{ netIncome: number; ebitda: number; data: any }>();
 
-  // 1. Initialisation du formulaire AVANT le constructeur
+  // 1. Initialisation du formulaire avant le constructeur
   public pnlForm: FormGroup = this.fb.group({
     revenue: [0, [Validators.required]],
     soldProduction: [0, [Validators.required]],
@@ -94,17 +93,16 @@ export class TabIncomeStatementComponent implements OnInit {
         this.pnlForm.reset({}, { emitEvent: false });
       }
     });
-  }
 
-  ngOnInit(): void {
-    this.pnlForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
-      if (this.pnlForm.valid) {
+    // 5. Émission des changements vers le parent
+    this.pnlForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
         this.pnlDataChange.emit({
           netIncome: this.netIncome(),
           ebitda: this.ebitda(),
           data: val,
         });
-      }
-    });
+      });
   }
 }
