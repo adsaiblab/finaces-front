@@ -3,8 +3,9 @@ import { DecimalPipe, SlicePipe, NgStyle } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
-import { EvaluationCaseDetailOut } from '../../../../core/models/case.model';
+import { Router, RouterLink } from '@angular/router';
+import { EvaluationCaseDetailOut, CaseStatus } from '../../../../core/models/case.model';
+import { inject } from '@angular/core';
 import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/finaces-risk-badge/finaces-risk-badge.component';
 
 @Component({
@@ -25,6 +26,8 @@ import { FinacesRiskBadgeComponent } from '../../../../shared/components/atoms/f
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentCasesTableComponent {
+  private readonly router = inject(Router);
+
   // Input Signal strict (Angular 17.1+)
   readonly cases = input<EvaluationCaseDetailOut[]>([]);
   readonly displayedColumns: string[] = [
@@ -53,5 +56,27 @@ export class RecentCasesTableComponent {
 
   getInitials(name: string | undefined): string {
     return name ? name.substring(0, 2).toUpperCase() : 'NA';
+  }
+
+  navigateToCase(element: EvaluationCaseDetailOut): void {
+    const id = element.id;
+    const status = element.status;
+
+    let route = `/cases/${id}/recevabilite`; // Par défaut
+
+    switch (status) {
+      case CaseStatus.DRAFT:
+        route = `/cases/${id}/recevabilite`;
+        break;
+      case CaseStatus.PENDING_GATE:
+        route = `/cases/${id}/gate`;
+        break;
+      case CaseStatus.FINANCIAL_INPUT:
+        route = `/cases/${id}/financials`;
+        break;
+      // Les autres statuts peuvent aussi renvoyer vers recevabilite ou workspace par défaut
+    }
+
+    this.router.navigateByUrl(route);
   }
 }
