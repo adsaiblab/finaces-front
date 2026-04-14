@@ -35,6 +35,8 @@ export class TabIncomeStatementComponent {
       const data = this.initialData();
       if (data) {
         this.pnlForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.pnlForm.reset({}, { emitEvent: false });
       }
     });
   }

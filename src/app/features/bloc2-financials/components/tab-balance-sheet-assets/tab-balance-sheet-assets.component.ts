@@ -35,6 +35,8 @@ export class TabBalanceSheetAssetsComponent {
       const data = this.initialData();
       if (data) {
         this.assetsForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.assetsForm.reset({}, { emitEvent: false });
       }
     });
   }

@@ -177,11 +177,12 @@ export class FinancialsComponent implements OnInit {
   }
 
   private updateLocalDraft(tab: string, data: any): void {
-    const map = this.statementsMap();
-    let yearData = map.get(this.currentExercise()) || { assets: {}, liabilities: {}, pnl: {}, cashflow: {}, others: {} };
-    
-    yearData = { ...yearData, [tab]: data };
-    map.set(this.currentExercise(), yearData);
+    this.statementsMap.update(map => {
+      let yearData = map.get(this.currentExercise()) || { assets: {}, liabilities: {}, pnl: {}, cashflow: {}, others: {} };
+      yearData = { ...yearData, [tab]: data };
+      map.set(this.currentExercise(), yearData);
+      return new Map(map); // New reference to trigger signal
+    });
   }
 
   public saveDraft(showNotification: boolean = true): void {
@@ -208,7 +209,10 @@ export class FinancialsComponent implements OnInit {
             this.snackBar.open('Brouillon sauvegardé avec succès', 'OK', { duration: 3000, panelClass: 'snack-success' });
           }
           // Update local map with potential new ID/timestamps from API
-          this.statementsMap().set(res.fiscal_year, FinancialMapper.fromApi(res));
+          this.statementsMap.update(map => {
+            map.set(res.fiscal_year, FinancialMapper.fromApi(res));
+            return new Map(map);
+          });
         },
         error: (err) => {
           this.snackBar.open('Erreur lors de la sauvegarde', 'OK', { duration: 4000 });

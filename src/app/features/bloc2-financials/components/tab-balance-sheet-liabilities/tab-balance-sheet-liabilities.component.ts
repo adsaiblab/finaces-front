@@ -24,7 +24,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class TabBalanceSheetLiabilitiesComponent {
   private fb = inject(FormBuilder);
-  private readonly destroyRef = inject(DestroyRef);
+  private destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
   public initialData = input<LiabilitiesFormValue | null>(null);
@@ -35,6 +35,8 @@ export class TabBalanceSheetLiabilitiesComponent {
       const data = this.initialData();
       if (data) {
         this.liabilitiesForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.liabilitiesForm.reset({}, { emitEvent: false });
       }
     });
   }
@@ -44,12 +46,10 @@ export class TabBalanceSheetLiabilitiesComponent {
     reserves: [0, [Validators.required]],
     retainedEarningsPrior: [0, [Validators.required]],
     currentYearEarnings: [0, [Validators.required]],
-
     shortTermDebt: [0, [Validators.required]],
     accountsPayable: [0, [Validators.required]],
     taxAndSocialLiabilities: [0, [Validators.required]],
     otherCurrentLiabilities: [0, [Validators.required]],
-
     longTermDebt: [0, [Validators.required]],
     longTermProvisions: [0, [Validators.required]],
   });
@@ -84,7 +84,11 @@ export class TabBalanceSheetLiabilitiesComponent {
   });
 
   public totalLiabilities = computed(() => {
-    return this.equityTotal() + this.currentLiabilitiesTotal() + this.nonCurrentLiabilitiesTotal();
+    return (
+      this.equityTotal() +
+      this.currentLiabilitiesTotal() +
+      this.nonCurrentLiabilitiesTotal()
+    );
   });
 
   ngOnInit(): void {

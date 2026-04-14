@@ -24,7 +24,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class TabCashFlowComponent {
   private fb = inject(FormBuilder);
-  private readonly destroyRef = inject(DestroyRef);
+  private destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
   public initialData = input<CashFlowFormValue | null>(null);
@@ -34,40 +34,42 @@ export class TabCashFlowComponent {
     effect(() => {
       const data = this.initialData();
       if (data) {
-        this.cashFlowForm.patchValue(data, { emitEvent: false });
+        this.cashflowForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.cashflowForm.reset({}, { emitEvent: false });
       }
     });
   }
 
-  public cashFlowForm: FormGroup = this.fb.group({
+  public cashflowForm: FormGroup = this.fb.group({
     operatingActivities: [0, [Validators.required]],
     investingActivities: [0, [Validators.required]],
     financingActivities: [0, [Validators.required]],
-    capex: [0, [Validators.required]],
+    freeCashFlow: [0],
     beginningCashBalance: [0, [Validators.required]],
+    capex: [0, [Validators.required]],
   });
 
-  private formValues = toSignal(this.cashFlowForm.valueChanges, {
-    initialValue: this.cashFlowForm.value,
-  });
+  private formValues = toSignal(this.cashflowForm.valueChanges, { initialValue: this.cashflowForm.value });
 
-  public changeInCash = computed(() => {
+  public netCashFlow = computed(() => {
     const v = this.formValues();
     return (
-      (v.operatingActivities || 0) + (v.investingActivities || 0) + (v.financingActivities || 0)
+      (v.operatingActivities || 0) +
+      (v.investingActivities || 0) +
+      (v.financingActivities || 0)
     );
   });
 
   public endingCashBalance = computed(() => {
-    const v = this.formValues();
-    return (v.beginningCashBalance || 0) + this.changeInCash();
+    return (this.formValues().beginningCashBalance || 0) + this.netCashFlow();
   });
 
   ngOnInit(): void {
-    this.cashFlowForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
-      if (this.cashFlowForm.valid) {
+    this.cashflowForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
+      if (this.cashflowForm.valid) {
         this.cashFlowDataChange.emit({
-          netCashFlow: this.changeInCash(),
+          netCashFlow: this.netCashFlow(),
           data: val,
         });
       }
