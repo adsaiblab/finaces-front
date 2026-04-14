@@ -29,6 +29,7 @@ export class TabIncomeStatementComponent {
   public year = input<number>(0);
   public initialData = input<PnlFormValue | null>(null);
   public pnlDataChange = output<{ netIncome: number; ebitda: number; data: any }>();
+  private isInitializing = false;
 
   // 1. Initialisation du formulaire avant le constructeur
   public pnlForm: FormGroup = this.fb.group({
@@ -87,17 +88,20 @@ export class TabIncomeStatementComponent {
     // 4. Effect pour le patchValue/reset
     effect(() => {
       const data = this.initialData();
+      this.isInitializing = true;
       if (data) {
         this.pnlForm.patchValue(data, { emitEvent: true });
       } else {
         this.pnlForm.reset({}, { emitEvent: true });
       }
+      this.isInitializing = false;
     });
 
     // 5. Émission des changements vers le parent
     this.pnlForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
+        if (this.isInitializing) return;
         this.pnlDataChange.emit({
           netIncome: this.netIncome(),
           ebitda: this.ebitda(),

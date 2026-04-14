@@ -29,6 +29,7 @@ export class TabCashFlowComponent {
   public year = input<number>(0);
   public initialData = input<CashFlowFormValue | null>(null);
   public cashFlowDataChange = output<{ netCashFlow: number; data: any }>();
+  private isInitializing = false;
 
   // 1. Initialisation du formulaire avant le constructeur
   public cashFlowForm: FormGroup = this.fb.group({
@@ -62,18 +63,21 @@ export class TabCashFlowComponent {
     // 3. Effect pour le patchValue/reset
     effect(() => {
       const data = this.initialData();
+      this.isInitializing = true;
       if (data) {
         this.cashFlowForm.patchValue(data, { emitEvent: true });
       } else {
         this.cashFlowForm.reset({}, { emitEvent: true });
       }
+      this.isInitializing = false;
     });
 
     // 4. Émission des changements vers le parent (Placé dans le constructeur pour takeUntilDestroyed)
     this.cashFlowForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
-        const currentNetFlow = (val.operatingActivities || 0) + (val.investingActivities || 0) + (val.financingActivities || 0);
+        if (this.isInitializing) return;
+        const currentNetFlow = (Number(val.operatingActivities) || 0) + (Number(val.investingActivities) || 0) + (Number(val.financingActivities) || 0);
         this.cashFlowDataChange.emit({
           netCashFlow: currentNetFlow,
           data: val,

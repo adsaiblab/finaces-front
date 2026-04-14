@@ -29,6 +29,7 @@ export class TabBalanceSheetAssetsComponent {
   public year = input<number>(0);
   public initialData = input<AssetsFormValue | null>(null);
   public assetsDataChange = output<{ total: number; data: any }>();
+  private isInitializing = false;
 
   // 1. Initialisation du formulaire avant le constructeur
   public assetsForm: FormGroup = this.fb.group({
@@ -75,17 +76,20 @@ export class TabBalanceSheetAssetsComponent {
     // 3. Effect pour le patchValue/reset
     effect(() => {
       const data = this.initialData();
+      this.isInitializing = true;
       if (data) {
         this.assetsForm.patchValue(data, { emitEvent: true });
       } else {
         this.assetsForm.reset({}, { emitEvent: true });
       }
+      this.isInitializing = false;
     });
 
     // 4. Émission des changements vers le parent (Placé dans le constructeur)
     this.assetsForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
+        if (this.isInitializing) return;
         this.assetsDataChange.emit({
           total: this.totalAssets(),
           data: val,

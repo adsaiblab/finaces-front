@@ -29,6 +29,7 @@ export class TabBalanceSheetLiabilitiesComponent {
   public year = input<number>(0);
   public initialData = input<LiabilitiesFormValue | null>(null);
   public liabilitiesDataChange = output<{ total: number; data: any }>();
+  private isInitializing = false;
 
   // 1. Initialisation du formulaire avant le constructeur
   public liabilitiesForm: FormGroup = this.fb.group({
@@ -86,17 +87,20 @@ export class TabBalanceSheetLiabilitiesComponent {
     // 3. Effect pour le patchValue/reset
     effect(() => {
       const data = this.initialData();
+      this.isInitializing = true;
       if (data) {
         this.liabilitiesForm.patchValue(data, { emitEvent: true });
       } else {
         this.liabilitiesForm.reset({}, { emitEvent: true });
       }
+      this.isInitializing = false;
     });
 
     // 4. Émission des changements vers le parent
     this.liabilitiesForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
+        if (this.isInitializing) return;
         this.liabilitiesDataChange.emit({
           total: this.totalLiabilities(),
           data: val,
