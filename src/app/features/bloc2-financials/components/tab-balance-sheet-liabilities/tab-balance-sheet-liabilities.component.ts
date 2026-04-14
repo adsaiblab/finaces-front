@@ -87,9 +87,9 @@ export class TabBalanceSheetLiabilitiesComponent {
     effect(() => {
       const data = this.initialData();
       if (data) {
-        this.liabilitiesForm.patchValue(data, { emitEvent: false });
+        this.liabilitiesForm.patchValue(data, { emitEvent: true });
       } else {
-        this.liabilitiesForm.reset({}, { emitEvent: false });
+        this.liabilitiesForm.reset({}, { emitEvent: true });
       }
     });
 

@@ -63,9 +63,9 @@ export class TabCashFlowComponent {
     effect(() => {
       const data = this.initialData();
       if (data) {
-        this.cashFlowForm.patchValue(data, { emitEvent: false });
+        this.cashFlowForm.patchValue(data, { emitEvent: true });
       } else {
-        this.cashFlowForm.reset({}, { emitEvent: false });
+        this.cashFlowForm.reset({}, { emitEvent: true });
       }
     });
 

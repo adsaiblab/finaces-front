@@ -88,9 +88,9 @@ export class TabIncomeStatementComponent {
     effect(() => {
       const data = this.initialData();
       if (data) {
-        this.pnlForm.patchValue(data, { emitEvent: false });
+        this.pnlForm.patchValue(data, { emitEvent: true });
       } else {
-        this.pnlForm.reset({}, { emitEvent: false });
+        this.pnlForm.reset({}, { emitEvent: true });
       }
     });
 

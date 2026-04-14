@@ -76,9 +76,9 @@ export class TabBalanceSheetAssetsComponent {
     effect(() => {
       const data = this.initialData();
       if (data) {
-        this.assetsForm.patchValue(data, { emitEvent: false });
+        this.assetsForm.patchValue(data, { emitEvent: true });
       } else {
-        this.assetsForm.reset({}, { emitEvent: false });
+        this.assetsForm.reset({}, { emitEvent: true });
       }
     });
 
