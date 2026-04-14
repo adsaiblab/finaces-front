@@ -59,7 +59,7 @@ export class TabIncomeStatementComponent {
       (Number(v.consumedPurchases) || 0) -
       (Number(v.externalExpenses) || 0) -
       (Number(v.personnelExpenses) || 0) -
-      (Number(v.taxes and duties) || 0) -
+      (Number(v.taxesAndDuties) || 0) -
       (Number(v.depreciationAmortization) || 0)
     );
   });
