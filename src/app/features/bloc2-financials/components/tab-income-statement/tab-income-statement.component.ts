@@ -7,7 +7,9 @@ import {
   inject,
   computed,
   DestroyRef,
+  effect,
 } from '@angular/core';
+import { PnlFormValue } from '../../../../core/mappers/financial.mapper';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +27,17 @@ export class TabIncomeStatementComponent {
   private destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
+  public initialData = input<PnlFormValue | null>(null);
   public pnlDataChange = output<{ netIncome: number; ebitda: number; data: any }>();
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.pnlForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
   public pnlForm: FormGroup = this.fb.group({
     revenue: [0, [Validators.required]],

@@ -7,7 +7,9 @@ import {
   inject,
   computed,
   DestroyRef,
+  effect,
 } from '@angular/core';
+import { LiabilitiesFormValue } from '../../../../core/mappers/financial.mapper';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +27,17 @@ export class TabBalanceSheetLiabilitiesComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
+  public initialData = input<LiabilitiesFormValue | null>(null);
   public liabilitiesDataChange = output<{ total: number; data: any }>();
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.liabilitiesForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
   public liabilitiesForm: FormGroup = this.fb.group({
     shareCapital: [0, [Validators.required]],

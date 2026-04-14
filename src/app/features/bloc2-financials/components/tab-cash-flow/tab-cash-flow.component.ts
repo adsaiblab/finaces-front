@@ -7,7 +7,9 @@ import {
   inject,
   computed,
   DestroyRef,
+  effect,
 } from '@angular/core';
+import { CashFlowFormValue } from '../../../../core/mappers/financial.mapper';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +27,17 @@ export class TabCashFlowComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
+  public initialData = input<CashFlowFormValue | null>(null);
   public cashFlowDataChange = output<{ netCashFlow: number; data: any }>();
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.cashFlowForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
   public cashFlowForm: FormGroup = this.fb.group({
     operatingActivities: [0, [Validators.required]],

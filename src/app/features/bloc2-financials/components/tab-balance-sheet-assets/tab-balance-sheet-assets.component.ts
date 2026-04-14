@@ -7,7 +7,9 @@ import {
   inject,
   computed,
   DestroyRef,
+  effect,
 } from '@angular/core';
+import { AssetsFormValue } from '../../../../core/mappers/financial.mapper';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +27,17 @@ export class TabBalanceSheetAssetsComponent {
   private destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
+  public initialData = input<AssetsFormValue | null>(null);
   public assetsDataChange = output<{ total: number; data: any }>();
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.assetsForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
   public assetsForm: FormGroup = this.fb.group({
     intangibleAssets: [0, [Validators.required]],

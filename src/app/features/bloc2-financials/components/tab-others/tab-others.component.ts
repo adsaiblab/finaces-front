@@ -5,7 +5,9 @@ import {
   output,
   inject,
   DestroyRef,
+  effect,
 } from '@angular/core';
+import { OthersFormValue } from '../../../../core/mappers/financial.mapper';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -32,7 +34,17 @@ export class TabOthersComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   public year = input<number>(0);
+  public initialData = input<OthersFormValue | null>(null);
   public othersDataChange = output<{ data: any }>();
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.othersForm.patchValue(data, { emitEvent: false });
+      }
+    });
+  }
 
   public othersForm: FormGroup = this.fb.group({
     // T08: Metadata fields exposed in the form
