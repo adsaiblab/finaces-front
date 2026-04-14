@@ -8,7 +8,6 @@ import {
   computed,
   DestroyRef,
   effect,
-  OnInit,
 } from '@angular/core';
 import { CashFlowFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -23,7 +22,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-cash-flow.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabCashFlowComponent implements OnInit {
+export class TabCashFlowComponent {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -60,7 +59,7 @@ export class TabCashFlowComponent implements OnInit {
   });
 
   constructor() {
-    // 3. Effect pour le patchValue/reset, exécuté après l'initialisation du formulaire
+    // 3. Effect pour le patchValue/reset
     effect(() => {
       const data = this.initialData();
       if (data) {
@@ -69,18 +68,16 @@ export class TabCashFlowComponent implements OnInit {
         this.cashFlowForm.reset({}, { emitEvent: false });
       }
     });
-  }
 
-  ngOnInit(): void {
+    // 4. Émission des changements vers le parent (Placé dans le constructeur pour takeUntilDestroyed)
     this.cashFlowForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
-        if (this.cashFlowForm.valid) {
-          this.cashFlowDataChange.emit({
-            netCashFlow: this.changeInCash(),
-            data: val,
-          });
-        }
+        const currentNetFlow = (val.operatingActivities || 0) + (val.investingActivities || 0) + (val.financingActivities || 0);
+        this.cashFlowDataChange.emit({
+          netCashFlow: currentNetFlow,
+          data: val,
+        });
       });
   }
 }
