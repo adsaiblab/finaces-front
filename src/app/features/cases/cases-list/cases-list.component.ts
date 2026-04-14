@@ -157,7 +157,7 @@ export class CasesListComponent implements OnInit {
     if (status === 'DRAFT' || status === 'PENDING_DOCS') {
       return buildSteps('ACTIVE', 'LOCKED', 'LOCKED', 'LOCKED', 'LOCKED');
     }
-    if (status === 'GATE_SEALED') {
+    if (status === 'FINANCIAL_INPUT') {
       return buildSteps('COMPLETED', 'ACTIVE', 'LOCKED', 'LOCKED', 'LOCKED');
     }
     if (status === 'NORMALIZED' || status === 'RATIOS_COMPUTED') {

@@ -17,7 +17,7 @@ describe('CasesListComponent (Matrix Tracker)', () => {
     { id: 'ca-9871x-12po', bidder_name: 'DurocDynamics GmbH',    status: 'SCORED'          as any, updated_at: '2026-03-26T09:12:00Z' },
     { id: 'ca-1029y-90al', bidder_name: 'Titan Constructors',    status: 'SCORED'          as any, updated_at: '2026-03-25T14:30:00Z' },
     { id: 'ca-0912x-77wq', bidder_name: 'Nexus Infrastructure',  status: 'DRAFT'           as any, updated_at: '2026-03-26T11:00:00Z' },
-    { id: 'ca-4458z-88tr', bidder_name: 'NovaTech Supplies',     status: 'GATE_SEALED'     as any, updated_at: '2026-03-24T16:45:00Z' },
+    { id: 'ca-4458z-88tr', bidder_name: 'NovaTech Supplies',     status: 'FINANCIAL_INPUT'     as any, updated_at: '2026-03-24T16:45:00Z' },
     { id: 'ca-8831y-55mn', bidder_name: 'Aeris Holdings',        status: 'EXPERT_REVIEWED' as any, updated_at: '2026-03-20T10:15:00Z' },
   ];
 
