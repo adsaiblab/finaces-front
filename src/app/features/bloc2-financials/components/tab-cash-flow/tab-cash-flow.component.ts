@@ -8,6 +8,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  OnInit,
 } from '@angular/core';
 import { CashFlowFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -22,7 +23,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-cash-flow.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabCashFlowComponent {
+export class TabCashFlowComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -30,18 +31,8 @@ export class TabCashFlowComponent {
   public initialData = input<CashFlowFormValue | null>(null);
   public cashFlowDataChange = output<{ netCashFlow: number; data: any }>();
 
-  constructor() {
-    effect(() => {
-      const data = this.initialData();
-      if (data) {
-        this.cashflowForm.patchValue(data, { emitEvent: false });
-      } else {
-        this.cashflowForm.reset({}, { emitEvent: false });
-      }
-    });
-  }
-
-  public cashflowForm: FormGroup = this.fb.group({
+  // 1. Initialisation du formulaire avant le constructeur
+  public cashFlowForm: FormGroup = this.fb.group({
     operatingActivities: [0, [Validators.required]],
     investingActivities: [0, [Validators.required]],
     financingActivities: [0, [Validators.required]],
@@ -50,9 +41,12 @@ export class TabCashFlowComponent {
     capex: [0, [Validators.required]],
   });
 
-  private formValues = toSignal(this.cashflowForm.valueChanges, { initialValue: this.cashflowForm.value });
+  // 2. Signaux réactifs basés sur le formulaire
+  private formValues = toSignal(this.cashFlowForm.valueChanges, { 
+    initialValue: this.cashFlowForm.value 
+  });
 
-  public netCashFlow = computed(() => {
+  public changeInCash = computed(() => {
     const v = this.formValues();
     return (
       (v.operatingActivities || 0) +
@@ -62,17 +56,31 @@ export class TabCashFlowComponent {
   });
 
   public endingCashBalance = computed(() => {
-    return (this.formValues().beginningCashBalance || 0) + this.netCashFlow();
+    return (this.formValues().beginningCashBalance || 0) + this.changeInCash();
   });
 
-  ngOnInit(): void {
-    this.cashflowForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
-      if (this.cashflowForm.valid) {
-        this.cashFlowDataChange.emit({
-          netCashFlow: this.netCashFlow(),
-          data: val,
-        });
+  constructor() {
+    // 3. Effect pour le patchValue/reset, exécuté après l'initialisation du formulaire
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.cashFlowForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.cashFlowForm.reset({}, { emitEvent: false });
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.cashFlowForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
+        if (this.cashFlowForm.valid) {
+          this.cashFlowDataChange.emit({
+            netCashFlow: this.changeInCash(),
+            data: val,
+          });
+        }
+      });
   }
 }
