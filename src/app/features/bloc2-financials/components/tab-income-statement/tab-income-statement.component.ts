@@ -8,6 +8,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  OnInit,
 } from '@angular/core';
 import { PnlFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -22,7 +23,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-income-statement.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabIncomeStatementComponent {
+export class TabIncomeStatementComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -30,17 +31,7 @@ export class TabIncomeStatementComponent {
   public initialData = input<PnlFormValue | null>(null);
   public pnlDataChange = output<{ netIncome: number; ebitda: number; data: any }>();
 
-  constructor() {
-    effect(() => {
-      const data = this.initialData();
-      if (data) {
-        this.pnlForm.patchValue(data, { emitEvent: false });
-      } else {
-        this.pnlForm.reset({}, { emitEvent: false });
-      }
-    });
-  }
-
+  // 1. Initialisation du formulaire AVANT le constructeur
   public pnlForm: FormGroup = this.fb.group({
     revenue: [0, [Validators.required]],
     soldProduction: [0, [Validators.required]],
@@ -56,10 +47,10 @@ export class TabIncomeStatementComponent {
     incomeTax: [0, [Validators.required]],
   });
 
-  // Capture the entire form value reactively
+  // 2. Capture de la valeur du formulaire
   private formValues = toSignal(this.pnlForm.valueChanges, { initialValue: this.pnlForm.value });
 
-  // KPI calculés dynamiquement via computed()
+  // 3. KPI calculés dynamiquement via computed()
   public operatingIncome = computed(() => {
     const v = this.formValues();
     return (
@@ -92,6 +83,18 @@ export class TabIncomeStatementComponent {
     const v = this.formValues();
     return this.ordinaryIncome() + (v.exceptionalIncome || 0) - (v.incomeTax || 0);
   });
+
+  constructor() {
+    // 4. Effect pour le patchValue/reset
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.pnlForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.pnlForm.reset({}, { emitEvent: false });
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.pnlForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {

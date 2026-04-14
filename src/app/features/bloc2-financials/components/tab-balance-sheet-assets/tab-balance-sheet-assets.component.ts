@@ -8,6 +8,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  OnInit,
 } from '@angular/core';
 import { AssetsFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -22,7 +23,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-balance-sheet-assets.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabBalanceSheetAssetsComponent {
+export class TabBalanceSheetAssetsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -30,17 +31,7 @@ export class TabBalanceSheetAssetsComponent {
   public initialData = input<AssetsFormValue | null>(null);
   public assetsDataChange = output<{ total: number; data: any }>();
 
-  constructor() {
-    effect(() => {
-      const data = this.initialData();
-      if (data) {
-        this.assetsForm.patchValue(data, { emitEvent: false });
-      } else {
-        this.assetsForm.reset({}, { emitEvent: false });
-      }
-    });
-  }
-
+  // 1. Initialisation du formulaire AVANT le constructeur
   public assetsForm: FormGroup = this.fb.group({
     intangibleAssets: [0, [Validators.required]],
     tangibleAssets: [0, [Validators.required]],
@@ -52,6 +43,7 @@ export class TabBalanceSheetAssetsComponent {
     liquidAssets: [0, [Validators.required]],
   });
 
+  // 2. Signaux réactifs dépendant du formulaire
   private formValues = toSignal(this.assetsForm.valueChanges, {
     initialValue: this.assetsForm.value,
   });
@@ -79,6 +71,18 @@ export class TabBalanceSheetAssetsComponent {
   public totalAssets = computed(() => {
     return this.nonCurrentAssetsTotal() + this.currentAssetsTotal();
   });
+
+  constructor() {
+    // 3. Effect pour le patchValue/reset, déclaré après les signaux du formulaire
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.assetsForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.assetsForm.reset({}, { emitEvent: false });
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.assetsForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {

@@ -8,6 +8,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  OnInit,
 } from '@angular/core';
 import { LiabilitiesFormValue } from '../../../../core/mappers/financial.mapper';
 
@@ -22,7 +23,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./tab-balance-sheet-liabilities.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabBalanceSheetLiabilitiesComponent {
+export class TabBalanceSheetLiabilitiesComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -30,17 +31,7 @@ export class TabBalanceSheetLiabilitiesComponent {
   public initialData = input<LiabilitiesFormValue | null>(null);
   public liabilitiesDataChange = output<{ total: number; data: any }>();
 
-  constructor() {
-    effect(() => {
-      const data = this.initialData();
-      if (data) {
-        this.liabilitiesForm.patchValue(data, { emitEvent: false });
-      } else {
-        this.liabilitiesForm.reset({}, { emitEvent: false });
-      }
-    });
-  }
-
+  // 1. Initialisation du formulaire AVANT le constructeur
   public liabilitiesForm: FormGroup = this.fb.group({
     shareCapital: [0, [Validators.required]],
     reserves: [0, [Validators.required]],
@@ -54,6 +45,7 @@ export class TabBalanceSheetLiabilitiesComponent {
     longTermProvisions: [0, [Validators.required]],
   });
 
+  // 2. Signaux réactifs dépendant du formulaire
   private formValues = toSignal(this.liabilitiesForm.valueChanges, {
     initialValue: this.liabilitiesForm.value,
   });
@@ -90,6 +82,18 @@ export class TabBalanceSheetLiabilitiesComponent {
       this.nonCurrentLiabilitiesTotal()
     );
   });
+
+  constructor() {
+    // 3. Effect pour le patchValue/reset
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.liabilitiesForm.patchValue(data, { emitEvent: false });
+      } else {
+        this.liabilitiesForm.reset({}, { emitEvent: false });
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.liabilitiesForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
