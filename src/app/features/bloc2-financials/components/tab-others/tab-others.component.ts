@@ -36,37 +36,37 @@ export class TabOthersComponent {
   public year = input<number>(0);
   public initialData = input<OthersFormValue | null>(null);
   public othersDataChange = output<{ data: any }>();
+  private isInitializing = false;
 
   constructor() {
     effect(() => {
       const data = this.initialData();
+      this.isInitializing = true;
       if (data) {
-        this.othersForm.patchValue(data, { emitEvent: false });
+        this.othersForm.patchValue(data, { emitEvent: true });
+      } else {
+        this.othersForm.reset({}, { emitEvent: true });
       }
+      this.isInitializing = false;
     });
+
+    this.othersForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
+        if (this.isInitializing) return;
+        this.othersDataChange.emit({ data: val });
+      });
   }
 
   public othersForm: FormGroup = this.fb.group({
-    // T08: Metadata fields exposed in the form
-    currency_original: ['MAD', Validators.required],
-    exchange_rate_to_usd: [1.0, [Validators.required, Validators.min(0)]],
-    referentiel: ['PCM', Validators.required],
-    is_consolidated: [false, Validators.required],
-    // Existing fields
-    headcount: [0, [Validators.required, Validators.min(0)]],
-    backlogValue: [0, [Validators.required, Validators.min(0)]],
-    distributedDividends: [0, [Validators.required, Validators.min(0)]],
-    consolidatedAccounts: [false],
+    currency: ['MAD', Validators.required],
+    exchangeRateToUsd: [1.0, [Validators.required, Validators.min(0)]],
+    accountingStandard: ['PCM', Validators.required],
+    isConsolidated: [false, Validators.required],
+    headcount: [null, [Validators.min(0)]],
+    backlogValue: [null, [Validators.min(0)]],
+    distributedDividends: [null, [Validators.min(0)]],
+    consolidatedAccounts: [false], // UI-only: no backend column, kept for future use
     notes: [''],
   });
-
-  ngOnInit(): void {
-    this.othersForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
-      if (this.othersForm.valid) {
-        this.othersDataChange.emit({
-          data: val,
-        });
-      }
-    });
-  }
 }

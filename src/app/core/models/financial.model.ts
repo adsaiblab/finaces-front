@@ -94,6 +94,10 @@ export interface FinancialStatementNestedCreate {
   balance_sheet_liabilities: BalanceSheetLiabilities;
   income_statement: IncomeStatement;
   cash_flow: CashFlowStatement;
+  // Metadata fields
+  headcount?: number;
+  backlog_value?: number;
+  source_notes?: string;
 }
 
 // Alias for transition

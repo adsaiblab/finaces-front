@@ -64,7 +64,7 @@ export interface CashFlowFormValue {
 export interface OthersFormValue {
   currency: string;
   exchangeRateToUsd?: number;
-  referentiel?: string;
+  accountingStandard?: string;
   isConsolidated?: boolean;
   fiscalYear?: number;
   headcount?: number;
@@ -94,10 +94,13 @@ export class FinancialMapper {
   ): FinancialStatementNestedCreate {
     return {
       fiscal_year: fiscalYear,
-      currency_original: baseInfo.currency || 'USD',
-      exchange_rate_to_usd: baseInfo.exchangeRateToUsd || 1.0,
-      referentiel: baseInfo.referentiel || 'IFRS',
-      is_consolidated: baseInfo.isConsolidated || false,
+      currency_original: baseInfo.currency,
+      exchange_rate_to_usd: baseInfo.exchangeRateToUsd,
+      referentiel: baseInfo.accountingStandard,
+      is_consolidated: baseInfo.isConsolidated,
+      headcount: baseInfo.headcount,
+      backlog_value: baseInfo.backlogValue,
+      source_notes: baseInfo.notes,
       balance_sheet_assets: {
         total_assets: forms.assets.totalAssets || 0,
         current_assets: forms.assets.currentAssetsTotal || 0,
@@ -141,6 +144,7 @@ export class FinancialMapper {
         financial_expenses: forms.pnl.financialExpenses,
         extraordinary_income: forms.pnl.exceptionalIncome,
         income_tax: forms.pnl.incomeTax,
+        dividends: forms.others.distributedDividends,
       },
       cash_flow: {
         operating_cash_flow: forms.cashflow.operatingActivities || 0,
@@ -216,8 +220,13 @@ export class FinancialMapper {
       others: {
         currency: raw.currency_original || 'MAD',
         exchangeRateToUsd: raw.exchange_rate_to_usd ?? 1.0,
-        referentiel: raw.referentiel || 'PCM',
-        isConsolidated: raw.is_consolidated ?? false,
+        accountingStandard: raw.referentiel || 'PCM',
+        isConsolidated: !!raw.is_consolidated,
+        headcount: raw.headcount ?? null,
+        backlogValue: raw.backlog_value ?? null,
+        distributedDividends: raw.income_statement?.dividends ?? 0,
+        consolidatedAccounts: !!raw.is_consolidated,
+        notes: raw.source_notes || '',
       }
     };
   }

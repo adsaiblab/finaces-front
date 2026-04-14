@@ -5,7 +5,7 @@
       class="grid grid-cols-[1fr_200px] items-center py-2.5 border-b border-[color:var(--color-border-default)] hover:bg-[color:var(--color-surface-hover)] px-2 transition-colors"
     >
       <label class="text-[15px] text-[color:var(--color-content-primary)]">Currency</label>
-      <select formControlName="currency_original" class="finaces-data-pill">
+      <select formControlName="currency" class="finaces-data-pill">
         <option value="MAD">MAD</option>
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
@@ -27,7 +27,7 @@
       >
       <input
         type="number"
-        formControlName="exchange_rate_to_usd"
+        formControlName="exchangeRateToUsd"
         placeholder="1.0"
         step="0.01"
         class="finaces-data-pill"
@@ -40,7 +40,7 @@
       <label class="text-[15px] text-[color:var(--color-content-primary)]"
         >Accounting Standard</label
       >
-      <select formControlName="referentiel" class="finaces-data-pill">
+      <select formControlName="accountingStandard" class="finaces-data-pill">
         <option value="PCM">PCM (Morocco)</option>
         <option value="IFRS">IFRS</option>
         <option value="OHADA">OHADA</option>
@@ -56,7 +56,7 @@
         >Consolidated Statement</label
       >
       <div class="flex justify-end pr-8">
-        <mat-slide-toggle formControlName="is_consolidated" color="primary"></mat-slide-toggle>
+        <mat-slide-toggle formControlName="isConsolidated" color="primary"></mat-slide-toggle>
       </div>
     </div>
 
