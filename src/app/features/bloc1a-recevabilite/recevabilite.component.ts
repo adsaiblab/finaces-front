@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CaseService } from '../../../core/services/case.service';
-import { EvaluationCaseDetailOut, CaseStatus } from '../../../core/models/case.model';
+import { CaseService } from '../../core/services/case.service';
+import { EvaluationCaseDetailOut, CaseStatus } from '../../core/models/case.model';
 import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
@@ -29,7 +29,7 @@ export class RecevabiliteComponent implements OnInit {
     const id = this.route.parent?.snapshot.paramMap.get('id');
     if (id) {
       this.caseService.getCaseDetail(id).subscribe({
-        next: (data) => {
+        next: (data: EvaluationCaseDetailOut) => {
           this.caseData.set(data);
           this.isLoading.set(false);
         },
