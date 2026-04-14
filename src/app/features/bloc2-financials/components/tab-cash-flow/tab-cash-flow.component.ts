@@ -48,14 +48,14 @@ export class TabCashFlowComponent {
   public changeInCash = computed(() => {
     const v = this.formValues();
     return (
-      (v.operatingActivities || 0) +
-      (v.investingActivities || 0) +
-      (v.financingActivities || 0)
+      (Number(v.operatingActivities) || 0) +
+      (Number(v.investingActivities) || 0) +
+      (Number(v.financingActivities) || 0)
     );
   });
 
   public endingCashBalance = computed(() => {
-    return (this.formValues().beginningCashBalance || 0) + this.changeInCash();
+    return (Number(this.formValues().beginningCashBalance) || 0) + this.changeInCash();
   });
 
   constructor() {

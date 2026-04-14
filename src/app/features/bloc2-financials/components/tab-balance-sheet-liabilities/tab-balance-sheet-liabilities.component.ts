@@ -52,26 +52,26 @@ export class TabBalanceSheetLiabilitiesComponent {
   public equityTotal = computed(() => {
     const v = this.formValues();
     return (
-      (v.shareCapital || 0) +
-      (v.reserves || 0) +
-      (v.retainedEarningsPrior || 0) +
-      (v.currentYearEarnings || 0)
+      (Number(v.shareCapital) || 0) +
+      (Number(v.reserves) || 0) +
+      (Number(v.retainedEarningsPrior) || 0) +
+      (Number(v.currentYearEarnings) || 0)
     );
   });
 
   public currentLiabilitiesTotal = computed(() => {
     const v = this.formValues();
     return (
-      (v.shortTermDebt || 0) +
-      (v.accountsPayable || 0) +
-      (v.taxAndSocialLiabilities || 0) +
-      (v.otherCurrentLiabilities || 0)
+      (Number(v.shortTermDebt) || 0) +
+      (Number(v.accountsPayable) || 0) +
+      (Number(v.taxAndSocialLiabilities) || 0) +
+      (Number(v.otherCurrentLiabilities) || 0)
     );
   });
 
   public nonCurrentLiabilitiesTotal = computed(() => {
     const v = this.formValues();
-    return (v.longTermDebt || 0) + (v.longTermProvisions || 0);
+    return (Number(v.longTermDebt) || 0) + (Number(v.longTermProvisions) || 0);
   });
 
   public totalLiabilities = computed(() => {

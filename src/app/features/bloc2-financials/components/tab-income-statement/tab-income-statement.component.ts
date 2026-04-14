@@ -53,25 +53,25 @@ export class TabIncomeStatementComponent {
   public operatingIncome = computed(() => {
     const v = this.formValues();
     return (
-      (v.revenue || 0) +
-      (v.soldProduction || 0) +
-      (v.otherOperatingIncome || 0) -
-      (v.consumedPurchases || 0) -
-      (v.externalExpenses || 0) -
-      (v.personnelExpenses || 0) -
-      (v.taxesAndDuties || 0) -
-      (v.depreciationAmortization || 0)
+      (Number(v.revenue) || 0) +
+      (Number(v.soldProduction) || 0) +
+      (Number(v.otherOperatingIncome) || 0) -
+      (Number(v.consumedPurchases) || 0) -
+      (Number(v.externalExpenses) || 0) -
+      (Number(v.personnelExpenses) || 0) -
+      (Number(v.taxes and duties) || 0) -
+      (Number(v.depreciationAmortization) || 0)
     );
   });
 
   public ebitda = computed(() => {
     const v = this.formValues();
-    return this.operatingIncome() + (v.depreciationAmortization || 0);
+    return this.operatingIncome() + (Number(v.depreciationAmortization) || 0);
   });
 
   public netFinancialResult = computed(() => {
     const v = this.formValues();
-    return (v.financialIncome || 0) - (v.financialExpenses || 0);
+    return (Number(v.financialIncome) || 0) - (Number(v.financialExpenses) || 0);
   });
 
   public ordinaryIncome = computed(() => {
@@ -80,7 +80,7 @@ export class TabIncomeStatementComponent {
 
   public netIncome = computed(() => {
     const v = this.formValues();
-    return this.ordinaryIncome() + (v.exceptionalIncome || 0) - (v.incomeTax || 0);
+    return this.ordinaryIncome() + (Number(v.exceptionalIncome) || 0) - (Number(v.incomeTax) || 0);
   });
 
   constructor() {

@@ -50,20 +50,20 @@ export class TabBalanceSheetAssetsComponent {
   public nonCurrentAssetsTotal = computed(() => {
     const v = this.formValues();
     return (
-      (v.intangibleAssets || 0) +
-      (v.tangibleAssets || 0) +
-      (v.financialAssets || 0) +
-      (v.otherNonCurrentAssets || 0)
+      (Number(v.intangibleAssets) || 0) +
+      (Number(v.tangibleAssets) || 0) +
+      (Number(v.financialAssets) || 0) +
+      (Number(v.otherNonCurrentAssets) || 0)
     );
   });
 
   public currentAssetsTotal = computed(() => {
     const v = this.formValues();
     return (
-      (v.inventory || 0) +
-      (v.accountsReceivable || 0) +
-      (v.otherCurrentAssets || 0) +
-      (v.liquidAssets || 0)
+      (Number(v.inventory) || 0) +
+      (Number(v.accountsReceivable) || 0) +
+      (Number(v.otherCurrentAssets) || 0) +
+      (Number(v.liquidAssets) || 0)
     );
   });
 
