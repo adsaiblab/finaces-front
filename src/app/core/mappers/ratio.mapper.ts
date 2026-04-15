@@ -44,8 +44,8 @@ export class RatioMapper {
       quick_ratio: toRatioValue(flat.quick_ratio),
       cash_ratio: toRatioValue(flat.cash_ratio),
       working_capital: toRatioValue(flat.working_capital, 'currency'),
-      wcr: toRatioValue(flat.wcr, 'currency'),
-      wcr_pct_revenue: toRatioValue(flat.wcr_pct_revenue, '%'),
+      wcr: toRatioValue(flat.working_capital_requirement, 'currency'),
+      wcr_pct_revenue: toRatioValue(flat.working_capital_requirement_pct_revenue, '%'),
       dso_days: toRatioValue(flat.dso_days, 'days'),
       dpo_days: toRatioValue(flat.dpo_days, 'days'),
       dio_days: toRatioValue(flat.dio_days ?? null, 'days'),
@@ -54,11 +54,11 @@ export class RatioMapper {
 
     const solvency: SolvencyGroup = {
       debt_to_equity: toRatioValue(flat.debt_to_equity),
-      financial_autonomy: toRatioValue(flat.equity_ratio),
+      financial_autonomy: toRatioValue(flat.financial_autonomy),
       gearing: toRatioValue(flat.gearing),
       interest_coverage: toRatioValue(flat.interest_coverage ?? null),
       debt_repayment_years: toRatioValue(flat.debt_repayment_years ?? null),
-      negative_equity: toRatioValue(flat.equity_ratio != null && flat.equity_ratio < 0 ? 1 : 0, 'binary'),
+      negative_equity: toRatioValue(flat.negative_equity ?? 0, 'binary'),
     };
 
     const profitability: ProfitabilityGroup = {
@@ -71,8 +71,8 @@ export class RatioMapper {
 
     const capacity: CapacityGroup = {
       cash_flow_capacity: toRatioValue(flat.cash_flow_capacity ?? null),
-      cf_capacity_margin: toRatioValue(flat.cf_capacity_margin ?? null, '%'),
-      operating_cash_flow: toRatioValue(flat.operating_cash_flow ?? null, 'currency'),
+      cf_capacity_margin: toRatioValue(flat.cash_flow_capacity_margin_pct ?? null, '%'),
+      operating_cash_flow: toRatioValue(null, 'currency'),
     };
 
     const z_score: ZScoreGroup = {
