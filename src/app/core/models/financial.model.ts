@@ -192,6 +192,7 @@ export interface FinancialStatementNormalizedSchema {
   // #region Metadata
   is_consolidated: boolean;
   adjustments_count: number;
+  adjustments: NormalizationAdjustment[];
   headcount?: number;
   backlog_value?: number;
   backlog_value_original?: number;
