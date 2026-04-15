@@ -143,15 +143,15 @@ export class CaseService {
       .pipe(catchError(this.handleError));
   }
 
-  normalizeFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema> {
+  normalizeFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema[]> {
     return this.http
-      .post<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalize`, {})
+      .post<FinancialStatementNormalizedSchema[]>(`${this.apiUrl}/${caseId}/normalize`, {})
       .pipe(catchError(this.handleError));
   }
 
-  getNormalizedFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema> {
+  getNormalizedFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema[]> {
     return this.http
-      .get<FinancialStatementNormalizedSchema>(`${this.apiUrl}/${caseId}/normalized-financials`)
+      .get<FinancialStatementNormalizedSchema[]>(`${this.apiUrl}/${caseId}/normalized-financials`)
       .pipe(catchError(this.handleError));
   }
 

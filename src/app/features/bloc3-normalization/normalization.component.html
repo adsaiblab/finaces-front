@@ -56,14 +56,21 @@
       </div>
 
       <div class="flex items-center gap-4">
-        @if (normalizedData(); as data) {
-          <div
-            class="px-4 py-2 bg-[color:var(--color-surface-card)] border border-[color:var(--color-border-default)] rounded-lg text-sm text-[color:var(--color-content-secondary)]"
-            data-testid="normalization-fiscal-year-display">
-            Fiscal Year:
-            <span class="font-bold text-[color:var(--color-content-primary)]">{{ data.fiscal_year }}</span>
-          </div>
-        }
+        <!-- Fiscal Year Tabs Selection -->
+        <div class="flex bg-[color:var(--color-surface-hover)] rounded-lg p-1 border border-[color:var(--color-border-default)]">
+          @for (stmt of statements(); track stmt.id) {
+            <button 
+              type="button"
+              (click)="selectYear(stmt.fiscal_year)"
+              [class.bg-white]="selectedYear() === stmt.fiscal_year"
+              [class.shadow-sm]="selectedYear() === stmt.fiscal_year"
+              [class.text-primary]="selectedYear() === stmt.fiscal_year"
+              class="px-5 py-1.5 rounded-md text-sm font-medium transition-all duration-200 hover:bg-white hover:bg-opacity-50 border-none cursor-pointer">
+              {{ stmt.fiscal_year }}
+            </button>
+          }
+        </div>
+
         <button mat-stroked-button color="primary"
           [disabled]="isRecalculating() || isLoading()"
           [attr.aria-busy]="isRecalculating()"

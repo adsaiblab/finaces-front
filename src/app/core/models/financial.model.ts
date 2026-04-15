@@ -117,24 +117,87 @@ export type CashFlowSchema = CashFlowStatement;
 export type FinancialStatementRawOut = FinancialStatementOut;
 
 export interface FinancialStatementNormalizedSchema {
-  statement_id: string;
+  id: string;
+  raw_statement_id: string;
   fiscal_year: number;
-  normalized_revenue: number;
-  normalized_ebitda: number;
-  normalized_net_income: number;
-  normalized_working_capital: number;
-  normalized_cash_flow: number;
-  adjustments: NormalizationAdjustment[];
-  confidence_score: number;
-  normalization_date: string;
-  normalized_bilan_actif?: BalanceSheetAssets;
-  normalized_bilan_passif?: BalanceSheetLiabilities;
-  normalized_income_statement?: IncomeStatement;
-  normalized_cash_flow_statement?: CashFlowStatement;
-  source_standard?: string;
-  applied_standard?: string;
-  exchange_rate?: number;
-  exchange_rate_date?: string;
+  currency_original: string;
+  currency_usd: string;
+  exchange_rate: number;
+
+  #region Assets
+  total_assets: number;
+  total_assets_original: number;
+  current_assets: number;
+  current_assets_original: number;
+  liquid_assets: number;
+  liquid_assets_original: number;
+  inventory: number;
+  inventory_original: number;
+  accounts_receivable: number;
+  accounts_receivable_original: number;
+  other_current_assets: number;
+  other_current_assets_original: number;
+  non_current_assets: number;
+  non_current_assets_original: number;
+  intangible_assets: number;
+  intangible_assets_original: number;
+  tangible_assets: number;
+  tangible_assets_original: number;
+  financial_assets: number;
+  financial_assets_original: number;
+  other_noncurrent_assets: number;
+  other_noncurrent_assets_original: number;
+  #endregion
+
+  #region Liabilities & Equity
+  total_liabilities_and_equity: number;
+  total_liabilities_and_equity_original: number;
+  equity: number;
+  equity_original: number;
+  share_capital: number;
+  share_capital_original: number;
+  reserves: number;
+  reserves_original: number;
+  retained_earnings_prior: number;
+  retained_earnings_prior_original: number;
+  current_year_earnings: number;
+  current_year_earnings_original: number;
+  non_current_liabilities: number;
+  non_current_liabilities_original: number;
+  long_term_debt: number;
+  long_term_debt_original: number;
+  current_liabilities: number;
+  current_liabilities_original: number;
+  short_term_debt: number;
+  short_term_debt_original: number;
+  accounts_payable: number;
+  accounts_payable_original: number;
+  tax_and_social_liabilities: number;
+  tax_and_social_liabilities_original: number;
+  other_current_liabilities: number;
+  other_current_liabilities_original: number;
+  #endregion
+
+  #region Income Statement
+  revenue: number;
+  revenue_original: number;
+  ebitda: number;
+  ebitda_original: number;
+  net_income: number;
+  net_income_original: number;
+  operating_income: number;
+  operating_income_original: number;
+  #endregion
+
+  #region Metadata
+  is_consolidated: boolean;
+  adjustments_count: number;
+  headcount?: number;
+  backlog_value?: number;
+  backlog_value_original?: number;
+  capex?: number;
+  capex_original?: number;
+  #endregion
 }
 
 export interface NormalizationAdjustment {

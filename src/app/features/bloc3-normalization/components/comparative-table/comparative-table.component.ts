@@ -35,158 +35,39 @@ export class ComparativeTableComponent {
   // Événement émis lors du clic sur une ligne ayant un ajustement, pour scroller vers les détails
   public rowClick = output<string>();
 
-  public displayedColumns: string[] = ['item', 'raw', 'normalized', 'delta', 'note'];
+  public readonly displayedColumns: string[] = ['item', 'original', 'normalized', 'delta', 'note'];
 
   // Signal calculé pour transformer le schéma JSON en lignes de tableau aplaties
   public dataSource = computed<ComparativeRow[]>(() => {
     const rawData = this.data();
     if (!rawData) return [];
 
-    // Helper pour générer une ligne (Mock basé sur les ajustements pour P10)
-    // Dans une implémentation réelle, on croiserait les données brutes et normalisées
     const rows: ComparativeRow[] = [
-      {
-        id: 'h1',
-        label: 'CURRENT ASSETS',
-        rawValue: 0,
-        normalizedValue: 0,
-        deltaAmount: 0,
-        deltaPct: 0,
-        note: '',
-        isHeader: true,
-        indentLevel: 0,
-      },
-      this.buildRow(
-        'Cash & Equivalents',
-        123456,
-        rawData.normalized_bilan_actif?.liquid_assets || 123456,
-        1,
-      ),
-      this.buildRow(
-        'Inventory',
-        345678,
-        rawData.normalized_bilan_actif?.inventory || 328194,
-        1,
-        'Δ',
-      ),
-      {
-        id: 't1',
-        label: 'Total Current Assets',
-        rawValue: 1160490,
-        normalizedValue: rawData.normalized_bilan_actif?.current_assets || 1143006,
-        deltaAmount: -17484,
-        deltaPct: -1.5,
-        note: '',
-        isTotal: true,
-        indentLevel: 0,
-      },
+      // --- ASSETS ---
+      { id: 'h1', label: 'ASSETS', rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 },
+      this.buildRow('Total Assets', rawData.total_assets_original, rawData.total_assets, 1),
+      this.buildRow('Current Assets', rawData.current_assets_original, rawData.current_assets, 1),
+      this.buildRow('Cash & Equivalents', rawData.liquid_assets_original, rawData.liquid_assets, 2),
+      this.buildRow('Inventory', rawData.inventory_original, rawData.inventory, 2),
+      this.buildRow('Accounts Receivable', rawData.accounts_receivable_original, rawData.accounts_receivable, 2),
+      this.buildRow('Non-Current Assets', rawData.non_current_assets_original, rawData.non_current_assets, 1),
+      this.buildRow('Tangible Assets', rawData.tangible_assets_original, rawData.tangible_assets, 2),
 
-      {
-        id: 'h2',
-        label: 'NON-CURRENT ASSETS',
-        rawValue: 0,
-        normalizedValue: 0,
-        deltaAmount: 0,
-        deltaPct: 0,
-        note: '',
-        isHeader: true,
-        indentLevel: 0,
-      },
-      this.buildRow(
-        'Other Non-Current Assets',
-        567890,
-        rawData.normalized_bilan_actif?.other_noncurrent_assets || 612345,
-        1,
-        'Δ',
-      ),
-      {
-        id: 't3',
-        label: 'TOTAL ASSETS',
-        rawValue: 4086416,
-        normalizedValue: rawData.normalized_bilan_actif?.total_assets || 4208787,
-        deltaAmount: 122371,
-        deltaPct: 3.0,
-        note: '',
-        isTotal: true,
-        indentLevel: 0,
-      },
+      // --- LIABILITIES & EQUITY ---
+      { id: 'h2', label: 'EQUITY & LIABILITIES', rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 },
+      this.buildRow('Total Equity', rawData.equity_original, rawData.equity, 1),
+      this.buildRow('Share Capital', rawData.share_capital_original, rawData.share_capital, 2),
+      this.buildRow('Current Liabilities', rawData.current_liabilities_original, rawData.current_liabilities, 1),
+      this.buildRow('Short Term Debt', rawData.short_term_debt_original, rawData.short_term_debt, 2),
+      this.buildRow('Non-Current Liabilities', rawData.non_current_liabilities_original, rawData.non_current_liabilities, 1),
+      this.buildRow('Long Term Debt', rawData.long_term_debt_original, rawData.long_term_debt, 2),
 
-      {
-        id: 'h3',
-        label: 'EQUITY',
-        rawValue: 0,
-        normalizedValue: 0,
-        deltaAmount: 0,
-        deltaPct: 0,
-        note: '',
-        isHeader: true,
-        indentLevel: 0,
-      },
-      {
-        id: 't4',
-        label: 'Total Equity',
-        rawValue: 1000000,
-        normalizedValue: rawData.normalized_bilan_passif?.equity || 1050000,
-        deltaAmount: 50000,
-        deltaPct: 5.0,
-        note: '',
-        isTotal: true,
-        indentLevel: 0,
-      },
-
-      {
-        id: 'h4',
-        label: 'CURRENT LIABILITIES',
-        rawValue: 0,
-        normalizedValue: 0,
-        deltaAmount: 0,
-        deltaPct: 0,
-        note: '',
-        isHeader: true,
-        indentLevel: 0,
-      },
-      {
-        id: 't5',
-        label: 'Total Current Liabilities',
-        rawValue: 2600000,
-        normalizedValue: rawData.normalized_bilan_passif?.current_liabilities || 2450000,
-        deltaAmount: -150000,
-        deltaPct: -5.8,
-        note: '',
-        isTotal: true,
-        indentLevel: 0,
-      },
-
-      {
-        id: 'h5',
-        label: 'NON-CURRENT LIABILITIES',
-        rawValue: 0,
-        normalizedValue: 0,
-        deltaAmount: 0,
-        deltaPct: 0,
-        note: '',
-        isHeader: true,
-        indentLevel: 0,
-      },
-      this.buildRow(
-        'Long Term Debt',
-        1200000,
-        rawData.normalized_bilan_passif?.long_term_debt || 1350000,
-        1,
-        'Δ',
-      ),
-
-      {
-        id: 't7',
-        label: 'TOTAL LIABILITIES & EQUITY',
-        rawValue: 5100000,
-        normalizedValue: rawData.normalized_bilan_passif?.total_liabilities || 5150000,
-        deltaAmount: 50000,
-        deltaPct: 1.0,
-        note: '',
-        isTotal: true,
-        indentLevel: 0,
-      },
+      // --- INCOME STATEMENT ---
+      { id: 'h3', label: 'INCOME STATEMENT', rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 },
+      this.buildRow('Revenue', rawData.revenue_original, rawData.revenue, 1),
+      this.buildRow('EBITDA', rawData.ebitda_original, rawData.ebitda, 1),
+      this.buildRow('Operating Income', rawData.operating_income_original, rawData.operating_income, 1),
+      this.buildRow('Net Income', rawData.net_income_original, rawData.net_income, 1),
     ];
 
     return rows;

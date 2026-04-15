@@ -14,32 +14,19 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div class="info-block">
         <span class="label">Detected Standard</span>
-        <span class="value font-medium">{{ data()!.source_standard || 'MAROC CNC' }}</span>
+        <span class="value font-medium">MAROC CNC</span>
       </div>
 
       <div class="info-block">
         <span class="label">Applied Standard</span>
-        <span class="value font-bold text-[color:var(--color-primary)]">{{
-          data()!.applied_standard || 'IFRS'
-        }}</span>
+        <span class="value font-bold text-[color:var(--color-primary)]">IFRS</span>
       </div>
 
       <div class="info-block">
         <span class="label">Exchange Rate</span>
         <span class="value">
-          1 USD = {{ data()!.exchange_rate != null ? (data()!.exchange_rate | number: '1.2-4') : '—' }}
-          <span class="text-xs text-[color:var(--color-content-secondary)] ml-1"
-            >(as of
-            {{
-              data()!.exchange_rate_date || data()!.normalization_date | date: 'mediumDate'
-            }})</span
-          >
+          1 USD = {{ data()!.exchange_rate | number: '1.2-4' }} {{ data()!.currency_original }}
         </span>
-      </div>
-
-      <div class="info-block">
-        <span class="label">Normalized At</span>
-        <span class="value text-sm">{{ data()!.normalization_date | date: 'medium' }}</span>
       </div>
 
       <div class="info-block">

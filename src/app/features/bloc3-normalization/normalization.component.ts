@@ -47,8 +47,13 @@ export class NormalizationComponent implements OnInit {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
 
-  public readonly caseId = signal<string>('');
-  public readonly normalizedData = signal<FinancialStatementNormalizedSchema | null>(null);
+  public readonly statements = signal<FinancialStatementNormalizedSchema[]>([]);
+  public readonly selectedYear = signal<number | null>(null);
+
+  public readonly normalizedData = computed(() =>
+    this.statements().find((s) => s.fiscal_year === this.selectedYear()) || null
+  );
+
   public readonly isLoading = signal<boolean>(true);
   public readonly isComputingRatios = signal<boolean>(false);
   public readonly isRecalculating = signal<boolean>(false);
@@ -67,15 +72,23 @@ export class NormalizationComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.normalizedData.set(data);
+          this.statements.set(data);
+          if (data.length > 0 && !this.selectedYear()) {
+            this.selectedYear.set(Math.max(...data.map(s => s.fiscal_year)));
+          }
+          console.log('[DEBUG adjustments]', this.normalizedData()?.adjustments_count);
           this.isLoading.set(false);
         },
         error: () => {
-          this.normalizedData.set(null);
+          this.statements.set([]);
           this.isLoading.set(false);
           this.loadError.set(true);
         },
       });
+  }
+
+  public selectYear(year: number): void {
+    this.selectedYear.set(year);
   }
 
   public navigateBackToFinancials(): void {

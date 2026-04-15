@@ -23,13 +23,13 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="raw">
+    <ng-container matColumnDef="original">
       <th
         mat-header-cell
         *matHeaderCellDef
         class="font-semibold text-right text-[color:var(--color-content-secondary)] bg-[color:var(--color-surface-default)]"
       >
-        Raw Value
+        Raw Value ({{ data()?.currency_original || 'MAD' }})
       </th>
       <td
         mat-cell
@@ -38,7 +38,7 @@
         [ngClass]="{ 'hidden-cell': row.isHeader }"
       >
         @if (!row.isHeader) {
-          {{ row.rawValue | currency: 'USD' : 'symbol' : '1.0-0' }}
+          {{ row.rawValue | number: '1.0-0' }}
         }
       </td>
     </ng-container>
