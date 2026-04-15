@@ -29,7 +29,7 @@ describe('RatioCalculationService', () => {
     service.computeRatios('case-123').subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/ratios/compute`);
     expect(req.request.method).toBe('POST');
-    req.flush({});
+    req.flush([{ fiscal_year: 2023 }]);
   });
 
   it('should correctly identify if a ratio requires a deep dive', () => {
