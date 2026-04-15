@@ -4,3 +4,4 @@ export * from './ia.mapper';
 export * from './financial.mapper';
 export * from './ratio.mapper';
 export * from './scorecard.mapper';
+export * from './normalization.mapper';

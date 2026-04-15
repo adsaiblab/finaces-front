@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http'
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { NormalizationMapper } from '../mappers/normalization.mapper';
 import {
   CaseCreate,
   EvaluationCaseOut,
@@ -145,14 +146,20 @@ export class CaseService {
 
   normalizeFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema[]> {
     return this.http
-      .post<FinancialStatementNormalizedSchema[]>(`${this.apiUrl}/${caseId}/normalize`, {})
-      .pipe(catchError(this.handleError));
+      .post<Record<string, unknown>[]>(`${this.apiUrl}/${caseId}/normalize`, {})
+      .pipe(
+        map((data) => NormalizationMapper.fromBackendList(data)),
+        catchError(this.handleError)
+      );
   }
 
   getNormalizedFinancials(caseId: string): Observable<FinancialStatementNormalizedSchema[]> {
     return this.http
-      .get<FinancialStatementNormalizedSchema[]>(`${this.apiUrl}/${caseId}/normalized-financials`)
-      .pipe(catchError(this.handleError));
+      .get<Record<string, unknown>[]>(`${this.apiUrl}/${caseId}/normalized-financials`)
+      .pipe(
+        map((data) => NormalizationMapper.fromBackendList(data)),
+        catchError(this.handleError)
+      );
   }
 
   computeRatios(caseId: string): Observable<RatioSetGrouped> {

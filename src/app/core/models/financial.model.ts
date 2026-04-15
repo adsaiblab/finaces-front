@@ -189,6 +189,40 @@ export interface FinancialStatementNormalizedSchema {
   operating_income_original: number;
   // #endregion
 
+  // #region Income Statement (detail)
+  sold_production: number;
+  sold_production_original: number;
+  other_operating_revenue: number;
+  other_operating_revenue_original: number;
+  cost_of_goods_sold: number;
+  cost_of_goods_sold_original: number;
+  personnel_expenses: number;
+  personnel_expenses_original: number;
+  depreciation_and_amortization: number;
+  depreciation_and_amortization_original: number;
+  financial_revenue: number;
+  financial_revenue_original: number;
+  financial_expenses: number;
+  financial_expenses_original: number;
+  income_before_tax: number;
+  income_before_tax_original: number;
+  // #endregion
+
+  // #region Cash Flow
+  operating_cash_flow: number;
+  operating_cash_flow_original: number;
+  investing_cash_flow: number;
+  investing_cash_flow_original: number;
+  financing_cash_flow: number;
+  financing_cash_flow_original: number;
+  change_in_cash: number;
+  change_in_cash_original: number;
+  beginning_cash: number;
+  beginning_cash_original: number;
+  ending_cash: number;
+  ending_cash_original: number;
+  // #endregion
+
   // #region Metadata
   is_consolidated: boolean;
   adjustments_count: number;
@@ -199,12 +233,31 @@ export interface FinancialStatementNormalizedSchema {
   capex?: number;
   capex_original?: number;
   // #endregion
+
+  // #region Missions 5 & 6
+  coherence: BalanceSheetCoherence | null;
+  ratio_readiness: RatioReadiness | null;
+  // #endregion
 }
 
 export interface NormalizationAdjustment {
   line_item: string;
   original_value: number;
   adjusted_value: number;
+  delta: number;
   reason: string;
-  confidence: number;
+  standard: string;
+}
+
+export interface BalanceSheetCoherence {
+  assets_liabilities_balanced: boolean;
+  ebitda_coherent: boolean;
+  cash_flow_coherent: boolean;
+  coherence_score: number;
+}
+
+export interface RatioReadiness {
+  basic_ratios_ready: boolean;
+  advanced_ratios_ready: boolean;
+  missing_fields: string[];
 }
