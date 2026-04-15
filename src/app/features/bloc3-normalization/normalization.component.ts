@@ -49,6 +49,7 @@ export class NormalizationComponent implements OnInit {
 
   public readonly statements = signal<FinancialStatementNormalizedSchema[]>([]);
   public readonly selectedYear = signal<number | null>(null);
+  public readonly caseId = signal<string>('');
 
   public readonly normalizedData = computed(() =>
     this.statements().find((s) => s.fiscal_year === this.selectedYear()) || null
