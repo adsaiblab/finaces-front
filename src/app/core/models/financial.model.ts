@@ -87,9 +87,9 @@ export interface CashFlowStatement {
 export interface FinancialStatementNestedCreate {
   fiscal_year: number;
   currency_original: string;
-  exchange_rate_to_usd: number;
-  referentiel: string;
-  is_consolidated: boolean;
+  exchange_rate_to_usd?: number;
+  referentiel?: string;
+  is_consolidated?: boolean;
   balance_sheet_assets: BalanceSheetAssets;
   balance_sheet_liabilities: BalanceSheetLiabilities;
   income_statement: IncomeStatement;

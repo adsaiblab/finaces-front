@@ -144,7 +144,7 @@ export class FinancialMapper {
         financial_expenses: forms.pnl.financialExpenses,
         extraordinary_income: forms.pnl.exceptionalIncome,
         income_tax: forms.pnl.incomeTax,
-        dividends: forms.others.distributedDividends,
+        dividends: baseInfo.distributedDividends,
       },
       cash_flow: {
         operating_cash_flow: forms.cashflow.operatingActivities || 0,
