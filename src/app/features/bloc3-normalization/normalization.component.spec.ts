@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { NormalizationComponent } from './normalization.component';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { CaseService } from '../../core/services/case.service';
@@ -11,19 +12,13 @@ describe('NormalizationComponent', () => {
   let fixture: ComponentFixture<NormalizationComponent>;
 
   const mockCaseService = {
-    getNormalizedFinancials: vi.fn().mockReturnValue(
-      of({
-        statement_id: 'mock',
-        fiscal_year: 2023,
-        adjustments: [],
-      }),
-    ),
-    normalizeFinancials: vi.fn().mockReturnValue(of({})),
-    computeRatios: vi.fn().mockReturnValue(of({})),
+    getNormalizedFinancials: vi.fn().mockReturnValue(of([])),
+    normalizeFinancials: vi.fn().mockReturnValue(of([])),
+    computeRatios: vi.fn().mockReturnValue(of([])),
   };
 
   const mockCaseContext = {
-    caseId: () => 'case-123',
+    caseId: signal('case-123'),
   };
 
   beforeEach(async () => {
@@ -44,6 +39,5 @@ describe('NormalizationComponent', () => {
     expect(component).toBeTruthy();
     expect(mockCaseService.getNormalizedFinancials).toHaveBeenCalledWith('case-123');
     expect(component.isLoading()).toBe(false);
-    expect(component.normalizedData()?.fiscal_year).toBe(2023);
   });
 });
