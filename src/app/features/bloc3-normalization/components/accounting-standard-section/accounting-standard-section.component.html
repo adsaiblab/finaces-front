@@ -27,7 +27,7 @@
       <div class="info-block">
         <span class="label">Exchange Rate</span>
         <span class="value">
-          1 USD = {{ data()!.exchange_rate_used || 10.5 | number: '1.2-4' }}
+          1 USD = {{ data()!.exchange_rate != null ? (data()!.exchange_rate | number: '1.2-4') : '—' }}
           <span class="text-xs text-[color:var(--color-content-secondary)] ml-1"
             >(as of
             {{

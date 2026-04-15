@@ -18,8 +18,8 @@ export enum CurrencyCode {
 }
 
 export interface BalanceSheetAssets {
-  total_assets: number;
-  current_assets: number;
+  total_assets?: number;
+  current_assets?: number;
   liquid_assets: number;
   inventory: number;
   other_noncurrent_assets: number;
@@ -33,10 +33,10 @@ export interface BalanceSheetAssets {
 }
 
 export interface BalanceSheetLiabilities {
-  total_liabilities: number;
-  current_liabilities: number;
+  total_liabilities?: number;
+  current_liabilities?: number;
   long_term_debt: number;
-  equity: number;
+  equity?: number;
   // Detailed fields matching ORM
   share_capital?: number;
   reserves?: number;
@@ -52,9 +52,9 @@ export interface BalanceSheetLiabilities {
 
 export interface IncomeStatement {
   revenue: number;
-  operating_income: number;
-  ebitda: number;
-  net_income: number;
+  operating_income?: number;
+  ebitda?: number;
+  net_income?: number;
   // Detailed fields matching ORM
   gross_profit?: number;
   extraordinary_expenses?: number;
@@ -133,7 +133,7 @@ export interface FinancialStatementNormalizedSchema {
   normalized_cash_flow_statement?: CashFlowStatement;
   source_standard?: string;
   applied_standard?: string;
-  exchange_rate_used?: number;
+  exchange_rate?: number;
   exchange_rate_date?: string;
 }
 

@@ -21,7 +21,7 @@ describe('AccountingStandardSectionComponent', () => {
     // Mocking standard parameters (which can be extended in the interface later)
     source_standard: 'MAROC CNC',
     applied_standard: 'IFRS',
-    exchange_rate_used: 10.5,
+    exchange_rate: 10.0,
     exchange_rate_date: '2026-03-16',
   } as any;
 
