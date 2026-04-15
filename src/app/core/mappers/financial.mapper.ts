@@ -130,9 +130,9 @@ export class FinancialMapper {
       },
       income_statement: {
         revenue: forms.pnl.revenue || 0,
-        operating_income: undefined,
-        ebitda: undefined,
-        net_income: undefined,
+        operating_income: forms.pnl.operatingIncome,
+        ebitda: forms.pnl.ebitda,
+        net_income: forms.pnl.netIncome,
         sold_production: forms.pnl.soldProduction,
         other_operating_revenue: forms.pnl.otherOperatingIncome,
         cost_of_goods_sold: forms.pnl.consumedPurchases,
