@@ -108,6 +108,59 @@
     @if (normalizedData(); as data) {
       <main class="flex flex-col gap-8 flex-1">
         <app-accounting-standard-section [data]="data" />
+
+        <!-- ── Badges Mission 5 & 6 ── -->
+        <div class="flex flex-wrap gap-3" data-testid="normalization-badges-row">
+          @if (data.ratio_readiness; as readiness) {
+            @if (readiness.advanced_ratios_ready) {
+              <span
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[color:var(--color-success)] bg-opacity-15 text-[color:var(--color-success)] border border-[color:var(--color-success)] border-opacity-30"
+                data-testid="normalization-ratio-readiness-badge"
+              >
+                ✓ Données suffisantes pour ratios avancés
+              </span>
+            } @else {
+              <span
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[color:var(--color-warning)] bg-opacity-15 text-[color:var(--color-warning)] border border-[color:var(--color-warning)] border-opacity-30"
+                data-testid="normalization-ratio-readiness-badge"
+              >
+                ⚠ Ratios avancés incomplets — manque&nbsp;: {{ readiness.missing_fields.join(', ') }}
+              </span>
+            }
+          }
+
+          @if (data.coherence; as coh) {
+            <span
+              [ngClass]="coh.assets_liabilities_balanced
+                ? 'bg-[color:var(--color-success)] bg-opacity-15 text-[color:var(--color-success)] border-[color:var(--color-success)]'
+                : 'bg-[color:var(--color-error)] bg-opacity-15 text-[color:var(--color-error)] border-[color:var(--color-error)]'"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-opacity-30"
+              data-testid="normalization-coherence-badge"
+            >
+              Bilan {{ coh.assets_liabilities_balanced ? 'équilibré' : 'déséquilibré' }}
+            </span>
+            <span
+              [ngClass]="coh.ebitda_coherent
+                ? 'bg-[color:var(--color-success)] bg-opacity-15 text-[color:var(--color-success)] border-[color:var(--color-success)]'
+                : 'bg-[color:var(--color-warning)] bg-opacity-15 text-[color:var(--color-warning)] border-[color:var(--color-warning)]'"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-opacity-30"
+            >
+              EBITDA {{ coh.ebitda_coherent ? 'cohérent' : 'à vérifier' }}
+            </span>
+            <span
+              [ngClass]="coh.cash_flow_coherent
+                ? 'bg-[color:var(--color-success)] bg-opacity-15 text-[color:var(--color-success)] border-[color:var(--color-success)]'
+                : 'bg-[color:var(--color-warning)] bg-opacity-15 text-[color:var(--color-warning)] border-[color:var(--color-warning)]'"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-opacity-30"
+            >
+              TF {{ coh.cash_flow_coherent ? 'cohérent' : 'delta' }}
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[color:var(--color-surface-card)] text-[color:var(--color-content-secondary)] border border-[color:var(--color-border-default)]">
+              Score {{ (coh.coherence_score * 100) | number: '1.0-0' }} %
+            </span>
+          }
+        </div>
+
         <div class="flex flex-col gap-4">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold text-[color:var(--color-content-primary)]">

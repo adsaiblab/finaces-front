@@ -39,38 +39,79 @@ export class ComparativeTableComponent {
 
   // Signal calculé pour transformer le schéma JSON en lignes de tableau aplaties
   public dataSource = computed<ComparativeRow[]>(() => {
-    const rawData = this.data();
-    if (!rawData) return [];
+    const d = this.data();
+    if (!d) return [];
 
-    const rows: ComparativeRow[] = [
-      // --- ASSETS ---
-      { id: 'h1', label: 'ASSETS', rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 },
-      this.buildRow('Total Assets', rawData.total_assets_original, rawData.total_assets, 1),
-      this.buildRow('Current Assets', rawData.current_assets_original, rawData.current_assets, 1),
-      this.buildRow('Cash & Equivalents', rawData.liquid_assets_original, rawData.liquid_assets, 2),
-      this.buildRow('Inventory', rawData.inventory_original, rawData.inventory, 2),
-      this.buildRow('Accounts Receivable', rawData.accounts_receivable_original, rawData.accounts_receivable, 2),
-      this.buildRow('Non-Current Assets', rawData.non_current_assets_original, rawData.non_current_assets, 1),
-      this.buildRow('Tangible Assets', rawData.tangible_assets_original, rawData.tangible_assets, 2),
+    const h = (id: string, label: string): ComparativeRow =>
+      ({ id, label, rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 });
+    const r = (label: string, raw: number, norm: number, indent = 1) =>
+      this.buildRow(label, raw ?? 0, norm ?? 0, indent);
 
-      // --- LIABILITIES & EQUITY ---
-      { id: 'h2', label: 'EQUITY & LIABILITIES', rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 },
-      this.buildRow('Total Equity', rawData.equity_original, rawData.equity, 1),
-      this.buildRow('Share Capital', rawData.share_capital_original, rawData.share_capital, 2),
-      this.buildRow('Current Liabilities', rawData.current_liabilities_original, rawData.current_liabilities, 1),
-      this.buildRow('Short Term Debt', rawData.short_term_debt_original, rawData.short_term_debt, 2),
-      this.buildRow('Non-Current Liabilities', rawData.non_current_liabilities_original, rawData.non_current_liabilities, 1),
-      this.buildRow('Long Term Debt', rawData.long_term_debt_original, rawData.long_term_debt, 2),
+    return [
+      // ── Section 1 : Bilan — Actif ───────────────────────────────────
+      h('h-assets', 'BILAN — ACTIF'),
+      r('Total Actif', d.total_assets_original, d.total_assets, 1),
+      r('Actif Circulant', d.current_assets_original, d.current_assets, 1),
+      r('Trésorerie & Équivalents', d.liquid_assets_original, d.liquid_assets, 2),
+      r('Stocks', d.inventory_original, d.inventory, 2),
+      r('Créances Clients', d.accounts_receivable_original, d.accounts_receivable, 2),
+      r('Autres Actifs Courants', d.other_current_assets_original, d.other_current_assets, 2),
+      r('Actif Immobilisé', d.non_current_assets_original, d.non_current_assets, 1),
+      r('Immobilisations Incorporelles', d.intangible_assets_original, d.intangible_assets, 2),
+      r('Immobilisations Corporelles', d.tangible_assets_original, d.tangible_assets, 2),
+      r('Actifs Financiers', d.financial_assets_original, d.financial_assets, 2),
+      r('Autres Actifs Non Courants', d.other_noncurrent_assets_original, d.other_noncurrent_assets, 2),
 
-      // --- INCOME STATEMENT ---
-      { id: 'h3', label: 'INCOME STATEMENT', rawValue: 0, normalizedValue: 0, deltaAmount: 0, deltaPct: 0, note: '', isHeader: true, indentLevel: 0 },
-      this.buildRow('Revenue', rawData.revenue_original, rawData.revenue, 1),
-      this.buildRow('EBITDA', rawData.ebitda_original, rawData.ebitda, 1),
-      this.buildRow('Operating Income', rawData.operating_income_original, rawData.operating_income, 1),
-      this.buildRow('Net Income', rawData.net_income_original, rawData.net_income, 1),
+      // ── Section 2 : Bilan — Passif & Capitaux Propres ──────────────
+      h('h-liabilities', 'BILAN — PASSIF & CAPITAUX PROPRES'),
+      r('Total Passif & CP', d.total_liabilities_and_equity_original, d.total_liabilities_and_equity, 1),
+      r('Capitaux Propres', d.equity_original, d.equity, 1),
+      r('Capital Social', d.share_capital_original, d.share_capital, 2),
+      r('Réserves', d.reserves_original, d.reserves, 2),
+      r('Report à Nouveau', d.retained_earnings_prior_original, d.retained_earnings_prior, 2),
+      r('Résultat de l\'exercice', d.current_year_earnings_original, d.current_year_earnings, 2),
+      r('Dettes Long Terme', d.non_current_liabilities_original, d.non_current_liabilities, 1),
+      r('Emprunts LT', d.long_term_debt_original, d.long_term_debt, 2),
+      r('Provisions LT', d.long_term_provisions_original, d.long_term_provisions, 2),
+      r('Dettes Court Terme', d.current_liabilities_original, d.current_liabilities, 1),
+      r('Dettes Fournisseurs', d.accounts_payable_original, d.accounts_payable, 2),
+      r('Dettes Fiscales & Sociales', d.tax_and_social_liabilities_original, d.tax_and_social_liabilities, 2),
+      r('Emprunts CT', d.short_term_debt_original, d.short_term_debt, 2),
+      r('Autres Dettes CT', d.other_current_liabilities_original, d.other_current_liabilities, 2),
+
+      // ── Section 3 : Compte de Résultat (complet) ───────────────────
+      h('h-income', 'COMPTE DE RÉSULTAT'),
+      r('Chiffre d\'Affaires', d.revenue_original, d.revenue, 1),
+      r('Production Vendue', d.sold_production_original, d.sold_production, 2),
+      r('Autres Produits d\'Exploitation', d.other_operating_revenue_original, d.other_operating_revenue, 2),
+      r('Coût des Marchandises Vendues', d.cost_of_goods_sold_original, d.cost_of_goods_sold, 2),
+      r('Charges de Personnel', d.personnel_expenses_original, d.personnel_expenses, 2),
+      r('Dotations Amortissements (D&A)', d.depreciation_and_amortization_original, d.depreciation_and_amortization, 2),
+      r('Résultat Financier', d.financial_income_original, d.financial_income, 2),
+      r('Produits Financiers', d.financial_revenue_original, d.financial_revenue, 3),
+      r('Charges Financières', d.financial_expenses_original, d.financial_expenses, 3),
+      r('Résultat Avant Impôt', d.income_before_tax_original, d.income_before_tax, 1),
+      r('EBITDA', d.ebitda_original, d.ebitda, 1),
+      r('Résultat d\'Exploitation', d.operating_income_original, d.operating_income, 1),
+      r('Résultat Net', d.net_income_original, d.net_income, 1),
+
+      // ── Section 4 : Flux de Trésorerie (Cash Flow) — NOUVEAU ───────
+      h('h-cashflow', 'FLUX DE TRÉSORERIE'),
+      r('FCF d\'Exploitation', d.operating_cash_flow_original, d.operating_cash_flow, 1),
+      r('FCF d\'Investissement', d.investing_cash_flow_original, d.investing_cash_flow, 1),
+      r('FCF de Financement', d.financing_cash_flow_original, d.financing_cash_flow, 1),
+      r('Variation Nette de Trésorerie', d.change_in_cash_original, d.change_in_cash, 1),
+      r('Trésorerie Début Période', d.beginning_cash_original, d.beginning_cash, 2),
+      r('Trésorerie Fin Période', d.ending_cash_original, d.ending_cash, 2),
+      ...(d.capex ? [r('Capex', d.capex_original ?? 0, d.capex, 1)] : []),
+
+      // ── Section 5 : Autres Indicateurs — NOUVEAU ───────────────────
+      ...(d.backlog_value || d.headcount ? [
+        h('h-others', 'AUTRES INDICATEURS'),
+        ...(d.backlog_value ? [r('Carnet de Commandes', d.backlog_value_original ?? 0, d.backlog_value, 1)] : []),
+        ...(d.headcount ? [{ id: 'headcount', label: 'Effectifs', rawValue: d.headcount, normalizedValue: d.headcount, deltaAmount: 0, deltaPct: 0, note: 'n/a', indentLevel: 1 } as ComparativeRow] : []),
+      ] : []),
     ];
-
-    return rows;
   });
 
   private buildRow(

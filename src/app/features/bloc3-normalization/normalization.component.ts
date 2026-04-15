@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NgClass, DecimalPipe } from '@angular/common';
 import { of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
@@ -30,6 +31,8 @@ import {
     MatBadgeModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    NgClass,
+    DecimalPipe,
     FinacesSkeletonLoaderComponent,
     AccountingStandardSectionComponent,
     ComparativeTableComponent,
@@ -77,7 +80,6 @@ export class NormalizationComponent implements OnInit {
           if (data.length > 0 && !this.selectedYear()) {
             this.selectedYear.set(Math.max(...data.map(s => s.fiscal_year)));
           }
-          console.warn('[DEBUG adjustments]', this.normalizedData()?.adjustments_count);
           this.isLoading.set(false);
         },
         error: () => {

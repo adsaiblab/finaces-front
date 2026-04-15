@@ -23,8 +23,11 @@
       </div>
 
       <div class="info-block">
-        <span class="label">Exchange Rate</span>
+        <span class="label">Exchange Rate Applied</span>
         <span class="value">
+          1 {{ data()!.currency_original }} = {{ (1 / data()!.exchange_rate) | number: '1.4-4' }} USD
+        </span>
+        <span class="label text-xs opacity-60">
           1 USD = {{ data()!.exchange_rate | number: '1.2-4' }} {{ data()!.currency_original }}
         </span>
       </div>
