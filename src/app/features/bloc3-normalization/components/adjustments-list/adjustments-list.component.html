@@ -35,10 +35,8 @@
                   {{ adj.line_item }}
                 </h3>
                 <p class="text-xs text-[color:var(--color-content-secondary)] mt-0.5">
-                  Confidence Score:
-                  <span class="font-bold" [ngClass]="getPercentageClass(adj.confidence)"
-                    >{{ adj.confidence }}%</span
-                  >
+                  Standard :
+                  <span class="font-bold text-[color:var(--color-primary)]">{{ adj.standard }}</span>
                 </p>
               </div>
             </div>

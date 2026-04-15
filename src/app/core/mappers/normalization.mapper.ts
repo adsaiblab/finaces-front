@@ -1,4 +1,4 @@
-import { FinancialStatementNormalizedSchema } from '../models/financial.model';
+import { FinancialStatementNormalizedSchema, NormalizationAdjustment } from '../models/financial.model';
 
 /**
  * NormalizationMapper — Convertit la réponse brute de l'API (où Pydantic
@@ -62,10 +62,10 @@ export class NormalizationMapper {
       non_current_liabilities_original: n('non_current_liabilities_original'),
       long_term_debt: n('long_term_debt'),
       long_term_debt_original: n('long_term_debt_original'),
-      accounts_payable: n('accounts_payable'),
-      accounts_payable_original: n('accounts_payable_original'),
       long_term_provisions: n('long_term_provisions'),
       long_term_provisions_original: n('long_term_provisions_original'),
+      accounts_payable: n('accounts_payable'),
+      accounts_payable_original: n('accounts_payable_original'),
       current_liabilities: n('current_liabilities'),
       current_liabilities_original: n('current_liabilities_original'),
       short_term_debt: n('short_term_debt'),
@@ -118,7 +118,7 @@ export class NormalizationMapper {
       // Metadata
       is_consolidated: Boolean(raw['is_consolidated']),
       adjustments_count: Number(raw['adjustments_count'] ?? 0),
-      adjustments: (raw['adjustments'] as unknown[]) ?? [],
+      adjustments: (raw['adjustments'] as NormalizationAdjustment[]) ?? [],
       headcount: opt('headcount'),
       backlog_value: opt('backlog_value'),
       backlog_value_original: opt('backlog_value_original'),

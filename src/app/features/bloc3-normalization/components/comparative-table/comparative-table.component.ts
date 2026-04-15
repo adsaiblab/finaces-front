@@ -87,7 +87,7 @@ export class ComparativeTableComponent {
       r('Coût des Marchandises Vendues', d.cost_of_goods_sold_original, d.cost_of_goods_sold, 2),
       r('Charges de Personnel', d.personnel_expenses_original, d.personnel_expenses, 2),
       r('Dotations Amortissements (D&A)', d.depreciation_and_amortization_original, d.depreciation_and_amortization, 2),
-      r('Résultat Financier', d.financial_income_original, d.financial_income, 2),
+      r('Résultat Financier (net)', (d.financial_revenue_original ?? 0) - (d.financial_expenses_original ?? 0), (d.financial_revenue ?? 0) - (d.financial_expenses ?? 0), 2),
       r('Produits Financiers', d.financial_revenue_original, d.financial_revenue, 3),
       r('Charges Financières', d.financial_expenses_original, d.financial_expenses, 3),
       r('Résultat Avant Impôt', d.income_before_tax_original, d.income_before_tax, 1),

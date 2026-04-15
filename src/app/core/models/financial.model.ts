@@ -166,6 +166,8 @@ export interface FinancialStatementNormalizedSchema {
   non_current_liabilities_original: number;
   long_term_debt: number;
   long_term_debt_original: number;
+  long_term_provisions: number;
+  long_term_provisions_original: number;
   current_liabilities: number;
   current_liabilities_original: number;
   short_term_debt: number;
