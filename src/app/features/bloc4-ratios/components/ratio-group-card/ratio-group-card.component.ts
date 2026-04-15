@@ -70,6 +70,7 @@ export class RatioGroupCardComponent {
   }
 
   public formatValue(ratioValue: RatioValue): string {
+    if (ratioValue.current === null || ratioValue.current === undefined) return '—';
     if (ratioValue.unit === '%') return `${ratioValue.current.toFixed(1)}%`;
     if (ratioValue.unit === 'days') return `${ratioValue.current.toFixed(0)} days`;
     if (ratioValue.unit === 'currency') return `$${(ratioValue.current / 1000000).toFixed(2)}M`;

@@ -67,8 +67,8 @@ export interface RatioSetFlat {
   cagr_revenue?: number;
   asset_turnover: number;
   equity_multiplier: number;
-  altman_zscore: number;
-  altman_zscore_zone: 'SAFE' | 'GREY' | 'DISTRESS';
+  z_score_altman: number | null;
+  z_score_zone: 'SAFE' | 'GREY' | 'DISTRESS' | null;
   computed_at: string;
 }
 

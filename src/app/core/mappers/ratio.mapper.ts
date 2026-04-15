@@ -15,9 +15,9 @@ import {
  * This mapper enriches flat ratios into display-ready grouped structures.
  */
 
-function toRatioValue(current: number, unit: RatioValue['unit'] = 'ratio'): RatioValue {
+function toRatioValue(current: number | null | undefined, unit: RatioValue['unit'] = 'ratio'): RatioValue {
   return {
-    current,
+    current: current ?? null,
     trend: [],
     benchmark_min: 0,
     benchmark_max: 0,
@@ -29,7 +29,7 @@ function toRatioValue(current: number, unit: RatioValue['unit'] = 'ratio'): Rati
 
 export class RatioMapper {
   /** Backend flat → Frontend grouped (for display) */
-  static fromBackendFlat(flat: RatioSetFlat): RatioSetGrouped {
+  static fromBackendFlat(flat: any): RatioSetGrouped {
     const liquidity: LiquidityGroup = {
       current_ratio: toRatioValue(flat.current_ratio),
       quick_ratio: toRatioValue(flat.quick_ratio),
@@ -39,17 +39,17 @@ export class RatioMapper {
       wcr_pct_revenue: toRatioValue(flat.wcr_pct_revenue, '%'),
       dso_days: toRatioValue(flat.dso_days, 'days'),
       dpo_days: toRatioValue(flat.dpo_days, 'days'),
-      dio_days: toRatioValue(0, 'days'),
-      cash_conversion_cycle: toRatioValue(0, 'days'),
+      dio_days: toRatioValue(flat.dio_days ?? null, 'days'),
+      cash_conversion_cycle: toRatioValue(flat.cash_conversion_cycle ?? null, 'days'),
     };
 
     const solvency: SolvencyGroup = {
       debt_to_equity: toRatioValue(flat.debt_to_equity),
       financial_autonomy: toRatioValue(flat.equity_ratio),
       gearing: toRatioValue(flat.gearing),
-      interest_coverage: toRatioValue(0),
-      debt_repayment_years: toRatioValue(0),
-      negative_equity: toRatioValue(flat.equity_ratio < 0 ? 1 : 0, 'binary'),
+      interest_coverage: toRatioValue(flat.interest_coverage ?? null),
+      debt_repayment_years: toRatioValue(flat.debt_repayment_years ?? null),
+      negative_equity: toRatioValue(flat.equity_ratio != null && flat.equity_ratio < 0 ? 1 : 0, 'binary'),
     };
 
     const profitability: ProfitabilityGroup = {
@@ -61,14 +61,14 @@ export class RatioMapper {
     };
 
     const capacity: CapacityGroup = {
-      cash_flow_capacity: toRatioValue(0),
-      cf_capacity_margin: toRatioValue(0, '%'),
-      operating_cash_flow: toRatioValue(0, 'currency'),
+      cash_flow_capacity: toRatioValue(flat.cash_flow_capacity ?? null),
+      cf_capacity_margin: toRatioValue(flat.cf_capacity_margin ?? null, '%'),
+      operating_cash_flow: toRatioValue(flat.operating_cash_flow ?? null, 'currency'),
     };
 
     const z_score: ZScoreGroup = {
-      z_score_altman: toRatioValue(flat.altman_zscore),
-      z_score_zone: flat.altman_zscore_zone,
+      z_score_altman: toRatioValue(flat.z_score_altman),
+      z_score_zone: flat.z_score_zone || 'SAFE',
       formula_breakdown: { x1: 0, x2: 0, x3: 0, x4: 0 },
     };
 

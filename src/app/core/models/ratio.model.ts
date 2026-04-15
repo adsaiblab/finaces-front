@@ -1,5 +1,5 @@
 export interface RatioValue {
-  current: number;
+  current: number | null;
   trend: number[];
   benchmark_min: number;
   benchmark_max: number;
