@@ -124,7 +124,7 @@ export interface FinancialStatementNormalizedSchema {
   currency_usd: string;
   exchange_rate: number;
 
-  #region Assets
+  // #region Assets
   total_assets: number;
   total_assets_original: number;
   current_assets: number;
@@ -147,9 +147,9 @@ export interface FinancialStatementNormalizedSchema {
   financial_assets_original: number;
   other_noncurrent_assets: number;
   other_noncurrent_assets_original: number;
-  #endregion
+  // #endregion
 
-  #region Liabilities & Equity
+  // #region Liabilities & Equity
   total_liabilities_and_equity: number;
   total_liabilities_and_equity_original: number;
   equity: number;
@@ -176,9 +176,9 @@ export interface FinancialStatementNormalizedSchema {
   tax_and_social_liabilities_original: number;
   other_current_liabilities: number;
   other_current_liabilities_original: number;
-  #endregion
+  // #endregion
 
-  #region Income Statement
+  // #region Income Statement
   revenue: number;
   revenue_original: number;
   ebitda: number;
@@ -187,9 +187,9 @@ export interface FinancialStatementNormalizedSchema {
   net_income_original: number;
   operating_income: number;
   operating_income_original: number;
-  #endregion
+  // #endregion
 
-  #region Metadata
+  // #region Metadata
   is_consolidated: boolean;
   adjustments_count: number;
   headcount?: number;
@@ -197,7 +197,7 @@ export interface FinancialStatementNormalizedSchema {
   backlog_value_original?: number;
   capex?: number;
   capex_original?: number;
-  #endregion
+  // #endregion
 }
 
 export interface NormalizationAdjustment {

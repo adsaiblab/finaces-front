@@ -76,7 +76,7 @@ export class NormalizationComponent implements OnInit {
           if (data.length > 0 && !this.selectedYear()) {
             this.selectedYear.set(Math.max(...data.map(s => s.fiscal_year)));
           }
-          console.log('[DEBUG adjustments]', this.normalizedData()?.adjustments_count);
+          console.warn('[DEBUG adjustments]', this.normalizedData()?.adjustments_count);
           this.isLoading.set(false);
         },
         error: () => {
