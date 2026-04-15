@@ -32,7 +32,10 @@ export class ComparativeTableComponent {
     null as unknown as FinancialStatementNormalizedSchema,
   );
 
-  // Événement émis lors du clic sur une ligne ayant un ajustement, pour scroller vers les détails
+  /** Exchange rate injected from parent so delta can compare raw_usd vs normalized_usd */
+  public exchangeRate = input<number>(1);
+
+  /** Event emitted when clicking on an adjusted row */
   public rowClick = output<string>();
 
   public readonly displayedColumns: string[] = ['item', 'original', 'normalized', 'delta', 'note'];
@@ -114,20 +117,31 @@ export class ComparativeTableComponent {
     indent: number,
     manualNote?: string,
   ): ComparativeRow {
-    const deltaAmount = norm - raw;
-    const deltaPct = raw !== 0 ? (deltaAmount / raw) * 100 : 0;
+    /**
+     * Δ represents the IFRS restatement adjustment BEYOND currency conversion.
+     * raw_usd = raw_MAD / exchange_rate  → what the original value would be in USD
+     * Δ = (normalized_usd - raw_usd) / raw_usd
+     * This is ~0% when only currency conversion was applied (no actual IFRS adjustment).
+     * Only true restatements (e.g. IFRS 16 lease capitalization) produce a non-zero Δ.
+     */
+    const rate = this.exchangeRate() || 1;
+    const rawUsd = rate !== 0 ? raw / rate : raw;  // convert MAD→USD for apples-to-apples
+    const deltaAmount = norm - rawUsd;
+    const deltaPct = rawUsd !== 0 ? (deltaAmount / rawUsd) * 100 : 0;
+
     let note = 'OK';
     if (manualNote) {
       note = manualNote;
-    } else if (Math.abs(deltaPct) > 0) {
+    } else if (Math.abs(deltaPct) > 1) {
+      // Only flag as adjusted if restatement is > 1% (pure conversion noise is < 0.01%)
       note = 'Δ';
     }
 
     return {
       id: label.toLowerCase().replace(/\s+/g, '-'),
       label,
-      rawValue: raw,
-      normalizedValue: norm,
+      rawValue: raw,       // displayed in MAD (source currency)
+      normalizedValue: norm, // displayed in USD (after conversion + restatements)
       deltaAmount,
       deltaPct,
       note,
@@ -137,9 +151,9 @@ export class ComparativeTableComponent {
 
   public getDeltaColorClass(deltaPct: number): string {
     const absDelta = Math.abs(deltaPct);
-    if (absDelta === 0) return 'text-success';
-    if (absDelta > 0 && absDelta <= 10) return 'text-warning';
-    return 'text-error';
+    if (absDelta <= 1) return 'text-success';   // pure conversion or negligible
+    if (absDelta <= 10) return 'text-warning';   // minor restatement
+    return 'text-error';                          // significant IFRS adjustment
   }
 
   public onRowClick(row: ComparativeRow): void {

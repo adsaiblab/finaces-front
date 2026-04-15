@@ -168,7 +168,7 @@
             </h2>
             <span class="text-sm text-[color:var(--color-content-secondary)]">Raw Data vs IFRS Norms</span>
           </div>
-          <app-comparative-table [data]="data" (rowClick)="scrollToAdjustments()" />
+          <app-comparative-table [data]="data" [exchangeRate]="data.exchange_rate" (rowClick)="scrollToAdjustments()" />
         </div>
         <div id="adjustments-section" class="scroll-mt-6" data-testid="normalization-adjustments-section">
           <app-adjustments-list [adjustments]="data.adjustments" />
