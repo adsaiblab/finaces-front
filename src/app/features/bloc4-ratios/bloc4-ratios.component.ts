@@ -78,10 +78,11 @@ export class Bloc4RatiosComponent implements OnInit {
           this.ratioSet.set(data);
           this.isLoading.set(false);
         },
-        error: (_err) => {
+        error: (err) => {
           if (!environment.production) {
             console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
           }
+          console.error('❌ [Ratios] computeRatios error in component:', err);
           this.loadMockData();
         },
       });

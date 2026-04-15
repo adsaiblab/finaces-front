@@ -15,9 +15,18 @@ import {
  * This mapper enriches flat ratios into display-ready grouped structures.
  */
 
-function toRatioValue(current: number | null | undefined, unit: RatioValue['unit'] = 'ratio'): RatioValue {
+function toRatioValue(current: any, unit: RatioValue['unit'] = 'ratio'): RatioValue {
+  // Pydantic serializes Decimal as strings. We must cast to number to avoid `.toFixed()` crashes.
+  let parsedCurrent: number | null = null;
+  if (current !== null && current !== undefined && current !== '') {
+    parsedCurrent = parseFloat(String(current));
+    if (isNaN(parsedCurrent)) {
+      parsedCurrent = null;
+    }
+  }
+
   return {
-    current: current ?? null,
+    current: parsedCurrent,
     trend: [],
     benchmark_min: 0,
     benchmark_max: 0,
