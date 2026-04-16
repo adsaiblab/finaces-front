@@ -208,6 +208,10 @@ export interface FinancialStatementNormalizedSchema {
   financial_expenses_original: number;
   income_before_tax: number;
   income_before_tax_original: number;
+  extraordinary_income: number;
+  extraordinary_income_original: number;
+  income_tax: number;
+  income_tax_original: number;
   // #endregion
 
   // #region Cash Flow
