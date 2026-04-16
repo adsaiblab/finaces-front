@@ -69,6 +69,10 @@ export interface CoherenceAlert {
     | 'HIDDEN_OVERLEVERAGE'
     | 'TOXIC_WCR'
     | 'SCISSORS_EFFECT'
+    | 'NEGATIVE_EQUITY'
+    | 'EARNINGS_QUALITY'
+    | 'MATURITY_MISMATCH'
+    | 'OTHER'
     | 'CUSTOM';
   message: string;
   rule_description: string;

@@ -88,7 +88,15 @@ export class RatioMapper {
     };
 
     const allAlerts = (flat.coherence_alerts_json || []) as any[];
-    const crossPillarCodes = ['FALSE_LIQUIDITY', 'HIDDEN_OVERLEVERAGE', 'TOXIC_WCR', 'SCISSORS_EFFECT'];
+    const crossPillarCodes = [
+      'FALSE_LIQUIDITY', 
+      'HIDDEN_OVERLEVERAGE', 
+      'TOXIC_WCR', 
+      'SCISSORS_EFFECT',
+      'NEGATIVE_EQUITY',
+      'EARNINGS_QUALITY',
+      'MATURITY_MISMATCH'
+    ];
 
     return {
       case_id: flat.case_id,
