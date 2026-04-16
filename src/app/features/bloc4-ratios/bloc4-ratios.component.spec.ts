@@ -11,24 +11,38 @@ describe('Bloc4RatiosComponent', () => {
   let component: Bloc4RatiosComponent;
   let fixture: ComponentFixture<Bloc4RatiosComponent>;
 
+  const mockRatioGrouped = {
+    case_id: 'case-123',
+    fiscal_year: 2023,
+    coherence_alerts: [],
+    coherence_status: 'CLEAN',
+    calculation_date: '',
+    normalization_source: '',
+    sector_code: '',
+    liquidity: {} as any,
+    solvency: {} as any,
+    profitability: {} as any,
+    capacity: {} as any,
+    z_score: {
+      z_score_zone: 'SAFE',
+      z_score_altman: {
+        current: 3.5,
+        trend: [],
+        benchmark_min: 0,
+        benchmark_max: 0,
+        status: 'GREEN',
+        unit: 'ratio',
+        variation_pct: 0,
+      },
+      formula_breakdown: { x1: 1, x2: 1, x3: 1, x4: 1 },
+    },
+  };
+
   const mockRatioService = {
     computeRatios: vi.fn().mockReturnValue(
       of({
-        case_id: 'case-123',
-        coherence_alerts: [],
-        z_score: {
-          z_score_zone: 'SAFE',
-          z_score_altman: {
-            current: 3.5,
-            trend: [],
-            benchmark_min: 0,
-            benchmark_max: 0,
-            status: 'GREEN',
-            unit: 'ratio',
-            variation_pct: 0,
-          },
-          formula_breakdown: { x1: 1, x2: 1, x3: 1, x4: 1 },
-        },
+        years: [2023],
+        ratiosByYear: new Map([[2023, mockRatioGrouped]]),
       }),
     ),
   };
