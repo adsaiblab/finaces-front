@@ -94,6 +94,8 @@ export class ComparativeTableComponent {
       r('Financial Income', d.financial_revenue_original, d.financial_revenue, 3),
       r('Financial Expenses', d.financial_expenses_original, d.financial_expenses, 3),
       r('Ordinary Income', d.income_before_tax_original, d.income_before_tax, 1),
+      r('Exceptional Income (Expense)', d.extraordinary_income_original, d.extraordinary_income, 1),
+      r('Income Tax', d.income_tax_original, d.income_tax, 1),
       r('EBITDA', d.ebitda_original, d.ebitda, 1),
       r('Operating Income', d.operating_income_original, d.operating_income, 1),
       r('Net Income', d.net_income_original, d.net_income, 1),
