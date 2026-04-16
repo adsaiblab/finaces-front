@@ -65,6 +65,10 @@ export interface CoherenceAlert {
     | 'MARGIN_ORDER'
     | 'SOLVENCY_LOGIC'
     | 'ZSCORE_DISTRESS'
+    | 'FALSE_LIQUIDITY'
+    | 'HIDDEN_OVERLEVERAGE'
+    | 'TOXIC_WCR'
+    | 'SCISSORS_EFFECT'
     | 'CUSTOM';
   message: string;
   rule_description: string;
@@ -82,6 +86,7 @@ export interface RatioSetGrouped {
   capacity: CapacityGroup;
   z_score: ZScoreGroup;
   coherence_alerts: CoherenceAlert[];
+  cross_pillar_alerts: CoherenceAlert[];
   coherence_status: 'CLEAN' | 'WARNINGS' | 'CRITICAL';
   calculation_date: string;
   normalization_source: string;

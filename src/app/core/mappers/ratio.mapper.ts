@@ -87,6 +87,9 @@ export class RatioMapper {
       },
     };
 
+    const allAlerts = (flat.coherence_alerts_json || []) as any[];
+    const crossPillarCodes = ['FALSE_LIQUIDITY', 'HIDDEN_OVERLEVERAGE', 'TOXIC_WCR', 'SCISSORS_EFFECT'];
+
     return {
       case_id: flat.case_id,
       fiscal_year: flat.fiscal_year,
@@ -95,8 +98,29 @@ export class RatioMapper {
       profitability,
       capacity,
       z_score,
-      coherence_alerts: [],
-      coherence_status: 'CLEAN',
+      coherence_alerts: allAlerts
+        .filter((a) => !crossPillarCodes.includes(a.pattern))
+        .map((a) => ({
+          id: a.id || Math.random().toString(),
+          severity: a.severity || 'WARNING',
+          rule_id: a.pattern || 'CUSTOM',
+          message: a.description || '',
+          rule_description: a.note || '',
+          affected_ratios: [],
+          suggested_action: '',
+        })),
+      cross_pillar_alerts: allAlerts
+        .filter((a) => crossPillarCodes.includes(a.pattern))
+        .map((a) => ({
+          id: a.id || Math.random().toString(),
+          severity: a.severity || 'WARNING',
+          rule_id: a.pattern,
+          message: a.description || '',
+          rule_description: a.note || '',
+          affected_ratios: [],
+          suggested_action: '',
+        })),
+      coherence_status: flat.coherence_status || 'CLEAN',
       calculation_date: flat.computed_at,
       normalization_source: '',
       sector_code: '',

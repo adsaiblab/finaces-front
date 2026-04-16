@@ -42,6 +42,7 @@ import {
     CoherenceAlertsComponent,
     RatioGroupCardComponent,
     ZscoreCardComponent,
+    CrossPillarAlertsComponent,
     NgClass,
   ],
   templateUrl: './bloc4-ratios.component.html',
