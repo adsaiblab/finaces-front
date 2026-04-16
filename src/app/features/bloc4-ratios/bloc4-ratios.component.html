@@ -50,6 +50,21 @@
       </button>
     </header>
 
+    @if (availableYears().length > 1) {
+      <div class="flex items-center gap-2" role="group" aria-label="Sélecteur d'année fiscale">
+        @for (year of availableYears(); track year) {
+          <button mat-stroked-button
+            [color]="selectedYear() === year ? 'primary' : ''"
+            [class.mat-flat-button]="selectedYear() === year"
+            (click)="selectYear(year)"
+            [attr.aria-pressed]="selectedYear() === year"
+            [attr.data-testid]="'ratios-year-btn-' + year">
+            {{ year }}
+          </button>
+        }
+      </div>
+    }
+
     <main class="flex flex-col gap-8 w-full" data-testid="ratios-main-content">
       <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
       </app-coherence-alerts>

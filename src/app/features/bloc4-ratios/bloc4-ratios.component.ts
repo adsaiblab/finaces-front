@@ -60,6 +60,9 @@ export class Bloc4RatiosComponent implements OnInit {
   public readonly isLoading = signal<boolean>(true);
   public readonly error = signal<string | null>(null);
   public readonly scoringInProgress = signal<boolean>(false);
+  public readonly availableYears = signal<number[]>([]);
+  public readonly selectedYear = signal<number | null>(null);
+  private ratiosByYear = new Map<number, RatioSetGrouped>();
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
@@ -74,8 +77,12 @@ export class Bloc4RatiosComponent implements OnInit {
       .computeRatios(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => {
-          this.ratioSet.set(data);
+        next: ({ years, ratiosByYear }) => {
+          this.availableYears.set(years);
+          this.ratiosByYear = ratiosByYear;
+          const mostRecent = years[0] ?? null;
+          this.selectedYear.set(mostRecent);
+          this.ratioSet.set(mostRecent ? (ratiosByYear.get(mostRecent) ?? null) : null);
           this.isLoading.set(false);
         },
         error: (err) => {
@@ -86,6 +93,11 @@ export class Bloc4RatiosComponent implements OnInit {
           this.loadMockData();
         },
       });
+  }
+
+  public selectYear(year: number): void {
+    this.selectedYear.set(year);
+    this.ratioSet.set(this.ratiosByYear.get(year) ?? null);
   }
 
   private loadMockData(): void {

@@ -75,10 +75,16 @@ export class RatioMapper {
       operating_cash_flow: toRatioValue(null, 'currency'),
     };
 
+    const bd = flat.z_score_breakdown;
     const z_score: ZScoreGroup = {
       z_score_altman: toRatioValue(flat.z_score_altman),
       z_score_zone: flat.z_score_zone || 'SAFE',
-      formula_breakdown: { x1: 0, x2: 0, x3: 0, x4: 0 },
+      formula_breakdown: {
+        x1: bd?.x1 != null ? parseFloat(String(bd.x1)) : 0,
+        x2: bd?.x2 != null ? parseFloat(String(bd.x2)) : 0,
+        x3: bd?.x3 != null ? parseFloat(String(bd.x3)) : 0,
+        x4: bd?.x4 != null ? parseFloat(String(bd.x4)) : 0,
+      },
     };
 
     return {
