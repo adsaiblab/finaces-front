@@ -16,16 +16,16 @@ import { CoherenceAlert } from '../../../../core/models/ratio.model';
 export class CrossPillarAlertsComponent {
   public alerts = input<CoherenceAlert[]>([]);
 
-  public getSeverityClass(severity: string): string {
+  public getSeverityBorderClass(severity: string): string {
     return severity === 'CRITICAL' ? 'border-critical' : 'border-warning';
   }
 
   public getSeverityBgClass(severity: string): string {
-    return severity === 'CRITICAL' ? 'bg-critical' : 'bg-warning';
+    return severity === 'CRITICAL' ? 'bg-critical-tint' : 'bg-warning-tint';
   }
 
-  public getBadgeClass(severity: string): string {
-    return severity === 'CRITICAL' ? 'bg-critical' : 'bg-warning';
+  public getSeverityTextColor(severity: string): string {
+    return severity === 'CRITICAL' ? 'text-[color:var(--color-error)]' : 'text-[color:var(--color-warning)]';
   }
 
   public getSeverityIconColor(severity: string): string {
