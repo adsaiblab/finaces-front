@@ -26,6 +26,7 @@ import {
   CoherenceAlertsComponent,
   RatioGroupCardComponent,
   ZscoreCardComponent,
+  CrossPillarAlertsComponent,
 } from './components';
 
 @Component({
