@@ -15,7 +15,7 @@ import {
  * This mapper enriches flat ratios into display-ready grouped structures.
  */
 
-function toRatioValue(current: any, unit: RatioValue['unit'] = 'ratio'): RatioValue {
+function toRatioValue(current: any, variation_pct: any = 0, unit: RatioValue['unit'] = 'ratio'): RatioValue {
   // Pydantic serializes Decimal as strings. We must cast to number to avoid `.toFixed()` crashes.
   let parsedCurrent: number | null = null;
   if (current !== null && current !== undefined && current !== '') {
@@ -32,7 +32,7 @@ function toRatioValue(current: any, unit: RatioValue['unit'] = 'ratio'): RatioVa
     benchmark_max: 0,
     status: 'GREEN',
     unit,
-    variation_pct: 0,
+    variation_pct: variation_pct != null ? parseFloat(String(variation_pct)) : 0,
   };
 }
 
@@ -40,44 +40,44 @@ export class RatioMapper {
   /** Backend flat → Frontend grouped (for display) */
   static fromBackendFlat(flat: any): RatioSetGrouped {
     const liquidity: LiquidityGroup = {
-      current_ratio: toRatioValue(flat.current_ratio),
-      quick_ratio: toRatioValue(flat.quick_ratio),
-      cash_ratio: toRatioValue(flat.cash_ratio),
-      working_capital: toRatioValue(flat.working_capital, 'currency'),
-      wcr: toRatioValue(flat.working_capital_requirement, 'currency'),
-      wcr_pct_revenue: toRatioValue(flat.working_capital_requirement_pct_revenue, '%'),
-      dso_days: toRatioValue(flat.dso_days, 'days'),
-      dpo_days: toRatioValue(flat.dpo_days, 'days'),
-      dio_days: toRatioValue(flat.dio_days ?? null, 'days'),
-      cash_conversion_cycle: toRatioValue(flat.cash_conversion_cycle ?? null, 'days'),
+      current_ratio: toRatioValue(flat.current_ratio, flat.current_ratio_variation_pct),
+      quick_ratio: toRatioValue(flat.quick_ratio, flat.quick_ratio_variation_pct),
+      cash_ratio: toRatioValue(flat.cash_ratio, flat.cash_ratio_variation_pct),
+      working_capital: toRatioValue(flat.working_capital, flat.working_capital_variation_pct, 'currency'),
+      wcr: toRatioValue(flat.working_capital_requirement, flat.working_capital_requirement_variation_pct, 'currency'),
+      wcr_pct_revenue: toRatioValue(flat.working_capital_requirement_pct_revenue, flat.working_capital_requirement_pct_revenue_variation_pct, '%'),
+      dso_days: toRatioValue(flat.dso_days, flat.dso_days_variation_pct, 'days'),
+      dpo_days: toRatioValue(flat.dpo_days, flat.dpo_days_variation_pct, 'days'),
+      dio_days: toRatioValue(flat.dio_days ?? null, flat.dio_days_variation_pct ?? null, 'days'),
+      cash_conversion_cycle: toRatioValue(flat.cash_conversion_cycle ?? null, flat.cash_conversion_cycle_variation_pct ?? null, 'days'),
     };
 
     const solvency: SolvencyGroup = {
-      debt_to_equity: toRatioValue(flat.debt_to_equity),
-      financial_autonomy: toRatioValue(flat.financial_autonomy),
-      gearing: toRatioValue(flat.gearing),
-      interest_coverage: toRatioValue(flat.interest_coverage ?? null),
-      debt_repayment_years: toRatioValue(flat.debt_repayment_years ?? null),
-      negative_equity: toRatioValue(flat.negative_equity ?? 0, 'binary'),
+      debt_to_equity: toRatioValue(flat.debt_to_equity, flat.debt_to_equity_variation_pct),
+      financial_autonomy: toRatioValue(flat.financial_autonomy, flat.financial_autonomy_variation_pct),
+      gearing: toRatioValue(flat.gearing, flat.gearing_variation_pct),
+      interest_coverage: toRatioValue(flat.interest_coverage ?? null, flat.interest_coverage_variation_pct ?? null),
+      debt_repayment_years: toRatioValue(flat.debt_repayment_years ?? null, flat.debt_repayment_years_variation_pct ?? null),
+      negative_equity: toRatioValue(flat.negative_equity ?? 0, 0, 'binary'),
     };
 
     const profitability: ProfitabilityGroup = {
-      net_margin: toRatioValue(flat.net_margin, '%'),
-      ebitda_margin: toRatioValue(flat.ebitda_margin, '%'),
-      operating_margin: toRatioValue(flat.operating_margin, '%'),
-      roa: toRatioValue(flat.roa, '%'),
-      roe: toRatioValue(flat.roe, '%'),
+      net_margin: toRatioValue(flat.net_margin, flat.net_margin_variation_pct, '%'),
+      ebitda_margin: toRatioValue(flat.ebitda_margin, flat.ebitda_margin_variation_pct, '%'),
+      operating_margin: toRatioValue(flat.operating_margin, flat.operating_margin_variation_pct, '%'),
+      roa: toRatioValue(flat.roa, flat.roa_variation_pct, '%'),
+      roe: toRatioValue(flat.roe, flat.roe_variation_pct, '%'),
     };
 
     const capacity: CapacityGroup = {
-      cash_flow_capacity: toRatioValue(flat.cash_flow_capacity ?? null),
-      cf_capacity_margin: toRatioValue(flat.cash_flow_capacity_margin_pct ?? null, '%'),
-      operating_cash_flow: toRatioValue(null, 'currency'),
+      cash_flow_capacity: toRatioValue(flat.cash_flow_capacity ?? null, flat.cash_flow_capacity_variation_pct ?? null),
+      cf_capacity_margin: toRatioValue(flat.cash_flow_capacity_margin_pct ?? null, flat.cash_flow_capacity_margin_pct_variation_pct ?? null, '%'),
+      operating_cash_flow: toRatioValue(null, 0, 'currency'),
     };
 
     const bd = flat.z_score_breakdown;
     const z_score: ZScoreGroup = {
-      z_score_altman: toRatioValue(flat.z_score_altman),
+      z_score_altman: toRatioValue(flat.z_score_altman, 0), // No variations for Z-Score
       z_score_zone: flat.z_score_zone || 'SAFE',
       formula_breakdown: {
         x1: bd?.x1 != null ? parseFloat(String(bd.x1)) : 0,
@@ -103,65 +103,4 @@ export class RatioMapper {
     };
   }
 
-  /**
-   * Computes variation_pct for each RatioValue field in `current` relative to `previous`.
-   * Formula: (N - N-1) / |N-1| * 100
-   * Mutates current in place and returns it for chaining.
-   * The oldest year (no predecessor) keeps variation_pct = 0.
-   */
-  static applyVariations(current: RatioSetGrouped, previous: RatioSetGrouped): RatioSetGrouped {
-    const vp = (cur: RatioValue, prev: RatioValue): void => {
-      if (cur?.current != null && prev?.current != null && prev.current !== 0) {
-        cur.variation_pct = parseFloat(
-          (((cur.current - prev.current) / Math.abs(prev.current)) * 100).toFixed(1)
-        );
-      }
-    };
-
-    // Liquidity pillar
-    const lCur = current.liquidity;
-    const lPrev = previous.liquidity;
-    vp(lCur.current_ratio, lPrev.current_ratio);
-    vp(lCur.quick_ratio, lPrev.quick_ratio);
-    vp(lCur.cash_ratio, lPrev.cash_ratio);
-    vp(lCur.working_capital, lPrev.working_capital);
-    vp(lCur.wcr, lPrev.wcr);
-    vp(lCur.wcr_pct_revenue, lPrev.wcr_pct_revenue);
-    vp(lCur.dso_days, lPrev.dso_days);
-    vp(lCur.dpo_days, lPrev.dpo_days);
-    vp(lCur.dio_days, lPrev.dio_days);
-    vp(lCur.cash_conversion_cycle, lPrev.cash_conversion_cycle);
-
-    // Solvency pillar
-    const sCur = current.solvency;
-    const sPrev = previous.solvency;
-    vp(sCur.debt_to_equity, sPrev.debt_to_equity);
-    vp(sCur.financial_autonomy, sPrev.financial_autonomy);
-    vp(sCur.gearing, sPrev.gearing);
-    vp(sCur.interest_coverage, sPrev.interest_coverage);
-    vp(sCur.debt_repayment_years, sPrev.debt_repayment_years);
-    vp(sCur.negative_equity, sPrev.negative_equity);
-
-    // Profitability pillar
-    const pCur = current.profitability;
-    const pPrev = previous.profitability;
-    vp(pCur.net_margin, pPrev.net_margin);
-    vp(pCur.ebitda_margin, pPrev.ebitda_margin);
-    vp(pCur.operating_margin, pPrev.operating_margin);
-    vp(pCur.roa, pPrev.roa);
-    vp(pCur.roe, pPrev.roe);
-
-    // Capacity pillar
-    const cCur = current.capacity;
-    const cPrev = previous.capacity;
-    vp(cCur.cash_flow_capacity, cPrev.cash_flow_capacity);
-    vp(cCur.cf_capacity_margin, cPrev.cf_capacity_margin);
-    vp(cCur.operating_cash_flow, cPrev.operating_cash_flow);
-
-    // Z-Score
-    vp(current.z_score.z_score_altman, previous.z_score.z_score_altman);
-
-    return current;
-  }
 }
-
