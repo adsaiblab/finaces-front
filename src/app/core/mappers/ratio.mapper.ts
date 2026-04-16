@@ -112,10 +112,10 @@ export class RatioMapper {
           id: a.id || Math.random().toString(),
           severity: a.severity || 'WARNING',
           rule_id: a.pattern || a.key || 'CUSTOM',
-          message: a.label || a.description || '',
-          rule_description: a.note || '',
+          message: a.label || a.description || a.key || 'Regulatory Coherence Alert',
+          rule_description: a.note || 'Compliance check failed for this field.',
           affected_ratios: a.affected_ratios || [],
-          suggested_action: a.suggested_action || '',
+          suggested_action: a.suggested_action || 'Verify original financial statements for data consistency.',
         })),
       cross_pillar_alerts: allAlerts
         .filter((a) => crossPillarCodes.includes(a.pattern))
@@ -123,10 +123,10 @@ export class RatioMapper {
           id: a.id || Math.random().toString(),
           severity: a.severity || 'WARNING',
           rule_id: a.pattern,
-          message: a.description || '',
-          rule_description: a.note || a.description || '', // Fallback to description for analysis
+          message: a.description || a.pattern.replace('_', ' '),
+          rule_description: a.note || a.description || 'Advanced financial intelligence pattern detected.',
           affected_ratios: a.affected_ratios || [],
-          suggested_action: a.suggested_action || '',
+          suggested_action: a.suggested_action || 'Consult with a senior credit analyst to review this risk pattern.',
         })),
       coherence_status: flat.coherence_status || 'CLEAN',
       calculation_date: flat.computed_at,
