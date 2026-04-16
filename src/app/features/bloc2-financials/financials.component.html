@@ -43,7 +43,7 @@
         <div class="flex items-center gap-1">
           <app-exercise-selector
             [years]="availableYears()"
-            [selectedYear]="currentExercise()"
+            [selectedYear]="currentExercise()!"
             (yearChange)="onYearChange($event)"
           />
           <button mat-icon-button color="primary" (click)="openAddYearDialog()" aria-label="Ajouter une année" title="Ajouter une année fiscale">
@@ -114,7 +114,7 @@
                   Assets
                 </h2>
                 <app-tab-balance-sheet-assets
-                  [year]="currentExercise()"
+                  [year]="currentExercise()!"
                   [initialData]="assetsDraft"
                   (assetsDataChange)="onAssetsUpdate($event)"
                 />
@@ -126,7 +126,7 @@
                   Liabilities &amp; Equity
                 </h2>
                 <app-tab-balance-sheet-liabilities
-                  [year]="currentExercise()"
+                  [year]="currentExercise()!"
                   [initialData]="liabilitiesDraft"
                   (liabilitiesDataChange)="onLiabilitiesUpdate($event)"
                 />
@@ -144,7 +144,7 @@
         <mat-tab label="Income Statement">
           <div class="p-6 h-full overflow-y-auto">
             <app-tab-income-statement
-              [year]="currentExercise()"
+              [year]="currentExercise()!"
               [initialData]="pnlDraft"
               (pnlDataChange)="onPnlUpdate($event)"
             />
@@ -154,7 +154,7 @@
         <mat-tab label="Cash Flow">
           <div class="p-6 h-full overflow-y-auto">
             <app-tab-cash-flow
-              [year]="currentExercise()"
+              [year]="currentExercise()!"
               [initialData]="cashflowDraft"
               (cashFlowDataChange)="onCashFlowUpdate($event)"
             />
@@ -164,7 +164,7 @@
         <mat-tab label="Others">
           <div class="animate-fade-in p-6">
             <app-tab-others 
-              [year]="currentExercise()"
+              [year]="currentExercise()!"
               [initialData]="othersDraft"
               (othersDataChange)="onOthersUpdate($event)"
             />
