@@ -97,7 +97,6 @@ export class TabIncomeStatementComponent {
       this.isInitializing = false;
     });
 
-    // 5. Émission des changements vers le parent
     this.pnlForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
@@ -105,7 +104,12 @@ export class TabIncomeStatementComponent {
         this.pnlDataChange.emit({
           netIncome: this.netIncome(),
           ebitda: this.ebitda(),
-          data: val,
+          data: {
+            ...val,
+            operatingIncome: this.operatingIncome(),
+            ebitda: this.ebitda(),
+            netIncome: this.netIncome()
+          },
         });
       });
   }
