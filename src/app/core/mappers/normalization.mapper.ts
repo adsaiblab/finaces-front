@@ -100,6 +100,10 @@ export class NormalizationMapper {
       financial_expenses_original: n('financial_expenses_original'),
       income_before_tax: n('income_before_tax'),
       income_before_tax_original: n('income_before_tax_original'),
+      extraordinary_income: n('extraordinary_income'),
+      extraordinary_income_original: n('extraordinary_income_original'),
+      income_tax: n('income_tax'),
+      income_tax_original: n('income_tax_original'),
 
       // Cash Flow
       operating_cash_flow: n('operating_cash_flow'),
