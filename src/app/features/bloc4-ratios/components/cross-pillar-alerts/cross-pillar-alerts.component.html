@@ -1,0 +1,64 @@
+@if (alerts() && alerts().length > 0) {
+<section class="cross-pillar-alerts mb-8" data-testid="cross-pillar-root">
+  <div class="section-header flex items-center justify-between mb-5 px-2">
+    <div class="flex items-center gap-3">
+      <div class="intelligence-icon-container">
+        <mat-icon class="intelligence-icon">psychology</mat-icon>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold m-0 text-[color:var(--color-content-primary)] tracking-tight uppercase text-xs">
+          Financial Intelligence Insights
+        </h3>
+        <p class="text-xs text-[color:var(--color-content-secondary)] m-0 opacity-80">
+          Advanced pattern detection from multi-period financial data
+        </p>
+      </div>
+    </div>
+    
+    <div class="insight-badge">
+      <span class="text-[10px] font-bold tracking-widest uppercase">Cross-period Analysis</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+    @for (alert of alerts(); track alert.id) {
+      <mat-card 
+        class="insight-card !bg-[color:var(--color-surface-card)] !border !shadow-sm transition-all duration-300 hover:!shadow-md"
+        [ngClass]="getSeverityClass(alert.severity)"
+      >
+        <mat-card-content class="!p-5 flex items-start gap-4">
+          <div class="icon-section">
+            <div class="icon-circle" [ngClass]="getSeverityBgClass(alert.severity)">
+              <mat-icon [class]="getSeverityIconColor(alert.severity)">
+                {{ getAlertIcon(alert.rule_id) }}
+              </mat-icon>
+            </div>
+          </div>
+
+          <div class="content-section flex-1">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold text-[color:var(--color-content-secondary)] uppercase tracking-widest opacity-70">
+                Rule: {{ alert.rule_id.replace('_', ' ') }}
+              </span>
+              <span 
+                class="severity-tag text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter"
+                [ngClass]="getBadgeClass(alert.severity)"
+              >
+                {{ alert.severity }}
+              </span>
+            </div>
+
+            <h4 class="text-[15px] font-bold text-[color:var(--color-content-primary)] mb-2 leading-snug">
+              {{ alert.message }}
+            </h4>
+
+            <p class="text-[13px] text-[color:var(--color-content-secondary)] leading-relaxed m-0 border-t border-[color:var(--color-border-default)] pt-3 mt-3 opacity-90">
+              {{ alert.rule_description }}
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</section>
+}
