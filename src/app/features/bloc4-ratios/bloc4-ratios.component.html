@@ -69,10 +69,6 @@
       <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
       </app-coherence-alerts>
 
-      @if (ratios.z_score.z_score_zone === 'DISTRESS' || ratios.z_score.z_score_zone === 'GREY') {
-        <app-zscore-card [zscore]="ratios.z_score" [isAlertMode]="true"></app-zscore-card>
-      }
-
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div class="xl:row-span-2">
           <app-ratio-group-card groupName="Liquidity &amp; Working Capital" groupIcon="water_drop"
