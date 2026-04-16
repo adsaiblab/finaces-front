@@ -24,7 +24,31 @@ export class FinancialYearService {
   }
 
   addFiscalYear(caseId: string, year: number): Observable<any> {
-    const payload = { fiscal_year: year };
+    // Backend requires a complete FinancialStatementNestedCreate body;
+    // we send a minimal zero-value skeleton so the endpoint accepts it.
+    const payload = {
+      fiscal_year: year,
+      currency_original: 'MAD',
+      exchange_rate_to_usd: 1.0,
+      referentiel: 'PCM',
+      is_consolidated: false,
+      balance_sheet_assets: {
+        liquid_assets: 0,
+        inventory: 0,
+        other_noncurrent_assets: 0,
+      },
+      balance_sheet_liabilities: {
+        long_term_debt: 0,
+      },
+      income_statement: {
+        revenue: 0,
+      },
+      cash_flow: {
+        operating_cash_flow: 0,
+        investing_cash_flow: 0,
+        financing_cash_flow: 0,
+      },
+    };
     return this.http.post<any>(`${this.apiUrl}/${caseId}/financials`, payload);
   }
 }
