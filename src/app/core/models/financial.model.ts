@@ -206,6 +206,8 @@ export interface FinancialStatementNormalizedSchema {
   financial_revenue_original: number;
   financial_expenses: number;
   financial_expenses_original: number;
+  financial_income: number;
+  financial_income_original: number;
   income_before_tax: number;
   income_before_tax_original: number;
   extraordinary_income: number;

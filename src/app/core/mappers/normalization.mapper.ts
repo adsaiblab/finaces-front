@@ -98,6 +98,8 @@ export class NormalizationMapper {
       financial_revenue_original: n('financial_revenue_original'),
       financial_expenses: n('financial_expenses'),
       financial_expenses_original: n('financial_expenses_original'),
+      financial_income: n('financial_income'),
+      financial_income_original: n('financial_income_original'),
       income_before_tax: n('income_before_tax'),
       income_before_tax_original: n('income_before_tax_original'),
       extraordinary_income: n('extraordinary_income'),
