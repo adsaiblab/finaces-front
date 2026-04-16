@@ -111,11 +111,11 @@ export class RatioMapper {
         .map((a) => ({
           id: a.id || Math.random().toString(),
           severity: a.severity || 'WARNING',
-          rule_id: a.pattern || 'CUSTOM',
-          message: a.description || '',
+          rule_id: a.pattern || a.key || 'CUSTOM',
+          message: a.label || a.description || '',
           rule_description: a.note || '',
-          affected_ratios: [],
-          suggested_action: '',
+          affected_ratios: a.affected_ratios || [],
+          suggested_action: a.suggested_action || '',
         })),
       cross_pillar_alerts: allAlerts
         .filter((a) => crossPillarCodes.includes(a.pattern))
@@ -124,9 +124,9 @@ export class RatioMapper {
           severity: a.severity || 'WARNING',
           rule_id: a.pattern,
           message: a.description || '',
-          rule_description: a.note || '',
-          affected_ratios: [],
-          suggested_action: '',
+          rule_description: a.note || a.description || '', // Fallback to description for analysis
+          affected_ratios: a.affected_ratios || [],
+          suggested_action: a.suggested_action || '',
         })),
       coherence_status: flat.coherence_status || 'CLEAN',
       calculation_date: flat.computed_at,
