@@ -117,8 +117,6 @@ export class FinancialsComponent implements OnInit {
             }
           });
 
-          });
-
           const sortedYears = years.sort((a,b) => b-a);
           this.statementsMap.set(map);
           this.availableYears.set(sortedYears);
