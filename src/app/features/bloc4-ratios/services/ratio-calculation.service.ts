@@ -23,15 +23,7 @@ export class RatioCalculationService {
            const ratiosByYear = new Map<number, RatioSetGrouped>();
            sorted.forEach(raw => ratiosByYear.set(raw.fiscal_year, RatioMapper.fromBackendFlat(raw)));
 
-           // Apply year-over-year variations: N vs N-1
-           // sorted is desc (2023, 2022, 2021), so sorted[i+1] = previous year
-           for (let i = 0; i < sorted.length - 1; i++) {
-             const yearN = sorted[i].fiscal_year;
-             const yearNm1 = sorted[i + 1].fiscal_year;
-             const current = ratiosByYear.get(yearN)!;
-             const previous = ratiosByYear.get(yearNm1)!;
-             RatioMapper.applyVariations(current, previous);
-           }
+           // Variations are now natively mapped from backend SSOT via RatioMapper
 
            return { years: sorted.map(r => r.fiscal_year), ratiosByYear };
         }),
