@@ -67,6 +67,11 @@ export class Bloc4RatiosComponent implements OnInit {
   public readonly selectedYear = signal<number | null>(null);
   private ratiosByYear = new Map<number, RatioSetGrouped>();
 
+  get noRatiosMessage(): string {
+    return `Les ratios financiers pour l'exercice ${this.selectedYear()} n'ont pas encore été calculés. Retournez à la normalisation pour les générer.`;
+  }
+
+
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
     this.loadRatios();
