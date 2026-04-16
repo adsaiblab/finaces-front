@@ -7,6 +7,7 @@ import { FinancialYearService } from '../../core/services/financial-year.service
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { CrossPillarAlertsComponent } from './components/cross-pillar-alerts/cross-pillar-alerts.component';
 
 describe('Bloc4RatiosComponent', () => {
   let component: Bloc4RatiosComponent;
@@ -16,6 +17,7 @@ describe('Bloc4RatiosComponent', () => {
     case_id: 'case-123',
     fiscal_year: 2023,
     coherence_alerts: [],
+    cross_pillar_alerts: [],
     coherence_status: 'CLEAN',
     calculation_date: '',
     normalization_source: '',
@@ -60,7 +62,7 @@ describe('Bloc4RatiosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Bloc4RatiosComponent, NoopAnimationsModule],
+      imports: [Bloc4RatiosComponent, CrossPillarAlertsComponent, NoopAnimationsModule],
       providers: [
         { provide: RatioCalculationService, useValue: mockRatioService },
         { provide: CaseService, useValue: mockCaseService },
