@@ -111,9 +111,9 @@ export class RatioMapper {
         .map((a) => ({
           id: a.id || Math.random().toString(),
           severity: a.severity || 'WARNING',
-          rule_id: a.pattern || a.key || 'CUSTOM',
-          message: a.label || a.description || a.key || 'Regulatory Coherence Alert',
-          rule_description: a.note || 'Compliance check failed for this field.',
+          rule_id: a.pattern || a.code || a.key || 'CUSTOM',
+          message: a.label || a.description || 'Regulatory Coherence Alert',
+          rule_description: a.message || a.note || 'Compliance check failed for this field.',
           affected_ratios: a.affected_ratios || [],
           suggested_action: a.suggested_action || 'Verify original financial statements for data consistency.',
         })),
