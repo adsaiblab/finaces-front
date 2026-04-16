@@ -10,7 +10,7 @@ import { CoherenceAlert } from '../../../../core/models/ratio.model';
   standalone: true,
   imports: [MatCardModule, MatIconModule, NgClass],
   template: `
-    @if (alerts().length > 0) {
+    @if (alerts() && alerts().length > 0) {
       <div class="cross-pillar-container mb-8">
         <div class="section-header flex items-center gap-2 mb-4 px-2">
           <mat-icon class="text-[color:var(--color-primary)]">psychology</mat-icon>
