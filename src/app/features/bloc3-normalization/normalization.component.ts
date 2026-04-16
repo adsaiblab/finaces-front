@@ -9,10 +9,11 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgClass, DecimalPipe } from '@angular/common';
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { of, forkJoin } from 'rxjs';
+import { delay, finalize } from 'rxjs/operators';
 
 import { CaseService } from '../../core/services/case.service';
+import { FinancialYearService } from '../../core/services/financial-year.service';
 import { FinancialStatementNormalizedSchema } from '../../core/models';
 import { FinacesSkeletonLoaderComponent } from '../../shared/components';
 
@@ -46,11 +47,13 @@ export class NormalizationComponent implements OnInit {
   private readonly caseContext = inject(CaseContextService);
   private readonly router = inject(Router);
   private readonly caseService = inject(CaseService);
+  private readonly financialYearService = inject(FinancialYearService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly statements = signal<FinancialStatementNormalizedSchema[]>([]);
+  public readonly availableYears = signal<number[]>([]);
   public readonly selectedYear = signal<number | null>(null);
   public readonly caseId = signal<string>('');
 
@@ -71,20 +74,26 @@ export class NormalizationComponent implements OnInit {
   private loadNormalizedData(): void {
     this.isLoading.set(true);
 
-    this.caseService
-      .getNormalizedFinancials(this.caseId())
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    forkJoin({
+      years: this.financialYearService.loadAvailableYears(this.caseId()),
+      normalized: this.caseService.getNormalizedFinancials(this.caseId())
+    })
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
-        next: (data) => {
-          this.statements.set(data);
-          if (data.length > 0 && !this.selectedYear()) {
-            this.selectedYear.set(Math.max(...data.map(s => s.fiscal_year)));
+        next: ({ years, normalized }) => {
+          this.availableYears.set(years);
+          this.statements.set(normalized);
+          
+          if (years.length > 0 && !this.selectedYear()) {
+            this.selectedYear.set(years[0]);
           }
-          this.isLoading.set(false);
         },
         error: () => {
           this.statements.set([]);
-          this.isLoading.set(false);
+          this.availableYears.set([]);
           this.loadError.set(true);
         },
       });

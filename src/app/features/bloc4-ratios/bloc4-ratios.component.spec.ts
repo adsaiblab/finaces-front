@@ -3,6 +3,7 @@ import { Bloc4RatiosComponent } from './bloc4-ratios.component';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { RatioCalculationService } from './services/ratio-calculation.service';
 import { CaseService } from '../../core/services/case.service';
+import { FinancialYearService } from '../../core/services/financial-year.service';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -49,6 +50,10 @@ describe('Bloc4RatiosComponent', () => {
 
   const mockCaseService = {};
 
+  const mockFinancialYearService = {
+    loadAvailableYears: vi.fn().mockReturnValue(of([2023])),
+  };
+
   const mockCaseContext = {
     caseId: () => 'case-123',
   };
@@ -60,6 +65,7 @@ describe('Bloc4RatiosComponent', () => {
         { provide: RatioCalculationService, useValue: mockRatioService },
         { provide: CaseService, useValue: mockCaseService },
         { provide: CaseContextService, useValue: mockCaseContext },
+        { provide: FinancialYearService, useValue: mockFinancialYearService },
       ],
     }).compileComponents();
 

@@ -22,6 +22,10 @@
         Les exercices fiscaux de ce dossier n&rsquo;ont pas encore été configurés.
         Revenez une fois le dossier initialisé.
       </p>
+      <button mat-flat-button color="primary" (click)="openAddYearDialog()" class="mt-4">
+        <mat-icon>add</mat-icon>
+        Initialiser un exercice
+      </button>
     </div>
   } @else {
 
@@ -36,11 +40,16 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <app-exercise-selector
-          [years]="availableYears()"
-          [selectedYear]="currentExercise()"
-          (yearChange)="onYearChange($event)"
-        />
+        <div class="flex items-center gap-1">
+          <app-exercise-selector
+            [years]="availableYears()"
+            [selectedYear]="currentExercise()"
+            (yearChange)="onYearChange($event)"
+          />
+          <button mat-icon-button color="primary" (click)="openAddYearDialog()" aria-label="Ajouter une année" title="Ajouter une année fiscale">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
 
         <div class="flex items-center gap-2">
           <!-- Save Draft Button -->

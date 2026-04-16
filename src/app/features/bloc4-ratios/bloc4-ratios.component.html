@@ -15,7 +15,7 @@
       (retry)="loadRatios()"
       (ignore)="error.set(null)"
     />
-  } @else if (ratioSet(); as ratios) {
+  } @else {
     <header
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[color:var(--color-border-default)] pb-6">
       <div>
@@ -24,7 +24,7 @@
           Financial Ratios
         </h1>
         <p class="text-[color:var(--color-content-secondary)] text-sm mt-1">
-          Case #{{ caseId() }} — Fiscal Year {{ ratios.fiscal_year }} — grouped analysis of 25+ indicators, Z-Score Altman, and coherence
+          Case #{{ caseId() }} — Fiscal Year {{ selectedYear() }} — grouped analysis of 25+ indicators, Z-Score Altman, and coherence
           alerts.
         </p>
       </div>
@@ -64,12 +64,13 @@
         }
       </div>
     }
-
-    <main class="flex flex-col gap-8 w-full" data-testid="ratios-main-content">
-      <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
-      </app-coherence-alerts>
-
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    
+    @if (ratioSet(); as ratios) {
+      <main class="flex flex-col gap-8 w-full" data-testid="ratios-main-content">
+        <app-coherence-alerts [alerts]="ratios.coherence_alerts" [status]="ratios.coherence_status">
+        </app-coherence-alerts>
+  
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div class="xl:row-span-2">
           <app-ratio-group-card groupName="Liquidity &amp; Working Capital" groupIcon="water_drop"
             [ratios]="ratios.liquidity">
@@ -133,13 +134,22 @@
         </button>
       </div>
     </div>
-  } @else {
-    <finaces-empty-state
-      variant="no-items"
-      title="Ratios non calculés"
-      description="Les ratios financiers n'ont pas encore été calculés. Retournez à la normalisation et cliquez sur Compute Financial Ratios."
-      testId="ratios-empty-state"
-    />
+    } @else {
+      <div class="pt-8 w-full h-full">
+        <finaces-empty-state
+          variant="no-items"
+          title="Ratios non calculés"
+          [description]="'Les ratios financiers pour l\\'exercice ' + selectedYear() + ' n\\'ont pas encore été calculés. Retournez à la normalisation pour les générer.'"
+          testId="ratios-empty-state"
+        />
+        <div class="flex justify-center mt-6">
+          <button mat-flat-button color="primary" (click)="navigateBack()">
+            <mat-icon aria-hidden="true">arrow_back</mat-icon>
+            Retour à la normalisation
+          </button>
+        </div>
+      </div>
+    }
   }
 
 </div>

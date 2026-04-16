@@ -13,6 +13,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 import { FinancialStatementOut } from '../../core/models';
 import { FinancialService } from '../../core/services/financial.service';
+import { FinancialYearService } from '../../core/services/financial-year.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddYearDialogComponent } from './components/add-year-dialog.component';
 import { FinancialMapper, AssetsFormValue, LiabilitiesFormValue, PnlFormValue, CashFlowFormValue, OthersFormValue } from '../../core/mappers/financial.mapper';
 
 import {
@@ -41,6 +44,7 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
     TabIncomeStatementComponent,
     TabCashFlowComponent,
     TabOthersComponent,
+    MatDialogModule,
   ],
   templateUrl: './financials.component.html',
   styleUrls: ['./financials.component.scss'],
@@ -49,6 +53,8 @@ import { TabOthersComponent } from './components/tab-others/tab-others.component
 export class FinancialsComponent implements OnInit {
   private readonly caseContext = inject(CaseContextService);
   private readonly financialService = inject(FinancialService);
+  private readonly financialYearService = inject(FinancialYearService);
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -57,8 +63,8 @@ export class FinancialsComponent implements OnInit {
   public readonly activeTab = signal<'assets' | 'liabilities' | 'pnl' | 'cashflow' | 'others'>('assets');
 
   // Multi-year State
-  public readonly availableYears = signal<number[]>([2023, 2022, 2021]);
-  public readonly currentExercise = signal<number>(2023);
+  public readonly availableYears = signal<number[]>([]);
+  public readonly currentExercise = signal<number | null>(null);
   
   // Loading & Saving states
   public readonly isSubmitting = signal<boolean>(false); // Normalization state
@@ -70,11 +76,11 @@ export class FinancialsComponent implements OnInit {
   public readonly statementsMap = signal<Map<number, any>>(new Map());
 
   // Current Exercise Draft (derived from statementsMap for sub-components inputs)
-  public get assetsDraft(): AssetsFormValue | null { return this.statementsMap().get(this.currentExercise())?.assets || null; }
-  public get liabilitiesDraft(): LiabilitiesFormValue | null { return this.statementsMap().get(this.currentExercise())?.liabilities || null; }
-  public get pnlDraft(): PnlFormValue | null { return this.statementsMap().get(this.currentExercise())?.pnl || null; }
-  public get cashflowDraft(): CashFlowFormValue | null { return this.statementsMap().get(this.currentExercise())?.cashflow || null; }
-  public get othersDraft(): OthersFormValue | null { return this.statementsMap().get(this.currentExercise())?.others || null; }
+  public get assetsDraft(): AssetsFormValue | null { return this.currentExercise() ? this.statementsMap().get(this.currentExercise()!)?.assets || null : null; }
+  public get liabilitiesDraft(): LiabilitiesFormValue | null { return this.currentExercise() ? this.statementsMap().get(this.currentExercise()!)?.liabilities || null : null; }
+  public get pnlDraft(): PnlFormValue | null { return this.currentExercise() ? this.statementsMap().get(this.currentExercise()!)?.pnl || null : null; }
+  public get cashflowDraft(): CashFlowFormValue | null { return this.currentExercise() ? this.statementsMap().get(this.currentExercise()!)?.cashflow || null : null; }
+  public get othersDraft(): OthersFormValue | null { return this.currentExercise() ? this.statementsMap().get(this.currentExercise()!)?.others || null : null; }
 
   // Balance Check signals
   public readonly currentAssetsTotal = signal<number>(0);
@@ -111,25 +117,57 @@ export class FinancialsComponent implements OnInit {
             }
           });
 
-          // Ensure 2023/2022/2021 presence if not in DB, but prioritize DB years
-          [2023, 2022, 2021].forEach(y => {
-            if (!years.includes(y)) years.push(y);
           });
-          
+
+          const sortedYears = years.sort((a,b) => b-a);
           this.statementsMap.set(map);
-          this.availableYears.set(years.sort((a,b) => b-a));
+          this.availableYears.set(sortedYears);
           
-          // Trigger initial totals display if 2023 exists
-          const current = map.get(this.currentExercise());
-          if (current) {
-            this.currentAssetsTotal.set(current.assets.totalAssets || 0);
-            this.currentLiabilitiesTotal.set(current.liabilities.totalLiabilities || 0);
+          if (sortedYears.length > 0 && !this.currentExercise()) {
+            this.currentExercise.set(sortedYears[0]);
+          }
+          
+          // Trigger initial totals display if selected exists
+          if (this.currentExercise()) {
+            const current = map.get(this.currentExercise()!);
+            if (current) {
+              this.currentAssetsTotal.set(current.assets.totalAssets || 0);
+              this.currentLiabilitiesTotal.set(current.liabilities.totalLiabilities || 0);
+            }
           }
         },
         error: (err) => {
           this.snackBar.open('Erreur lors du chargement des données', 'Recommencer', { duration: 5000 });
         }
       });
+  }
+
+  public openAddYearDialog(): void {
+    const dialogRef = this.dialog.open(AddYearDialogComponent, { width: '400px' });
+
+    dialogRef.afterClosed().subscribe(year => {
+      if (year && !this.availableYears().includes(year)) {
+        this.snackBar.open(`Création de l'exercice ${year}...`, '', { duration: 2000 });
+        this.financialYearService.addFiscalYear(this.caseId(), year)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.snackBar.open(`Exercice ${year} créé`, 'OK', { duration: 3000, panelClass: 'snack-success' });
+              this.currentExercise.set(year);
+              this.loadFinancials();
+            },
+            error: (err) => {
+              if (err.status === 409) {
+                this.snackBar.open(`L'année ${year} existe déjà pour ce dossier.`, 'OK', { duration: 3000 });
+              } else {
+                this.snackBar.open(`Erreur de création`, 'OK', { duration: 3000 });
+              }
+            }
+          });
+      } else if (year) {
+        this.snackBar.open(`L'année ${year} existe déjà.`, 'OK', { duration: 3000 });
+      }
+    });
   }
 
   public onYearChange(year: number): void {
@@ -177,22 +215,23 @@ export class FinancialsComponent implements OnInit {
   }
 
   private updateLocalDraft(tab: string, data: any): void {
+    if (!this.currentExercise()) return;
     this.statementsMap.update(map => {
-      let yearData = map.get(this.currentExercise()) || { assets: {}, liabilities: {}, pnl: {}, cashflow: {}, others: {} };
+      let yearData = map.get(this.currentExercise()!) || { assets: {}, liabilities: {}, pnl: {}, cashflow: {}, others: {} };
       yearData = { ...yearData, [tab]: data };
-      map.set(this.currentExercise(), yearData);
+      map.set(this.currentExercise()!, yearData);
       return new Map(map); // New reference to trigger signal
     });
   }
 
   public saveDraft(showNotification: boolean = true): void {
-    if (!this.caseId()) return;
+    if (!this.caseId() || !this.currentExercise()) return;
 
-    const currentYearData = this.statementsMap().get(this.currentExercise());
+    const currentYearData = this.statementsMap().get(this.currentExercise()!);
     if (!currentYearData) return;
 
     const others = currentYearData.others || {};
-    const payload = FinancialMapper.toApi(this.currentExercise(), others, currentYearData);
+    const payload = FinancialMapper.toApi(this.currentExercise()!, others, currentYearData);
 
     this.isSaving.set(true);
     this.financialService.createFinancialStatement(this.caseId(), payload)

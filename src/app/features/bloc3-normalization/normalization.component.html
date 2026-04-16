@@ -58,15 +58,15 @@
       <div class="flex items-center gap-4">
         <!-- Fiscal Year Tabs Selection -->
         <div class="flex bg-[color:var(--color-surface-hover)] rounded-lg p-1 border border-[color:var(--color-border-default)]">
-          @for (stmt of statements(); track stmt.id) {
+          @for (year of availableYears(); track year) {
             <button 
               type="button"
-              (click)="selectYear(stmt.fiscal_year)"
-              [class.bg-white]="selectedYear() === stmt.fiscal_year"
-              [class.shadow-sm]="selectedYear() === stmt.fiscal_year"
-              [class.text-primary]="selectedYear() === stmt.fiscal_year"
+              (click)="selectYear(year)"
+              [class.bg-white]="selectedYear() === year"
+              [class.shadow-sm]="selectedYear() === year"
+              [class.text-primary]="selectedYear() === year"
               class="px-5 py-1.5 rounded-md text-sm font-medium transition-all duration-200 hover:bg-white hover:bg-opacity-50 border-none cursor-pointer">
-              {{ stmt.fiscal_year }}
+              {{ year }}
             </button>
           }
         </div>

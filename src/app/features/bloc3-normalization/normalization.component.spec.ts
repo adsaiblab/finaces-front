@@ -3,6 +3,7 @@ import { signal } from '@angular/core';
 import { NormalizationComponent } from './normalization.component';
 import { CaseContextService } from '../../core/services/case-context.service';
 import { CaseService } from '../../core/services/case.service';
+import { FinancialYearService } from '../../core/services/financial-year.service';
 import { of } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -64,18 +65,24 @@ describe('NormalizationComponent', () => {
     computeRatios: vi.fn().mockReturnValue(of([])),
   };
 
+  const mockFinancialYearService = {
+    loadAvailableYears: vi.fn().mockReturnValue(of([])),
+  };
+
   const mockCaseContext = {
     caseId: signal('case-123'),
   };
 
   beforeEach(async () => {
     mockCaseService.getNormalizedFinancials.mockReturnValue(of([]));
+    mockFinancialYearService.loadAvailableYears.mockReturnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [NormalizationComponent, NoopAnimationsModule],
       providers: [
         { provide: CaseService, useValue: mockCaseService },
         { provide: CaseContextService, useValue: mockCaseContext },
+        { provide: FinancialYearService, useValue: mockFinancialYearService },
       ],
     }).compileComponents();
 
@@ -96,6 +103,7 @@ describe('NormalizationComponent', () => {
   });
 
   it('should select the latest fiscal year when data is loaded', async () => {
+    mockFinancialYearService.loadAvailableYears.mockReturnValue(of([2023, 2022, 2021]));
     mockCaseService.getNormalizedFinancials.mockReturnValue(
       of([
         { ...mockNormalizedData, fiscal_year: 2021 },
@@ -112,6 +120,7 @@ describe('NormalizationComponent', () => {
   });
 
   it('should display coherence data when coherence is present', async () => {
+    mockFinancialYearService.loadAvailableYears.mockReturnValue(of([2023]));
     mockCaseService.getNormalizedFinancials.mockReturnValue(
       of([mockNormalizedData] as FinancialStatementNormalizedSchema[])
     );
@@ -125,6 +134,7 @@ describe('NormalizationComponent', () => {
   });
 
   it('should display ratio readiness warning when advanced ratios are not ready', async () => {
+    mockFinancialYearService.loadAvailableYears.mockReturnValue(of([2023]));
     mockCaseService.getNormalizedFinancials.mockReturnValue(
       of([mockNormalizedData] as FinancialStatementNormalizedSchema[])
     );
@@ -140,6 +150,7 @@ describe('NormalizationComponent', () => {
   });
 
   it('should display adjustments list when adjustments are returned', async () => {
+    mockFinancialYearService.loadAvailableYears.mockReturnValue(of([2023]));
     mockCaseService.getNormalizedFinancials.mockReturnValue(
       of([mockNormalizedData] as FinancialStatementNormalizedSchema[])
     );

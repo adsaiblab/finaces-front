@@ -9,10 +9,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { forkJoin, of, delay } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { RatioCalculationService } from './services/ratio-calculation.service';
 import { environment } from '../../../environments/environment';
 import { CaseService } from '../../core/services/case.service';
+import { FinancialYearService } from '../../core/services/financial-year.service';
 import { RatioSetGrouped } from '../../core/models/ratio.model';
 import {
   FinacesSkeletonLoaderComponent,
@@ -51,6 +53,7 @@ export class Bloc4RatiosComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly ratioService = inject(RatioCalculationService);
   private readonly caseService = inject(CaseService);
+  private readonly financialYearService = inject(FinancialYearService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -73,17 +76,21 @@ export class Bloc4RatiosComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.ratioService
-      .computeRatios(this.caseId())
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    forkJoin({
+      years: this.financialYearService.loadAvailableYears(this.caseId()),
+      ratiosData: this.ratioService.computeRatios(this.caseId())
+    })
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
-        next: ({ years, ratiosByYear }) => {
+        next: ({ years, ratiosData }) => {
           this.availableYears.set(years);
-          this.ratiosByYear = ratiosByYear;
+          this.ratiosByYear = ratiosData.ratiosByYear;
           const mostRecent = years[0] ?? null;
           this.selectedYear.set(mostRecent);
-          this.ratioSet.set(mostRecent ? (ratiosByYear.get(mostRecent) ?? null) : null);
-          this.isLoading.set(false);
+          this.ratioSet.set(mostRecent ? (this.ratiosByYear.get(mostRecent) ?? null) : null);
         },
         error: (err) => {
           if (!environment.production) {
