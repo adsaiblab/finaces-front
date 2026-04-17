@@ -74,7 +74,18 @@ export class RecentCasesTableComponent {
       case CaseStatus.FINANCIAL_INPUT:
         route = `/cases/${id}/financials`;
         break;
-      // Les autres statuts peuvent aussi renvoyer vers recevabilite ou workspace par défaut
+      case CaseStatus.NORMALIZATION_DONE:
+      case CaseStatus.RATIOS_COMPUTED:
+        route = `/cases/${id}/tension`;
+        break;
+      case CaseStatus.SCORING_DONE:
+      case CaseStatus.STRESS_DONE:
+      case CaseStatus.EXPERT_REVIEWED:
+        route = `/cases/${id}/expert`;
+        break;
+      case CaseStatus.CLOSED:
+        route = `/cases/${id}/rapport`;
+        break;
     }
 
     this.router.navigateByUrl(route);
