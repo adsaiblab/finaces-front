@@ -13,7 +13,7 @@ export class ScoringMccService {
   private apiUrl = `${environment.apiUrl}/cases`;
 
   public getScoring(caseId: string): Observable<ScoringMccSchema> {
-    return this.http.get<ScoringMccSchema>(`${this.apiUrl}/${caseId}/score`).pipe(
+    return this.http.post<ScoringMccSchema>(`${this.apiUrl}/${caseId}/score`, {}).pipe(
       tap((result) => console.warn('✅ [Scoring MCC] Fetched successfully:', result)),
       catchError((err) => {
         console.error('❌ [Scoring MCC] Fetch error:', err);
