@@ -26,10 +26,10 @@ describe('ScoringMccService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should call GET on /score endpoint', () => {
+  it('should call POST on /score endpoint', () => {
     service.getScoring('case-123').subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/score`);
-    expect(req.request.method).toBe('GET');
+    expect(req.request.method).toBe('POST');
     req.flush({});
   });
 
