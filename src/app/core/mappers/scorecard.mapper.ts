@@ -24,11 +24,11 @@ function toPillarLabel(score: number): PillarLabel {
 
 function toPillarDetailSchema(p: PillarDetail): PillarDetailSchema {
   return {
-    pillar_name: p.name,
-    score: p.score,
-    label: toPillarLabel(p.score),
-    ratios_used: p.signals,
-    comment: p.detail_text,
+    pillar_name: p.name ?? 'Unknown Pillar',
+    score: p.score ?? 0,
+    label: toPillarLabel(p.score ?? 0),
+    ratios_used: p.signals ?? [],
+    comment: p.detail_text ?? '',
   };
 }
 
@@ -44,7 +44,7 @@ export class ScorecardMapper {
       return (
         pillarMap.get(name) ?? {
           id: '',
-          name,
+          name: name ? (name.charAt(0).toUpperCase() + name.slice(1)) : 'Unknown Pillar',
           score: 0,
           weight: 0,
           trend: null,
@@ -88,6 +88,7 @@ export class ScorecardMapper {
       created_at: back.created_at,
       computed_at: back.created_at,
       version: String(back.version),
+      cross_analysis_alerts: back.cross_analysis_alerts ?? [],
       overrides:
         back.is_overridden && back.override_rationale
           ? [

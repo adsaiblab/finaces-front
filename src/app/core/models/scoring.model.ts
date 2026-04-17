@@ -111,6 +111,7 @@ export interface ScorecardOutputSchema {
   created_at: string;
   computed_at: string;
   version: string;
+  cross_analysis_alerts: string[];
   overrides?: OverrideRecord[];
 }
 

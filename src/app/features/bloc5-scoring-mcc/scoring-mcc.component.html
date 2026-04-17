@@ -35,7 +35,7 @@
             Scoring MCC
           </h1>
           <p class="scoring-subtitle">
-            Dossier n°{{ caseId() }} — Décision de risque fondée sur les ratios financiers validés.
+            Case Workspace — Dossier n°{{ caseId() }}
           </p>
         </div>
 
@@ -46,7 +46,7 @@
               [class.scoring-status-chip--computed]="data.status === 'COMPUTED'"
               [class.scoring-status-chip--overridden]="data.status === 'OVERRIDDEN'"
             >
-              {{ data.status === 'COMPUTED' ? 'CALCULÉ AUTOMATIQUEMENT' : 'SURCLASSÉ MANUELLEMENT' }}
+              {{ data.status === 'COMPUTED' ? 'CALCULÉ AUTOMATIQUEMENT' : 'MANUALLY OVERRIDDEN' }}
             </span>
           </div>
         }
@@ -85,10 +85,10 @@
           <section aria-labelledby="scoring-pillars-heading">
             <h2 id="scoring-pillars-heading" class="scoring-section-title">
               <mat-icon aria-hidden="true">account_balance</mat-icon>
-              Analyse détaillée par pilier
+              Detailed Pillar Analysis
             </h2>
 
-            @if (data.pillars.length === 0) {
+            @if ((data.pillars?.length ?? 0) === 0) {
               <div class="scoring-empty scoring-empty--inline" data-testid="scoring-no-pillars">
                 <mat-icon aria-hidden="true">bar_chart</mat-icon>
                 <p>Aucun pilier disponible pour ce scoring.</p>
