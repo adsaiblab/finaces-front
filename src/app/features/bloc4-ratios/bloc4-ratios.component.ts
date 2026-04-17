@@ -62,7 +62,7 @@ export class Bloc4RatiosComponent implements OnInit {
   public readonly caseId = signal<string>('');
 
   public readonly ratioSet = signal<RatioSetGrouped | null>(null);
-  public readonly isLoading = signal<boolean>(true);
+  public readonly isLoading = signal<boolean>(false);
   public readonly error = signal<string | null>(null);
   public readonly scoringInProgress = signal<boolean>(false);
   public readonly availableYears = signal<number[]>([]);
@@ -80,6 +80,7 @@ export class Bloc4RatiosComponent implements OnInit {
   }
 
   public loadRatios(): void {
+    if (this.isLoading()) return;
     this.isLoading.set(true);
     this.error.set(null);
 
