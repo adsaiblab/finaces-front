@@ -58,7 +58,12 @@ export class AdminIaService {
             val: { accuracy: 0, f1_score: 0, roc_auc: 0 },
             test: { accuracy: 0, f1_score: 0, roc_auc: 0 }
           },
-          feature_importance: [], // To be implemented when backend supports it
+          feature_importance: (stats.latest_metrics?.feature_importance || []).map((fi: any) => ({
+            feature_name: fi.feature,
+            importance_score: fi.importance,
+            pillar: this.mapFeatureToPillar(fi.feature),
+            direction: 'POSITIVE' // SHAP would give us direction, using default for now
+          })), 
           alerts: alerts
         };
       })
@@ -71,5 +76,15 @@ export class AdminIaService {
     return this.http.get<ConvergenceDataPoint[]>(`${this.apiUrl}/admin-ia/runs/${modelId}/convergence`).pipe(
       map(data => data || [])
     );
+  }
+
+  private mapFeatureToPillar(feature: string): string {
+    const f = feature.toLowerCase();
+    if (f.includes('ratio') || f.includes('cash') || f.includes('receivables') || f.includes('liquidity')) return 'LIQUIDITY';
+    if (f.includes('debt') || f.includes('equity') || f.includes('gearing') || f.includes('solvency')) return 'SOLVENCY';
+    if (f.includes('margin') || f.includes('roa') || f.includes('roe') || f.includes('profitable') || f.includes('operating')) return 'PROFITABILITY';
+    if (f.includes('contract') || f.includes('exposure') || f.includes('backlog')) return 'CAPACITY';
+    if (f.includes('score') || f.includes('quality') || f.includes('completeness')) return 'QUALITY';
+    return 'MACRO';
   }
 }
