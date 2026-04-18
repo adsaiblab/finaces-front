@@ -10,6 +10,16 @@ describe('ScoringMccService', () => {
   let service: ScoringMccService;
   let httpMock: HttpTestingController;
 
+  const mockScorecard = {
+    case_id: 'case-123',
+    global_score: 4,
+    final_risk_class: 'LOW',
+    is_overridden: false,
+    pillars: [],
+    smart_recommendations: [],
+    cross_analysis_alerts: [],
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [ScoringMccService, provideHttpClient(), provideHttpClientTesting()],
@@ -26,11 +36,20 @@ describe('ScoringMccService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should call POST on /score endpoint', () => {
-    service.getScoring('case-123').subscribe();
+  it('should call GET on /score endpoint for existing data', () => {
+    service.getExistingScoring('case-123').subscribe((data) => {
+      expect(data).toEqual(mockScorecard);
+    });
+    const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/score`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockScorecard);
+  });
+
+  it('should call POST on /score endpoint for computation', () => {
+    service.computeScoring('case-123').subscribe();
     const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/score`);
     expect(req.request.method).toBe('POST');
-    req.flush({});
+    req.flush(mockScorecard);
   });
 
   it('should call POST on /score/override endpoint', () => {
@@ -39,6 +58,6 @@ describe('ScoringMccService', () => {
     const req = httpMock.expectOne(`${environment.apiUrl}/cases/case-123/score/override`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(payload);
-    req.flush({});
+    req.flush(mockScorecard);
   });
 });

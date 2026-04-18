@@ -27,7 +27,7 @@ describe('TensionComponent', () => {
   let component: TensionComponent;
   let fixture: ComponentFixture<TensionComponent>;
 
-  const mockScoringService = { getScoring: vi.fn().mockReturnValue(of({})) };
+  const mockScoringService = { getExistingScoring: vi.fn().mockReturnValue(of(null)) };
   const mockIaService      = { getPrediction: vi.fn().mockReturnValue(of({})) };
   const mockTensionCalc    = { calculateTension: vi.fn().mockReturnValue(MOCK_TENSION_RESULT) };
   const mockRouter         = { navigate: vi.fn() };
@@ -130,7 +130,7 @@ describe('TensionComponent', () => {
     TestBed.resetTestingModule();
     const pending$ = new Subject();
     await buildComponent(
-      { getScoring: vi.fn().mockReturnValue(pending$) },
+      { getExistingScoring: vi.fn().mockReturnValue(pending$) },
       { getPrediction: vi.fn().mockReturnValue(pending$) },
     );
     component.isLoading.set(true);
