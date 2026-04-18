@@ -33,6 +33,8 @@ import {
   PillarDetailCardComponent,
   OverrideZoneComponent,
   RecommendationsSectionComponent,
+  ScoringRecommendation,
+  ScoreOverride,
 } from './components';
 
 @Component({
@@ -94,6 +96,27 @@ export class ScoringMccComponent implements OnInit {
   readonly qualityPillar = computed(
     () => this.scoringData()?.pillars?.find((p) => p.name.toLowerCase().includes('quality')) ?? null,
   );
+  
+  readonly mappedRecommendations = computed<ScoringRecommendation[]>(() =>
+    (this.scoringData()?.smart_recommendations ?? []).map((text, i) => ({
+      id: String(i),
+      type: 'WARNING',
+      message: text,
+    }))
+  );
+
+  readonly mappedOverrideDetails = computed<ScoreOverride | undefined>(() => {
+    const d = this.scoringData();
+    if (!d?.is_overridden || !d?.override_rationale) return undefined;
+    
+    return {
+      original_score: d.system_calculated_score,
+      new_score: d.global_score,
+      reason: d.override_rationale,
+      author: 'Senior Analyst', // Mock as per requirements
+      timestamp: d.computed_at,
+    };
+  });
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());

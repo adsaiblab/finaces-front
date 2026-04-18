@@ -3,9 +3,11 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-interface ScoringRecommendation {
+
+export interface ScoringRecommendation {
+  id: string;
   type: 'POSITIVE' | 'WARNING' | 'CRITICAL' | string;
-  text: string;
+  message: string;
 }
 
 @Component({

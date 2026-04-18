@@ -106,14 +106,14 @@
           <!-- Recommandations + Override -->
           <div class="scoring-bottom-row">
             <app-recommendations-section
-              [recommendations]="data.smart_recommendations"
+              [recommendations]="mappedRecommendations()"
               [crossAnalysisAlerts]="data.cross_analysis_alerts"
             />
 
             <app-override-zone
               [originalScore]="data.global_score"
               [isOverridden]="data.is_overridden"
-              [overrideDetails]="data.override_rationale"
+              [overrideDetails]="mappedOverrideDetails()"
               [isSubmitting]="isOverriding()"
               (overrideSubmit)="handleOverride($event)"
               data-testid="scoring-override-zone"
