@@ -171,8 +171,8 @@ export class CasesListComponent implements OnInit {
       'SCORED':             4,          // ← alias utilisé dans les tests
       'STRESSDONE':         6,
       'STRESS_DONE':        6,
-      'EXPERTREVIEWED':     8,
-      'EXPERT_REVIEWED':    8,          // ← alias utilisé dans les tests
+      'EXPERTREVIEWED':     9,
+      'EXPERT_REVIEWED':    9,          // ← alias utilisé dans les tests
       'CLOSED':             9,
       'ARCHIVED':           9,
     };
