@@ -1,7 +1,21 @@
 <div class="workspace-container">
-  <header class="mb-6 pb-4 border-b border-strong">
-    <h1 class="text-xl font-bold text-primary">Espace de travail du dossier</h1>
-    <p class="text-sm text-secondary">Navigation inter-blocs à implémenter ici</p>
+  <header class="mb-6 pb-4 border-b border-strong flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-primary">Espace de travail du dossier</h1>
+    </div>
+
+    @if (canRollback) {
+      <button
+        mat-stroked-button
+        color="warn"
+        [disabled]="isRollingBack()"
+        (click)="openRollbackDialog()"
+        title="Réservé aux administrateurs et analystes seniors"
+      >
+        <mat-icon>history</mat-icon>
+        {{ isRollingBack() ? 'Réinitialisation...' : 'Corriger une étape' }}
+      </button>
+    }
   </header>
 
   <main>

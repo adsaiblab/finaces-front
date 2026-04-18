@@ -167,4 +167,10 @@ export class CaseService {
       .post<RatioSetGrouped>(`${this.apiUrl}/${caseId}/ratios/compute`, {})
       .pipe(catchError(this.handleError));
   }
+
+  rollbackCase(caseId: string, payload: { target_status: string; reason: string }): Observable<{ status: string; new_status: string }> {
+    return this.http
+      .post<{ status: string; new_status: string }>(`${this.apiUrl}/${caseId}/rollback`, payload)
+      .pipe(catchError(this.handleError));
+  }
 }
