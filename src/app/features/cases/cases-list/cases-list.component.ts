@@ -157,16 +157,24 @@ export class CasesListComponent implements OnInit {
     const normalizedStatus = status.toUpperCase().replace(/_/g, '');
     
     const STATUS_ACTIVE_INDEX: Record<string, number> = {
-      'DRAFT':             0,
-      'PENDINGGATE':       0,
-      'FINANCIALINPUT':    1,
-      'NORMALIZATIONDONE': 2,
-      'RATIOSCOMPUTED':    3,
-      'SCORINGDONE':       4,
-      'STRESSDONE':        6,
-      'EXPERTREVIEWED':    8,
-      'CLOSED':            9,
-      'ARCHIVED':          9,
+      'DRAFT':              0,
+      'PENDINGGATE':        0,
+      'PENDING_GATE':       0,
+      'FINANCIALINPUT':     1,
+      'FINANCIAL_INPUT':    1,
+      'NORMALIZATIONDONE':  2,
+      'NORMALIZATION_DONE': 2,
+      'RATIOSCOMPUTED':     3,
+      'RATIOS_COMPUTED':    3,
+      'SCORINGDONE':        4,
+      'SCORING_DONE':       4,
+      'SCORED':             4,          // ← alias utilisé dans les tests
+      'STRESSDONE':         6,
+      'STRESS_DONE':        6,
+      'EXPERTREVIEWED':     8,
+      'EXPERT_REVIEWED':    8,          // ← alias utilisé dans les tests
+      'CLOSED':             9,
+      'ARCHIVED':           9,
     };
 
     const activeIndex = STATUS_ACTIVE_INDEX[normalizedStatus] ?? 0;
