@@ -5,25 +5,37 @@ import { ScoringMccService } from './services/scoring-mcc.service';
 import { of, throwError } from 'rxjs';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ScorecardOutputSchema } from '../../core/models/scoring.model';
 
 describe('ScoringMccComponent', () => {
   let component: ScoringMccComponent;
   let fixture: ComponentFixture<ScoringMccComponent>;
 
-  const mockScoringData = {
+  const mockScoringData: ScorecardOutputSchema = {
     case_id: 'case-123',
-    global_score: 4,
-    final_risk_class: 'LOW',
+    system_calculated_score: 4.125,
+    system_risk_class: 'LOW',
+    global_score: 4.125,
+    base_risk_class: 'LOW',
     is_overridden: false,
+    final_risk_class: 'LOW',
+    override_rationale: null,
+    risk_profile: 'BALANCED',
+    risk_description: 'Stable profile',
+    synergy_index: null,
+    synergy_bonus: null,
+    cross_analysis_alerts: [],
+    trends_summary: {},
     pillars: [],
     smart_recommendations: [],
-    cross_analysis_alerts: [],
+    overrides_applied: [],
+    computed_at: new Date().toISOString()
   };
 
   const mockScoringService = {
     getExistingScoring: vi.fn().mockReturnValue(of(mockScoringData)),
     computeScoring: vi.fn().mockReturnValue(of(mockScoringData)),
-    overrideScore: vi.fn().mockReturnValue(of({})),
+    overrideScore: vi.fn().mockReturnValue(of(mockScoringData)),
   };
 
   const mockCaseContext = {

@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { PillarScore } from '../../../../core/models/scoring.model';
+import { PillarDetailSchema } from '../../../../core/models/scoring.model';
 
 @Component({
   selector: 'app-pillar-detail-card',
@@ -13,14 +13,15 @@ import { PillarScore } from '../../../../core/models/scoring.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PillarDetailCardComponent {
-  public pillar = input<PillarScore>({
+  public pillar = input<PillarDetailSchema>({
     id: '',
     name: '',
     score: 0,
     weight: 0,
     status: 'GOOD',
     key_drivers: [],
-  } as unknown as PillarScore);
+    detailText: '',
+  } as unknown as PillarDetailSchema);
 
   public getStatusColor(): string {
     const status = this.pillar().status;

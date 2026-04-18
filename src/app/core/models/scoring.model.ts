@@ -33,8 +33,6 @@ export interface ScorecardOut {
   created_at: string;
 }
 
-// Legacy aliases for backward compatibility
-
 export enum TensionLevel {
   NONE = 'NONE',
   MILD = 'MILD',
@@ -74,47 +72,45 @@ export interface RatioSetFlat {
 }
 
 export interface PillarDetailSchema {
-  pillar_name: string;
+  id: string;
+  name: string;
   score: number;
-  label: PillarLabel;
-  ratios_used: string[];
+  weight: number;
+  status: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'CRITICAL';
   key_drivers: string[];
-  comment: string;
+  detailText: string;
+  signals?: string[];
+  trend?: number[];
 }
 
 export interface ScorecardOutputSchema {
   case_id: string;
-  scorecard_id: string;
-  fiscal_year: number;
-  liquidity_score: number;
-  liquidity_label: PillarLabel;
-  liquidity_detail: PillarDetailSchema;
-  solvency_score: number;
-  solvency_label: PillarLabel;
-  solvency_detail: PillarDetailSchema;
-  profitability_score: number;
-  profitability_label: PillarLabel;
-  profitability_detail: PillarDetailSchema;
-  capacity_score: number;
-  capacity_label: PillarLabel;
-  capacity_detail: PillarDetailSchema;
-  quality_score: number;
-  quality_label: PillarLabel;
-  quality_detail: PillarDetailSchema;
+  system_calculated_score: number;
+  system_risk_class: RiskClass | string;
+  
   global_score: number;
-  risk_class: RiskClass | string;
-  risk_profile: RiskProfile;
-  ia_score?: number;
-  tension_level?: TensionLevel;
-  tension_comment?: string;
-  expert_comment?: string;
-  expert_reviewed_at?: string;
-  expert_reviewed_by?: string;
-  created_at: string;
-  computed_at: string;
-  version: string;
+  base_risk_class: RiskClass | string;
+  
+  is_overridden: boolean;
+  final_risk_class: RiskClass | string;
+  override_rationale: string | null;
+  
+  risk_profile: string | null;
+  risk_description: string | null;
+  
+  synergy_index: number | null;
+  synergy_bonus: number | null;
+  
   cross_analysis_alerts: string[];
-  overrides?: OverrideRecord[];
+  trends_summary: Record<string, string>;
+  
+  pillars: PillarDetailSchema[];
+  smart_recommendations: string[];
+  overrides_applied: any[];
+  
+  computed_at: string;
+  calculation_date?: string;
+  version?: string;
 }
 
 export interface OverrideRecord {
@@ -130,43 +126,6 @@ export interface RecommendationUpdate {
   recommendation: string;
   conditions?: string[];
   risk_factors?: string[];
-}
-
-export interface PillarScore {
-  id: string;
-  name: string;
-  score: number;
-  weight: number;
-  status: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'CRITICAL';
-  key_drivers: string[];
-}
-
-export interface ScoreOverride {
-  original_score: number;
-  new_score: number;
-  original_risk_class: string;
-  new_risk_class: string;
-  reason: string;
-  author: string;
-  timestamp: string;
-}
-
-export interface ScoringRecommendation {
-  id: string;
-  type: 'POSITIVE' | 'WARNING' | 'CRITICAL';
-  message: string;
-}
-
-export interface ScoringMccSchema {
-  case_id: string;
-  global_score: number;
-  risk_class: string;
-  calculation_date: string;
-  pillars: PillarScore[];
-  recommendations: ScoringRecommendation[];
-  cross_analysis_alerts: string[];
-  override?: ScoreOverride;
-  status: 'COMPUTED' | 'OVERRIDDEN';
 }
 
 export interface ScoreOverridePayload {

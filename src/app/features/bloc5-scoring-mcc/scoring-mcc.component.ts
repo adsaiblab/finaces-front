@@ -27,7 +27,7 @@ import {
   FinacesEmptyStateComponent,
 } from '../../shared/components';
 import { ScoringMccService } from './services/scoring-mcc.service';
-import { ScoringMccSchema, ScoreOverridePayload } from '../../core/models/scoring.model';
+import { ScorecardOutputSchema, ScoreOverridePayload } from '../../core/models/scoring.model';
 
 import {
   PillarDetailCardComponent,
@@ -65,7 +65,7 @@ export class ScoringMccComponent implements OnInit {
 
   // ─── State signals ──────────────────────────────────────────────────
   readonly caseId      = signal<string>('');
-  readonly scoringData = signal<ScoringMccSchema | null>(null);
+  readonly scoringData = signal<ScorecardOutputSchema | null>(null);
   readonly isLoading   = signal<boolean>(true);
   readonly isComputing = signal<boolean>(false);
   readonly isOverriding = signal<boolean>(false);
