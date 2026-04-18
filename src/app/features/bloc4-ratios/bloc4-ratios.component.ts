@@ -79,59 +79,35 @@ export class Bloc4RatiosComponent implements OnInit {
     this.loadRatios();
   }
 
-  // Statuts où le POST compute est encore autorisé par le backend
-  private readonly COMPUTE_ALLOWED = new Set([
-    'NORMALIZATION_DONE', 'NORMALIZATIONDONE',
-    'RATIOS_COMPUTED',    'RATIOSCOMPUTED',
-  ]);
-
   public loadRatios(): void {
     if (this.isLoading()) return;
     this.isLoading.set(true);
     this.error.set(null);
 
-    // Récupération du statut actuel du dossier avant de décider GET ou POST
-    this.caseService.getCaseDetail(this.caseId()).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (caseData) => {
-        const canCompute = this.COMPUTE_ALLOWED.has(caseData.status ?? '');
-        const ratiosCall = canCompute
-          ? this.ratioService.computeRatios(this.caseId())   // POST
-          : this.ratioService.getRatios(this.caseId());       // GET ← lecture seule
-
-        forkJoin({
-          years: this.financialYearService.loadAvailableYears(this.caseId()),
-          ratiosData: ratiosCall,
-        })
-          .pipe(
-            finalize(() => this.isLoading.set(false)),
-            takeUntilDestroyed(this.destroyRef),
-          )
-          .subscribe({
-            next: ({ years, ratiosData }) => {
-              this.availableYears.set(years);
-              this.ratiosByYear = ratiosData.ratiosByYear;
-              const mostRecent = years[0] ?? null;
-              this.selectedYear.set(mostRecent);
-              this.ratioSet.set(mostRecent ? (this.ratiosByYear.get(mostRecent) ?? null) : null);
-            },
-            error: (err) => {
-              if (!environment.production) {
-                console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
-              }
-              console.error('❌ [Ratios] computeRatios error in component:', err);
-              this.loadMockData();
-            },
-          });
-      },
-      error: (err) => {
-        console.error('❌ [Ratios] getCaseDetail error:', err);
-        // Fallback mock si on ne peut même pas charger le dossier
-        this.isLoading.set(false);
-        this.loadMockData();
-      }
-    });
+    forkJoin({
+      years: this.financialYearService.loadAvailableYears(this.caseId()),
+      ratiosData: this.ratioService.computeRatios(this.caseId())
+    })
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: ({ years, ratiosData }) => {
+          this.availableYears.set(years);
+          this.ratiosByYear = ratiosData.ratiosByYear;
+          const mostRecent = years[0] ?? null;
+          this.selectedYear.set(mostRecent);
+          this.ratioSet.set(mostRecent ? (this.ratiosByYear.get(mostRecent) ?? null) : null);
+        },
+        error: (err) => {
+          if (!environment.production) {
+            console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
+          }
+          console.error('❌ [Ratios] computeRatios error in component:', err);
+          this.loadMockData();
+        },
+      });
   }
 
   public selectYear(year: number): void {

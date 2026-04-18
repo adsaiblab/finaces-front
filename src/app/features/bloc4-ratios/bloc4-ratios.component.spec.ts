@@ -50,9 +50,7 @@ describe('Bloc4RatiosComponent', () => {
     ),
   };
 
-  const mockCaseService = {
-    getCaseDetail: vi.fn().mockReturnValue(of({ id: 'case-123', status: 'NORMALIZATION_DONE' })),
-  };
+  const mockCaseService = {};
 
   const mockFinancialYearService = {
     loadAvailableYears: vi.fn().mockReturnValue(of([2023])),
