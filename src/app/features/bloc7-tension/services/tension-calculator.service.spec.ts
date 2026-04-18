@@ -1,23 +1,33 @@
 import { TestBed } from '@angular/core/testing';
 import { TensionCalculatorService } from './tension-calculator.service';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ScoringMccSchema, TensionLevel } from '../../../core/models/scoring.model';
+import { ScorecardOutputSchema, TensionLevel } from '../../../core/models/scoring.model';
 import { IAPredictionResult } from '../../../core/models/ia.model';
 
 describe('TensionCalculatorService', () => {
   let service: TensionCalculatorService;
 
-  const mockMcc: ScoringMccSchema = {
+  const mockMcc: ScorecardOutputSchema = {
     case_id: '123',
+    system_calculated_score: 3.0,
+    system_risk_class: 'MODERATE',
     global_score: 3.0,
-    risk_class: 'MODERATE',
-    calculation_date: '',
-    status: 'COMPUTED',
-    pillars: [
-      { id: 'p1', name: 'Liquidity', score: 3.0, weight: 100, status: 'GOOD', key_drivers: [] },
-    ],
-    recommendations: [],
+    base_risk_class: 'MODERATE',
+    is_overridden: false,
+    final_risk_class: 'MODERATE',
+    override_rationale: null,
+    risk_profile: 'BALANCED',
+    risk_description: 'Stable',
+    synergy_index: null,
+    synergy_bonus: null,
     cross_analysis_alerts: [],
+    trends_summary: {},
+    pillars: [
+      { id: 'p1', name: 'Liquidity', score: 3.0, weight: 100, status: 'GOOD', key_drivers: [], detailText: '' },
+    ],
+    smart_recommendations: [],
+    overrides_applied: [],
+    computed_at: new Date().toISOString()
   };
 
   const mockIa: IAPredictionResult = {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ScoringMccSchema, TensionLevel, PillarScore } from '../../../core/models/scoring.model';
+import { ScorecardOutputSchema, TensionLevel, PillarDetailSchema } from '../../../core/models/scoring.model';
 import { IAPredictionResult } from '../../../core/models/ia.model';
 import {
   TensionAnalysisResult,
@@ -12,7 +12,7 @@ import {
 })
 export class TensionCalculatorService {
   public calculateTension(
-    mccData: ScoringMccSchema,
+    mccData: ScorecardOutputSchema,
     iaData: IAPredictionResult,
   ): TensionAnalysisResult {
     const mccScore = mccData.global_score;
@@ -26,7 +26,7 @@ export class TensionCalculatorService {
     if (delta < 0) direction = 'DOWN';
 
     // 2. Determine Class Divergence
-    const classDivergence = mccData.risk_class !== iaData.predicted_risk_class;
+    const classDivergence = mccData.final_risk_class !== iaData.predicted_risk_class;
 
     // 3. Determine Level
     let level: TensionLevel = TensionLevel.NONE;
@@ -50,7 +50,7 @@ export class TensionCalculatorService {
     }
 
     // 5. Build Pillar Comparisons (Simplified heuristic mapping for UX display)
-    const pillarsComparison: PillarComparison[] = mccData.pillars.map((p: PillarScore) => {
+    const pillarsComparison: PillarComparison[] = mccData.pillars.map((p: PillarDetailSchema) => {
       // Pseudo-random mapping based on SHAP could be done here,
       // but for UI consistency, we calculate a mock IA impact based on global delta.
       const mockIaImpact = parseFloat((p.score + delta * (p.weight / 100)).toFixed(2));
@@ -68,7 +68,7 @@ export class TensionCalculatorService {
       level,
       direction,
       delta_score: delta,
-      mcc_class: mccData.risk_class,
+      mcc_class: String(mccData.final_risk_class),
       ia_class: iaData.predicted_risk_class,
       class_divergence: classDivergence,
       pillars_comparison: pillarsComparison,

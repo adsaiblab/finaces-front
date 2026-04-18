@@ -23,7 +23,7 @@ import { TensionCalculatorService } from './services/tension-calculator.service'
 
 import { TensionAnalysisResult, AnalystDecisionPayload } from '../../core/models/tension.model';
 import { IAPredictionResult } from '../../core/models/ia.model';
-import { TensionLevel, ScoringMccSchema } from '../../core/models/scoring.model';
+import { TensionLevel, ScorecardOutputSchema } from '../../core/models/scoring.model';
 import {
   FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
@@ -105,7 +105,7 @@ export class TensionComponent implements OnInit {
             return;
           }
           const result = this.tensionCalc.calculateTension(
-            data.mcc as ScoringMccSchema,
+            data.mcc as ScorecardOutputSchema,
             data.ia as unknown as IAPredictionResult,
           );
           this.tensionData.set(result);
