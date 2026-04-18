@@ -60,6 +60,7 @@ export class Bloc4RatiosComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   public readonly caseId = signal<string>('');
+  public readonly caseStatus = signal<string>('');
 
   public readonly ratioSet = signal<RatioSetGrouped | null>(null);
   public readonly isLoading = signal<boolean>(false);
@@ -76,21 +77,33 @@ export class Bloc4RatiosComponent implements OnInit {
 
   ngOnInit(): void {
     this.caseId.set(this.caseContext.caseId());
+    this.caseStatus.set(this.caseContext.caseStatus() ?? '');
     this.loadRatios();
   }
+
+  // Statuts où le POST compute est encore autorisé par le backend
+  private readonly COMPUTE_ALLOWED = new Set([
+    'NORMALIZATION_DONE', 'NORMALIZATIONDONE',
+    'RATIOS_COMPUTED',    'RATIOSCOMPUTED',
+  ]);
 
   public loadRatios(): void {
     if (this.isLoading()) return;
     this.isLoading.set(true);
     this.error.set(null);
 
+    const canCompute = this.COMPUTE_ALLOWED.has(this.caseStatus());
+    const ratiosCall = canCompute
+      ? this.ratioService.computeRatios(this.caseId())   // POST
+      : this.ratioService.getRatios(this.caseId());       // GET ← lecture seule
+
     forkJoin({
       years: this.financialYearService.loadAvailableYears(this.caseId()),
-      ratiosData: this.ratioService.computeRatios(this.caseId())
+      ratiosData: ratiosCall,
     })
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: ({ years, ratiosData }) => {

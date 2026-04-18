@@ -17,17 +17,8 @@ export class RatioCalculationService {
     return this.http
       .post<any[]>(`${this.apiUrl}/${caseId}/ratios/compute`, {}, {})
       .pipe(
-        map((ratiosArray) => {
-           if (!ratiosArray || ratiosArray.length === 0) throw new Error("No ratios returned by backend");
-           const sorted = [...ratiosArray].sort((a, b) => b.fiscal_year - a.fiscal_year);
-           const ratiosByYear = new Map<number, RatioSetGrouped>();
-           sorted.forEach(raw => ratiosByYear.set(raw.fiscal_year, RatioMapper.fromBackendFlat(raw)));
-
-           // Variations are now natively mapped from backend SSOT via RatioMapper
-
-           return { years: sorted.map(r => r.fiscal_year), ratiosByYear };
-        }),
-        tap((result) => console.warn('✅ [Ratios] Mapped successfully to Grouped:', result)),
+        map((ratiosArray) => this.mapRatios(ratiosArray)),
+        tap((result) => console.warn('✅ [Ratios] Computed and mapped successfully:', result)),
         catchError((err) => {
           console.error('❌ [Ratios] Calculation error:', err);
           return throwError(
@@ -36,6 +27,32 @@ export class RatioCalculationService {
           );
         }),
       );
+  }
+
+  public getRatios(caseId: string): Observable<{ years: number[]; ratiosByYear: Map<number, RatioSetGrouped> }> {
+    return this.http
+      .get<any[]>(`${this.apiUrl}/${caseId}/ratios`)
+      .pipe(
+        map((ratiosArray) => this.mapRatios(ratiosArray)),
+        tap((result) => console.warn('✅ [Ratios] Fetched and mapped successfully:', result)),
+        catchError((err) => {
+          console.error('❌ [Ratios] Fetch error:', err);
+          return throwError(
+            () =>
+              new Error('Failed to fetch existing ratios. The data might not have been computed yet.'),
+          );
+        }),
+      );
+  }
+
+  private mapRatios(ratiosArray: any[]): { years: number[]; ratiosByYear: Map<number, RatioSetGrouped> } {
+    if (!ratiosArray || ratiosArray.length === 0) return { years: [], ratiosByYear: new Map() };
+    
+    const sorted = [...ratiosArray].sort((a, b) => b.fiscal_year - a.fiscal_year);
+    const ratiosByYear = new Map<number, RatioSetGrouped>();
+    sorted.forEach(raw => ratiosByYear.set(raw.fiscal_year, RatioMapper.fromBackendFlat(raw)));
+
+    return { years: sorted.map(r => r.fiscal_year), ratiosByYear };
   }
 
   public requiresDeepDive(ratioValue: RatioValue): boolean {
