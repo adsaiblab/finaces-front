@@ -9,8 +9,6 @@ import { CaseService } from '../../../core/services/case.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { RollbackDialogComponent } from './rollback-dialog/rollback-dialog.component';
 
-const ROLLBACK_ROLES = new Set(['ADMIN', 'SENIOR_FIDUCIARY']);
-
 @Component({
   selector: 'app-case-workspace',
   standalone: true,
@@ -30,8 +28,7 @@ export class CaseWorkspaceComponent implements OnInit {
   readonly isRollingBack = signal(false);
 
   get canRollback(): boolean {
-    const role = this.authService.currentUser()?.role ?? '';
-    return ROLLBACK_ROLES.has(role);
+    return this.authService.currentUser() !== null;
   }
 
   get caseId(): string {
