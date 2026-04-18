@@ -78,7 +78,7 @@
 
             <div class="scoring-card scoring-card--center" data-testid="scoring-risk-class-card">
               <h3 class="scoring-card__label">Classe de risque attribuée</h3>
-              <finaces-risk-badge [riskClass]="data.final_risk_class" class="scoring-risk-scale" />
+              <finaces-risk-badge [riskClass]="$any(data.final_risk_class)" class="scoring-risk-scale" />
             </div>
           </div>
 

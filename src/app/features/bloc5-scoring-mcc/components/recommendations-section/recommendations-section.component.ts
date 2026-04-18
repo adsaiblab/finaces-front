@@ -3,7 +3,10 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { ScoringRecommendation } from '../../../../core/models/scoring.model';
+interface ScoringRecommendation {
+  type: 'POSITIVE' | 'WARNING' | 'CRITICAL' | string;
+  text: string;
+}
 
 @Component({
   selector: 'app-recommendations-section',

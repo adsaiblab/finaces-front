@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ScoreOverridePayload, ScoreOverride } from '../../../../core/models/scoring.model';
+import { ScoreOverridePayload, OverrideRecord } from '../../../../core/models/scoring.model';
 
 @Component({
   selector: 'app-override-zone',
@@ -30,7 +30,7 @@ export class OverrideZoneComponent {
   private fb = inject(FormBuilder);
 
   public isOverridden = input<boolean>(false);
-  public overrideDetails = input<ScoreOverride | undefined>();
+  public overrideDetails = input<OverrideRecord | undefined>();
   public originalScore = input<number>(0);
   public isSubmitting = input<boolean>(false);
 
