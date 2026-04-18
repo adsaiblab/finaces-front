@@ -56,7 +56,7 @@
           <span class="leading-snug">{{ driver }}</span>
         </li>
       }
-      @if (pillar().key_drivers.length === 0) {
+      @if ((pillar().key_drivers?.length ?? 0) === 0) {
         <li class="text-sm text-[color:var(--color-content-secondary)] italic">
           No specific drivers highlighted.
         </li>

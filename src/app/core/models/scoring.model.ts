@@ -7,6 +7,7 @@ export interface PillarDetail {
   weight: number;
   trend: 'IMPROVING' | 'STABLE' | 'DETERIORATING' | null;
   signals: string[];
+  key_drivers: string[];
   detail_text: string;
 }
 
@@ -77,6 +78,7 @@ export interface PillarDetailSchema {
   score: number;
   label: PillarLabel;
   ratios_used: string[];
+  key_drivers: string[];
   comment: string;
 }
 

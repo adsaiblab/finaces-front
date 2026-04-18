@@ -28,6 +28,7 @@ function toPillarDetailSchema(p: PillarDetail): PillarDetailSchema {
     score: p.score ?? 0,
     label: toPillarLabel(p.score ?? 0),
     ratios_used: p.signals ?? [],
+    key_drivers: (p as any).key_drivers ?? [],
     comment: p.detail_text ?? '',
   };
 }
@@ -35,9 +36,13 @@ function toPillarDetailSchema(p: PillarDetail): PillarDetailSchema {
 export class ScorecardMapper {
   /** Backend ScorecardOut (pillars[]) → Legacy ScorecardOutputSchema (denormalized) */
   static fromBackend(back: ScorecardOut): ScorecardOutputSchema {
-    const pillarMap = new Map<string, PillarDetail>();
-    for (const p of back.pillars) {
-      pillarMap.set(p.name.toLowerCase(), p);
+    const rawPillars = back.pillars ?? [];
+    for (const p of rawPillars) {
+      pillarMap.set(p.name.toLowerCase(), {
+        ...p,
+        key_drivers: (p as any).key_drivers ?? [],
+        signals: p.signals ?? [],
+      } as PillarDetail);
     }
 
     function getPillar(name: string): PillarDetail {
@@ -49,6 +54,7 @@ export class ScorecardMapper {
           weight: 0,
           trend: null,
           signals: [],
+          key_drivers: [],
           detail_text: '',
         }
       );
