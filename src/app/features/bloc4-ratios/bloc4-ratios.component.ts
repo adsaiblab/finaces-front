@@ -86,7 +86,7 @@ export class Bloc4RatiosComponent implements OnInit {
 
     forkJoin({
       years: this.financialYearService.loadAvailableYears(this.caseId()),
-      ratiosData: this.ratioService.computeRatios(this.caseId())
+      ratiosData: this.ratioService.getRatios(this.caseId())
     })
       .pipe(
         finalize(() => this.isLoading.set(false)),
@@ -101,12 +101,47 @@ export class Bloc4RatiosComponent implements OnInit {
           this.ratioSet.set(mostRecent ? (this.ratiosByYear.get(mostRecent) ?? null) : null);
         },
         error: (err) => {
-          if (!environment.production) {
-            console.warn('Backend unavailable, injecting Enterprise-Grade Mock for Ratios');
-          }
-          console.error('❌ [Ratios] computeRatios error in component:', err);
-          this.loadMockData();
+          console.error('❌ [Ratios] getRatios error:', err);
+          // If 404 or empty, we just leave it empty. Component template handles ratioSet() === null
+          this.availableYears.set([]);
+          this.ratioSet.set(null);
         },
+      });
+  }
+
+  public recomputeRatios(): void {
+    if (this.isLoading()) return;
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.ratioService.computeRatios(this.caseId())
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (ratiosData) => {
+          this.ratiosByYear = ratiosData.ratiosByYear;
+          this.availableYears.set(ratiosData.years);
+          const mostRecent = ratiosData.years[0] ?? null;
+          this.selectedYear.set(mostRecent);
+          this.ratioSet.set(mostRecent ? (this.ratiosByYear.get(mostRecent) ?? null) : null);
+          
+          this.snackBar.open('Ratios recalculés avec succès.', 'Fermer', {
+            duration: 3000,
+            panelClass: ['snack-success']
+          });
+        },
+        error: (err) => {
+          // Si 400 (déjà calculé), on informe simplement l'utilisateur
+          if (err.status === 400) {
+            this.snackBar.open('Calcul déjà effectué pour ce dossier.', 'OK', { duration: 3000 });
+            this.loadRatios(); // Rafraîchir pour voir les ratios existants
+          } else {
+            this.error.set('Échec du calcul des ratios. Vérifiez les données de normalisation.');
+            this.snackBar.open('Erreur lors du calcul.', 'Fermer', { duration: 5000 });
+          }
+        }
       });
   }
 

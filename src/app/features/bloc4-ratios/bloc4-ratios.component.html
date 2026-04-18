@@ -138,16 +138,19 @@
       </div>
     </div>
     } @else {
-      <div class="pt-8 w-full h-full">
+      <div class="pt-12 w-full max-w-2xl mx-auto h-full">
         <finaces-empty-state
-          variant="no-items"
+          variant="no-data"
           title="Ratios non calculés"
-          [description]="noRatiosMessage"
+          [description]="'Les ratios financiers n\'ont pas encore été générés pour ce dossier. Cliquez ci-dessous pour lancer l\'analyse automatique.'"
+          ctaText="Calculer les ratios"
+          (ctaClick)="recomputeRatios()"
           testId="ratios-empty-state"
         />
-        <div class="flex justify-center mt-6">
-          <button mat-flat-button color="primary" (click)="navigateBack()">
-            <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        
+        <div class="flex justify-center mt-8">
+          <button mat-button (click)="navigateBack()" class="text-content-secondary hover:text-content-primary">
+            <mat-icon aria-hidden="true" class="mr-2">arrow_back</mat-icon>
             Retour à la normalisation
           </button>
         </div>
