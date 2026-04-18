@@ -48,6 +48,12 @@ describe('Bloc4RatiosComponent', () => {
         ratiosByYear: new Map([[2023, mockRatioGrouped]]),
       }),
     ),
+    getRatios: vi.fn().mockReturnValue(
+      of({
+        years: [2023],
+        ratiosByYear: new Map([[2023, mockRatioGrouped]]),
+      }),
+    ),
   };
 
   const mockCaseService = {};
@@ -78,7 +84,7 @@ describe('Bloc4RatiosComponent', () => {
 
   it('should create and load ratios on init', () => {
     expect(component).toBeTruthy();
-    expect(mockRatioService.computeRatios).toHaveBeenCalledWith('case-123');
+    expect(mockRatioService.getRatios).toHaveBeenCalledWith('case-123');
     expect(component.isLoading()).toBe(false);
   });
 });
