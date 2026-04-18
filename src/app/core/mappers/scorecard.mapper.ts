@@ -37,6 +37,7 @@ export class ScorecardMapper {
   /** Backend ScorecardOut (pillars[]) → Legacy ScorecardOutputSchema (denormalized) */
   static fromBackend(back: ScorecardOut): ScorecardOutputSchema {
     const rawPillars = back.pillars ?? [];
+    const pillarMap = new Map<string, PillarDetail>();
     for (const p of rawPillars) {
       pillarMap.set(p.name.toLowerCase(), {
         ...p,
