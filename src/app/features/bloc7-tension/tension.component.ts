@@ -91,7 +91,7 @@ export class TensionComponent implements OnInit {
     this.loadError.set(null);
 
     forkJoin({
-      mcc: this.scoringService.getScoring(this.caseId()).pipe(catchError(() => of(null))),
+      mcc: this.scoringService.getExistingScoring(this.caseId()).pipe(catchError(() => of(null))),
       ia:  this.iaService.getPrediction(this.caseId()).pipe(catchError(() => of(null))),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))

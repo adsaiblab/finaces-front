@@ -24,6 +24,7 @@ import {
   FinacesInlineErrorComponent,
   FinacesSkeletonLoaderComponent,
   ErrorCode,
+  FinacesEmptyStateComponent,
 } from '../../shared/components';
 import { ScoringMccService } from './services/scoring-mcc.service';
 import { ScoringMccSchema, ScoreOverridePayload } from '../../core/models/scoring.model';
@@ -49,6 +50,7 @@ import {
     FinacesRiskBadgeComponent,
     FinacesInlineErrorComponent,
     FinacesSkeletonLoaderComponent,
+    FinacesEmptyStateComponent,
   ],
   templateUrl: './scoring-mcc.component.html',
   styleUrls: ['./scoring-mcc.component.scss'],
@@ -65,6 +67,7 @@ export class ScoringMccComponent implements OnInit {
   readonly caseId      = signal<string>('');
   readonly scoringData = signal<ScoringMccSchema | null>(null);
   readonly isLoading   = signal<boolean>(true);
+  readonly isComputing = signal<boolean>(false);
   readonly isOverriding = signal<boolean>(false);
 
   // ─── Error signals ───────────────────────────────────────────────────
@@ -72,24 +75,24 @@ export class ScoringMccComponent implements OnInit {
   readonly retryCount = signal<number>(0);
 
   // ─── Computed signals ─────────────────────────────────────────────────
-  readonly hasNoPillars = computed(
-    () => !this.isLoading() && !this.loadError() && (this.scoringData()?.pillars?.length ?? 0) === 0,
+  readonly hasNoData = computed(
+    () => !this.isLoading() && !this.loadError() && !this.scoringData(),
   );
 
   readonly liquidityPillar = computed(
-    () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('liquid')) ?? null,
+    () => this.scoringData()?.pillars?.find((p) => p.name.toLowerCase().includes('liquid')) ?? null,
   );
   readonly solvencyPillar = computed(
-    () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('solven')) ?? null,
+    () => this.scoringData()?.pillars?.find((p) => p.name.toLowerCase().includes('solven')) ?? null,
   );
   readonly profitabilityPillar = computed(
-    () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('profit')) ?? null,
+    () => this.scoringData()?.pillars?.find((p) => p.name.toLowerCase().includes('profit')) ?? null,
   );
   readonly capacityPillar = computed(
-    () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('capaci')) ?? null,
+    () => this.scoringData()?.pillars?.find((p) => p.name.toLowerCase().includes('capaci')) ?? null,
   );
   readonly qualityPillar = computed(
-    () => this.scoringData()?.pillars.find((p) => p.name.toLowerCase().includes('quality')) ?? null,
+    () => this.scoringData()?.pillars?.find((p) => p.name.toLowerCase().includes('quality')) ?? null,
   );
 
   ngOnInit(): void {
@@ -97,14 +100,17 @@ export class ScoringMccComponent implements OnInit {
     this.loadScoring();
   }
 
-  // ─── Chargement ──────────────────────────────────────────────────────
+  /**
+   * Initial Load: Attempts to retrieve existing data (GET).
+   * Does NOT trigger a calculation by default.
+   */
   private loadScoring(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
     this.scoringData.set(null);
 
     this.scoringService
-      .getScoring(this.caseId())
+      .getExistingScoring(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -113,6 +119,12 @@ export class ScoringMccComponent implements OnInit {
         },
         error: (err) => {
           const status = err?.status;
+          if (status === 404) {
+            // No data yet: this is a normal state, not a "load error"
+            this.scoringData.set(null);
+            this.isLoading.set(false);
+            return;
+          }
           if (status === 401 || status === 403) {
             this.isLoading.set(false);
             this.router.navigate(['/auth/login']);
@@ -121,6 +133,33 @@ export class ScoringMccComponent implements OnInit {
           this.loadError.set('server');
           this.scoringData.set(null);
           this.isLoading.set(false);
+        },
+      });
+  }
+
+  /**
+   * Manual Trigger: Launches the scoring engine (POST).
+   */
+  public recomputeScoring(): void {
+    if (this.isComputing()) return;
+
+    this.isComputing.set(true);
+    this.scoringService
+      .computeScoring(this.caseId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.scoringData.set(data);
+          this.isComputing.set(false);
+          this.snackBar.open('Score calculé avec succès.', 'OK', { duration: 3000 });
+        },
+        error: (err) => {
+          this.isComputing.set(false);
+          if (err?.status === 400) {
+            this.snackBar.open('Score déjà calculé, rechargez la page pour voir les données.', 'Fermer', { duration: 5000 });
+          } else {
+            this.snackBar.open('Erreur lors du calcul du score.', 'OK', { duration: 4000 });
+          }
         },
       });
   }
@@ -148,29 +187,8 @@ export class ScoringMccComponent implements OnInit {
           });
         },
         error: () => {
-          of(null)
-            .pipe(delay(800), takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => {
-              const currentData = this.scoringData();
-              if (currentData) {
-                this.scoringData.set({
-                  ...currentData,
-                  global_score: payload.new_score,
-                  status: 'OVERRIDDEN',
-                  override: {
-                    original_score:      currentData.global_score,
-                    new_score:           payload.new_score,
-                    original_risk_class: currentData.risk_class,
-                    new_risk_class:      'ADJUSTED',
-                    reason:              payload.reason,
-                    author:              'Analyste senior',
-                    timestamp:           new Date().toISOString(),
-                  },
-                });
-              }
-              this.isOverriding.set(false);
-              this.snackBar.open('Surclassement appliqué (mode démo).', 'OK', { duration: 3000 });
-            });
+          this.isOverriding.set(false);
+          this.snackBar.open('Erreur lors de l\'application du surclassement.', 'OK', { duration: 3000 });
         },
       });
   }

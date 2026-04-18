@@ -43,24 +43,25 @@
           <div class="scoring-status-badge" data-testid="scoring-status-badge">
             <span
               class="scoring-status-chip"
-              [class.scoring-status-chip--computed]="data.status === 'COMPUTED'"
-              [class.scoring-status-chip--overridden]="data.status === 'OVERRIDDEN'"
+              [class.scoring-status-chip--computed]="data.final_risk_class !== 'NOT_EVALUATED'"
+              [class.scoring-status-chip--overridden]="data.is_overridden"
             >
-              {{ data.status === 'COMPUTED' ? 'CALCULÉ AUTOMATIQUEMENT' : 'MANUALLY OVERRIDDEN' }}
+              {{ data.is_overridden ? 'MANUALLY OVERRIDDEN' : 'CALCULÉ AUTOMATIQUEMENT' }}
             </span>
           </div>
         }
       </header>
 
       <!-- EMPTY STATE : scoring non encore calculé -->
-      @if (!scoringData() && !isLoading() && !loadError()) {
-        <div class="scoring-empty" data-testid="scoring-no-data">
-          <mat-icon aria-hidden="true">bar_chart</mat-icon>
-          <h3 class="scoring-empty__title">Scoring non calculé</h3>
-          <p class="scoring-empty__text">
-            Les ratios financiers n'ont pas encore été calculés pour ce dossier.
-            Complétez les données financières puis relancez le scoring.
-          </p>
+      @if (hasNoData()) {
+        <div class="scoring-empty-wrapper" data-testid="scoring-empty-state">
+          <finaces-empty-state
+            variant="no-data"
+            title="Score non calculé"
+            description="Le scoring MCC n'a pas encore été généré pour ce dossier. Cliquez sur le bouton ci-dessous pour lancer l'analyse."
+            [ctaText]="isComputing() ? 'Calcul en cours...' : 'Calculer le score'"
+            (ctaClick)="recomputeScoring()"
+          />
         </div>
       }
 
@@ -77,7 +78,7 @@
 
             <div class="scoring-card scoring-card--center" data-testid="scoring-risk-class-card">
               <h3 class="scoring-card__label">Classe de risque attribuée</h3>
-              <finaces-risk-badge [riskClass]="$any(data.risk_class)" class="scoring-risk-scale" />
+              <finaces-risk-badge [riskClass]="data.final_risk_class" class="scoring-risk-scale" />
             </div>
           </div>
 
@@ -105,14 +106,14 @@
           <!-- Recommandations + Override -->
           <div class="scoring-bottom-row">
             <app-recommendations-section
-              [recommendations]="data.recommendations"
+              [recommendations]="data.smart_recommendations"
               [crossAnalysisAlerts]="data.cross_analysis_alerts"
             />
 
             <app-override-zone
-              [originalScore]="data.override ? data.override.original_score : data.global_score"
-              [isOverridden]="data.status === 'OVERRIDDEN'"
-              [overrideDetails]="data.override"
+              [originalScore]="data.global_score"
+              [isOverridden]="data.is_overridden"
+              [overrideDetails]="data.override_rationale"
               [isSubmitting]="isOverriding()"
               (overrideSubmit)="handleOverride($event)"
               data-testid="scoring-override-zone"
@@ -140,7 +141,7 @@
           color="primary"
           class="finaces-primary-btn scoring-nav-bar__proceed"
           (click)="proceedNext()"
-          [disabled]="isOverriding()"
+          [disabled]="isOverriding() || !scoringData()"
           aria-label="Passer à l'analyse IA"
           data-testid="scoring-proceed-ia-btn"
         >

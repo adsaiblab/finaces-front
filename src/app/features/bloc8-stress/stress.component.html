@@ -115,10 +115,14 @@
 
       <!-- État vide -->
       @if (hasNoData()) {
-        <div class="stress-empty-state" data-testid="stress-empty-state" role="status">
-          <mat-icon aria-hidden="true">query_stats</mat-icon>
-          <p class="stress-empty-title">Aucun test de stress disponible</p>
-          <p class="stress-empty-subtitle">Lancez une simulation pour voir les résultats de résilience.</p>
+        <div class="stress-empty-wrapper" data-testid="stress-empty-state">
+          <finaces-empty-state
+            variant="no-data"
+            title="Aucun test de stress"
+            description="Aucune simulation de stress n'a été réalisée pour ce dossier. Configurez les paramètres et lancez la simulation."
+            ctaText="Paramétrer la simulation"
+            (ctaClick)="isLoading.set(false)"
+          />
         </div>
       }
 

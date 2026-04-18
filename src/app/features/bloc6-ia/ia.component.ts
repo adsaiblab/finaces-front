@@ -31,6 +31,7 @@ import {
   FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
   ErrorCode,
+  FinacesEmptyStateComponent,
 } from '../../shared/components';
 
 @Component({
@@ -48,6 +49,7 @@ import {
     FinacesRiskBadgeComponent,
     FinacesSkeletonLoaderComponent,
     FinacesInlineErrorComponent,
+    FinacesEmptyStateComponent,
     PercentPipe,
     DecimalPipe,
     NgClass,
@@ -66,7 +68,7 @@ export class IaComponent implements OnInit {
   // --- Identite ---
   readonly caseId = signal<string>('');
 
-  // --- Double skeleton independant (forkJoin prediction + model) ---
+  // --- States ---
   readonly isLoading           = signal<boolean>(true);
   readonly isPredictionLoading = signal<boolean>(true);
   readonly isModelLoading      = signal<boolean>(true);
@@ -79,7 +81,7 @@ export class IaComponent implements OnInit {
   readonly retryCount      = signal<number>(0);
   readonly whatIfError     = signal<ErrorCode | null>(null);
 
-  // --- Simulation (CONTRAINTE METIER : zero ecriture DB) ---
+  // --- Simulation ---
   readonly isSimulating    = signal<boolean>(false);
   readonly simulationScore = signal<number | null>(null);
   readonly simulationClass = signal<string | null>(null);
@@ -95,6 +97,7 @@ export class IaComponent implements OnInit {
     this.isPredictionLoading.set(true);
     this.isModelLoading.set(true);
     this.predictionError.set(null);
+    this.predictionData.set(null);
     this.simulationScore.set(null);
     this.simulationClass.set(null);
 
@@ -124,6 +127,14 @@ export class IaComponent implements OnInit {
         },
         error: (err) => {
           const status = err?.status;
+          if (status === 404) {
+             // Treat 404 as "no data" state
+             this.predictionData.set(null);
+             this.isLoading.set(false);
+             this.isPredictionLoading.set(false);
+             this.isModelLoading.set(false);
+             return;
+          }
           if (status === 401 || status === 403) {
             this.isLoading.set(false);
             this.isPredictionLoading.set(false);
@@ -189,7 +200,7 @@ export class IaComponent implements OnInit {
       });
   }
 
-  // --- Simulation What-If (CONTRAINTE METIER : zero ecriture DB) ---
+  // --- Simulation What-If ---
   onSimulate(scenario: WhatIfScenarioInput): void {
     this.isSimulating.set(true);
     this.whatIfError.set(null);

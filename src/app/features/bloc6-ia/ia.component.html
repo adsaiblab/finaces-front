@@ -39,6 +39,19 @@
     />
   }
 
+  <!-- EMPTY STATE : prediction non encore calculée -->
+  @if (!isLoading() && !predictionError() && !predictionData()) {
+    <div class="ia-empty-wrapper" data-testid="ia-empty-state">
+      <finaces-empty-state
+        variant="no-data"
+        title="Prédiction non disponible"
+        description="L'analyse prédictive IA n'a pas encore été générée pour ce dossier. Ce processus est généralement déclenché automatiquement après la validation du scoring."
+        ctaText="Rafraîchir"
+        (ctaClick)="loadPrediction()"
+      />
+    </div>
+  }
+
   <!-- ─── CONTENU PRINCIPAL ───────────────────────────────────────────────── -->
   @if (!isLoading() && !predictionError()) {
     <div class="ia-content" data-testid="ia-content-wrapper">

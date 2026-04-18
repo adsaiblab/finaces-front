@@ -5,16 +5,11 @@
     </div>
 
     @if (canRollback) {
-      <button
-        mat-stroked-button
-        color="warn"
-        [disabled]="isRollingBack()"
-        (click)="openRollbackDialog()"
-        title="Réservé aux administrateurs et analystes seniors"
-      >
-        <mat-icon>history</mat-icon>
-        {{ isRollingBack() ? 'Réinitialisation...' : 'Corriger une étape' }}
-      </button>
+    <button mat-stroked-button color="warn" [disabled]="isRollingBack()" (click)="openRollbackDialog()"
+      title="Réservé aux administrateurs et analystes seniors">
+      <mat-icon>history</mat-icon>
+      {{ isRollingBack() ? 'Réinitialisation...' : 'Corriger une étape' }}
+    </button>
     }
   </header>
 

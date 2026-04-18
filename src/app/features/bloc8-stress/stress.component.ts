@@ -24,6 +24,7 @@ import {
   FinacesSkeletonLoaderComponent,
   FinacesInlineErrorComponent,
   ErrorCode,
+  FinacesEmptyStateComponent,
 } from '../../shared/components';
 
 import {
@@ -45,6 +46,7 @@ export type StressTab = 'CONTRACT' | 'MACRO' | 'SHOCK';
     MatSnackBarModule,
     FinacesSkeletonLoaderComponent,
     FinacesInlineErrorComponent,
+    FinacesEmptyStateComponent,
     StressParametersComponent,
     MilestoneTimelineComponent,
     ScenarioResultsComponent,
@@ -98,6 +100,8 @@ export class StressComponent implements OnInit {
   private loadInitialStressData(): void {
     this.isLoading.set(true);
     this.loadError.set(null);
+    this.stressData.set(null);
+
     this.stressService
       .getStressTests(this.caseId())
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -106,7 +110,14 @@ export class StressComponent implements OnInit {
           this.stressData.set(data as StressTestResponse);
           this.isLoading.set(false);
         },
-        error: () => {
+        error: (err) => {
+          const status = err?.status;
+          if (status === 404) {
+             // Normal state: No results yet.
+             this.stressData.set(null);
+             this.isLoading.set(false);
+             return;
+          }
           this.loadMockData();
         },
       });
