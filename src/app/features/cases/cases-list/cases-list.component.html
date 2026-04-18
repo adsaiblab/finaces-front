@@ -142,22 +142,23 @@
       } @else {
         <div class="table-scroll-wrapper overflow-x-auto flex-grow w-full">
           <table
-            class="w-full text-left border-collapse min-w-[1000px] table-fixed"
+            class="w-full text-left border-collapse min-w-[1400px]"
             data-testid="cases-list-table"
             aria-label="Liste des dossiers d’évaluation"
           >
-            <thead
-              class="bg-sidebar-active-bg sticky top-0 z-10 border-b-2 border-strong shadow-sm"
-            >
+            <thead class="bg-sidebar-active-bg sticky top-0 z-10 border-b-2 border-strong shadow-sm">
               <tr class="text-secondary text-[11px] font-bold uppercase tracking-wider">
-                <th class="py-3 px-4 w-1/4" scope="col">Dossier d’évaluation (entité)</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">
-                  Revue documentaire
-                </th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Financiers</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Scoring / IA</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Avis expert</th>
-                <th class="py-3 px-3 text-center border-l border-strong w-[15%]" scope="col">Rapport final</th>
+                <th class="py-3 px-4 w-[20%]" scope="col">Case (Entity)</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Gate</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Financials</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Normaliz.</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Ratios</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Scoring</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">IA</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Tension</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Stress</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Expert</th>
+                <th class="py-3 px-2 text-center border-l border-strong" scope="col">Report</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-strong">

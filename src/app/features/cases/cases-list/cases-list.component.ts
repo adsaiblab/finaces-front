@@ -22,7 +22,7 @@ import { EvaluationCaseOut } from '../../../core/models/case.model';
 export type StepStatus = 'COMPLETED' | 'ACTIVE' | 'LOCKED';
 
 export interface ProcessStep {
-  id: 'gate' | 'financials' | 'scoring' | 'expert' | 'report';
+  id: 'gate' | 'financials' | 'normalization' | 'ratios' | 'scoring' | 'ia' | 'tension' | 'stress' | 'expert' | 'report';
   name: string;
   status: StepStatus;
   targetRoute: string;
@@ -140,42 +140,43 @@ export class CasesListComponent implements OnInit {
   }
 
   private deriveSteps(status: string): ProcessStep[] {
-    const buildSteps = (
-      gate: StepStatus,
-      fin: StepStatus,
-      scor: StepStatus,
-      exp: StepStatus,
-      rep: StepStatus,
-    ): ProcessStep[] => [
-      { id: 'gate', name: 'Revue documentaire', status: gate, targetRoute: 'gate' },
-      { id: 'financials', name: 'Financiers & Ratios', status: fin, targetRoute: 'financials' },
-      { id: 'scoring', name: 'Scoring & Tension', status: scor, targetRoute: 'tension' },
-      { id: 'expert', name: 'Avis expert', status: exp, targetRoute: 'expert' },
-      { id: 'report', name: 'Rapport final', status: rep, targetRoute: 'rapport' },
+    const ALL_STEPS: { id: ProcessStep['id']; name: string; route: string }[] = [
+      { id: 'gate',          name: 'Gate',          route: 'gate' },
+      { id: 'financials',    name: 'Financials',    route: 'financials' },
+      { id: 'normalization', name: 'Normalization', route: 'normalization' },
+      { id: 'ratios',        name: 'Ratios',        route: 'ratios' },
+      { id: 'scoring',       name: 'Scoring',       route: 'scoring-mcc' },
+      { id: 'ia',            name: 'IA',            route: 'ia' },
+      { id: 'tension',       name: 'Tension',       route: 'tension' },
+      { id: 'stress',        name: 'Stress',        route: 'stress' },
+      { id: 'expert',        name: 'Expert',        route: 'expert' },
+      { id: 'report',        name: 'Report',        route: 'rapport' },
     ];
 
-    if (status === 'DRAFT' || status === 'PENDING_DOCS') {
-      return buildSteps('ACTIVE', 'LOCKED', 'LOCKED', 'LOCKED', 'LOCKED');
-    }
-    if (status === 'PENDING_GATE' || status === 'FINANCIAL_INPUT') {
-      return buildSteps('COMPLETED', 'ACTIVE', 'LOCKED', 'LOCKED', 'LOCKED');
-    }
-    if (status === 'NORMALIZATION_DONE' || status === 'RATIOS_COMPUTED') {
-      return buildSteps('COMPLETED', 'COMPLETED', 'ACTIVE', 'LOCKED', 'LOCKED');
-    }
-    if (status === 'STRESS_DONE') {
-      return buildSteps('COMPLETED', 'COMPLETED', 'COMPLETED', 'LOCKED', 'LOCKED'); // Stress done on Scoring pillar
-    }
-    if (status === 'SCORING_DONE') {
-      return buildSteps('COMPLETED', 'COMPLETED', 'COMPLETED', 'ACTIVE', 'LOCKED');
-    }
-    if (status === 'EXPERT_REVIEWED') {
-      return buildSteps('COMPLETED', 'COMPLETED', 'COMPLETED', 'COMPLETED', 'ACTIVE');
-    }
-    if (status === 'REPORT_GENERATED' || status === 'CLOSED') {
-      return buildSteps('COMPLETED', 'COMPLETED', 'COMPLETED', 'COMPLETED', 'COMPLETED');
-    }
-    return buildSteps('LOCKED', 'LOCKED', 'LOCKED', 'LOCKED', 'LOCKED');
+    // Index de l'étape active selon le statut backend (normalisé pour mapping robuste)
+    const normalizedStatus = status.toUpperCase().replace(/_/g, '');
+    
+    const STATUS_ACTIVE_INDEX: Record<string, number> = {
+      'DRAFT':             0,
+      'PENDINGGATE':       0,
+      'FINANCIALINPUT':    1,
+      'NORMALIZATIONDONE': 2,
+      'RATIOSCOMPUTED':    3,
+      'SCORINGDONE':       4,
+      'STRESSDONE':        6,
+      'EXPERTREVIEWED':    8,
+      'CLOSED':            9,
+      'ARCHIVED':          9,
+    };
+
+    const activeIndex = STATUS_ACTIVE_INDEX[normalizedStatus] ?? 0;
+
+    return ALL_STEPS.map((s, i) => ({
+      id: s.id,
+      name: s.name,
+      targetRoute: s.route,
+      status: i < activeIndex ? 'COMPLETED' : i === activeIndex ? 'ACTIVE' : 'LOCKED',
+    }));
   }
 
   updateSearch(event: Event): void {
