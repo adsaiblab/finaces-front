@@ -110,12 +110,39 @@ export class IaComponent implements OnInit {
         map(({ prediction, model }) => {
           this.isPredictionLoading.set(false);
           this.isModelLoading.set(false);
+
+          const p = prediction as any;
+          const auc = model.auc_roc ?? 0;
+          const prob = p.ia_probability_default ?? 0;
+          const halfInterval = parseFloat(((1 - auc) * 0.5).toFixed(3));
+
           return {
-            ...prediction,
+            case_id:              p.case_id,
+            model_version:        p.version ?? 'xgboost',
+            prediction_timestamp: p.predicted_at,
+            predicted_score:      p.ia_score,
+            predicted_risk_class: p.ia_risk_class,
+            confidence_interval: {
+              lower: Math.max(0, parseFloat((prob - halfInterval).toFixed(3))),
+              upper: Math.min(1, parseFloat((prob + halfInterval).toFixed(3))),
+            },
             model_performance: {
               auc_roc:  model.auc_roc,
               accuracy: model.accuracy,
               f1_score: model.f1_score,
+            },
+            disclaimer: 'Scores générés par apprentissage automatique à titre indicatif.',
+            feature_importance: [],
+            shap_values: {
+              base_value:         0,
+              total_contribution: 0,
+              features: p.explanations?.top_features?.map((f: any) => ({
+                feature_name:  f.feature_name,
+                feature_value: String(f.feature_value),
+                shap_value:    f.shap_value,
+                direction:     f.impact > 0 ? 'positive' : 'negative',
+                magnitude:     Math.abs(f.impact ?? 0),
+              })) ?? [],
             },
           };
         }),

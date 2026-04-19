@@ -86,7 +86,7 @@
             <div class="ia-model-badge__item">
               <span class="ia-model-badge__label">Intervalle de confiance</span>
               <span class="ia-model-badge__value ia-model-badge__value--mono">
-                [{{ data.confidence_interval.lower | number:'1.1-2' }} – {{ data.confidence_interval.upper | number:'1.1-2' }}]
+                [{{ data.confidence_interval?.lower | number:'1.1-2' }} – {{ data.confidence_interval?.upper | number:'1.1-2' }}]
               </span>
             </div>
           </div>
