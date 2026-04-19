@@ -120,7 +120,7 @@ export class IaComponent implements OnInit {
             case_id:              p.case_id,
             model_version:        p.version ?? 'xgboost',
             prediction_timestamp: p.predicted_at,
-            predicted_score:      p.ia_score,
+            predicted_score:      parseFloat((p.ia_score / 20).toFixed(2)),
             predicted_risk_class: p.ia_risk_class,
             confidence_interval: {
               lower: Math.max(0, parseFloat((prob - halfInterval).toFixed(3))),
