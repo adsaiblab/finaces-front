@@ -10,9 +10,9 @@ export class IAMapper {
     return {
       ...prediction,
       model_performance: {
-        auc_roc: modelInfo.auc_roc,
-        accuracy: modelInfo.accuracy,
-        f1_score: modelInfo.f1_score,
+        auc_roc: modelInfo.metrics.auc_roc,
+        accuracy: modelInfo.metrics.accuracy,
+        f1_score: modelInfo.metrics.f1_score,
       },
     };
   }
