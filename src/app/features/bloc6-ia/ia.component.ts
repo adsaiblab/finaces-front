@@ -112,7 +112,11 @@ export class IaComponent implements OnInit {
           this.isModelLoading.set(false);
 
           const p = prediction as any;
-          const auc = model.auc_roc ?? 0;
+          const metrics = (model as any).metrics ?? {};
+          const auc   = metrics.auc_roc  ?? 0;
+          const acc   = metrics.accuracy  ?? 0;
+          const f1    = metrics.f1_score  ?? 0;
+          
           const prob = p.ia_probability_default ?? 0;
           const halfInterval = parseFloat(((1 - auc) * 0.5).toFixed(3));
 
@@ -127,9 +131,9 @@ export class IaComponent implements OnInit {
               upper: Math.min(1, parseFloat((prob + halfInterval).toFixed(3))),
             },
             model_performance: {
-              auc_roc:  model.auc_roc,
-              accuracy: model.accuracy,
-              f1_score: model.f1_score,
+              auc_roc:  auc,
+              accuracy: acc,
+              f1_score: f1,
             },
             disclaimer: 'Scores générés par apprentissage automatique à titre indicatif.',
             feature_importance: [],
