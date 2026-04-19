@@ -22,12 +22,7 @@ export class IaService {
     return this.http.get<IAPredictionOut>(`${this.baseUrl}/ia/predict/${caseId}`).pipe(
       catchError((err) => {
         if (!environment.production) console.error('[IA Model] Prediction error:', err);
-        return throwError(
-          () =>
-            new Error(
-              'AI Prediction model is currently unavailable. Proceed with MCC Scoring only.',
-            ),
-        );
+        return throwError(() => err);
       }),
     );
   }
@@ -49,7 +44,7 @@ export class IaService {
     return this.http.get<IAModelInfo>(`${this.baseUrl}/ia/models/active`).pipe(
       catchError((err) => {
         if (!environment.production) console.error('[IA Model] Get active model error:', err);
-        return throwError(() => new Error('Failed to retrieve active IA model information.'));
+        return throwError(() => err);
       }),
     );
   }
