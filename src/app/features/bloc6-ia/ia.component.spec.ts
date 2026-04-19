@@ -50,10 +50,11 @@ const mockModel = {
   name: 'xgboost',
   version: 'v2.4.1',
   is_active: true,
-  auc_roc: 0.89,
-  accuracy: 0.9,
-  f1_score: 0.82,
-  confidence_interval: { lower: 0.85, upper: 0.93 },
+  metrics: {
+    auc_roc: 0.89,
+    accuracy: 0.9,
+    f1_score: 0.82,
+  },
   trained_at: '',
 };
 

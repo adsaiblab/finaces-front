@@ -42,10 +42,11 @@ export interface IAModelInfo {
   name: string;
   version: string;
   is_active: boolean;
-  auc_roc: number;
-  accuracy: number;
-  f1_score: number;
-  confidence_interval: { lower: number; upper: number };
+  metrics: {
+    auc_roc: number;
+    accuracy: number;
+    f1_score: number;
+  };
   trained_at: string;
 }
 
