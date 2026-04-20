@@ -2,3 +2,22 @@
   display: block;
   height: 100%;
 }
+
+.feature-row {
+  grid-template-columns: 2rem 1fr 1fr;
+}
+
+.shap-toggle {
+  ::ng-deep .mat-button-toggle {
+    font-size: 0.7rem;
+    font-weight: 600;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 10px;
+  }
+
+  ::ng-deep .mat-button-toggle-checked {
+    background-color: var(--color-primary-default);
+    color: var(--color-content-inverse);
+  }
+}
