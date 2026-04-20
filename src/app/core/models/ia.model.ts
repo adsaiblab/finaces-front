@@ -46,6 +46,7 @@ export interface IAModelInfo {
     auc_roc: number;
     accuracy: number;
     f1_score: number;
+    feature_importance?: FeatureImportance[];
   };
   trained_at: string;
 }
