@@ -5,6 +5,7 @@ import { trigger, animate, style, transition } from '@angular/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ShapLabelPipe } from '../../../pipes/shap-label.pipe';
+import { FeatureImportance } from '../../../../core/models/ia.model';
 
 interface ShapFeature {
   feature: string;
@@ -38,7 +39,7 @@ const RISK_KEYWORDS = ['debt', 'gearing', 'interest', 'payable', 'liability', 'd
   ]
 })
 export class ShapFeatureImportanceComponent implements OnChanges {
-  @Input() rawFeatures: Array<{ feature: string; importance: number }> = [];
+  @Input() rawFeatures: FeatureImportance[] = [];
 
   displayMode: 'top10' | 'top20' | 'all' = 'top10';
   features: ShapFeature[] = [];
@@ -51,14 +52,14 @@ export class ShapFeatureImportanceComponent implements OnChanges {
   }
 
   buildFeatures(): void {
-    const sorted = [...this.rawFeatures].sort((a, b) => b.importance - a.importance);
-    const maxVal = sorted[0]?.importance ?? 1;
+    const sorted = [...this.rawFeatures].sort((a, b) => b.importance_score - a.importance_score);
+    const maxVal = sorted[0]?.importance_score ?? 1;
 
     this.features = sorted.map(f => ({
-      feature: f.feature,
-      value: f.importance,
-      widthPct: Math.round((f.importance / maxVal) * 100),
-      isRisk: RISK_KEYWORDS.some(k => f.feature.toLowerCase().includes(k))
+      feature: f.feature_name,
+      value: f.importance_score,
+      widthPct: Math.round((f.importance_score / maxVal) * 100),
+      isRisk: RISK_KEYWORDS.some(k => f.feature_name.toLowerCase().includes(k))
     }));
 
     this.applyDisplayMode();
