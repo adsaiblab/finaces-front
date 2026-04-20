@@ -136,7 +136,12 @@ export class IaComponent implements OnInit {
               f1_score: f1,
             },
             disclaimer: 'Scores générés par apprentissage automatique à titre indicatif.',
-            feature_importance: metrics.feature_importance ?? [],
+            feature_importance: (metrics.feature_importance ?? []).map((f: any) => ({
+              feature_name: f.feature_name ?? f.feature,
+              importance_score: f.importance_score ?? f.importance,
+              rank: f.rank ?? 0,
+              correlation_with_target: f.correlation_with_target ?? 0
+            })),
             shap_values: {
               base_value:         0,
               total_contribution: 0,
