@@ -6,3 +6,4 @@
 
 export { CurrencyFormatPipe } from './currency-format.pipe';
 export { RiskClassLabelPipe } from './risk-class-label.pipe';
+export { ShapLabelPipe } from './shap-label.pipe';

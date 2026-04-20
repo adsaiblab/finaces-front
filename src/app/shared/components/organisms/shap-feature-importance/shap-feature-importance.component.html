@@ -1,0 +1,49 @@
+<div class="shap-container">
+  <div class="shap-header">
+    <span class="shap-title">
+      <mat-icon>bar_chart</mat-icon>
+      Global Feature Importance (SHAP)
+    </span>
+    <div class="shap-controls">
+      <mat-button-toggle-group [(ngModel)]="displayMode" (change)="onModeChange()">
+        <mat-button-toggle value="top10">Top 10</mat-button-toggle>
+        <mat-button-toggle value="top20">Top 20</mat-button-toggle>
+        <mat-button-toggle value="all">Tout</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+  <div class="shap-chart">
+    <div
+      *ngFor="let feat of visibleFeatures; let i = index"
+      class="shap-row"
+      [class.shap-row--highlight]="i < 3"
+      [@fadeIn]="{ value: '', params: { delay: i * 30 } }"
+    >
+      <!-- Rank badge -->
+      <span class="shap-rank" [class.shap-rank--top]="i < 3">#{{ i + 1 }}</span>
+
+      <!-- Feature name -->
+      <span class="shap-label" [title]="feat.feature">
+        {{ feat.feature | shapLabel }}
+      </span>
+
+      <!-- Bar track -->
+      <div class="shap-bar-track">
+        <div
+          class="shap-bar"
+          [style.width.%]="feat.widthPct"
+          [class.shap-bar--risk]="feat.isRisk"
+          [class.shap-bar--positive]="!feat.isRisk"
+        ></div>
+      </div>
+
+      <!-- Value -->
+      <span class="shap-value">+{{ feat.value | number:'1.3-3' }}</span>
+    </div>
+  </div>
+
+  <div class="shap-footer" *ngIf="features.length > 10">
+    <span class="shap-total">{{ features.length }} features au total</span>
+  </div>
+</div>

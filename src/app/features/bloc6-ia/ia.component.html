@@ -139,10 +139,8 @@
           <!-- Ligne 2 : SHAP + What-If -->
           <div class="ia-analysis-row">
             <div class="ia-card ia-card--chart" data-testid="ia-shap-chart-card">
-              <app-finaces-shap-chart
-                [features]="data.shap_values.features"
-                [maxFeatures]="8"
-                [showValues]="true"
+              <app-shap-feature-importance
+                [rawFeatures]="data.feature_importance"
               />
             </div>
 

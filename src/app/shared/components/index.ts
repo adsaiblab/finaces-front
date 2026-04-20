@@ -16,6 +16,6 @@ export * from './molecules/finaces-skeleton-loader/finaces-skeleton-loader.compo
 
 // ─── Organisms ────────────────────────────────────────────────────────────────
 export * from './organisms/finaces-convergence-chart/finaces-convergence-chart.component';
-export * from './organisms/finaces-shap-chart/finaces-shap-chart.component';
+export * from './organisms/shap-feature-importance/shap-feature-importance.component';
 export * from './organisms/finaces-stress-chart/finaces-stress-chart.component';
 export * from './organisms/finaces-what-if/finaces-what-if.component';

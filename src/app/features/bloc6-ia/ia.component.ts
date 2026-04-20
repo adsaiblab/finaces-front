@@ -24,7 +24,7 @@ import { IAPredictionResult, WhatIfScenarioInput } from '../../core/models/ia.mo
 
 import {
   FinacesIaDisclaimerComponent,
-  FinacesShapChartComponent,
+  ShapFeatureImportanceComponent,
   FinacesWhatIfComponent,
   FinacesScoreGaugeComponent,
   FinacesRiskBadgeComponent,
@@ -43,7 +43,7 @@ import {
     MatProgressSpinnerModule,
     MatSnackBarModule,
     FinacesIaDisclaimerComponent,
-    FinacesShapChartComponent,
+    ShapFeatureImportanceComponent,
     FinacesWhatIfComponent,
     FinacesScoreGaugeComponent,
     FinacesRiskBadgeComponent,
@@ -136,7 +136,7 @@ export class IaComponent implements OnInit {
               f1_score: f1,
             },
             disclaimer: 'Scores générés par apprentissage automatique à titre indicatif.',
-            feature_importance: [],
+            feature_importance: metrics.feature_importance ?? [],
             shap_values: {
               base_value:         0,
               total_contribution: 0,
